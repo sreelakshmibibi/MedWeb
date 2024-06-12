@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         // ]);
         $this->call([
             UserTypeSeeder::class,
+            SocialNetworkSeeder::class,
             // Other seeders...
         ]);
     }
