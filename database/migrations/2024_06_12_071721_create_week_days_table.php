@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('clinic_details', function (Blueprint $table) {
+        Schema::create('week_days', function (Blueprint $table) {
             $table->id();
-            $table->string('clinic_name');
-            $table->string('clinic_logo')->nullable();
-            $table->string('clinic_address')->nullable();
-            $table->foreignId('clinic_type_id')->constrained();
+            $table->string('name');
+            $table->string('acronym');
+            $table->char('status');
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('clinic_details');
+        Schema::dropIfExists('week_days');
     }
 };
