@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ClinicDetail extends Model
+class SocialNetwork extends Model
 {
     use HasFactory;
-    protected $fillable = ['clinic_name', 'clinic_logo', 'clinic_address'];
+    protected $fillable = ['network', 'status'];
 }
