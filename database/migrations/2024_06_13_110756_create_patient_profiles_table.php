@@ -24,7 +24,6 @@ return new class extends Migration
             $table->integer('area')->nullable(); 
             $table->foreignId('nationality')->constrained('countries'); 
             $table->string('registration_date', 50)->nullable(); 
-            $table->foreignId('doctor_id')->constrained('doctor_profiles'); 
             $table->integer('visit_count')->default(0); 
             $table->string('pstatus', 1)->default('Y'); 
             $table->string('regby', 50);
