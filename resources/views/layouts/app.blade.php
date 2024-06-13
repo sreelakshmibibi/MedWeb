@@ -40,6 +40,8 @@
 
     @yield('content')
 
+    @yield('footer')
+
     <!-- Vendor JS -->
     <script src="js/vendors.min.js"></script>
     <script src="js/pages/chat-popup.js"></script>
