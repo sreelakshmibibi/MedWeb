@@ -27,6 +27,9 @@ class DatabaseSeeder extends Seeder
             CitySeeder::class,
             AppointmentStatusSeeder::class,
             AppointmentTypeSeeder::class,
+            DosageSeeder::class,
+            ClinicTypeSeeder::class,
+            WeekDaySeeder::class,
             // Other seeders...
         ]);
     }
