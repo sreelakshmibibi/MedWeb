@@ -25,12 +25,12 @@
     {{-- @vite(['resources/sass/app.scss', 'resources/js/app.js']) --}}
 
     <!-- Vendors Style-->
-    <link rel="stylesheet" href="css/vendors_css.css">
+    <link rel="stylesheet" href="{{ asset('css/vendors_css.css') }}">
 
     <!-- Style-->
-    <link rel="stylesheet" href="css/horizontal-menu.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/skin_color.css">
+    <link rel="stylesheet" href="{{ asset('css/horizontal-menu.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/skin_color.css') }}">
 
 </head>
 
@@ -47,31 +47,21 @@
 
     </div>
 
-    <div class="container-fluid">
-        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-1 border-top">
-            <div class="col-md-4 d-flex align-items-center">
-                <span class="mb-3 mb-md-0 text-muted">Copyright &copy; 2024 MedWeb</span>
-            </div>
-
-            <div class="col-md-4 d-flex justify-content-end">
-                <span class="mb-3 mb-md-0 text-muted">Developed by Serieux</span>
-            </div>
-        </footer>
-    </div>
+    @include('dashboard.footer')
 
     <!-- Vendor JS -->
-    <script src="js/vendors.min.js"></script>
-    <script src="js/pages/chat-popup.js"></script>
-    <script src="assets/icons/feather-icons/feather.min.js"></script>
+    <script src="{{ asset('js/vendors.min.js') }}"></script>
+    <script src="{{ asset('js/pages/chat-popup.js') }}"></script>
+    <script src="{{ asset('assets/icons/feather-icons/feather.min.js') }}"></script>
 
-    <script src="assets/vendor_components/apexcharts-bundle/dist/apexcharts.js"></script>
-    <script src="assets/vendor_components/OwlCarousel2/dist/owl.carousel.js"></script>
+    <script src="{{ asset('assets/vendor_components/apexcharts-bundle/dist/apexcharts.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/OwlCarousel2/dist/owl.carousel.js') }}"></script>
 
     <!-- MedWeb App -->
-    <script src="js/jquery.smartmenus.js"></script>
-    <script src="js/menus.js"></script>
-    <script src="js/template.js"></script>
-    <script src="js/pages/dashboard3.js"></script>
+    <script src="{{ asset('js/jquery.smartmenus.js') }}"></script>
+    <script src="{{ asset('js/menus.js') }}"></script>
+    <script src="{{ asset('js/template.js') }}"></script>
+    <script src="{{ asset('js/pages/dashboard3.js') }}"></script>
 
 </body>
 
