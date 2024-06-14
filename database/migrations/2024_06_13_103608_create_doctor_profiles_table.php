@@ -21,6 +21,10 @@ return new class extends Migration
             $table->string('license_number', 50)->unique(); 
             $table->string('subspecialty')->nullable(); 
             $table->text('address')->nullable(); 
+            $table->foreignId('area')->constrained('cities'); 
+            $table->foreignId('state')->constrained('states'); 
+            $table->foreignId('nationality')->constrained('countries'); 
+            $table->integer('pin')->nullable(); 
             $table->date('date_of_birth')->nullable(); 
             $table->string('gender', 10)->nullable(); 
             $table->string('photo', 255)->nullable(); 
@@ -33,6 +37,13 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('doctor_profiles', function (Blueprint $table) {
+            $table->dropForeign(['user_id']);
+            $table->dropForeign(['department_id']);
+            $table->dropForeign(['area']);
+            $table->dropForeign(['state']);
+            $table->dropForeign(['nationality']);
+        });
         Schema::dropIfExists('doctor_profiles');
     }
 };
