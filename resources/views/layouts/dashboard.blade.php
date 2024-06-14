@@ -13,9 +13,9 @@
     <meta name="author" content="">
     <link rel="icon" href="images/favicon.ico">
 
-    {{-- <title>MedWeb - Dashboard</title> --}}
+    <title>MedWeb - Dashboard</title>
 
-    <title>{{ config('app.name', 'MedWeb') }}</title>
+    {{-- <title>{{ config('app.name', 'MedWeb') }}</title> --}}
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
@@ -36,7 +36,28 @@
 
 <body class="layout-top-nav dark-skin theme-primary fixed">
 
-    @yield('content')
+    <div class="wrapper">
+        <div id="loader"></div>
+
+        @include('dashboard.header')
+
+        @include('dashboard.menu')
+
+        @yield('content')
+
+    </div>
+
+    <div class="container-fluid">
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-1 border-top">
+            <div class="col-md-4 d-flex align-items-center">
+                <span class="mb-3 mb-md-0 text-muted">Copyright &copy; 2024 MedWeb</span>
+            </div>
+
+            <div class="col-md-4 d-flex justify-content-end">
+                <span class="mb-3 mb-md-0 text-muted">Developed by Serieux</span>
+            </div>
+        </footer>
+    </div>
 
     <!-- Vendor JS -->
     <script src="js/vendors.min.js"></script>
