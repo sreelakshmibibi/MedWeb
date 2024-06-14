@@ -13,7 +13,7 @@
     <meta name="author" content="">
     <link rel="icon" href="images/favicon.ico">
 
-    {{-- <title>MedWeb - Log in </title> --}}
+    {{-- <title>MedWeb - Dashboard</title> --}}
 
     <title>{{ config('app.name', 'MedWeb') }}</title>
 
@@ -22,7 +22,7 @@
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
     <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    {{-- @vite(['resources/sass/app.scss', 'resources/js/app.js']) --}}
 
     <!-- Vendors Style-->
     <link rel="stylesheet" href="css/vendors_css.css">
@@ -31,21 +31,26 @@
     <link rel="stylesheet" href="css/horizontal-menu.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/skin_color.css">
+
 </head>
 
-{{-- <body> --}}
-
-<body class="hold-transition theme-primary bg-img"
-    style="background-image: url(images/front-end-img/banners/slider-2.jpg)">
+<body class="layout-top-nav dark-skin theme-primary fixed">
 
     @yield('content')
-
-    @yield('footer')
 
     <!-- Vendor JS -->
     <script src="js/vendors.min.js"></script>
     <script src="js/pages/chat-popup.js"></script>
     <script src="assets/icons/feather-icons/feather.min.js"></script>
+
+    <script src="assets/vendor_components/apexcharts-bundle/dist/apexcharts.js"></script>
+    <script src="assets/vendor_components/OwlCarousel2/dist/owl.carousel.js"></script>
+
+    <!-- MedWeb App -->
+    <script src="js/jquery.smartmenus.js"></script>
+    <script src="js/menus.js"></script>
+    <script src="js/template.js"></script>
+    <script src="js/pages/dashboard3.js"></script>
 
 </body>
 
