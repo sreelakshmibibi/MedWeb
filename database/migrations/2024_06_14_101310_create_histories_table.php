@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('patient_id');
             $table->unsignedBigInteger('app_id');
             $table->string('history', 500);
-            $table->foreignId('doctor_id')->constrained('doctor_profiles');
+            $table->foreignId('doctor_id')->constrained('users');
             $table->dateTime('cdate');
             $table->string('status', 5)->default('Y');
             $table->timestamp('updt')->useCurrent()->useCurrentOnUpdate();

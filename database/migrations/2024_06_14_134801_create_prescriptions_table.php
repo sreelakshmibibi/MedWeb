@@ -11,15 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('advice', function (Blueprint $table) {
+        Schema::create('prescriptions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('patient_id');
             $table->unsignedBigInteger('app_id');
-            $table->string('advice', 500);
-            $table->foreignId('doctor_id')->constrained('users');
-            $table->dateTime('cdate');
+            $table->foreignId('medid')->constrained('medicines');
+            $table->dateTime('endate');
+            $table->string('medd_name', 200);
+            $table->string('str', 150);
+            $table->string('dose', 100);
+            $table->string('days', 10);
+            $table->string('duration', 20);
+            $table->string('remark', 300);
+            $table->foreignId('prby')->constrained('users');
+            $table->string('finalsave', 5)->default('NO');
             $table->string('status', 5)->default('Y');
-            $table->timestamp('updt')->useCurrent()->useCurrentOnUpdate();
+            $table->timestamps();
 
             $table->foreign('patient_id')
                   ->references('patient_id')
@@ -34,7 +41,13 @@ return new class extends Migration
             // Indexes
             $table->index('patient_id');
             $table->index('app_id');
-            $table->index('advice');
+            $table->index('medid');
+            $table->index('medd_name');
+            $table->index('str');
+            $table->index('dose');
+            $table->index('days');
+            $table->index('duration');
+            $table->index('remark');
         });
     }
 
@@ -43,11 +56,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('advice', function (Blueprint $table) {
+        Schema::table('prescriptions', function (Blueprint $table) {
             $table->dropForeign(['app_id']);
             $table->dropForeign(['patient_id']);
-            $table->dropForeign(['doctor_id']);
+            $table->dropForeign(['medid']);
+            $table->dropForeign(['prby']);
         });
-        Schema::dropIfExists('advice');
+        Schema::dropIfExists('prescriptions');
     }
 };

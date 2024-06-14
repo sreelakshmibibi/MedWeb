@@ -21,7 +21,7 @@ return new class extends Migration
             $table->time('Time');
             $table->time('tim_to');
             $table->float('slot');
-            $table->foreignId('doctor_id')->constrained('doctor_profiles');
+            $table->foreignId('doctor_id')->constrained('users');
             $table->string('type', 20);
             $table->string('status', 20);
             $table->string('app_note', 300);
