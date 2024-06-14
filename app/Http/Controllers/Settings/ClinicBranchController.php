@@ -3,15 +3,37 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Models\ClinicBranch;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class ClinicBranchController extends Controller
 {
     /**
      * Display a listing of the resource.m
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+        
+            $clinics = ClinicBranch::query();
+            
+            return DataTables::of($clinics)
+                    ->addIndexColumn()
+                    ->addColumn('action', function($row){
+       
+                            $btn = ' <div class="d-flex"><a href="#" class="waves-effect waves-circle btn btn-circle btn-success btn-xs me-5">
+                            <i class="fa fa-pencil"></i></a>
+                            <a href="#" class="waves-effect waves-circle btn btn-circle btn-danger btn-xs">
+                            <i class="fa fa-trash"></i></a></div>';
+      
+                            return $btn;
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+        }
+        
         return view('settings.clinics.clinic_form');
     }
 

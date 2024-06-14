@@ -17,34 +17,17 @@
                     <div class="box-body">
                         <div class="table-responsive">
                             <!-- Main content -->
-                            <table class="table table-bordered table-hover table-striped mb-0 border-2" id="y_dataTables">
+                            <table class="table table-bordered table-hover table-striped mb-0 border-2 data-table" id="y_dataTables">
                                 <thead class="bg-primary-light">
                                     <tr>
-                                        <th>Id</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Created at</th>
-                                        <th>Manage</th>
+                                    <th>No</th>
+                                    <th>Name</th>
+                                    <th width="100px">Action</th>
                                     </tr>
                                 </thead>
-                                {{-- <tbody>
-                                    <tr>
-                                        <td>Id</td>
-                                        <td>Name</td>
-                                        <td>Email</td>
-                                        <td>Created at</td>
-                                        <td>
-                                            <div class="d-flex">
-                                                <a href="#"
-                                                    class="waves-effect waves-circle btn btn-circle btn-success btn-xs me-5"><i
-                                                        class="fa fa-pencil"></i></a>
-                                                <a href="#"
-                                                    class="waves-effect waves-circle btn btn-circle btn-danger btn-xs"><i
-                                                        class="fa fa-trash"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody> --}}
+                                <tbody>
+                                    
+                                </tbody>
                             </table>
                             <!-- /.content -->
                         </div>
@@ -55,80 +38,25 @@
     </div>
     <!-- /.content-wrapper -->
 
-    <!-- modal -->
-    <div class="modal center-modal fade" id="modal-center" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">New Department Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <div class="box">
-                            <!-- /.box-header -->
-                            <form class="form">
-                                <div class="box-body">
-                                    <div class="form-group">
-                                        <label class="form-label" for="name">Department</label>
-                                        <input class="form-control" type="text" id="name" name="name"
-                                            placeholder="Department Name">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="form-label" for="name">Status</label>
-                                        <input class="form-control" type="text" id="status" name="status"
-                                            placeholder="Status">
-                                    </div>
-
-                                    <div class="form-group mt-2">
-                                        <label class="form-label col-md-6" for="branch">Active</label>
-                                        <input name="branch" type="radio" class="form-control with-gap" id="yes">
-                                        <label for="yes">Yes</label>
-                                        <input name="branch" type="radio" class="form-control with-gap" id="no">
-                                        <label for="no">No</label>
-                                    </div>
-                                </div>
-                                <!-- /.box-body -->
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer modal-footer-uniform">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success float-end">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+   @include('settings.department.create')
     {{-- </div> --}}
 
     <!-- ./wrapper -->
-    <script>
-        $(document).ready(function() {
-            $('#y_dataTables').DataTable({
+    <script type="text/javascript">
+        
+        jQuery(function($){
+        
+            var table = $('.data-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ url('list') }}",
-                columns: [{
-                        data: 'id',
-                        name: 'id'
-                    },
-                    {
-                        data: 'name',
-                        name: 'name'
-                    },
-                    {
-                        data: 'email',
-                        name: 'email'
-                    },
-                    {
-                        data: 'created_at',
-                        name: 'created_at'
-                    }
+                ajax: "{{ route('settings.department') }}",
+                columns: [
+                    {data: 'id', name: 'id'},
+                    {data: 'department', name: 'department'},
+                    {data: 'action', name: 'action', orderable: false, searchable: true},
                 ]
             });
+                
         });
     </script>
 @endsection
