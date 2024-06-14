@@ -9,9 +9,13 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
+Route::get('/formclinic', function () {
+    return view('forms.clinic_form');
+});
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/clinic',[ClinicBranchController::class, 'index'])->name('settings.clinic');
+Route::get('/clinic', [ClinicBranchController::class, 'index'])->name('settings.clinic');
 Route::get('/department', [DepartmentController::class, 'index'])->name('settings.department');
 Route::get('list', [DepartmentController::class, 'dataTableLogic']);

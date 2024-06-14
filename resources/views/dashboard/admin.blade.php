@@ -20,9 +20,9 @@
                                             <div>
                                                 <h4 class="mb-0">Total Patients</h4>
                                                 <h3 class="mb-0">1245</h3>
-                                                <br />
                                             </div>
                                         </div>
+                                        <pre class="mt-2"> </pre>
                                     </div>
                                 </div>
                             </div>
@@ -40,9 +40,9 @@
                                                 <h3 class="mb-0">240</h3>
                                             </div>
                                         </div>
-                                        <div class="d-flex align-items-center">
-                                            <div class="ms-15">
-                                                <h6 class="mb-0"><span class="text-xs text-warning">Doctors-</span>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <div>
+                                                <h6 class="mb-0 mt-2"><span class="text-xs text-warning">Doctors-</span>
                                                     45
                                                     &nbsp; <span class="text-xs text-info">Others-</span>
                                                     195</h6>
@@ -54,7 +54,7 @@
                             <div class="col-lg-4 col-12">
                                 <div class="box">
                                     <div class="box-body">
-                                        <div class="d-flex align-items-center">
+                                        <div class="d-flex align-items-center pb-8">
                                             <div class="me-15">
                                                 <img src="../images/svg-icon/color-svg/custom-19.svg" alt=""
                                                     class="w-120" />
@@ -62,9 +62,9 @@
                                             <div>
                                                 <h4 class="mb-0">Total Surgery</h4>
                                                 <h3 class="mb-0">245</h3>
-                                                <br />
                                             </div>
                                         </div>
+                                        <pre class="mt-2"> </pre>
                                     </div>
                                 </div>
                             </div>
@@ -418,8 +418,5 @@
         </div>
     </div>
     <!-- /.content-wrapper -->
-
-    {{-- </div> --}}
-
     <!-- ./wrapper -->
 @endsection

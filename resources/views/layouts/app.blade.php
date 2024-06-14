@@ -13,7 +13,7 @@
     <meta name="author" content="">
     <link rel="icon" href="images/favicon.ico">
 
-    {{-- <title>MedWeb - Log in </title> --}}
+    {{-- <title>MedWeb</title> --}}
 
     <title>{{ config('app.name', 'MedWeb') }}</title>
 
@@ -25,36 +25,42 @@
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
     <!-- Vendors Style-->
-    <link rel="stylesheet" href="css/vendors_css.css">
+    <link rel="stylesheet" href="{{ asset('css/vendors_css.css') }}">
 
     <!-- Style-->
-    <link rel="stylesheet" href="css/horizontal-menu.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/skin_color.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ asset('css/horizontal-menu.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/skin_color.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
+    </script>
 
-<script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
 
-<link  href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
 
-<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 </head>
 
 {{-- <body> --}}
 
 <body class="hold-transition theme-primary bg-img"
-    style="background-image: url(images/front-end-img/banners/slider-2.jpg)">
+    style="background-image: url({{ asset('images/front-end-img/banners/slider-2.jpg') }})">
+    <div class="container h-p100">
 
-    @yield('content')
+        @yield('content')
 
-    @yield('footer')
+        @include('layouts.footer')
+
+    </div>
 
     <!-- Vendor JS -->
-    <script src="js/vendors.min.js"></script>
-    <script src="js/pages/chat-popup.js"></script>
-    <script src="assets/icons/feather-icons/feather.min.js"></script>
+    <script src="{{ asset('js/vendors.min.js') }}"></script>
+    <script src="{{ asset('js/pages/chat-popup.js') }}"></script>
+    <script src="{{ asset('assets/icons/feather-icons/feather.min.js') }}"></script>
 
 </body>
 
