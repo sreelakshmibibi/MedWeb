@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('clinic_name');
             $table->string('clinic_logo')->nullable();
             $table->string('clinic_address')->nullable();
+            $table->string('phone_number')->nullable();
             $table->foreignId('clinic_type_id')->constrained();
             $table->timestamps();
         });
