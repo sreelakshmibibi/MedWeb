@@ -50,9 +50,9 @@
                     <span class="path1"></span><span class="path2"></span></i>Settings
             </a>
             <ul>
-                <li><a href="patients.html"><i class="icon-Commit"><span class="path1"></span><span
-                                class="path2"></span></i>Logo and Clinic Name</a></li>
-                <li><a href="patient_details.html"><i class="icon-Commit"><span class="path1"></span><span
+                <li><a href="{{ route('settings.clinic') }}"><i class="icon-Commit"><span class="path1"></span><span
+                                class="path2"></span></i>Clinics</a></li>
+                <li><a href="{{ route('settings.department') }}"><i class="icon-Commit"><span class="path1"></span><span
                                 class="path2"></span></i>Departments</a></li>
                 <li><a href="patients.html"><i class="icon-Commit"><span class="path1"></span><span
                                 class="path2"></span></i>Medicines</a></li>
