@@ -19,3 +19,4 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::get('/clinic', [ClinicBranchController::class, 'index'])->name('settings.clinic');
 Route::get('/department', [DepartmentController::class, 'index'])->name('settings.department');
 Route::post('/department/store', [DepartmentController::class, 'store'])->name('settings.department.store');
+Route::delete('/department/{department}', [DepartmentController::class, 'destroy'])->name('settings.departments.destroy');

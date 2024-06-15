@@ -26,8 +26,10 @@ class DepartmentController extends Controller
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
 
-                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-xs me-1" title="edit" data-bs-toggle="modal"
-                        data-bs-target="#modal-edit"><i class="fa fa-pencil"></i></button><button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" title="delete"><i class="fa fa-trash"></i></button>';
+                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="'.$row->id.'"
+                        data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
+                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="'.$row->id.'" title="delete">
+                        <i class="fa fa-trash"></i></button>';
 
                     return $btn;
                 })
@@ -95,8 +97,11 @@ class DepartmentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $department = Department::findOrFail($id);
+        $department->delete();
+
+        return redirect()->back()->with('success', 'Department deleted successfully.');
     }
 }

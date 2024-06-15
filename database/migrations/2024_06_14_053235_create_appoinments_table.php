@@ -82,6 +82,7 @@ return new class extends Migration
             $table->index('con_strt_time');
             $table->index('imfil');
             $table->index('con_end_time');
+            $table->softDeletes(); 
         });
     }
 

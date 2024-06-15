@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('clinic_website')->nullable();
             $table->foreignId('clinic_type_id')->constrained();
             $table->timestamps();
+            $table->softDeletes(); 
         });
     }
 

@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('gender', 10)->nullable(); 
             $table->string('photo', 255)->nullable(); 
             $table->timestamps(); 
+            $table->softDeletes(); 
         });
     }
 

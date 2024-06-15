@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('country');
             $table->integer('phonecode');
             $table->timestamps();
+            $table->softDeletes(); 
         });
     }
 

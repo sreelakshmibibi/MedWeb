@@ -23,7 +23,7 @@ return new class extends Migration
             $table->date('med_date');
             $table->date('med_last_update');
             $table->timestamps();
-
+            $table->softDeletes(); 
             $table->index('med_name');
             $table->index('med_strength');
             $table->index('status');

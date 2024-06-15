@@ -23,7 +23,7 @@ return new class extends Migration
             $table->foreignId('doneby')->constrained('users'); // ID of the person who performed the treatment
             $table->string('status', 5)->default('Y'); // Treatment status  
             $table->timestamps(); 
-
+            $table->softDeletes(); 
             $table->foreign('patient_id')
             ->references('patient_id')
             ->on('patient_profiles')

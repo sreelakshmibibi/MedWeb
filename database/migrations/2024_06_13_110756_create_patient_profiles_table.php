@@ -44,6 +44,7 @@ return new class extends Migration
             $table->index('national_id'); 
             $table->index('regby');
             $table->timestamps(); 
+            $table->softDeletes(); 
         });
     }
 

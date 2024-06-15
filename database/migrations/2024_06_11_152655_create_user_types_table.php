@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('priority');
             $table->char('status');
             $table->timestamps();
+            $table->softDeletes(); 
         });
     }
 

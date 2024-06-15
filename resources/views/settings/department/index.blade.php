@@ -60,6 +60,7 @@
 
     @include('settings.department.create')
     @include('settings.department.edit')
+    @include('settings.department.delete')
     {{-- </div> --}}
 
     <!-- ./wrapper -->
@@ -90,72 +91,36 @@
                     },
                 ]
             });
-
+            $(document).on('click', '.btn-danger', function() {
+            var departmentId = $(this).data('id');
+            $('#delete_department_id').val(departmentId); // Set department ID in the hidden input
+            $('#modal-delete').modal('show');
         });
 
-        $("#buttonalert").click(function() {
-            // swal("Success!", "New Clinic Added");
+        $('#btn-confirm-delete').click(function() {
+            var departmentId = $('#delete_department_id').val();
+            var url = "{{ route('settings.departments.destroy', ':department') }}";
+            url = url.replace(':department', departmentId);
 
-            swal({
-                    title: "Are you sure?",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "Yes",
-                    cancelButtonText: "No",
-                    closeOnConfirm: true,
-                    closeOnCancel: true,
+            $.ajax({
+                type: 'DELETE',
+                url: url,
+                data: {
+                    "_token": "{{ csrf_token() }}"
                 },
-                function(isConfirm) {
-                    if (isConfirm) {
-                        $("#modal-right").modal('toggle');
-                    }
+                success: function(response) {
+                    $('#modal-delete').modal('hide');
+                    $('.alerttop').html('<i class="ti-check"></i> ' + response.success + ' <a href="#" class="closed">×</a>');
+                    $('.alerttop').removeClass('fadeOut').addClass('fadeIn');
+                    table.ajax.reload(); 
+                },
+                error: function(xhr) {
+                    $('#modal-delete').modal('hide');
+                    swal("Error!", xhr.responseJSON.message, "error");
                 }
-                // function (isConfirm) {
-                //     if (isConfirm) {
-                //         swal(
-                //             "Saved!",
-                //             "Your data is updated.",
-                //             "success"
-                //         );
-                //     } else {
-                //         swal(
-                //             "Cancelled",
-                //             "cancelled",
-                //             "error"
-                //         );
-                //     }
-                // }
-            );
+            });
         });
 
-        $(".buttondelete").click(function() {
-            swal({
-                    title: "Are you sure?",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "Yes",
-                    cancelButtonText: "No",
-                    closeOnConfirm: true,
-                    closeOnCancel: true,
-                },
-                function(isConfirm) {
-                    // function (isConfirm) {
-                    //     if (isConfirm) {
-                    //         swal(
-                    //             "Saved!",
-                    //             "Your data is updated.",
-                    //             "success"
-                    //         );
-                    //     } else {
-                    //         swal(
-                    //             "Cancelled",
-                    //             "cancelled",
-                    //             "error"
-                    //         );
-                    //     }
-                    // }
-                }
-            );
         });
     </script>
 @endsection

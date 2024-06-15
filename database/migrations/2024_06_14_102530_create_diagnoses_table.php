@@ -20,7 +20,7 @@ return new class extends Migration
             $table->dateTime('cdate');
             $table->string('status', 5)->default('Y');
             $table->timestamp('updt')->useCurrent()->useCurrentOnUpdate();
-
+            $table->softDeletes(); 
             $table->foreign('patient_id')
                   ->references('patient_id')
                   ->on('patient_profiles')

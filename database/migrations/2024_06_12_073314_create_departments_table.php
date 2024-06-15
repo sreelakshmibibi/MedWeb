@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('clinic_type_id')->constrained();
             $table->char('status');
             $table->timestamps();
+            $table->softDeletes(); 
         });
     }
 

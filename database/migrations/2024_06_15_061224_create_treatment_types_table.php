@@ -17,6 +17,7 @@ return new class extends Migration
             $table->decimal('treat_cost', 10, 3); //Treatment cost
             $table->string('status', 5)->default('Y');  //Treatment status (treatment available or not)
             $table->timestamps();
+            $table->softDeletes(); 
             //index
             $table->index('treat_name');
             $table->index('status');

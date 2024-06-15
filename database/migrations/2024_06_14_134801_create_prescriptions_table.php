@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('finalsave', 5)->default('NO');
             $table->string('status', 5)->default('Y');
             $table->timestamps();
-
+            $table->softDeletes(); 
             $table->foreign('patient_id')
                   ->references('patient_id')
                   ->on('patient_profiles')

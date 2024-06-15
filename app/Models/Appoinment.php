@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Appoinment extends Model
 {
     use HasFactory;
+    use SoftDeletes;
     protected $fillable = [
         'app_id',
         'patient_id',
@@ -50,5 +52,5 @@ class Appoinment extends Model
         'imfil',
         'br'
     ];
-
+    protected $dates = ['deleted_at'];
 }

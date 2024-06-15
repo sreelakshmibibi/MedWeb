@@ -34,6 +34,7 @@ return new class extends Migration
             $table->index('patient_id');
             $table->index('app_id');
             $table->index('symptom');
+            $table->softDeletes(); 
         });
     }
 
