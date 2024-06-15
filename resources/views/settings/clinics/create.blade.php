@@ -127,7 +127,7 @@
             </div>
             <div class="modal-footer modal-footer-uniform">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-success float-end showtop"
+                <button type="button" class="btn btn-success float-end" id="sa-title"
                     data-bs-dismiss="modal">Save</button>
             </div>
         </div>

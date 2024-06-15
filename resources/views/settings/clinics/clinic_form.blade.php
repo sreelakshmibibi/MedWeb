@@ -4,10 +4,18 @@
     <div class="content-wrapper">
         <div class="container-full">
             <!-- alert -->
-            <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-success alerttop fadeOut"
-                style="display: none;">
-                <i class="ti-check"></i> New clinic branch added <a href="#" class="closed">×</a>
-            </div>
+            @if (session('success'))
+                <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-success alerttop fadeOut"
+                    style="display: block;">
+                    <i class="ti-check"></i> {{ session('success') }} <a href="#" class="closed">×</a>
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fade fadeOut"
+                    style="display: block;">
+                    <i class="ti-check"></i> {{ session('error') }} <a href="#" class="closed">×</a>
+                </div>
+            @endif
 
             <!-- Content Header (Page header) -->
             <div class="content-header">
