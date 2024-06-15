@@ -8,7 +8,7 @@
 
     <!-- Sample menu definition -->
     <ul id="main-menu" class="sm sm-blue">
-        <li><a href="#"><i class="icon-Layout-4-blocks"><span class="path1"></span><span
+        <li><a href="{{ route('home')}}"><i class="icon-Layout-4-blocks"><span class="path1"></span><span
                         class="path2"></span></i>Dashboard</a>
         </li>
         <li><a href="appointments.html"><i class="fa-regular fa-calendar-check"><span class="path1"></span><span

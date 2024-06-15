@@ -16,15 +16,15 @@
                                     <div class="box-body">
                                         <div class="form-group">
                                             <label class="form-label" for="name">Department</label>
-                                            <input class="form-control" type="text" id="name" name="name"
+                                            <input class="form-control" type="text" id="department" name="department" required minlength="3"
                                                 placeholder="Department Name">
                                         </div>
 
                                         <div class="form-group mt-2">
                                             <label class="form-label col-md-6" for="branch">Active</label>
-                                            <input name="status" type="radio" checked class="form-control with-gap" id="yes">
+                                            <input name="status" type="radio" checked class="form-control with-gap" id="yes" value="Y">
                                             <label for="yes">Yes</label>
-                                            <input name="status" type="radio" class="form-control with-gap" id="no">
+                                            <input name="status" type="radio" class="form-control with-gap" id="no" value="N">
                                             <label for="no">No</label>
                                         </div>
                                     </div>

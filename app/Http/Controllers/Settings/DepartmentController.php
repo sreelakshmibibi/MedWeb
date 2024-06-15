@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Settings\DepartmentRequest;
 use App\Models\Department;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
@@ -50,24 +51,23 @@ class DepartmentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(DepartmentRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
-
-        // Create a new department instance
-        $department = new Department();
-        $department->department = $request->input('name');
-        $department->status = 'Y';
-        $department->clinic_type_id = 1;
-
-        // Save the department
-        $department->save();
-
-        // Optionally, you can return a response or redirect somewhere
-        return redirect()->back()->with('success', 'Department created successfully.');
-
+        try {
+            // Create a new department instance
+            $department = new Department();
+            $department->department = $request->input('department');
+            $department->status = $request->input('status');
+            $department->clinic_type_id = 1;
+    
+            // Save the department
+            $department->save();
+    
+            return redirect()->back()->with('success', 'Department created successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to create department: ' . $e->getMessage());
+        }
+        
     }
 
     /**
