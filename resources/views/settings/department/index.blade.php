@@ -4,6 +4,16 @@
     <div class="content-wrapper">
         <div class="container-full">
             <div class="content-header">
+            @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="alert alert-error">
+                    {{ session('error') }}
+                </div>
+            @endif
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Department Details</h3>
                     <button type="button" class="waves-effect waves-light btn btn-primary mb-5" data-bs-toggle="modal"
@@ -22,6 +32,7 @@
                                     <tr>
                                     <th>No</th>
                                     <th>Name</th>
+                                    <th>Status</th>
                                     <th width="100px">Action</th>
                                     </tr>
                                 </thead>
@@ -53,6 +64,7 @@
                 columns: [
                     {data: 'id', name: 'id'},
                     {data: 'department', name: 'department'},
+                    {data: 'status', name: 'status'},
                     {data: 'action', name: 'action', orderable: false, searchable: true},
                 ]
             });
