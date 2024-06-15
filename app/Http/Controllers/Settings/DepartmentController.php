@@ -20,27 +20,24 @@ class DepartmentController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-        
+
             $departments = Department::query();
-            
             return DataTables::of($departments)
-                    ->addIndexColumn()
-                    ->addColumn('action', function($row){
-       
-                            $btn = ' <div class="d-flex"><a href="#" class="waves-effect waves-circle btn btn-circle btn-success btn-xs me-5">
-                            <i class="fa fa-pencil"></i></a>
-                            <a href="#" class="waves-effect waves-circle btn btn-circle btn-danger btn-xs">
-                            <i class="fa fa-trash"></i></a></div>';
-      
-                            return $btn;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+
+                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-xs me-1" title="edit" data-bs-toggle="modal"
+                        data-bs-target="#modal-edit"><i class="fa fa-pencil"></i></button><button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" title="delete"><i class="fa fa-trash"></i></button>';
+
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
-        
-       return view('settings.department.index');
+
+        return view('settings.department.index');
     }
- 
+
     /**
      * Show the form for creating a new resource.
      */
@@ -60,15 +57,15 @@ class DepartmentController extends Controller
             $department->department = $request->input('department');
             $department->status = $request->input('status');
             $department->clinic_type_id = 1;
-    
+
             // Save the department
             $department->save();
-    
+
             return redirect()->back()->with('success', 'Department created successfully');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to create department: ' . $e->getMessage());
         }
-        
+
     }
 
     /**

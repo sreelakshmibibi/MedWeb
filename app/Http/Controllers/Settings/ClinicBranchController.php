@@ -16,24 +16,23 @@ class ClinicBranchController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-        
+
             $clinics = ClinicBranch::query();
-            
+
             return DataTables::of($clinics)
-                    ->addIndexColumn()
-                    ->addColumn('action', function($row){
-       
-                            $btn = ' <div class="d-flex"><a href="#" class="waves-effect waves-circle btn btn-circle btn-success btn-xs me-5">
-                            <i class="fa fa-pencil"></i></a>
-                            <a href="#" class="waves-effect waves-circle btn btn-circle btn-danger btn-xs">
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+
+                    $btn = '<div class="d-flex"><a href="#" class="waves-effect waves-circle btn btn-circle btn-success btn-xs me-1">
+                            <i class="fa fa-pencil"></i></a><a href="#" class="waves-effect waves-circle btn btn-circle btn-danger btn-xs">
                             <i class="fa fa-trash"></i></a></div>';
-      
-                            return $btn;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
+
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
-        
+
         return view('settings.clinics.clinic_form');
     }
 
