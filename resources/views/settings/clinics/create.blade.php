@@ -1,13 +1,13 @@
-<div class="modal modal-right slideInRight" id="modal-right" tabindex="-1">
-    <div class="modal-dialog modal-dialog-scrollable h-p100" style="width:40%; max-width: 80%">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><i class="fa fa-clinic-medical"></i> Clinic Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="container-fluid">
-                    <form class="form">
+<form class="form">
+    <div class="modal modal-right slideInRight" id="modal-right" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable h-p100" style="width:40%; max-width: 80%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa fa-clinic-medical"></i> Clinic Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
                         <div class="form-group">
                             <label class="form-label" for="name">Clinic Name</label>
                             <input class="form-control" type="text" id="name" name="name"
@@ -121,15 +121,13 @@
                                 </div>
                             </div>
                         </div>
-                    </form>
-
+                    </div>
                 </div>
-            </div>
-            <div class="modal-footer modal-footer-uniform">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-success float-end" id="sa-title"
-                    data-bs-dismiss="modal">Save</button>
+                <div class="modal-footer modal-footer-uniform">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success float-end" id="buttonalert">Save</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</form>

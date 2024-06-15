@@ -97,5 +97,35 @@
             });
 
         });
+
+        $("#buttonalert").click(function() {
+            // swal("Success!", "New Clinic Added");
+
+            swal({
+                    title: "Are you sure?",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Yes",
+                    cancelButtonText: "No",
+                    closeOnConfirm: true,
+                    closeOnCancel: true,
+                },
+                // function (isConfirm) {
+                //     if (isConfirm) {
+                //         swal(
+                //             "Saved!",
+                //             "Your data is updated.",
+                //             "success"
+                //         );
+                //     } else {
+                //         swal(
+                //             "Cancelled",
+                //             "cancelled",
+                //             "error"
+                //         );
+                //     }
+                // }
+            );
+        });
     </script>
 @endsection
