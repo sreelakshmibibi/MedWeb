@@ -19,27 +19,26 @@ class DepartmentController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-        
+
             $departments = Department::query();
-            
             return DataTables::of($departments)
-                    ->addIndexColumn()
-                    ->addColumn('action', function($row){
-       
-                            $btn = ' <div class="d-flex"><a href="#" class="waves-effect waves-circle btn btn-circle btn-success btn-xs me-5">
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+
+                    $btn = ' <div class="d-flex"><a href="#" class="waves-effect waves-circle btn btn-circle btn-success btn-xs me-5">
                             <i class="fa fa-pencil"></i></a>
                             <a href="#" class="waves-effect waves-circle btn btn-circle btn-danger btn-xs">
                             <i class="fa fa-trash"></i></a></div>';
-      
-                            return $btn;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
+
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
-        
-       return view('settings.department.index');
+
+        return view('settings.department.index');
     }
- 
+
     /**
      * Show the form for creating a new resource.
      */
@@ -62,13 +61,13 @@ class DepartmentController extends Controller
         $department->department = $request->input('name');
         $department->status = 'Y';
         $department->clinic_type_id = 1;
-        
+
         // Save the department
         $department->save();
 
         // Optionally, you can return a response or redirect somewhere
         return redirect()->back()->with('success', 'Department created successfully.');
-    
+
     }
 
     /**

@@ -19,7 +19,7 @@
                         <div class="box-body">
                             <div class="table-responsive">
                         <!-- Main content -->
-                                <table class="table table-bordered table-hover table-striped mb-0 border-2 data-table" id="y_dataTables">
+                                <table class="table table-bordered table-hover table-striped mb-0 border-2 data-table">
                                     <thead class="bg-primary-light">
                                         <tr>
                                         <th>No</th>
