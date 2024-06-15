@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('sms_description');
             $table->char('status');
             $table->timestamps();
+            $table->softDeletes(); 
         });
     }
 

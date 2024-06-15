@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('network');
             $table->char('status');
             $table->timestamps();
+            $table->softDeletes(); 
         });
     }
 

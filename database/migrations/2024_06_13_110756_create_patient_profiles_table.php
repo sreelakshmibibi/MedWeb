@@ -21,8 +21,11 @@ return new class extends Migration
             $table->string('gender', 20)->nullable(); 
             $table->date('birth_date')->nullable(); 
             $table->integer('age')->nullable(); 
-            $table->integer('area')->nullable(); 
+            $table->string('address')->nullable();
+            $table->foreignId('area')->constrained('cities'); 
+            $table->foreignId('state')->constrained('states'); 
             $table->foreignId('nationality')->constrained('countries'); 
+            $table->integer('pin')->nullable(); 
             $table->string('registration_date', 50)->nullable(); 
             $table->integer('visit_count')->default(0); 
             $table->string('pstatus', 1)->default('Y'); 
@@ -41,6 +44,7 @@ return new class extends Migration
             $table->index('national_id'); 
             $table->index('regby');
             $table->timestamps(); 
+            $table->softDeletes(); 
         });
     }
 
@@ -49,6 +53,11 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('patient_profiles', function (Blueprint $table) {
+            $table->dropForeign(['area']);
+            $table->dropForeign(['state']);
+            $table->dropForeign(['nationality']);
+        });
         Schema::dropIfExists('patient_profiles');
     }
 };

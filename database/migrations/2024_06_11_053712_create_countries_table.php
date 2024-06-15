@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('clinic_details', function (Blueprint $table) {
+        Schema::create('countries', function (Blueprint $table) {
             $table->id();
-            $table->string('clinic_name');
-            $table->string('clinic_logo')->nullable();
-            $table->string('clinic_address')->nullable();
-            $table->foreignId('clinic_type_id')->constrained();
+            $table->string('code');
+            $table->string('country');
+            $table->integer('phonecode');
             $table->timestamps();
+            $table->softDeletes(); 
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('clinic_details');
+        Schema::dropIfExists('countries');
     }
 };

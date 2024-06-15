@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('stat')->nullable();
             $table->char('indrop');
             $table->timestamps();
+            $table->softDeletes(); 
         });
     }
 
