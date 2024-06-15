@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('departments', function (Blueprint $table) {
             $table->id();
-            $table->string('department');
+            $table->string('department')->unique();
             $table->foreignId('clinic_type_id')->constrained();
             $table->char('status');
             $table->timestamps();
