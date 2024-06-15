@@ -1,6 +1,6 @@
 <form method="post" action="{{ route('settings.department.store') }}">
     @csrf
-    <div class="modal modal-right slideInRight" id="modal-right" tabindex="-1">
+    <div class="modal modal-right slideInRight" id="modal-edit" tabindex="-1">
         <div class="modal-dialog" style="width:40%; max-width: 80%;">
             <div class="modal-content">
                 <div class="modal-header">
@@ -32,9 +32,7 @@
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-success float-end" id="buttonalert">Save</button>
                 </div>
-
             </div>
-
         </div>
     </div>
 </form>
