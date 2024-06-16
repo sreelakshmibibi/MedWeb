@@ -91,6 +91,30 @@
                     },
                 ]
             });
+            $(document).on('click', '.btn-edit', function() {
+            var departmentId = $(this).data('id');
+            $('#edit_department_id').val(departmentId); // Set department ID in the hidden input
+            $.ajax({
+                url: '{{ url("department","") }}' + "/" + departmentId + "/edit",
+                method: 'GET',
+                success: function(response) {
+                    $('#edit_department_id').val(response.id);
+                    $('#edit_department').val(response.department);
+                    
+                    if (response.status === 'Y') {
+                        $('#edit_yes').prop('checked', true);
+                    } else {
+                        $('#edit_no').prop('checked', true);
+                    }
+
+                    $('#modal-edit').modal('show');
+                },
+                error: function(error) {
+                    console.log(error)
+                }
+            });
+            
+        });
             $(document).on('click', '.btn-danger', function() {
             var departmentId = $(this).data('id');
             $('#delete_department_id').val(departmentId); // Set department ID in the hidden input
@@ -109,10 +133,8 @@
                     "_token": "{{ csrf_token() }}"
                 },
                 success: function(response) {
-                    $('#modal-delete').modal('hide');
-                    $('.alerttop').html('<i class="ti-check"></i> ' + response.success + ' <a href="#" class="closed">×</a>');
-                    $('.alerttop').removeClass('fadeOut').addClass('fadeIn');
-                    table.ajax.reload(); 
+                    table.draw();
+                    
                 },
                 error: function(xhr) {
                     $('#modal-delete').modal('hide');

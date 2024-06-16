@@ -26,7 +26,7 @@ class DepartmentController extends Controller
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
 
-                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="'.$row->id.'"
+                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="'.$row->id.'"
                         data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
                         <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="'.$row->id.'" title="delete">
                         <i class="fa fa-trash"></i></button>';
@@ -83,15 +83,28 @@ class DepartmentController extends Controller
      */
     public function edit(string $id)
     {
-        //
-    }
+        $department = Department::find($id);
+        if (!$department) {
+            abort(404);
+        }
+        return $department;
+    } 
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        $department = Department::findOrFail($request->edit_department_id);
+        
+        // Update department fields based on form data
+        $department->department = $request->department;
+        $department->status = $request->status;
+        
+        // Save the updated department
+        $department->save();
+
+        return redirect()->back()->with('success', 'Department updated successfully.');
     }
 
     /**
@@ -102,6 +115,6 @@ class DepartmentController extends Controller
         $department = Department::findOrFail($id);
         $department->delete();
 
-        return redirect()->back()->with('success', 'Department deleted successfully.');
+        return response()->json(['success', 'Department deleted successfully.'], 201);
     }
 }
