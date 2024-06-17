@@ -8,7 +8,7 @@
 
     <!-- Sample menu definition -->
     <ul id="main-menu" class="sm sm-blue">
-        <li><a href="{{ route('home')}}"><i class="icon-Layout-4-blocks"><span class="path1"></span><span
+        <li><a href="{{ route('home') }}"><i class="icon-Layout-4-blocks"><span class="path1"></span><span
                         class="path2"></span></i>Dashboard</a>
         </li>
         <li><a href="appointments.html"><i class="fa-regular fa-calendar-check"><span class="path1"></span><span
@@ -52,14 +52,14 @@
             <ul>
                 <li><a href="{{ route('settings.clinic') }}"><i class="icon-Commit"><span class="path1"></span><span
                                 class="path2"></span></i>Clinics</a></li>
-                <li><a href="{{ route('settings.department') }}"><i class="icon-Commit"><span class="path1"></span><span
-                                class="path2"></span></i>Departments</a></li>
-                <li><a href="patients.html"><i class="icon-Commit"><span class="path1"></span><span
+                <li><a href="{{ route('settings.department') }}"><i class="icon-Commit"><span
+                                class="path1"></span><span class="path2"></span></i>Departments</a></li>
+                <li><a href="{{ route('settings.medicine') }}"><i class="icon-Commit"><span class="path1"></span><span
                                 class="path2"></span></i>Medicines</a></li>
                 <li><a href="patient_details.html"><i class="icon-Commit"><span class="path1"></span><span
                                 class="path2"></span></i>Dental Diseases</a></li>
-                <li><a href="patients.html"><i class="icon-Commit"><span class="path1"></span><span
-                                class="path2"></span></i>Treatment Cost</a></li>
+                <li><a href="{{ route('settings.treatment_cost') }}"><i class="icon-Commit"><span
+                                class="path1"></span><span class="path2"></span></i>Treatment Cost</a></li>
                 <li><a href="patient_details.html"><i class="icon-Commit"><span class="path1"></span><span
                                 class="path2"></span></i>Combo Offers</a></li>
             </ul>

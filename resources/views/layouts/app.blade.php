@@ -40,7 +40,8 @@
 
     @yield('content')
 
-    @yield('footer')
+    {{-- @yield('footer') --}}
+    @include('layouts.footer')
 
     <!-- Vendor JS -->
     <script src="js/vendors.min.js"></script>
