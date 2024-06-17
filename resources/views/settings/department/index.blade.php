@@ -92,56 +92,56 @@
                 ]
             });
             $(document).on('click', '.btn-edit', function() {
-            var departmentId = $(this).data('id');
-            $('#edit_department_id').val(departmentId); // Set department ID in the hidden input
-            $.ajax({
-                url: '{{ url("department","") }}' + "/" + departmentId + "/edit",
-                method: 'GET',
-                success: function(response) {
-                    $('#edit_department_id').val(response.id);
-                    $('#edit_department').val(response.department);
-                    
-                    if (response.status === 'Y') {
-                        $('#edit_yes').prop('checked', true);
-                    } else {
-                        $('#edit_no').prop('checked', true);
+                var departmentId = $(this).data('id');
+                $('#edit_department_id').val(departmentId); // Set department ID in the hidden input
+                $.ajax({
+                    url: '{{ url('department', '') }}' + "/" + departmentId + "/edit",
+                    method: 'GET',
+                    success: function(response) {
+                        $('#edit_department_id').val(response.id);
+                        $('#edit_department').val(response.department);
+
+                        if (response.status === 'Y') {
+                            $('#edit_yes').prop('checked', true);
+                        } else {
+                            $('#edit_no').prop('checked', true);
+                        }
+
+                        $('#modal-edit').modal('show');
+                    },
+                    error: function(error) {
+                        console.log(error)
                     }
+                });
 
-                    $('#modal-edit').modal('show');
-                },
-                error: function(error) {
-                    console.log(error)
-                }
             });
-            
-        });
             $(document).on('click', '.btn-danger', function() {
-            var departmentId = $(this).data('id');
-            $('#delete_department_id').val(departmentId); // Set department ID in the hidden input
-            $('#modal-delete').modal('show');
-        });
-
-        $('#btn-confirm-delete').click(function() {
-            var departmentId = $('#delete_department_id').val();
-            var url = "{{ route('settings.departments.destroy', ':department') }}";
-            url = url.replace(':department', departmentId);
-
-            $.ajax({
-                type: 'DELETE',
-                url: url,
-                data: {
-                    "_token": "{{ csrf_token() }}"
-                },
-                success: function(response) {
-                    table.draw();
-                    
-                },
-                error: function(xhr) {
-                    $('#modal-delete').modal('hide');
-                    swal("Error!", xhr.responseJSON.message, "error");
-                }
+                var departmentId = $(this).data('id');
+                $('#delete_department_id').val(departmentId); // Set department ID in the hidden input
+                $('#modal-delete').modal('show');
             });
-        });
+
+            $('#btn-confirm-delete').click(function() {
+                var departmentId = $('#delete_department_id').val();
+                var url = "{{ route('settings.departments.destroy', ':department') }}";
+                url = url.replace(':department', departmentId);
+
+                $.ajax({
+                    type: 'DELETE',
+                    url: url,
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        table.draw();
+
+                    },
+                    error: function(xhr) {
+                        $('#modal-delete').modal('hide');
+                        swal("Error!", xhr.responseJSON.message, "error");
+                    }
+                });
+            });
 
         });
     </script>
