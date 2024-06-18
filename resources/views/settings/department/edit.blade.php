@@ -18,14 +18,12 @@
 
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6">Active</label>
-                            <div>
-                                <input name="status" type="radio" class="form-control with-gap" id="edit_yes" value="Y">
-                                <label for="edit_yes">Yes</label>
-                            </div>
-                            <div>
-                                <input name="status" type="radio" class="form-control with-gap" id="edit_no" value="N">
-                                <label for="edit_no">No</label>
-                            </div>
+                            <input name="status" type="radio" checked class="form-control with-gap" id="yes"
+                                value="Y">
+                            <label for="yes">Yes</label>
+                            <input name="status" type="radio" class="form-control with-gap" id="no"
+                                value="N">
+                            <label for="no">No</label>
                         </div>
                     </div>
                 </div>

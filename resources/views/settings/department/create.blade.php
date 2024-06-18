@@ -20,14 +20,12 @@
                         <!-- Status -->
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6">Active</label>
-                            <div class="form-check">
-                                <input name="status" type="radio" class="form-check-input" id="yes" checked value="Y">
-                                <label class="form-check-label" for="yes">Yes</label>
-                            </div>
-                            <div class="form-check">
-                                <input name="status" type="radio" class="form-check-input" id="no" value="N">
-                                <label class="form-check-label" for="no">No</label>
-                            </div>
+                            <input name="status" type="radio" checked class="form-control with-gap" id="yes"
+                                value="Y">
+                            <label for="yes">Yes</label>
+                            <input name="status" type="radio" class="form-control with-gap" id="no"
+                                value="N">
+                            <label for="no">No</label>
                             <div id="statusError" class="invalid-feedback"></div>
                         </div>
                     </div>
