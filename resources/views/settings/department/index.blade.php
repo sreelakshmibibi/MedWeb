@@ -1,4 +1,5 @@
 @extends('layouts.dashboard')
+@section('title', 'Departments')
 @section('content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
@@ -95,7 +96,7 @@
                 var departmentId = $(this).data('id');
                 $('#edit_department_id').val(departmentId); // Set department ID in the hidden input
                 $.ajax({
-                    url: '{{ url("department", "") }}' + "/" + departmentId + "/edit",
+                    url: '{{ url('department', '') }}' + "/" + departmentId + "/edit",
                     method: 'GET',
                     success: function(response) {
                         $('#edit_department_id').val(response.id);

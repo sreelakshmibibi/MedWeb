@@ -13,7 +13,8 @@
     <meta name="author" content="">
     <link rel="icon" href="images/favicon.ico">
 
-    <title>MedWeb - Dashboard</title>
+    {{-- <title>MedWeb - Dashboard</title> --}}
+    <title>@yield('title')</title>
 
     {{-- <title>{{ config('app.name', 'MedWeb') }}</title> --}}
 
