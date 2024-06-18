@@ -44,6 +44,8 @@
                                         <th>med_date</th>
                                         <th>med_last_update</th>
                                         <th>company_name</th>
+                                        <th>rep_name</th>
+                                        <th>rep_phone number</th>
                                         <th>med_name</th>
                                         <th>med_strength</th>
                                         <th>Status</th>

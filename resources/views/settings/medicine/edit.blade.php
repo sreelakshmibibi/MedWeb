@@ -97,6 +97,24 @@
                                 minlength="3" placeholder="Company Name">
                         </div>
 
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="rname">Representative Name</label>
+                                    <input class="form-control" type="text" id="rname" name="rname"
+                                        required minlength="3" placeholder="Representative Name">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="phone">Contact
+                                        Number</label>
+                                    <input type="text" class="form-control" id="phone" name="phone"
+                                        placeholder="Phone Number">
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label class="form-label" for="mname">Medicine Name</label>
                             <input class="form-control" type="text" id="mname" name="mname" required

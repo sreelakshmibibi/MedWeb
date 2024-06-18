@@ -78,15 +78,14 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="mdate">Medicine Date</label>
-                                    <input class="form-control" type="date" id="mdate" name="mdate"
-                                        required minlength="3" placeholder="Medicine Date">
+                                    <input class="form-control" type="date" id="mdate" name="mdate">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="mlast_update">Expiring Date</label>
-                                    <input class="form-control" type="date" id="mlast_update" name="mlast_update"
-                                        required minlength="3" placeholder="Expiring date">
+                                    <input class="form-control" type="date" id="mlast_update"
+                                        name="mlast_update">
                                 </div>
                             </div>
                         </div>
@@ -97,6 +96,23 @@
                                 minlength="3" placeholder="Company Name">
                         </div>
 
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="rname">Representative Name</label>
+                                    <input class="form-control" type="text" id="rname" name="rname"
+                                        required minlength="3" placeholder="Representative Name">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="phone">Contact
+                                        Number</label>
+                                    <input type="text" class="form-control" id="phone" name="phone"
+                                        placeholder="Phone Number">
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label class="form-label" for="mname">Medicine Name</label>
