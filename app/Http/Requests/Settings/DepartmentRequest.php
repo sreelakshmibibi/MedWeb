@@ -21,15 +21,16 @@ class DepartmentRequest extends FormRequest
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules()
-    {
+    { 
         return [
-            'department' => [
-                'required',
-                'string',
-                'max:255',
-            ],
-            'status' => 'required|string|size:1', // Adjust validation rules for status as needed
-        ];
+        'department' => [
+            'required',
+            'string',
+            'max:255',
+            Rule::unique('departments'),
+        ],
+        'status' => 'required|string|size:1',
+    ];
     }
 
     public function messages()
