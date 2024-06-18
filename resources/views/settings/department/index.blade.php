@@ -93,7 +93,6 @@
                 var departmentId = $(this).data('id');
                 $('#edit_department_id').val(departmentId); // Set department ID in the hidden input
                 $.ajax({
-                    url: '{{ url('department', '') }}' + "/" + departmentId + "/edit",
                     url: '{{ url('department') }}' + "/" + departmentId + "/edit",
                     method: 'GET',
                     success: function(response) {
@@ -129,7 +128,7 @@
                         table.draw(); // Refresh DataTable
                         $('#successMessage').text('Department deleted successfully');
                         $('#successMessage').fadeIn().delay(3000)
-                    .fadeOut(); // Show for 3 seconds
+                            .fadeOut(); // Show for 3 seconds
                     },
                     error: function(xhr) {
                         $('#modal-delete').modal('hide');
