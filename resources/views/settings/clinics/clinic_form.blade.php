@@ -63,6 +63,8 @@
 
     <!-- modal -->
     @include('settings.clinics.create')
+    @include('settings.clinics.edit')
+    @include('settings.clinics.delete')
 
     <script type="text/javascript">
         jQuery(function($) {
