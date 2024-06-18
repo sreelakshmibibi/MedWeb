@@ -42835,3 +42835,21 @@ img.online {
 }
 
 /*# sourceMappingURL=style.css.map */
+
+.modal-right .modal-dialog{
+    width:40%;
+}
+
+/*add ons for responsiveness */
+@media all and (max-width: 1000px) {
+    .modal-right .modal-dialog{
+    width:360px;
+    }
+    }
+
+@media all and (max-width: 600px) {
+.modal-right .modal-dialog{
+width:80%;
+max-width: 80%;
+}
+}
