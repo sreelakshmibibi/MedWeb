@@ -1,0 +1,52 @@
+<?php
+
+namespace App\Http\Requests\Settings;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class TreatmentCostRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'treat_name' => [
+                'required',
+                'string',
+                'max:255',
+                // Rule::unique('treatment_types'),
+            ],
+            'treat_cost' => [
+                'required',
+                'numeric',
+            ],
+            'status' => 'required|string|size:1', 
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'treat_name.required' => 'The treatment name is required.',
+            'treat_name.string' => 'The treatment name must be a string.',
+            'treat_name.max' => 'The treatment name may not be greater than 255 characters.',
+            'treat_cost.required' => 'The treatment cost is required.',
+            'treat_cost.numeric' => 'The treatment cost must be a number.',
+            'status.required' => 'The status is required.',
+            'status.string' => 'The status must be a string.',
+            'status.size' => 'The status must be a single character.',
+        ];
+    }
+}

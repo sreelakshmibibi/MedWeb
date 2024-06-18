@@ -4,6 +4,7 @@
     <div class="content-wrapper">
         <div class="container-full">
             <div class="content-header">
+                <div id="successMessage" style="display:none;" class="alert alert-success">Treatment cost created successfully</div>
                 @if (session('success'))
                     <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-success alerttop fadeOut"
                         style="display: block;">
@@ -11,7 +12,7 @@
                     </div>
                 @endif
                 @if (session('error'))
-                    <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fade fadeOut"
+                    <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fadeOut"
                         style="display: block;">
                         <i class="ti-check"></i> {{ session('error') }} <a href="#" class="closed">×</a>
                     </div>
@@ -25,12 +26,9 @@
 
             <section class="content">
                 <div class="box">
-                    {{-- <div class="box-body p-0"> --}}
                     <div class="box-body">
                         <div class="table-responsive">
-                            <!-- Main content -->
-                            <table
-                                class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center">
+                            <table class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center">
                                 <thead class="bg-primary-light">
                                     <tr>
                                         <th>No</th>
@@ -41,10 +39,9 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                    <!-- Populate table rows with Treatment type data -->
                                 </tbody>
                             </table>
-                            <!-- /.content -->
                         </div>
                     </div>
                 </div>
@@ -67,54 +64,45 @@
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('settings.treatment_cost') }}",
-                columns: [{
-                        data: 'id',
-                        name: 'id'
+                columns: [
+                    { 
+                        data: 'DT_RowIndex', 
+                        name: 'DT_RowIndex', 
+                        orderable: false, 
+                        searchable: false,
+                        render: function (data, type, row, meta) {
+                            // Return the row index (starts from 0)
+                            return meta.row + 1; // Adding 1 to start counting from 1
+                        }
                     },
-                    {
-                        data: 'treatment name',
-                        name: 'treatment name'
-                    },
-                    {
-                        data: 'cost',
-                        name: 'cost'
-                    },
-                    {
-                        data: 'status',
-                        name: 'status'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: true
-                    },
+                    { data: 'treat_name', name: 'treat_name' },
+                    { data: 'treat_cost', name: 'treat_cost' },
+                    { data: 'status', name: 'status' },
+                    { data: 'action', name: 'action', orderable: false, searchable: true },
                 ]
+                
             });
+            
             $(document).on('click', '.btn-edit', function() {
                 var treatmentId = $(this).data('id');
                 $('#edit_treatment_cost_id').val(treatmentId); // Set treatment ID in the hidden input
                 $.ajax({
-                    url: '{{ url('treatment', '') }}' + "/" + treatmentId + "/edit",
+                    url: '{{ url("treatment_cost") }}' + "/" + treatmentId + "/edit",
                     method: 'GET',
                     success: function(response) {
                         $('#edit_treatment_cost_id').val(response.id);
-                        $('#edit_treatment_cost').val(response.treatment);
-
-                        if (response.status === 'Y') {
-                            $('#edit_yes').prop('checked', true);
-                        } else {
-                            $('#edit_no').prop('checked', true);
-                        }
-
+                        $('#edit_treatment_name').val(response.treat_name);
+                        $('#edit_treatment_cost').val(response.treat_cost);
+                        $('#edit_yes').prop('checked', response.status === 'Y');
+                        $('#edit_no').prop('checked', response.status === 'N');
                         $('#modal-edit').modal('show');
                     },
                     error: function(error) {
-                        console.log(error)
+                        console.log(error);
                     }
                 });
-
             });
+
             $(document).on('click', '.btn-danger', function() {
                 var treatmentId = $(this).data('id');
                 $('#delete_treatment_id').val(treatmentId); // Set treatment ID in the hidden input
@@ -129,12 +117,11 @@
                 $.ajax({
                     type: 'DELETE',
                     url: url,
-                    data: {
-                        "_token": "{{ csrf_token() }}"
-                    },
+                    data: { "_token": "{{ csrf_token() }}" },
                     success: function(response) {
-                        table.draw();
-
+                        table.draw(); // Refresh DataTable
+                        $('#successMessage').text('Department deleted successfully');
+                        $('#successMessage').fadeIn().delay(3000).fadeOut(); // Show for 3 seconds
                     },
                     error: function(xhr) {
                         $('#modal-delete').modal('hide');
