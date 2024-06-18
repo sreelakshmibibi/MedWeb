@@ -92,6 +92,12 @@
                         </div>
 
                         <div class="form-group">
+                            <label class="form-label" for="cname">Company Name</label>
+                            <input class="form-control" type="text" id="cname" name="cname" required
+                                minlength="3" placeholder="Company Name">
+                        </div>
+
+                        <div class="form-group">
                             <label class="form-label" for="mname">Medicine Name</label>
                             <input class="form-control" type="text" id="mname" name="mname" required
                                 minlength="3" placeholder="Medicine Name">
