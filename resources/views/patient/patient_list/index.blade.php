@@ -44,6 +44,7 @@
                                         <th>Last Appointment Date</th>
                                         <th>Upcoming (if any)</th>
                                         <th>Status</th>
+                                        <th width="100px">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -107,6 +108,12 @@
                     {
                         data: 'pstatus',
                         name: 'pstatus'
+                    },
+                    {
+                        data: 'status',
+                        name: 'status',
+                        orderable: false,
+                        searchable: true
                     },
                     {
                         data: 'action',

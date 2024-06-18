@@ -82,10 +82,11 @@
                             </div>
 
                             <div class="col-12">
-                                <div class="box">
+                                @include('patient.today.index')
+                                {{-- <div class="box">
                                     <div class="box-header with-border">
                                         {{-- <h4 class="box-title">Today's Patients</h4> --}}
-                                        <h4 class="box-title">Patients List</h4>
+                                {{-- }}           <h4 class="box-title">Patients List</h4>
                                         <p class="mb-0 pull-right">Today</p>
                                         <div class="box-controls pull-right">
                                             <div class="lookup lookup-circle lookup-right">
@@ -97,12 +98,12 @@
                                         <div class="table-responsive">
                                             <table class="table mb-0">
                                                 {{-- <table class="table mb-0 table-striped"> --}}
-                                                <tbody>
+                                {{-- }}          <tbody>
                                                     {{-- <tr class="bg-info-light"> --}}
-                                                    <tr class="bg-primary-light">
+                                {{-- }}              <tr class="bg-primary-light">
                                                         <th>No</th>
                                                         {{-- <th>Date</th> --}}
-                                                        <th>ID</th>
+                                {{-- }}                  <th>ID</th>
                                                         <th>Name</th>
                                                         <th>Age</th>
                                                         <th>City</th>
@@ -113,7 +114,7 @@
                                                     <tr>
                                                         <td>01</td>
                                                         {{-- <td>01/08/2021</td> --}}
-                                                        <td>DO-124585</td>
+                                {{-- }}                    <td>DO-124585</td>
                                                         <td><strong>Shawn Hampton</strong></td>
                                                         <td>27</td>
                                                         <td>Miami</td>
@@ -133,7 +134,7 @@
                                                     <tr>
                                                         <td>02</td>
                                                         {{-- <td>01/08/2021</td> --}}
-                                                        <td>DO-412577</td>
+                                {{-- }}                  <td>DO-412577</td>
                                                         <td><strong>Polly Paul</strong></td>
                                                         <td>31</td>
                                                         <td>Naples</td>
@@ -153,7 +154,7 @@
                                                     <tr>
                                                         <td>03</td>
                                                         {{-- <td>01/08/2021</td> --}}
-                                                        <td>DO-412151</td>
+                                {{-- }}              <td>DO-412151</td>
                                                         <td><strong>Harmani Doe</strong></td>
                                                         <td>21</td>
                                                         <td>Destin</td>
@@ -173,7 +174,7 @@
                                                     <tr>
                                                         <td>04</td>
                                                         {{-- <td>01/08/2021</td> --}}
-                                                        <td>DO-123654</td>
+                                {{-- }}              <td>DO-123654</td>
                                                         <td><strong>Mark Wood</strong></td>
                                                         <td>30</td>
                                                         <td>Orlando</td>
@@ -193,7 +194,7 @@
                                                     <tr>
                                                         <td>05</td>
                                                         {{-- <td>01/08/2021</td> --}}
-                                                        <td>DO-159874</td>
+                                {{-- }}           <td>DO-159874</td>
                                                         <td><strong>Johen Doe</strong></td>
                                                         <td>58</td>
                                                         <td>Tampa</td>
@@ -221,7 +222,7 @@
                                                 All</a>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>
