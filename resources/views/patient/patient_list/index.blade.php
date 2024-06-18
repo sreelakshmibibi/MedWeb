@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Medicines')
+@section('title', 'Patients')
 @section('content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
@@ -18,7 +18,7 @@
                     </div>
                 @endif
                 <div class="d-flex align-items-center justify-content-between">
-                    <h3 class="page-title">Medicine Details</h3>
+                    <h3 class="page-title">Patient Details</h3>
                     <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
                         data-bs-target="#modal-right"> <i class="fa fa-add"></i> Add New</button>
                 </div>
@@ -35,20 +35,14 @@
                                 <thead class="bg-primary-light">
                                     <tr>
                                         <th>No</th>
-                                        <th>med_bar_code</th>
-                                        <th>Name</th>
-                                        <th>Strength</th>
-                                        <th>remarks</th>
-                                        <th>price</th>
-                                        <th>med_status</th>
-                                        <th>Status</th>
-                                        <th>med_date</th>
-                                        <th>med_last_update</th>
-                                        <th>company_name</th>
-                                        <th>rep_name</th>
-                                        <th>rep_phone number</th>
-                                        <th>med_name</th>
-                                        <th>med_strength</th>
+                                        <th>Patient ID</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Gender</th>
+                                        <th>Address</th>
+                                        <th>Phone Number</th>
+                                        <th>Last Appointment Date</th>
+                                        <th>Upcoming (if any)</th>
                                         <th>Status</th>
                                         <th width="100px">Action</th>
                                     </tr>
@@ -66,31 +60,60 @@
     </div>
     <!-- /.content-wrapper -->
 
-    @include('settings.medicine.create')
-    @include('settings.medicine.edit')
-    @include('settings.medicine.delete')
+    @include('patient.patient_list.create')
+    @include('patient.patient_list.edit')
+    @include('patient.patient_list.delete')
     {{-- </div> --}}
 
     <!-- ./wrapper -->
-    {{-- <script type="module"> --}}
     <script type="text/javascript">
         jQuery(function($) {
 
             var table = $('.data-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('settings.medicine') }}",
+                ajax: "{{ route('patient.patient_list') }}",
                 columns: [{
                         data: 'id',
                         name: 'id'
                     },
                     {
-                        data: 'department',
-                        name: 'department'
+                        data: 'first_name',
+                        name: 'first_name'
+                    },
+                    {
+                        data: 'last_name',
+                        name: 'last_name'
+                    },
+                    {
+                        data: 'gender',
+                        name: 'gender'
+                    },
+                    {
+                        data: 'address',
+                        name: 'address'
+                    },
+                    {
+                        data: 'phone',
+                        name: 'phone'
+                    },
+                    {
+                        data: 'lastappointmentdate',
+                        name: 'lastappointmentdate'
+                    },
+                    {
+                        data: 'upcomingappointmentdate',
+                        name: 'upcomingappointmentdate'
+                    },
+                    {
+                        data: 'pstatus',
+                        name: 'pstatus'
                     },
                     {
                         data: 'status',
-                        name: 'status'
+                        name: 'status',
+                        orderable: false,
+                        searchable: true
                     },
                     {
                         data: 'action',
@@ -101,14 +124,14 @@
                 ]
             });
             $(document).on('click', '.btn-edit', function() {
-                var departmentId = $(this).data('id');
-                $('#edit_department_id').val(departmentId); // Set department ID in the hidden input
+                var patientId = $(this).data('id');
+                $('#edit_patient_id').val(patientId); // Set patient ID in the hidden input
                 $.ajax({
-                    url: '{{ url('department', '') }}' + "/" + departmentId + "/edit",
+                    url: '{{ url('patient', '') }}' + "/" + patientId + "/edit",
                     method: 'GET',
                     success: function(response) {
-                        $('#edit_department_id').val(response.id);
-                        $('#edit_department').val(response.department);
+                        $('#edit_patient_id').val(response.id);
+                        $('#edit_patient').val(response.patient);
 
                         if (response.status === 'Y') {
                             $('#edit_yes').prop('checked', true);
@@ -125,15 +148,15 @@
 
             });
             $(document).on('click', '.btn-danger', function() {
-                var departmentId = $(this).data('id');
-                $('#delete_department_id').val(departmentId); // Set department ID in the hidden input
+                var patientId = $(this).data('id');
+                $('#delete_patient_id').val(patientId); // Set patient ID in the hidden input
                 $('#modal-delete').modal('show');
             });
 
             $('#btn-confirm-delete').click(function() {
-                var departmentId = $('#delete_department_id').val();
-                var url = "{{ route('settings.departments.destroy', ':department') }}";
-                url = url.replace(':department', departmentId);
+                var departmentId = $('#delete_patient_id').val();
+                var url = "{{ route('patient.patient_list.destroy', ':patient') }}";
+                url = url.replace(':patient', patientId);
 
                 $.ajax({
                     type: 'DELETE',
@@ -153,40 +176,5 @@
             });
 
         });
-
-        // barcode
-        function generateBarcode() {
-            // Get input value
-            var inputValue = document.getElementById("barcodeInput").value.trim();
-
-            // Check if input value is empty
-            if (inputValue === "") {
-                alert("Please enter text to generate barcode.");
-                return;
-            }
-
-            // Generate barcode
-            JsBarcode("#barcodeCanvas", inputValue, {
-                format: "CODE128", // Barcode format (you can choose other formats like EAN-13, QR Code, etc.)
-                displayValue: true, // Display value below barcode
-                fontSize: 16,
-                textMargin: 10,
-                width: 2,
-                height: 50
-            });
-
-            JsBarcode("#barcodeCanvas", inputValue, {
-                format: "CODE128", // Barcode format (CODE128, EAN-13, etc.)
-                displayValue: true, // Show human-readable value below barcode
-                fontSize: 16, // Font size of the value text
-                textMargin: 10, // Margin between barcode and value text
-                width: 2, // Barcode bar width (in pixels)
-                height: 50, // Barcode height (in pixels)
-                margin: 10, // Margin around the barcode (in pixels)
-                background: "#f0f0f0", // Background color of the barcode
-                // height: 25,
-                lineColor: "#333" // Color of the barcode bars
-            });
-        }
     </script>
 @endsection

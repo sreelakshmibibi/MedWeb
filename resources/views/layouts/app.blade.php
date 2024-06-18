@@ -14,29 +14,29 @@
     <link rel="icon" href="images/favicon.ico">
 
     {{-- <title>MedWeb - Log in </title> --}}
-
-    <title>{{ config('app.name', 'MedWeb') }}</title>
+    <title>@yield('title')</title>
+    {{-- <title>{{ config('app.name', 'MedWeb') }}</title> --}}
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
     <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    {{-- @vite(['resources/sass/app.scss', 'resources/js/app.js']) --}}
 
     <!-- Vendors Style-->
-    <link rel="stylesheet" href="css/vendors_css.css">
+    <link rel="stylesheet" href="{{ asset('css/vendors_css.css') }}">
 
     <!-- Style-->
-    <link rel="stylesheet" href="css/horizontal-menu.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/skin_color.css">
+    <link rel="stylesheet" href="{{ asset('css/horizontal-menu.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/skin_color.css') }}">
 </head>
 
 {{-- <body> --}}
 
 <body class="hold-transition theme-primary bg-img"
-    style="background-image: url(images/front-end-img/banners/slider-2.jpg)">
+    style="background-image: url({{ asset('images/front-end-img/banners/slider-2.jpg') }})">
 
     @yield('content')
 
@@ -44,9 +44,9 @@
     @include('layouts.footer')
 
     <!-- Vendor JS -->
-    <script src="js/vendors.min.js"></script>
-    <script src="js/pages/chat-popup.js"></script>
-    <script src="assets/icons/feather-icons/feather.min.js"></script>
+    <script src="{{ asset('js/vendors.min.js') }}"></script>
+    <script src="{{ asset('js/pages/chat-popup.js') }}"></script>
+    <script src="{{ asset('assets/icons/feather-icons/feather.min.js') }}"></script>
 
 </body>
 
