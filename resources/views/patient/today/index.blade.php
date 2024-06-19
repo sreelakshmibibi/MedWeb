@@ -124,7 +124,7 @@
     <div class="box-footer bg-light py-10 with-border">
         <div class="d-flex align-items-center justify-content-between">
             <p class="mb-0">Total <span id="total-value"> </span> Patients</p>
-            <a type="button" href="{{ route('patient.patient_list') }}"
+            <a type="button" href=""
                 class="waves-effect waves-light btn btn-primary">View
                 All</a>
         </div>
@@ -143,7 +143,7 @@
 
         function fetchTotal() {
             $.ajax({
-                url: '{{ route('totalpatients') }}',
+                url: '',
                 type: 'GET',
                 dataType: 'json',
                 success: function(response) {
@@ -160,7 +160,7 @@
             processing: true,
             serverSide: true,
             lengthMenu: [5, 10, 25, 50],
-            ajax: "{{ route('patient.today') }}",
+            ajax: "",
             columns: [{
                     data: 'patient_id',
                     name: 'patient_id'
@@ -206,7 +206,7 @@
             var patientId = $(this).data('patient_id');
             $('#edit_patient_id').val(patientId); // Set patient ID in the hidden input
             $.ajax({
-                url: '{{ url('patient', '') }}' + "/" + patientId + "/edit",
+                url: '{{ url("patient", "") }}' + "/" + patientId + "/edit",
                 method: 'GET',
                 success: function(response) {
                     $('#edit_patient_id').val(response.id);
@@ -234,7 +234,7 @@
 
         $('#btn-confirm-delete').click(function() {
             var departmentId = $('#delete_patient_id').val();
-            var url = "{{ route('patient.patient_list.destroy', ':patient') }}";
+            var url = "";
             url = url.replace(':patient', patientId);
 
             $.ajax({

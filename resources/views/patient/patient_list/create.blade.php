@@ -1,4 +1,4 @@
-<form method="post" action="{{ route('patient.patient_list.store') }}">
+<form method="post" action="">
     @csrf
     <div class="modal modal-right slideInRight" id="modal-right" tabindex="-1">
         <div class="modal-dialog modal-dialog-scrollable h-p100">

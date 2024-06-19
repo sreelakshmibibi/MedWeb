@@ -1,4 +1,4 @@
-<form method="post" action="{{ route('patient.today.update') }}">
+<form method="post" action="">
     @csrf
     <input type="hidden" id="edit_patient_id" name="edit_patient_id" value="">
     <div class="modal modal-right slideInRight" id="modal-edit" tabindex="-1">

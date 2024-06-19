@@ -18,7 +18,13 @@ Route::get('/formclinic', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
 Route::get('/clinic', [ClinicBranchController::class, 'index'])->name('settings.clinic');
+Route::post('/clinic/store', [ClinicBranchController::class, 'store'])->name('settings.clinic.store');
+Route::get('/clinic/{clinic}/edit', [ClinicBranchController::class, 'edit'])->name('settings.clinic.edit');
+Route::post('/clinic/update', [ClinicBranchController::class, 'update'])->name('settings.clinic.update');
+Route::get('/clinic/{clinic}', [ClinicBranchController::class, 'destroy'])->name('settings.clinic.destroy');
+
 Route::get('/department', [DepartmentController::class, 'index'])->name('settings.department');
 Route::post('/department/store', [DepartmentController::class, 'store'])->name('settings.department.store');
 Route::get('/department/{department}/edit', [DepartmentController::class, 'edit'])->name('settings.department.edit');

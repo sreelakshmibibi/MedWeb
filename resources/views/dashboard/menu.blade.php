@@ -11,7 +11,7 @@
         <li><a href="{{ route('home') }}"><i class="icon-Layout-4-blocks"><span class="path1"></span><span
                         class="path2"></span></i>Dashboard</a>
         </li>
-        <li><a href="{{ route('appointment') }}"><i class="fa-regular fa-calendar-check"><span
+        <li><a href="#"><i class="fa-regular fa-calendar-check"><span
                         class="path1"></span><span class="path2"></span></i>Appointments</a></li>
         <li><a href="#">
                 <i class="fa-solid fa-user-nurse">
@@ -26,7 +26,7 @@
         <li><a href="#"><i class="fa-solid fa-hospital-user"><span class="path1"></span><span
                         class="path2"></span></i>Patients</a>
             <ul>
-                <li><a href="{{ route('patient.patient_list') }}"><i class="icon-Commit"><span
+                <li><a href="#"><i class="icon-Commit"><span
                                 class="path1"></span><span class="path2"></span></i>Patient List</a></li>
                 <li><a href="patient_details.html"><i class="icon-Commit"><span class="path1"></span><span
                                 class="path2"></span></i>Patient Details</a></li>

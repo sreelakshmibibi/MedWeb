@@ -72,7 +72,7 @@
             var table = $('.data-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('patient.patient_list') }}",
+                ajax: "",
                 columns: [{
                         data: 'id',
                         name: 'id'
@@ -127,7 +127,7 @@
                 var patientId = $(this).data('id');
                 $('#edit_patient_id').val(patientId); // Set patient ID in the hidden input
                 $.ajax({
-                    url: '{{ url('patient', '') }}' + "/" + patientId + "/edit",
+                    url: '{{ url("patient", "") }}' + "/" + patientId + "/edit",
                     method: 'GET',
                     success: function(response) {
                         $('#edit_patient_id').val(response.id);
@@ -155,7 +155,7 @@
 
             $('#btn-confirm-delete').click(function() {
                 var departmentId = $('#delete_patient_id').val();
-                var url = "{{ route('patient.patient_list.destroy', ':patient') }}";
+                var url = "";
                 url = url.replace(':patient', patientId);
 
                 $.ajax({

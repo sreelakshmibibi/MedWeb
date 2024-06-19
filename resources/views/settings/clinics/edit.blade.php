@@ -1,4 +1,4 @@
-<form method="post" action="{{ route('settings.clinics.update') }}">
+<form method="post" action="{{ route('settings.clinic.update') }}">
     @csrf
     <input type="hidden" id="edit_department_id" name="edit_department_id" value="">
     <div class="modal modal-right slideInRight" id="modal-edit" tabindex="-1">
