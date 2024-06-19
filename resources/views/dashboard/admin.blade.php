@@ -20,7 +20,7 @@
                                             </div>
                                             <div>
                                                 <h4 class="mb-0">Total Patients</h4>
-                                                <h3 class="mb-0">1245</h3>
+                                                <h3 class="mb-0" id="total-patient"> </h3>
                                             </div>
                                         </div>
                                         <pre class="mt-2"> </pre>
@@ -38,15 +38,16 @@
                                             </div>
                                             <div>
                                                 <h4 class="mb-0">Total Staffs</h4>
-                                                <h3 class="mb-0">240</h3>
+                                                <h3 class="mb-0" id="total-staff">240</h3>
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center justify-content-center">
                                             <div>
-                                                <h6 class="mb-0 mt-2"><span class="text-xs text-warning">Doctors-</span>
-                                                    45
-                                                    &nbsp; <span class="text-xs text-info">Others-</span>
-                                                    195</h6>
+                                                <h6 class="mb-0 mt-2"><span
+                                                        class="text-xs text-warning">Doctors-</span><span
+                                                        id="total-doctor">45</span>
+                                                    &nbsp; <span class="text-xs text-info">Others-</span><span
+                                                        id="total-other">195</span></h6>
                                             </div>
                                         </div>
                                     </div>
@@ -62,7 +63,7 @@
                                             </div>
                                             <div>
                                                 <h4 class="mb-0">Total Surgery</h4>
-                                                <h3 class="mb-0">245</h3>
+                                                <h3 class="mb-0" id="total-surgery">245</h3>
                                             </div>
                                         </div>
                                         <pre class="mt-2"> </pre>
@@ -83,146 +84,6 @@
 
                             <div class="col-12">
                                 @include('patient.today.index')
-                                {{-- <div class="box">
-                                    <div class="box-header with-border">
-                                        {{-- <h4 class="box-title">Today's Patients</h4> --}}
-                                {{-- }}           <h4 class="box-title">Patients List</h4>
-                                        <p class="mb-0 pull-right">Today</p>
-                                        <div class="box-controls pull-right">
-                                            <div class="lookup lookup-circle lookup-right">
-                                                <input type="text" name="s">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="box-body no-padding">
-                                        <div class="table-responsive">
-                                            <table class="table mb-0">
-                                                {{-- <table class="table mb-0 table-striped"> --}}
-                                {{-- }}          <tbody>
-                                                    {{-- <tr class="bg-info-light"> --}}
-                                {{-- }}              <tr class="bg-primary-light">
-                                                        <th>No</th>
-                                                        {{-- <th>Date</th> --}}
-                                {{-- }}                  <th>ID</th>
-                                                        <th>Name</th>
-                                                        <th>Age</th>
-                                                        <th>City</th>
-                                                        <th>Gender</th>
-                                                        <th>Doctor</th>
-                                                        <th>Settings</th>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>01</td>
-                                                        {{-- <td>01/08/2021</td> --}}
-                                {{-- }}                    <td>DO-124585</td>
-                                                        <td><strong>Shawn Hampton</strong></td>
-                                                        <td>27</td>
-                                                        <td>Miami</td>
-                                                        <td>Male</td>
-                                                        <td>Dr.Samuel</td>
-                                                        <td>
-                                                            <div class="d-flex">
-                                                                <a href="#"
-                                                                    class="waves-effect waves-circle btn btn-circle btn-success btn-xs me-5"><i
-                                                                        class="fa fa-pencil"></i></a>
-                                                                <a href="#"
-                                                                    class="waves-effect waves-circle btn btn-circle btn-danger btn-xs"><i
-                                                                        class="fa fa-trash"></i></a>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>02</td>
-                                                        {{-- <td>01/08/2021</td> --}}
-                                {{-- }}                  <td>DO-412577</td>
-                                                        <td><strong>Polly Paul</strong></td>
-                                                        <td>31</td>
-                                                        <td>Naples</td>
-                                                        <td>Female</td>
-                                                        <td>Dr.Geeta</td>
-                                                        <td>
-                                                            <div class="d-flex">
-                                                                <a href="#"
-                                                                    class="waves-effect waves-circle btn btn-circle btn-success btn-xs me-5"><i
-                                                                        class="fa fa-pencil"></i></a>
-                                                                <a href="#"
-                                                                    class="waves-effect waves-circle btn btn-circle btn-danger btn-xs"><i
-                                                                        class="fa fa-trash"></i></a>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>03</td>
-                                                        {{-- <td>01/08/2021</td> --}}
-                                {{-- }}              <td>DO-412151</td>
-                                                        <td><strong>Harmani Doe</strong></td>
-                                                        <td>21</td>
-                                                        <td>Destin</td>
-                                                        <td>Female</td>
-                                                        <td>Dr.Gaya</td>
-                                                        <td>
-                                                            <div class="d-flex">
-                                                                <a href="#"
-                                                                    class="waves-effect waves-circle btn btn-circle btn-success btn-xs me-5"><i
-                                                                        class="fa fa-pencil"></i></a>
-                                                                <a href="#"
-                                                                    class="waves-effect waves-circle btn btn-circle btn-danger btn-xs"><i
-                                                                        class="fa fa-trash"></i></a>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>04</td>
-                                                        {{-- <td>01/08/2021</td> --}}
-                                {{-- }}              <td>DO-123654</td>
-                                                        <td><strong>Mark Wood</strong></td>
-                                                        <td>30</td>
-                                                        <td>Orlando</td>
-                                                        <td>Male</td>
-                                                        <td>Dr.Geeta</td>
-                                                        <td>
-                                                            <div class="d-flex">
-                                                                <a href="#"
-                                                                    class="waves-effect waves-circle btn btn-circle btn-success btn-xs me-5"><i
-                                                                        class="fa fa-pencil"></i></a>
-                                                                <a href="#"
-                                                                    class="waves-effect waves-circle btn btn-circle btn-danger btn-xs"><i
-                                                                        class="fa fa-trash"></i></a>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>05</td>
-                                                        {{-- <td>01/08/2021</td> --}}
-                                {{-- }}           <td>DO-159874</td>
-                                                        <td><strong>Johen Doe</strong></td>
-                                                        <td>58</td>
-                                                        <td>Tampa</td>
-                                                        <td>Male</td>
-                                                        <td>Dr.Raghu</td>
-                                                        <td>
-                                                            <div class="d-flex">
-                                                                <a href="#"
-                                                                    class="waves-effect waves-circle btn btn-circle btn-success btn-xs me-5"><i
-                                                                        class="fa fa-pencil"></i></a>
-                                                                <a href="#"
-                                                                    class="waves-effect waves-circle btn btn-circle btn-danger btn-xs"><i
-                                                                        class="fa fa-trash"></i></a>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="box-footer bg-light py-10 with-border">
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <p class="mb-0">Total 90 Patient</p>
-                                            <a type="button" class="waves-effect waves-light btn btn-primary">View
-                                                All</a>
-                                        </div>
-                                    </div>
-                                </div> --}}
                             </div>
                         </div>
                     </div>

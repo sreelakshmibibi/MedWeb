@@ -124,8 +124,7 @@
     <div class="box-footer bg-light py-10 with-border">
         <div class="d-flex align-items-center justify-content-between">
             <p class="mb-0">Total <span id="total-value"> </span> Patients</p>
-            <a type="button" href=""
-                class="waves-effect waves-light btn btn-primary">View
+            <a type="button" href="" class="waves-effect waves-light btn btn-primary">View
                 All</a>
         </div>
     </div>
@@ -143,11 +142,12 @@
 
         function fetchTotal() {
             $.ajax({
-                url: '',
+                url: '{{ route('totalpatients') }}',
                 type: 'GET',
                 dataType: 'json',
                 success: function(response) {
                     $('#total-value').text(response.total);
+                    $('#total-patient').text(response.total);
                 },
                 error: function(xhr, status, error) {
                     console.error('Error fetching total:', error);
@@ -206,7 +206,7 @@
             var patientId = $(this).data('patient_id');
             $('#edit_patient_id').val(patientId); // Set patient ID in the hidden input
             $.ajax({
-                url: '{{ url("patient", "") }}' + "/" + patientId + "/edit",
+                url: '{{ url('patient', '') }}' + "/" + patientId + "/edit",
                 method: 'GET',
                 success: function(response) {
                     $('#edit_patient_id').val(response.id);
