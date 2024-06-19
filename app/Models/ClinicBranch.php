@@ -19,8 +19,27 @@ class ClinicBranch extends Model
     'country_id',
     'pincode',
     'is_main_branch',
-    'phone_number', 
+    'clinic_phone', 
     'clinic_website', 
-    'clinic_type_id'];
+    'clinic_type_id',
+    'clinic_status'];    
     protected $dates = ['deleted_at'];
+    
+    // Define the relationship with Country
+    public function country()
+    {
+        return $this->belongsTo(Country::class, 'country_id', 'id');
+    }
+
+    // Define the relationship with State
+    public function state()
+    {
+        return $this->belongsTo(State::class, 'state_id', 'id');
+    }
+
+    // Define the relationship with City
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'city_id', 'id');
+    }
 }

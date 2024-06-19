@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HelperController;
 use App\Http\Controllers\Settings\ClinicBranchController;
 use App\Http\Controllers\Settings\DepartmentController;
 use App\Http\Controllers\Settings\TreatmentCostController;
@@ -19,11 +20,15 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+Route::get('/get-states/{countryId}', [HelperController::class, 'getStates'])->name('get.states');
+Route::get('/get-cities/{stateId}', [HelperController::class, 'getCities'])->name('get.cities');
+
 Route::get('/clinic', [ClinicBranchController::class, 'index'])->name('settings.clinic');
 Route::post('/clinic/store', [ClinicBranchController::class, 'store'])->name('settings.clinic.store');
 Route::get('/clinic/{clinic}/edit', [ClinicBranchController::class, 'edit'])->name('settings.clinic.edit');
 Route::post('/clinic/update', [ClinicBranchController::class, 'update'])->name('settings.clinic.update');
-Route::get('/clinic/{clinic}', [ClinicBranchController::class, 'destroy'])->name('settings.clinic.destroy');
+Route::post('/clinic/{clinic}/{status}', [ClinicBranchController::class, 'statusChange'])->name('settings.clinic.destroy');
+
 
 Route::get('/department', [DepartmentController::class, 'index'])->name('settings.department');
 Route::post('/department/store', [DepartmentController::class, 'store'])->name('settings.department.store');

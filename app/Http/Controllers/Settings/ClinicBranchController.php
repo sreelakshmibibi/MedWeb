@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ClinicBranchRequest;
+use App\Models\City;
 use App\Models\ClinicBranch;
+use App\Models\Country;
+use App\Models\State;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -15,17 +19,38 @@ class ClinicBranchController extends Controller
      */
     public function index(Request $request)
     {
+        $countries = Country::all();
+        $states = State::all();
+        $cities = City::all();
         if ($request->ajax()) {
 
-            $clinics = ClinicBranch::query();
+            $clinics = ClinicBranch::with(['country', 'state', 'city']);
 
             return DataTables::of($clinics)
                 ->addIndexColumn()
+                ->addColumn('clinic_address', function ($row) {
+                   $clinicAddress = explode("<br>", $row->clinic_address);
+                    $clinicAddress = implode(", ",$clinicAddress) . ', ' .
+                        $row->city->city . ', ' .
+                        $row->state->state . ', ' .
+                        $row->country->country . ', ' .
+                        "Pincode - " . $row->pincode;
+        
+                    return $clinicAddress;
+                })
                 ->addColumn('action', function ($row) {
-
-                    $btn = '<div class="d-flex"><a href="#" class="waves-effect waves-circle btn btn-circle btn-success btn-xs me-1">
-                            <i class="fa fa-pencil"></i></a><a href="#" class="waves-effect waves-circle btn btn-circle btn-danger btn-xs">
-                            <i class="fa fa-trash"></i></a></div>';
+                    
+                    $btn = '<div class="d-flex">
+                    <button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="'.$row->id.'"
+                        data-bs-target="#modal-edit-clinic" ><i class="fa fa-pencil"></i></button>
+                      ';
+                       if ($row->clinic_status == 'Y') {
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete-clinic" data-id="'.$row->id.'" data-status="'.$row->clinic_status.'"  title="Make inactive">
+                        <i class="fa fa-trash"></i></button> </div>';
+                    } else {
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete-clinic" data-id="'.$row->id.'" data-status="'.$row->clinic_status.'" title="Make active">
+                        <i class="fa fa-trash"></i></button> </div>';
+                    }
 
                     return $btn;
                 })
@@ -33,7 +58,7 @@ class ClinicBranchController extends Controller
                 ->make(true);
         }
 
-        return view('settings.clinics.clinic_form');
+        return view('settings.clinics.clinic_form', compact('countries', 'states', 'cities'));
     }
 
     /**
@@ -47,9 +72,39 @@ class ClinicBranchController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ClinicBranchRequest $request)
     {
-        //
+        try {
+            $clinic = new ClinicBranch();
+            $clinic->clinic_name = $request->input('clinic_name');
+            $clinic->clinic_email = $request->input('clinic_email');
+            $clinic->clinic_phone = $request->input('clinic_phone');
+            $clinic->clinic_website = $request->input('clinic_website');
+            $clinic->is_main_branch = $request->input('branch_active');
+            $clinic->clinic_address = $request->input('clinic_address1')."<br>". $request->input('clinic_address2');
+            $clinic->country_id = $request->input('clinic_country');
+            $clinic->state_id = $request->input('clinic_state');
+            $clinic->city_id = $request->input('clinic_city');
+            $clinic->pincode = $request->input('clinic_pincode');
+            $clinic->clinic_status = "Y";
+            $clinic->clinic_type_id = 1;
+            // Handle clinic logo if uploaded
+            if ($request->hasFile('clinic_logo')) {
+                $logoPath = $request->file('clinic_logo')->store('clinic-logos', 'public');
+                $clinic->clinic_logo = $logoPath;
+            }
+
+            // Save the clinic
+            $i = $clinic->save();
+           
+            if ($i) {
+                return redirect()->route('clinic.index')->with('success', 'Clinic created successfully');
+            }
+    
+        } catch (\Exception $e) {
+           return redirect()->back()->with('error', 'Failed to create clinic: ' . $e->getMessage());
+        }
+                   
     }
 
     /**
@@ -65,22 +120,64 @@ class ClinicBranchController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $clinicBranch = ClinicBranch::find($id);
+        if (!$clinicBranch) {
+            abort(404);
+        }
+        return $clinicBranch;
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        try {
+            $clinic = ClinicBranch::findOrFail($request->edit_clinic_id);
+            
+            // Update clinic fields based on form data
+            $clinic->clinic_name = $request->clinic_name;
+            $clinic->clinic_email = $request->clinic_email;
+            $clinic->clinic_phone = $request->clinic_phone;
+            $clinic->clinic_website = $request->clinic_website;
+            $clinic->is_main_branch = $request->edit_branch_active;
+            $clinic->clinic_address = $request->clinic_address1."<br>". $request->clinic_address2;
+            $clinic->country_id = $request->clinic_country;
+            $clinic->state_id = $request->clinic_state;
+            $clinic->city_id = $request->clinic_city;
+            $clinic->pincode = $request->clinic_pincode;
+            $clinic->clinic_status = "Y";
+            $clinic->clinic_type_id = 1;
+            // Handle clinic logo if uploaded
+            if ($request->hasFile('clinic_logo')) {
+                $logoPath = $request->file('clinic_logo')->store('clinic-logos', 'public');
+                $clinic->clinic_logo = $logoPath;
+            }
+            // Save the updated clinic
+            $i = $clinic->save();
+           if ($i) {
+                return redirect()->route('clinic.index')->with('success', 'Clinic updated successfully');
+            }
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to update clinic. Please try again.');
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function statusChange(string $id, string $status)
     {
-        //
+        /*Make status inactive*/
+        $clinicBranch = ClinicBranch::findOrFail($id);
+        $statusChange = $status == 'Y' ? 'N' : 'Y';
+        $statusText = $status == 'Y' ? 'Clinic deactivated successfully' : 'Clinic activated successfully';
+        $clinicBranch->clinic_status = $statusChange;
+        $clinicBranch->save();
+
+        return redirect()->route('settings.clinic')->with('success', $statusText);
+
     }
+    
 }

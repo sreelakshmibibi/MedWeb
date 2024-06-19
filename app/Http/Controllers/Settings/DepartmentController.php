@@ -94,36 +94,36 @@ class DepartmentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(DepartmentRequest $request)
-{
-    try {
-        $department = Department::findOrFail($request->edit_department_id);
-        
-        // Update department fields based on form data
-        $department->department = $request->department;
-        $department->status = $request->status;
-        
-        // Save the updated department
-        $department->save();
+    public function update(Request $request)
+    {
+        try {
+            $department = Department::findOrFail($request->edit_department_id);
+            
+            // Update department fields based on form data
+            $department->department = $request->department;
+            $department->status = $request->status;
+            
+            // Save the updated department
+            $department->save();
 
-        // Return JSON response for AJAX request
-        if ($request->ajax()) {
-            return response()->json(['success' => 'Department updated successfully.']);
+            // Return JSON response for AJAX request
+            if ($request->ajax()) {
+                return response()->json(['success' => 'Department updated successfully.']);
+            }
+
+            // Redirect back with success message for non-AJAX request
+            return redirect()->back()->with('success', 'Department updated successfully.');
+        } catch (\Exception $e) {
+            // Handle any unexpected errors
+            // Return JSON response for AJAX request
+            if ($request->ajax()) {
+                return response()->json(['error' => 'Failed to update department. Please try again.'], 500);
+            }
+
+            // Redirect back with error message for non-AJAX request
+            return redirect()->back()->with('error', 'Failed to update department. Please try again.');
         }
-
-        // Redirect back with success message for non-AJAX request
-        return redirect()->back()->with('success', 'Department updated successfully.');
-    } catch (\Exception $e) {
-        // Handle any unexpected errors
-        // Return JSON response for AJAX request
-        if ($request->ajax()) {
-            return response()->json(['error' => 'Failed to update department. Please try again.'], 500);
-        }
-
-        // Redirect back with error message for non-AJAX request
-        return redirect()->back()->with('error', 'Failed to update department. Please try again.');
     }
-}
 
     /**
      * Remove the specified resource from storage.

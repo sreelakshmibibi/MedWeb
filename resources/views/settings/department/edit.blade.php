@@ -14,16 +14,18 @@
                         <div class="form-group">
                             <label class="form-label" for="edit_department">Department</label>
                             <input class="form-control" type="text" id="edit_department" name="department" required minlength="3" placeholder="Department Name" autocomplete="off">
+                            <div class="invalid-feedback"></div>
                         </div>
 
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6">Active</label>
-                            <input name="status" type="radio" checked class="form-control with-gap" id="yes"
-                                value="Y">
-                            <label for="yes">Yes</label>
-                            <input name="status" type="radio" class="form-control with-gap" id="no"
-                                value="N">
-                            <label for="no">No</label>
+                            <div>
+                                <input name="status" type="radio" class="form-control-input" id="edit_yes" value="Y">
+                                <label class="form-check-label" for="edit_yes">Yes</label>
+                                <input name="status" type="radio" class="form-control-input" id="edit_no" value="N">
+                                <label class="form-check-label" for="edit_no">No</label>
+                            </div>
+                            <div class="text-danger" id="statusError"></div>
                         </div>
                     </div>
                 </div>
@@ -72,8 +74,7 @@
                     $('#modal-edit').modal('hide');
                     $('#successMessage').text('Department updated successfully');
                     $('#successMessage').fadeIn().delay(3000).fadeOut(); // Show for 3 seconds
-                    // table.draw(); // Refresh DataTable
-                    location.reload();
+                    location.reload(); // Refresh the page or update the table as needed
                 },
                 error: function(xhr) {
                     // If error, update modal to show errors
@@ -106,14 +107,12 @@
 
             // Fetch department details via AJAX
             $.ajax({
-                url: '{{ url("department", "") }}' + "/" + departmentId + "/edit",
+                url: '{{ url("department") }}' + "/" + departmentId + "/edit",
                 method: 'GET',
                 success: function(response) {
                     // Populate form fields
                     $('#edit_department_id').val(response.id);
-
-                    // Clear input value and ensure no autofill suggestions
-                    $('#edit_department').val('').focus().val(response.department);
+                    $('#edit_department').val(response.department);
 
                     // Set radio button status
                     if (response.status === 'Y') {

@@ -22,8 +22,9 @@ return new class extends Migration
             $table->foreignId('city_id')->constrained();
             $table->string('pincode')->nullable();
             $table->string('is_main_branch')->nullable();
-            $table->integer('phone_number')->nullable();
+            $table->integer('clinic_phone')->nullable();
             $table->string('clinic_website')->nullable();
+            $table->string('clinic_status');
             $table->foreignId('clinic_type_id')->constrained();
             $table->timestamps();
             $table->softDeletes(); 

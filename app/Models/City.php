@@ -12,4 +12,10 @@ class City extends Model
     use SoftDeletes;
     protected $fillable = ['city', 'state_id'];
     protected $dates = ['deleted_at'];
+
+    public function clinicBranches()
+    {
+        return $this->hasMany(ClinicBranch::class, 'city_id', 'id');
+    }
+    
 }

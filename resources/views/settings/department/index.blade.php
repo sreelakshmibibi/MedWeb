@@ -100,7 +100,7 @@
                         $('#edit_department').val(response.department);
                         $('#edit_yes').prop('checked', response.status === 'Y');
                         $('#edit_no').prop('checked', response.status === 'N');
-                        $('#modal-edit').modal('show');
+                        // $('#modal-edit').modal('show');
                     },
                     error: function(error) {
                         console.log(error);
