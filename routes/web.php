@@ -4,6 +4,8 @@ use App\Http\Controllers\Settings\ClinicBranchController;
 use App\Http\Controllers\Settings\DepartmentController;
 use App\Http\Controllers\Settings\TreatmentCostController;
 use App\Http\Controllers\Settings\MedicineController;
+use App\Http\Controllers\Patient\PatientListController;
+use App\Http\Controllers\Patient\TodayController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -42,3 +44,17 @@ Route::post('/medicine/store', [MedicineController::class, 'store'])->name('sett
 Route::get('/medicine/{department}/edit', [MedicineController::class, 'edit'])->name('settings.medicine.edit');
 Route::post('/medicine/update', [MedicineController::class, 'update'])->name('settings.medicine.update');
 Route::delete('/medicine/{medicine}', [MedicineController::class, 'destroy'])->name('settings.medicine.destroy');
+
+Route::get('/patient_list', [PatientListController::class, 'index'])->name('patient.patient_list');
+Route::post('/patient_list/store', [PatientListController::class, 'store'])->name('patient.patient_list.store');
+Route::get('/patient_list/{patient_list}/edit', [PatientListController::class, 'edit'])->name('patient.patient_list.edit');
+Route::post('/patient_list/update', [PatientListController::class, 'update'])->name('patient.patient_list.update');
+Route::delete('/patient_list/{patient_list}', [PatientListController::class, 'destroy'])->name('patient.patient_list.destroy');
+
+Route::get('/today', [TodayController::class, 'index'])->name('patient.today');
+Route::post('/today/store', [TodayController::class, 'store'])->name('patient.today.store');
+Route::get('/today/{today}/edit', [TodayController::class, 'edit'])->name('patient.today.edit');
+Route::post('/today/update', [TodayController::class, 'update'])->name('patient.today.update');
+Route::delete('/today/{today}', [TodayController::class, 'destroy'])->name('patient.today.destroy');
+
+Route::get('/totalpatients', [TodayController::class, 'getTotal'])->name('totalpatients');
