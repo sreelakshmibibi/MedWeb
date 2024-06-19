@@ -77,7 +77,13 @@
                         }
                     },
                     { data: 'treat_name', name: 'treat_name' },
-                    { data: 'treat_cost', name: 'treat_cost' },
+                    { 
+                        data: 'treat_cost', 
+                        name: 'treat_cost',
+                        render: function (data, type, row) {
+                            return parseFloat(data).toFixed(2); // Format to 2 decimal points
+                        }
+                    },
                     { data: 'status', name: 'status' },
                     { data: 'action', name: 'action', orderable: false, searchable: true },
                 ]
@@ -93,7 +99,9 @@
                     success: function(response) {
                         $('#edit_treatment_cost_id').val(response.id);
                         $('#edit_treatment_name').val(response.treat_name);
-                        $('#edit_treatment_cost').val(response.treat_cost);
+                        // Format the treat_cost to two decimal points
+                        var formattedCost = parseFloat(response.treat_cost).toFixed(2);
+                        $('#edit_treatment_cost').val(formattedCost);
                         $('#edit_yes').prop('checked', response.status === 'Y');
                         $('#edit_no').prop('checked', response.status === 'N');
                         $('#modal-edit').modal('show');

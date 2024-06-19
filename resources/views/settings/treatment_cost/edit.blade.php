@@ -26,7 +26,7 @@
 
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6">Active</label>
-                            <input name="status" type="radio" checked class="form-control with-gap" id="edit_yes"
+                            <input name="status" type="radio"  class="form-control with-gap" id="edit_yes"
                                 value="Y">
                             <label for="yes">Yes</label>
                             <input name="status" type="radio" class="form-control with-gap" id="edit_no"
@@ -153,10 +153,11 @@
                 success: function(response) {
                     // Populate form fields
                     $('#edit_treatment_cost_id').val(response.id);
-
+                    // Format the treat_cost to two decimal points
+                    var formattedCost = parseFloat(response.treat_cost).toFixed(2);
                     // Clear input value and ensure no autofill suggestions
                     $('#edit_treatment_name').val('').focus().val(response.treat_name);
-                    $('#edit_treatment_cost').val('').focus().val(response.treat_cost);
+                    $('#edit_treatment_cost').val('').focus().val(formattedCost);
                     // Set radio button status
                     if (response.status === 'Y') {
                         $('#edit_yes').prop('checked', true);
