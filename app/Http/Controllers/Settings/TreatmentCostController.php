@@ -93,7 +93,7 @@ class TreatmentCostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(TreatmentCostRequest $request)
+    public function update(TreatmentCostRequest $request, $id)
     {
         try {
             $treatment = TreatmentType::findOrFail($request->edit_treatment_cost_id);

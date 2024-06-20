@@ -41,7 +41,7 @@ Route::delete('/department/{department}', [DepartmentController::class, 'destroy
 Route::get('/treatment_cost', [TreatmentCostController::class, 'index'])->name('settings.treatment_cost');
 Route::post('/treatment_cost/store', [TreatmentCostController::class, 'store'])->name('settings.treatment_cost.store');
 Route::get('/treatment_cost/{department}/edit', [TreatmentCostController::class, 'edit'])->name('settings.treatment_cost.edit');
-Route::post('/treatment_cost/update', [TreatmentCostController::class, 'update'])->name('settings.treatment_cost.update');
+Route::post('/treatment_cost/{treatment_cost}/update', [TreatmentCostController::class, 'update'])->name('settings.treatment_cost.update');
 Route::delete('/treatment_cost/{treatment_cost}', [TreatmentCostController::class, 'destroy'])->name('settings.treatment_cost.destroy');
 
 Route::get('/medicine', [MedicineController::class, 'index'])->name('settings.medicine');

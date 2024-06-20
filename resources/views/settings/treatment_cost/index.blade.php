@@ -104,7 +104,7 @@
                         $('#edit_treatment_cost').val(formattedCost);
                         $('#edit_yes').prop('checked', response.status === 'Y');
                         $('#edit_no').prop('checked', response.status === 'N');
-                        $('#modal-edit').modal('show');
+                        //$('#modal-edit').modal('show');
                     },
                     error: function(error) {
                         console.log(error);

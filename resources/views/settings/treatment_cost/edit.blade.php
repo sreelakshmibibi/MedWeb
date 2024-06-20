@@ -1,4 +1,4 @@
-<form id="editTreatmentCostForm" method="post" action="{{ route('settings.treatment_cost.update') }}">
+<form id="editTreatmentCostForm" method="post" action="{{ route('settings.treatment_cost.update', ['treatment_cost' => ':id']) }}">
     @csrf
     <input type="hidden" id="edit_treatment_cost_id" name="edit_treatment_cost_id" value="">
     <div class="modal fade modal-right slideInRight" id="modal-edit" tabindex="-1">
@@ -28,6 +28,19 @@
 
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6">Active</label>
+                            <div>
+                                <input name="status" type="radio" class="form-control-input" id="edit_yes"
+                                    value="Y">
+                                <label class="form-check-label" for="edit_yes">Yes</label>
+                                <input name="status" type="radio" class="form-control-input" id="edit_no"
+                                    value="N">
+                                <label class="form-check-label" for="edit_no">No</label>
+                            </div>
+                            <div class="text-danger" id="editStatusError"></div>
+                        </div>
+
+                        {{-- <div class="form-group mt-2">
+                            <label class="form-label col-md-6">Active</label>
                             <input name="status" type="radio" class="form-control with-gap" id="edit_yes"
                                 value="Y">
                             <label for="yes">Yes</label>
@@ -35,7 +48,7 @@
                                 value="N">
                             <label for="no">No</label>
                             <div id="editStatusError" class="invalid-feedback"></div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
                 <div class="modal-footer modal-footer-uniform">
@@ -93,7 +106,9 @@
 
             // If validation passed, submit the form via AJAX
             var form = $('#editTreatmentCostForm');
-            var url = form.attr('action');
+            var treatmentCostId = $('#edit_treatment_cost_id').val();
+            var url = form.attr('action').replace(':id', treatmentCostId);
+            //var url = form.attr('action');
             var formData = form.serialize();
 
             $.ajax({
@@ -114,14 +129,14 @@
                     // If error, update modal to show errors
                     var errors = xhr.responseJSON.errors;
 
-                    if (errors.hasOwnProperty('edit_treatment_name')) {
+                    if (errors.hasOwnProperty('treat_name')) {
                         $('#edit_treatment_name').addClass('is-invalid');
-                        $('#editTreatmentError').text(errors.edit_treatment_name[0]);
+                        $('#editTreatmentError').text(errors.treat_name[0]);
                     }
 
-                    if (errors.hasOwnProperty('department')) {
+                    if (errors.hasOwnProperty('treat_cost')) {
                         $('#edit_treatment_cost').addClass('is-invalid');
-                        $('#editTreatmentCostError').text(errors.edit_treatment_cost[0]);
+                        $('#editTreatmentCostError').text(errors.treat_cost[0]);
                     }
 
                     if (errors.hasOwnProperty('status')) {
