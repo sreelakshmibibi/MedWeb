@@ -61,7 +61,7 @@
                 $('#edit_department').next('.invalid-feedback').text('Department name is required.');
                 return; // Prevent further execution
             }
-            $('#modal-right').attr('data-bs-dismiss', 'modal');
+
             // If validation passed, submit the form via AJAX
             var form = $('#editDepartmentForm');
             var url = form.attr('action');
@@ -74,6 +74,7 @@
                 dataType: 'json',
                 success: function(response) {
                     // If successful, hide modal and show success message
+                    $('#modal-edit').attr('data-bs-dismiss', 'modal');
                     $('#modal-edit').modal('hide');
                     $('#successMessage').text('Department updated successfully');
                     $('#successMessage').fadeIn().delay(3000)
