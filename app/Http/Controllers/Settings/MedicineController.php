@@ -99,7 +99,7 @@ class MedicineController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(MedicineRequest $request)
+    public function update(MedicineRequest $request, $id)
     {
         try {
             $medicine = Medicine::findOrFail($request->edit_medicine_id);

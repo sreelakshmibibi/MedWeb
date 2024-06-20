@@ -22,12 +22,13 @@ class MedicineRequest extends FormRequest
      */
     public function rules(): array
     {
+        $medicineId = $this->route('medicine');
         return [
             'med_bar_code' => [
                 'required',
                 'string',
                 'max:100',
-                // Rule::unique('medicines'), // Ensure the barcode is unique
+                Rule::unique('medicines')->ignore($medicineId), // Ensure the barcode is unique
             ],
             'med_name' => [
                 'required',

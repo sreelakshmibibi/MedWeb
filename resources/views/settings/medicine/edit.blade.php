@@ -1,4 +1,4 @@
-<form id="editMedicineForm" method="post" action="{{ route('settings.medicine.update') }}">
+<form id="editMedicineForm" method="post" action="{{ route('settings.medicine.update', ['medicine' => ':id']) }}">
     @csrf
     <input type="hidden" id="edit_medicine_id" name="edit_medicine_id" value="">
     <div class="modal modal-right slideInRight" id="modal-edit" tabindex="-1">
@@ -22,15 +22,15 @@
                             <div class="col-md-8">
                                 <label class="form-label" for="med_bar_code">Barcode</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="edit_med_bar_code" name="med_bar_code" placeholder="Enter text..." >
+                                    <input type="text" class="form-control" id="edit_med_bar_code" name="med_bar_code" placeholder="Enter text..." readonly >
                                     {{-- <input type="file" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload"> --}}
-                                    <button class="btn btn-primary btn-sm input-group-text" type="button"
+                                    {{-- <button class="btn btn-primary btn-sm input-group-text" type="button"
                                         id="inputGroupFileAddon04" onclick="generateBarcode()">Generate
-                                        Barcode</button>
+                                        Barcode</button> --}}
                                         <div id="medBarcodeError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <canvas id="edit_barcodeCanvas" class="col-md-4" style=" height:64px;"></canvas>
+                            {{-- <canvas id="edit_barcodeCanvas" class="col-md-4" style=" height:64px;"></canvas> --}}
                         </div>
                         
 
@@ -82,20 +82,28 @@
 
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6">Stock Status</label>
-                            <input name="stock_status" type="radio" class="form-control with-gap" id="edit_in" value="In Stock">
-                            <label for="in">In Stock</label>
-                            <input name="stock_status" type="radio" class="form-control with-gap" id="edit_out" value="Out of Stock">
-                            <label for="out">Out of Stock</label>
-                            <div id="editMedStockStatusError" class="invalid-feedback"></div>
+                            <div>
+                                <input name="stock_status" type="radio" class="form-control-input" id="edit_in"
+                                    value="In Stock">
+                                <label class="form-check-label" for="edit_in">In Stock</label>
+                                <input name="stock_status" type="radio" class="form-control-input" id="edit_out"
+                                    value="Out of Stock">
+                                <label class="form-check-label" for="edit_out">Out of Stock</label>
+                            </div>
+                            <div class="text-danger" id="editMedStockStatusError"></div>
                         </div>
 
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6">Active</label>
-                            <input name="status" type="radio"  class="form-control with-gap" id="med_edit_yes" value="Y">
-                            <label for="yes">Yes</label>
-                            <input name="status" type="radio" class="form-control with-gap" id="med_edit_no"  value="N">
-                            <label for="no">No</label>
-                            <div id="editMedStatusError" class="invalid-feedback"></div>
+                            <div>
+                                <input name="status" type="radio" class="form-control-input" id="med_edit_yes"
+                                    value="Y">
+                                <label class="form-check-label" for="med_edit_yes">Yes</label>
+                                <input name="status" type="radio" class="form-control-input" id="med_edit_no"
+                                    value="N">
+                                <label class="form-check-label" for="med_edit_no">No</label>
+                            </div>
+                            <div class="text-danger" id="editMedStatusError"></div>
                         </div>
                     </div>
                 </div>
@@ -110,7 +118,7 @@
 
 <script>
     $(function() {
-        $('#edit_barcodeCanvas').empty();
+
         // Handle Update button click
         $('#updateMedicineBtn').click(function() {
            // Reset previous error messages
@@ -221,7 +229,8 @@
 
             // If validation passed, submit the form via AJAX
             var form = $('#editMedicineForm');
-            var url = form.attr('action');
+            var medicineId = $('#edit_medicine_id').val();
+            var url = form.attr('action').replace(':id', medicineId);
             var formData = form.serialize();
 
             $.ajax({
@@ -339,18 +348,13 @@
                     $('#edit_quantity').val('').focus().val(response.quantity);
                     $('#edit_med_remarks').val('').focus().val(response.med_remarks);
                     // Set radio button status
-                    // if (response.status === 'Y') {
-                    //     $('#med_edit_yes').prop('checked', true);
-                    // } else {
-                    //     $('#med_edit_no').prop('checked', true);
-                    // }
+                    if (response.status === 'Y') {
+                        $('#med_edit_yes').prop('checked', true);
+                    } else {
+                        $('#med_edit_no').prop('checked', true);
+                    }
                     
-                        // Reset the radio buttons in the edit modal
-                        $('#editMedicineForm input[name="status"]').prop('checked', false);
-                        if (response.status) {
-                            $('#editMedicineForm input[name="status"][value="' + response.status + '"]').prop('checked', true);
-                        }
-                    if (response.stock_status === 'Y') {
+                    if (response.stock_status === 'In Stock') {
                         $('#edit_in').prop('checked', true);
                     } else {
                         $('#edit_out').prop('checked', true);

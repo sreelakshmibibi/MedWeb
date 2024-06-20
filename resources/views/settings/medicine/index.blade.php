@@ -131,24 +131,10 @@
                         $('#edit_med_strength').val(response.med_strength);
                         $('#edit_quantity').val(response.quantity);
                         $('#edit_med_remarks').val(response.med_remarks);
-                        // Set radio button status
-                        // if (response.status === 'Y') {
-                        //     $('#med_edit_yes').prop('checked', true);
-                        // } else {
-                        //     $('#med_edit_no').prop('checked', true);
-                        // }
-                        if (response.stock_status === 'Y') {
-                            $('#edit_in').prop('checked', true);
-                        } else {
-                            $('#edit_out').prop('checked', true);
-                        }
-                        
-                        // Reset the radio buttons in the edit modal
-                        $('#editMedicineForm input[name="status"]').prop('checked', false);
-                        if (response.status) {
-                            $('#editMedicineForm input[name="status"][value="' + response.status + '"]').prop('checked', true);
-                        }
-                        $('#modal-edit').modal('show');
+                        $('#edit_in').prop('checked', response.stock_status === 'In Stock');
+                        $('#edit_out').prop('checked', response.stock_status === 'Out of Stock');
+                        $('#med_edit_yes').prop('checked', response.status === 'Y');
+                        $('#med_edit_no').prop('checked', response.status === 'N');
 
                     },
                     error: function(error) {
@@ -198,18 +184,20 @@
             // Get input value
             var barcode = '';
             var inputValue = '';
+            inputValue = document.getElementById("med_bar_code").value.trim();
+            barcode = 'barcodeCanvas';
             
-            if ( ($('#med_bar_code').length > 0) && ($('#med_bar_code').val()!='') ) {
-                inputValue = document.getElementById("med_bar_code").value.trim();
-                barcode = 'barcodeCanvas';
-                $('#medBarcodeError').text('');
-            } 
-            if ( ($('#edit_med_bar_code').length > 0) && ($('#edit_med_bar_code').val()!='') ) {
-                inputValue = document.getElementById("edit_med_bar_code").value.trim();
-                barcode = 'edit_barcodeCanvas';
-                $('#editMedBarcodeError').text('');
+            // if ( ($('#med_bar_code').length > 0) && ($('#med_bar_code').val()!='') ) {
+            //     inputValue = document.getElementById("med_bar_code").value.trim();
+            //     barcode = 'barcodeCanvas';
+            //     $('#medBarcodeError').text('');
+            // } 
+            // if ( ($('#edit_med_bar_code').length > 0) && ($('#edit_med_bar_code').val()!='') ) {
+            //     inputValue = document.getElementById("edit_med_bar_code").value.trim();
+            //     barcode = 'edit_barcodeCanvas';
+            //     $('#editMedBarcodeError').text('');
 
-            } 
+            // } 
 
             // Check if input value is empty
             if (inputValue === "") {

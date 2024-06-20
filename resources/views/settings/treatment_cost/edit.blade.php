@@ -38,17 +38,6 @@
                             </div>
                             <div class="text-danger" id="editStatusError"></div>
                         </div>
-
-                        {{-- <div class="form-group mt-2">
-                            <label class="form-label col-md-6">Active</label>
-                            <input name="status" type="radio" class="form-control with-gap" id="edit_yes"
-                                value="Y">
-                            <label for="yes">Yes</label>
-                            <input name="status" type="radio" class="form-control with-gap" id="edit_no"
-                                value="N">
-                            <label for="no">No</label>
-                            <div id="editStatusError" class="invalid-feedback"></div>
-                        </div> --}}
                     </div>
                 </div>
                 <div class="modal-footer modal-footer-uniform">
@@ -108,7 +97,6 @@
             var form = $('#editTreatmentCostForm');
             var treatmentCostId = $('#edit_treatment_cost_id').val();
             var url = form.attr('action').replace(':id', treatmentCostId);
-            //var url = form.attr('action');
             var formData = form.serialize();
 
             $.ajax({
