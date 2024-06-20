@@ -61,7 +61,8 @@ class ClinicBranchController extends Controller
         }
 
         // return view('settings.clinics.clinic_form', compact('countries', 'states', 'cities'));
-        return view('settings.clinics.index', compact('countries', 'states', 'cities'));
+        $clinicDetails = ClinicBasicDetail::first();
+        return view('settings.clinics.index', compact('countries', 'states', 'cities', 'clinicDetails'));
     }
 
     /**
@@ -82,37 +83,39 @@ class ClinicBranchController extends Controller
 
             // Find the existing ClinicBasicDetail record by clinic_name
             $clinic = ClinicBasicDetail::first();
+            $message = null;
 
             if ($clinic) {
                 // Update existing record
                 $clinic->clinic_website = $clinic_website;
                 $clinic->clinic_name = $clinic_name;
-
                 // Only update clinic_logo if a new file was uploaded
                 if ($clinic_logo !== null && $clinic_logo !== $clinic->clinic_logo) {
                     $clinic->clinic_logo = $clinic_logo;
                 }
 
                 $clinic->save();
+                $message = "Clinic details updated successfully";
             } else {
                 // Create new record
-                $clinic = ClinicBasicDetail::create([
-                    'clinic_name' => $clinic_name,
-                    'clinic_website' => $clinic_website,
+                $clinicCreate = ClinicBasicDetail::create([
+                    'clinic_name' => $request->input('clinic_name'),
+                    'clinic_website' => $request->input('clinic_website'),
                     'clinic_logo' => $clinic_logo,
+                    'clinic_type_id' => 1, // Adjust as per your requirements
                 ]);
+                $message = "Clinic details added successfully";
             }
 
-            // Optionally, you can return a response or redirect as per your application flow
-            return response()->json(['message' => 'Clinic details updated or created successfully']);
+            // Redirect to clinic index page with success message
+            return redirect()->route('settings.clinic')->with('success', $message);
 
         } catch (\Exception $e) {
-            // Log the exception or handle it in a way appropriate for your application
-            // For example:
-            // Log::error('Error creating clinic: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to create or update clinic details'], 500);
+            // Redirect to clinic index page with error message
+            return redirect()->route('settings.clinic')->with('error', "Something went wrong!");
         }
     }
+
 
 
     /**
