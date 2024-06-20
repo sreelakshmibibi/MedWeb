@@ -27,6 +27,7 @@ Route::get('/get-states/{countryId}', [HelperController::class, 'getStates'])->n
 Route::get('/get-cities/{stateId}', [HelperController::class, 'getCities'])->name('get.cities');
 
 Route::get('/clinic', [ClinicBranchController::class, 'index'])->name('settings.clinic');
+Route::post('/clinic/create', [ClinicBranchController::class, 'create'])->name('settings.clinic.create');
 Route::post('/clinic/store', [ClinicBranchController::class, 'store'])->name('settings.clinic.store');
 Route::get('/clinic/{clinic}/edit', [ClinicBranchController::class, 'edit'])->name('settings.clinic.edit');
 Route::post('/clinic/update', [ClinicBranchController::class, 'update'])->name('settings.clinic.update');
