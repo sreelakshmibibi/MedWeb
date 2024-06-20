@@ -1,7 +1,7 @@
 <form id="createDepartmentForm" method="post" action="{{ route('settings.department.store') }}">
     @csrf
-    <div class="modal modal-right slideInRight" id="modal-right" tabindex="-1">
-        <div class="modal-dialog" style="width:40%; max-width: 80%;">
+    <div class="modal fade modal-right slideInRight" id="modal-right" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fa fa-briefcase"></i> Department Details</h5>
@@ -13,7 +13,8 @@
                         <!-- Department Name -->
                         <div class="form-group">
                             <label class="form-label" for="department">Department</label>
-                            <input class="form-control" type="text" id="department" name="department" placeholder="Department Name">
+                            <input class="form-control" type="text" id="department" name="department"
+                                placeholder="Department Name">
                             <div id="departmentError" class="invalid-feedback"></div>
                         </div>
 
@@ -69,6 +70,7 @@
                 $('#statusError').text('');
             }
 
+            $('#modal-right').attr('data-bs-dismiss', 'modal');
             // If validation passed, submit the form via AJAX
             var form = $('#createDepartmentForm');
             var url = form.attr('action');
@@ -83,7 +85,8 @@
                     // If successful, hide modal and show success message
                     $('#modal-right').modal('hide');
                     $('#successMessage').text('Department created successfully');
-                    $('#successMessage').fadeIn().delay(3000).fadeOut(); // Show for 3 seconds
+                    $('#successMessage').fadeIn().delay(3000)
+                        .fadeOut(); // Show for 3 seconds
                     location.reload();
                     // Optionally, you can reload or update the table here
                 },

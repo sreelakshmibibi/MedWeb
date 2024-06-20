@@ -1,8 +1,8 @@
 <form id="editDepartmentForm" method="post" action="{{ route('settings.department.update') }}">
     @csrf
     <input type="hidden" id="edit_department_id" name="edit_department_id" value="">
-    <div class="modal modal-right slideInRight" id="modal-edit" tabindex="-1">
-        <div class="modal-dialog" style="width:40%; max-width: 80%;">
+    <div class="modal fade modal-right slideInRight" id="modal-edit" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fa fa-briefcase"></i> Edit Department Details</h5>
@@ -13,16 +13,19 @@
                     <div class="container-fluid">
                         <div class="form-group">
                             <label class="form-label" for="edit_department">Department</label>
-                            <input class="form-control" type="text" id="edit_department" name="department" required minlength="3" placeholder="Department Name" autocomplete="off">
+                            <input class="form-control" type="text" id="edit_department" name="department" required
+                                minlength="3" placeholder="Department Name" autocomplete="off">
                             <div class="invalid-feedback"></div>
                         </div>
 
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6">Active</label>
                             <div>
-                                <input name="status" type="radio" class="form-control-input" id="edit_yes" value="Y">
+                                <input name="status" type="radio" class="form-control-input" id="edit_yes"
+                                    value="Y">
                                 <label class="form-check-label" for="edit_yes">Yes</label>
-                                <input name="status" type="radio" class="form-control-input" id="edit_no" value="N">
+                                <input name="status" type="radio" class="form-control-input" id="edit_no"
+                                    value="N">
                                 <label class="form-check-label" for="edit_no">No</label>
                             </div>
                             <div class="text-danger" id="statusError"></div>
@@ -58,7 +61,7 @@
                 $('#edit_department').next('.invalid-feedback').text('Department name is required.');
                 return; // Prevent further execution
             }
-
+            $('#modal-right').attr('data-bs-dismiss', 'modal');
             // If validation passed, submit the form via AJAX
             var form = $('#editDepartmentForm');
             var url = form.attr('action');
@@ -73,7 +76,8 @@
                     // If successful, hide modal and show success message
                     $('#modal-edit').modal('hide');
                     $('#successMessage').text('Department updated successfully');
-                    $('#successMessage').fadeIn().delay(3000).fadeOut(); // Show for 3 seconds
+                    $('#successMessage').fadeIn().delay(3000)
+                        .fadeOut(); // Show for 3 seconds
                     location.reload(); // Refresh the page or update the table as needed
                 },
                 error: function(xhr) {
@@ -82,7 +86,8 @@
 
                     if (errors.hasOwnProperty('department')) {
                         $('#edit_department').addClass('is-invalid');
-                        $('#edit_department').next('.invalid-feedback').text(errors.department[0]);
+                        $('#edit_department').next('.invalid-feedback').text(errors
+                            .department[0]);
                     }
 
                     if (errors.hasOwnProperty('status')) {
@@ -107,7 +112,7 @@
 
             // Fetch department details via AJAX
             $.ajax({
-                url: '{{ url("department") }}' + "/" + departmentId + "/edit",
+                url: '{{ url('department') }}' + "/" + departmentId + "/edit",
                 method: 'GET',
                 success: function(response) {
                     // Populate form fields
