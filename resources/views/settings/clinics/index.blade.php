@@ -44,14 +44,10 @@
                                                 <div id="clinicLogoError" class="invalid-feedback"></div>
                                             </div>
                                             <div class="row form-group">
-                                                <div class="col-md-8">
-                                                    <label class="form-label" for="logo">Logo</label>
-                                                    <input class="form-control" type="file" id="clinic_logo"
-                                                        name="clinic_logo" placeholder="logo">
-                                                    <div id="clinicLogoError" class="invalid-feedback"></div>
-                                                </div>
-
-                                                <canvas id="logoCanvas" class="col-md-4" style=" height:64px;"></canvas>
+                                                
+                                                <canvas id="logoCanvas" class="col-md-4" style=" height:64px;">
+                                                    
+                                                </canvas>
                                             </div>
                                             <div class="form-group">
                                                 <label class="form-label" for="website">Website</label>
