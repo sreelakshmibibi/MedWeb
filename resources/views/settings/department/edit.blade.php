@@ -112,7 +112,7 @@
 
             // Fetch department details via AJAX
             $.ajax({
-                url: '{{ url('department') }}' + "/" + departmentId + "/edit",
+                url: '{{ url("department") }}' + "/" + departmentId + "/edit",
                 method: 'GET',
                 success: function(response) {
                     // Populate form fields
