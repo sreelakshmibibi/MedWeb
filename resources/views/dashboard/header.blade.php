@@ -1,15 +1,30 @@
+@php
+    $logoPath = session('logoPath');
+    $clinicName = session('clinicName');
+@endphp
 <header class="main-header">
     <div class="inside-header">
         <div class="d-flex align-items-center logo-box justify-content-start">
             <!-- Logo -->
             <a href="#" class="logo">
                 <!-- logo-->
-                <div class="logo-lg">
-                    <span class="dark-logo">
+                <div class="logo d-inline-flex align-items-center">
+                    {{-- <span> --}}
+                    @if ($logoPath)
+                        <img src="{{ asset('storage/' . $logoPath) }}" alt="Logo"
+                            style="width: 50px; margin-right:10px;">
+                    @else
+                        {{-- <img src="{{ asset('images/logo/logo-1.jpg') }}" alt="Default Logo"
+                            style="width: 50px;  margin-right:10px;"> --}}
+                        <img src="{{ asset('logos/cor-logo-3.png') }}" alt="Default Logo"
+                            style="width: 50px;  margin-right:10px;">
+                    @endif
+                    @if ($clinicName)
+                        <h3>$clinicName</h3>
+                    @else
                         <h3>MedWeb</h3>
-                    </span>
-                    {{-- <span class="light-logo"><img src="images/logo-dark-text.png" alt="logo"></span> --}}
-                    {{-- <span class="dark-logo"><img src="images/logo-light-text.png" alt="logo"></span> --}}
+                        {{-- <span >MedWeb</span> --}}
+                    @endif
                 </div>
             </a>
         </div>
