@@ -2,15 +2,11 @@
 
 namespace App\Http\Controllers\Settings;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Settings\MedicineRequest;
 use App\Models\Medicine;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
-
 use Yajra\DataTables\DataTables as DataTables;
+use App\Http\Requests\Settings\MedicineRequest;
 
 class MedicineController extends Controller
 {
@@ -21,14 +17,14 @@ class MedicineController extends Controller
     {
         if ($request->ajax()) {
 
-            $medicine = Medicine::query();
-            return DataTables::of($medicine)
+            $medicines = Medicine::orderBy('med_name', 'asc')->get();
+            return DataTables::of($medicines)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
 
-                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
+                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="'.$row->id.'"
                         data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
-                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
+                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="'.$row->id.'" title="delete">
                         <i class="fa fa-trash"></i></button>';
 
                     return $btn;
@@ -54,26 +50,36 @@ class MedicineController extends Controller
     public function store(MedicineRequest $request)
     {
         try {
-            // Create a new department instance
-            $medicine = new Medicine();
-            $medicine->medicine = $request->input('department');
-            $medicine->status = $request->input('status');
-            $medicine->clinic_type_id = 1;
+            // Create a new medicine instance
+            $medicineEntry = new Medicine();
+            $medicineEntry->med_bar_code = $request->input('med_bar_code');
+            $medicineEntry->med_name = $request->input('med_name');
+            $medicineEntry->med_company = $request->input('med_company');
+            $medicineEntry->med_strength = $request->input('med_strength');
+            $medicineEntry->med_remarks = $request->input('med_remarks');
+            $medicineEntry->med_price = $request->input('med_price');
+            $medicineEntry->expiry_date = $request->input('expiry_date');
+            $medicineEntry->quantity = $request->input('quantity');
+            $medicineEntry->stock_status = $request->input('stock_status');
+            $medicineEntry->status = $request->input('status'); 
 
-            // Save the department
-            $medicine->save();
+            $saved = $medicineEntry->save();
 
-            return redirect()->back()->with('success', 'Medicine created successfully');
+            if ($saved) {
+                return redirect()->back()->with('success', 'Medicine entry created successfully');
+            } else {
+                return redirect()->back()->with('error', 'Failed to create medicine entry. Please try again.');
+            }
+            
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to create medicine: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to create medicine entry: ' . $e->getMessage());
         }
-
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Medicine $medicine)
     {
         //
     }
@@ -88,23 +94,49 @@ class MedicineController extends Controller
             abort(404);
         }
         return $medicine;
-    }
+    } 
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(MedicineRequest $request)
     {
-        $medicine = Medicine::findOrFail($request->edit_medicine_id);
+        try {
+            $medicine = Medicine::findOrFail($request->edit_medicine_id);
+            
+            // Update medicine fields based on form data
+            $medicine->med_bar_code = $request->med_bar_code;
+            $medicine->med_name = $request->med_name;
+            $medicine->med_company = $request->med_company;
+            $medicine->med_strength = $request->med_strength;
+            $medicine->med_remarks = $request->med_remarks;
+            $medicine->med_price = $request->med_price;
+            $medicine->expiry_date = $request->expiry_date;
+            $medicine->quantity = $request->quantity;
+            $medicine->stock_status = $request->stock_status;
+            $medicine->status = $request->status; 
+            
+            // Save the updated medicine
+            $medicine->save();
 
-        // Update department fields based on form data
-        $medicine->medicine = $request->medicine;
-        $medicine->status = $request->status;
+            // Return JSON response for AJAX request
+            if ($request->ajax()) {
+                return response()->json(['success' => 'Medicine details updated successfully.']);
+            }
 
-        // Save the updated Medicine
-        $medicine->save();
+            // Redirect back with success message for non-AJAX request
+            return redirect()->back()->with('success', 'Medicine details updated successfully.');
+            
+        } catch (\Exception $e) {
+            // Handle any unexpected errors
+            // Return JSON response for AJAX request
+            if ($request->ajax()) {
+                return response()->json(['error' => 'Failed to update medicine details. Please try again.'], 500);
+            }
 
-        return redirect()->back()->with('success', 'Medicine updated successfully.');
+            // Redirect back with error message for non-AJAX request
+            return redirect()->back()->with('error', 'Failed to update medicine details. Please try again.');
+        }
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Settings;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class TreatmentCostRequest extends FormRequest
 {
