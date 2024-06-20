@@ -28,7 +28,6 @@
                                     <thead class="bg-primary-light">
                                         <tr>
                                             <th>No</th>
-                                            <th>Name</th>
                                             <th>Phone Number</th>
                                             <th>Address</th>
                                             <th>Status</th>
@@ -74,10 +73,6 @@
                             // Return the row index (starts from 0)
                             return meta.row + 1; // Adding 1 to start counting from 1
                         }
-                    },
-                    {
-                        data: 'clinic_name',
-                        name: 'clinic_name'
                     },
                     {
                         data: 'clinic_phone',

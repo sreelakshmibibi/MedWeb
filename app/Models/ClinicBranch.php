@@ -10,15 +10,15 @@ class ClinicBranch extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    protected $fillable = ['clinic_name', 
+    protected $fillable = [
     'clinic_email', 
-    'clinic_logo', 
     'clinic_address',
     'city_id',
     'state_id',
     'country_id',
     'pincode',
     'is_main_branch',
+    'is_medicine_provided',
     'clinic_phone', 
     'clinic_website', 
     'clinic_type_id',
