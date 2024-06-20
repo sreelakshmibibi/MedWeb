@@ -1,9 +1,3 @@
-{{-- @extends('layouts.dashboard')
-@section('title', 'Clinics')
-@section('content') --}}
-<!-- Content Wrapper. Contains page content -->
-{{-- <div class="content-wrapper">
-        <div class="container-full"> --}}
 <!-- alert -->
 <div id="successMessage" style="display:none;" class="alert alert-success">
 </div>
@@ -11,7 +5,8 @@
 <!-- Content Header (Page header) -->
 <div class="content-header">
     <div class="d-flex align-items-center justify-content-between">
-        <h3 class="page-title">Clinic Branches</h3>
+        {{-- <h3 class="page-title">Clinic Branches</h3> --}}
+        <h3></h3>
         <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
             data-bs-target="#modal-right"> <i class="fa fa-add"></i> Add New</button>
     </div>
@@ -177,7 +172,7 @@
                         'Clinic activated successfully';
                     $('#successMessage').text(statusText);
                     $('#successMessage').fadeIn().delay(3000)
-                .fadeOut(); // Show for 3 seconds
+                        .fadeOut(); // Show for 3 seconds
                     table.draw(); // Refresh DataTable
                 },
                 error: function(xhr) {
@@ -258,4 +253,3 @@
         return re.test(pincode);
     }
 </script>
-{{-- @endsection --}}

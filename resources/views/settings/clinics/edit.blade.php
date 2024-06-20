@@ -69,6 +69,17 @@
                             <div id="clinicBranchError" class="invalid-feedback"></div>
                         </div>
 
+                        <div class="form-group mt-2">
+                            <label class="form-label col-md-6" for="branch">Is medicine provided?</label>
+                            <input name="branch_active" type="radio" class="form-control with-gap" id="yes"
+                                value="Y" checked>
+                            <label for="yes">Yes</label>
+                            <input name="branch_active" type="radio" class="form-control with-gap" id="no"
+                                value="N">
+                            <label for="no">No</label>
+                            <div id="clinicBranchError" class="invalid-feedback"></div>
+                        </div>
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -168,7 +179,7 @@
         function loadStates(countryId) {
             if (countryId) {
                 $.ajax({
-                    url: '{{ route("get.states", "") }}' + '/' + countryId,
+                    url: '{{ route('get.states', '') }}' + '/' + countryId,
                     type: "GET",
                     dataType: "json",
                     success: function(data) {
@@ -191,7 +202,7 @@
         function loadCities(stateId) {
             if (stateId) {
                 $.ajax({
-                    url: '{{ route("get.cities", "") }}' + '/' + stateId,
+                    url: '{{ route('get.cities', '') }}' + '/' + stateId,
                     type: "GET",
                     dataType: "json",
                     success: function(data) {
