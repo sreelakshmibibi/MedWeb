@@ -113,14 +113,21 @@
                         $('#edit_clinic_website').val(response.clinic_website);
                         $('#edit_yes').prop('checked', response.is_main_branch === 'Y');
                         $('#edit_no').prop('checked', response.is_main_branch === 'N');
-                        $('#edit_medicine_yes').prop('checked', response.edit_is_medicine_provided === 'Y');
-                        $('#edit_medicine_no').prop('checked', response.edit_is_medicine_provided === 'N');
                         $('#edit_clinic_country').val(response.country_id);
                         let addressParts = response.clinic_address.split("<br>");
                         $('#edit_clinic_address1').val(addressParts[0]);
                         $('#edit_clinic_address2').val(addressParts[1]);
                         $('#edit_clinic_pincode').val(response.pincode);
                         // $('#edit_clinic_logo').val(response.clinic_logo);
+                        if (response.clinic_logo) {
+                            var logoUrl = '{{ asset("storage/") }}/' + response.clinic_logo;
+                            console.log(logoUrl);
+                            $('#currentClinicLogoImg').attr('src', logoUrl);
+                            $('#currentClinicLogoImg').show(); // Show the image element
+                        } else {
+                            $('#currentClinicLogoImg').attr('src', ''); // Clear src if no logo
+                            $('#currentClinicLogoImg').hide(); // Hide image element
+                        }
                         // Load states based on selected country (assuming you have this function)
                         loadStates(response.country_id);
                         $('#edit_clinic_state').val(response.state_id);

@@ -69,21 +69,6 @@
                             <div id="clinicBranchError" class="invalid-feedback"></div>
                         </div>
 
-                        <div class="form-group mt-2">
-
-                            <label class="form-label col-md-6">Is Medicine Provided?</label>
-                            <div>
-                                <input name="status" type="radio" class="form-control-input"
-                                    id="edit_medicine_yes" value="Y">
-                                <label class="form-check-label" for="edit_yes">Yes</label>
-                                <input name="status" type="radio" class="form-control-input"
-                                    id="edit_medicine_no" value="N">
-                                <label class="form-check-label" for="edit_no">No</label>
-                            </div>
-                            <div class="text-danger" id="statusError"></div>
-                        </div>
-
-
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -235,7 +220,6 @@
                 clinic_email: $('#edit_clinic_email').val(),
                 clinic_website: $('#edit_clinic_website').val(),
                 branch_active: $('input[name="branch_active"]:checked').val(),
-                is_medicine_provided: $('input[name="is_medicine_provided"]:checked').val(),
                 clinic_logo: $('#edit_clinic_logo').val(),
                 clinic_address1: $('#edit_clinic_address1').val(),
                 clinic_address2: $('#edit_clinic_address2').val(),
