@@ -31,26 +31,26 @@ class ClinicBranchController extends Controller
             return DataTables::of($clinics)
                 ->addIndexColumn()
                 ->addColumn('clinic_address', function ($row) {
-                   $clinicAddress = explode("<br>", $row->clinic_address);
-                    $clinicAddress = implode(", ",$clinicAddress) . ', ' .
+                    $clinicAddress = explode("<br>", $row->clinic_address);
+                    $clinicAddress = implode(", ", $clinicAddress) . ', ' .
                         $row->city->city . ', ' .
                         $row->state->state . ', ' .
                         $row->country->country . ', ' .
                         "Pincode - " . $row->pincode;
-        
+
                     return $clinicAddress;
                 })
                 ->addColumn('action', function ($row) {
-                    
+
                     $btn = '<div class="d-flex">
-                    <button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="'.$row->id.'"
+                    <button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
                         data-bs-target="#modal-edit-clinic" ><i class="fa fa-pencil"></i></button>
                       ';
-                       if ($row->clinic_status == 'Y') {
-                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete-clinic" data-id="'.$row->id.'" data-status="'.$row->clinic_status.'"  title="Make inactive">
+                    if ($row->clinic_status == 'Y') {
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete-clinic" data-id="' . $row->id . '" data-status="' . $row->clinic_status . '"  title="Make inactive">
                         <i class="fa fa-trash"></i></button> </div>';
                     } else {
-                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete-clinic" data-id="'.$row->id.'" data-status="'.$row->clinic_status.'" title="Make active">
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete-clinic" data-id="' . $row->id . '" data-status="' . $row->clinic_status . '" title="Make active">
                         <i class="fa fa-trash"></i></button> </div>';
                     }
 
@@ -60,7 +60,8 @@ class ClinicBranchController extends Controller
                 ->make(true);
         }
 
-        return view('settings.clinics.clinic_form', compact('countries', 'states', 'cities'));
+        // return view('settings.clinics.clinic_form', compact('countries', 'states', 'cities'));
+        return view('settings.clinics.index', compact('countries', 'states', 'cities'));
     }
 
     /**
@@ -124,7 +125,7 @@ class ClinicBranchController extends Controller
             $clinic->clinic_email = $request->input('clinic_email');
             $clinic->clinic_phone = $request->input('clinic_phone');
             $clinic->is_main_branch = $request->input('branch_active');
-            $clinic->clinic_address = $request->input('clinic_address1')."<br>". $request->input('clinic_address2');
+            $clinic->clinic_address = $request->input('clinic_address1') . "<br>" . $request->input('clinic_address2');
             $clinic->country_id = $request->input('clinic_country');
             $clinic->state_id = $request->input('clinic_state');
             $clinic->city_id = $request->input('clinic_city');
@@ -139,15 +140,15 @@ class ClinicBranchController extends Controller
 
             // Save the clinic
             $i = $clinic->save();
-           
+
             if ($i) {
                 return redirect()->route('clinic.index')->with('success', 'Clinic created successfully');
             }
-    
+
         } catch (\Exception $e) {
-           return redirect()->back()->with('error', 'Failed to create clinic: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to create clinic: ' . $e->getMessage());
         }
-                   
+
     }
 
     /**
@@ -177,12 +178,12 @@ class ClinicBranchController extends Controller
     {
         try {
             $clinic = ClinicBranch::findOrFail($request->edit_clinic_id);
-            
+
             // Update clinic fields based on form data
             $clinic->clinic_email = $request->clinic_email;
             $clinic->clinic_phone = $request->clinic_phone;
             $clinic->is_main_branch = $request->edit_branch_active;
-            $clinic->clinic_address = $request->clinic_address1."<br>". $request->clinic_address2;
+            $clinic->clinic_address = $request->clinic_address1 . "<br>" . $request->clinic_address2;
             $clinic->country_id = $request->clinic_country;
             $clinic->state_id = $request->clinic_state;
             $clinic->city_id = $request->clinic_city;
@@ -190,7 +191,7 @@ class ClinicBranchController extends Controller
             $clinic->clinic_type_id = 1;
             // Save the updated clinic
             $i = $clinic->save();
-           if ($i) {
+            if ($i) {
                 return redirect()->route('clinic.index')->with('success', 'Clinic updated successfully');
             }
 
@@ -214,5 +215,5 @@ class ClinicBranchController extends Controller
         return redirect()->route('settings.clinic')->with('success', $statusText);
 
     }
-    
+
 }
