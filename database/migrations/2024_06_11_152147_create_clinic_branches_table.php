@@ -22,6 +22,7 @@ return new class extends Migration
         });
         Schema::create('clinic_branches', function (Blueprint $table) {
             $table->id();
+            $table->string('clinic_email')->nullable();
             $table->string('clinic_address')->nullable();
             $table->foreignId('country_id')->constrained();
             $table->foreignId('state_id')->constrained();
@@ -29,7 +30,7 @@ return new class extends Migration
             $table->string('pincode')->nullable();
             $table->string('is_main_branch')->nullable();
             $table->string('is_medicine_provided')->nullable();
-            $table->integer('clinic_phone')->nullable();
+            $table->string('clinic_phone')->nullable();
             $table->string('clinic_status');
             $table->foreignId('clinic_type_id')->constrained();
             $table->timestamps();

@@ -18,7 +18,6 @@ class ClinicBranch extends Model
     'country_id',
     'pincode',
     'is_main_branch',
-    'is_medicine_provided',
     'clinic_phone', 
     'clinic_website', 
     'clinic_type_id',

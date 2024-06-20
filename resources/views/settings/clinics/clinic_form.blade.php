@@ -25,6 +25,7 @@
                                 <th>No</th>
                                 <th>Phone Number</th>
                                 <th>Address</th>
+                                <th>Is Medicine Provided?</th>
                                 <th>Status</th>
                                 <th width="100px">Action</th>
                             </tr>
@@ -78,6 +79,10 @@
                     name: 'clinic_address'
                 },
                 {
+                    data: 'is_medicine_provided',
+                    name: 'is_medicine_provided'
+                },
+                {
                     data: 'clinic_status',
                     name: 'clinic_status'
                 },
@@ -89,6 +94,7 @@
                 },
             ]
         });
+        
         $(document).on('click', '.btn-edit', function() {
             var clinicId = $(this).data('id');
             $('#edit_clinic_id').val(clinicId); // Set department ID in the hidden input
@@ -103,6 +109,8 @@
                     $('#edit_clinic_website').val(response.clinic_website);
                     $('#edit_yes').prop('checked', response.is_main_branch === 'Y');
                     $('#edit_no').prop('checked', response.is_main_branch === 'N');
+                    $('#edit_medicine_yes').prop('checked', response.is_medicine_provided === 'Y');
+                    $('#edit_medicine_no').prop('checked', response.is_medicine_provided === 'N');
                     $('#edit_clinic_country').val(response.country_id);
                     let addressParts = response.clinic_address.split("<br>");
                     $('#edit_clinic_address1').val(addressParts[0]);

@@ -9,12 +9,12 @@
                 </div>
                 <div class="modal-body">
                     <div class="container-fluid">
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label class="form-label" for="name">Clinic Name</label>
                             <input class="form-control" type="text" id="clinic_name" name="clinic_name"
                                 placeholder="Clinic Name">
                             <div id="clinicNameError" class="invalid-feedback"></div>
-                        </div>
+                        </div> -->
 
                         <div class="row">
                             <div class="col-md-6">
@@ -36,7 +36,7 @@
                             </div>
                         </div>
 
-                        <div class="row">
+                        <!-- <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="logo">Logo</label>
@@ -53,7 +53,7 @@
                                     <div id="clinicWebsiteError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6" for="branch">Is main branch?</label>
@@ -68,12 +68,12 @@
 
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6" for="branch">Is medicine provided?</label>
-                            <input name="branch_active" type="radio" class="form-control with-gap" id="yes"
+                            <input name="is_medicine_provided" type="radio" class="form-control with-gap" id="medicine_yes"
                                 value="Y" checked>
-                            <label for="yes">Yes</label>
-                            <input name="branch_active" type="radio" class="form-control with-gap" id="no"
+                            <label for="medicine_yes">Yes</label>
+                            <input name="is_medicine_provided" type="radio" class="form-control with-gap" id="medicine_no"
                                 value="N">
-                            <label for="no">No</label>
+                            <label for="medicine_no">No</label>
                             <div id="clinicBranchError" class="invalid-feedback"></div>
                         </div>
 
@@ -224,13 +224,10 @@
 
             // Gather form data
             var formData = {
-                clinic_name: $('#clinic_name').val(),
                 clinic_phone: $('#clinic_phone').val(),
                 clinic_email: $('#clinic_email').val(),
-                clinic_website: $('#clinic_website').val(),
                 branch_active: $('input[name="branch_active"]:checked').val(),
-                clinic_logo: $('#clinic_logo').prop('files')[
-                    0], // For file upload, use prop('files')[0]
+                is_medicine_provided: $('input[name="is_medicine_provided"]:checked').val(),
                 clinic_address1: $('#clinic_address1').val(),
                 clinic_address2: $('#clinic_address2').val(),
                 clinic_country: $('#clinic_country').val(),
@@ -255,7 +252,6 @@
                     dataType: 'json',
                     success: function(response) {
                         // If successful, hide modal and show success message
-                        console.log(response);
                         $('#modal-right').modal('hide');
                         $('#successMessage').text('Clinic created successfully');
                         $('#successMessage').fadeIn().delay(3000)
@@ -271,12 +267,6 @@
                         if (xhr.responseJSON && xhr.responseJSON.errors) {
                             var errors = xhr.responseJSON.errors;
 
-                            // Handle clinic_name error
-                            if (errors.hasOwnProperty('clinic_name')) {
-                                $('#clinic_name').addClass('is-invalid');
-                                $('#clinicNameError').text(errors.clinic_name[0]);
-                            }
-
                             // Handle clinic_phone error
                             if (errors.hasOwnProperty('clinic_phone')) {
                                 $('#clinic_phone').addClass('is-invalid');
@@ -287,17 +277,6 @@
                             if (errors.hasOwnProperty('clinic_email')) {
                                 $('#clinic_email').addClass('is-invalid');
                                 $('#clinicEmailError').text(errors.clinic_email[0]);
-                            }
-
-                            // Handle clinic_website error
-                            if (errors.hasOwnProperty('clinic_website')) {
-                                $('#clinic_website').addClass('is-invalid');
-                                $('#clinicWebsiteError').text(errors.clinic_website[0]);
-                            }
-
-                            // Handle branch_active error
-                            if (errors.hasOwnProperty('branch_active')) {
-                                $('#clinicBranchError').text(errors.branch_active[0]);
                             }
 
                             // Handle clinic_address1 error
@@ -333,12 +312,6 @@
                                 $('#clinicPincodeError').text(errors.clinic_pincode[0]);
                             }
 
-                            // Handle clinic_logo error if applicable
-                            if (errors.hasOwnProperty('clinic_logo')) {
-                                $('#clinic_logo').addClass('is-invalid');
-                                $('#clinicLogoError').text(errors.clinic_logo[0]);
-                            }
-
                             // Scroll to the top of the modal to show the first error
                             $('#modal-right .modal-body').scrollTop(0);
                         }
@@ -350,10 +323,8 @@
 
         // Function to reset form errors
         function resetErrors() {
-            $('#clinic_name').removeClass('is-invalid');
             $('#clinicPhoneError').text('');
             $('#clinicEmailError').text('');
-            $('#clinicWebsiteError').text('');
             $('#clinicBranchError').text('');
             $('#clinicAddress1Error').text('');
             $('#clinicAddress2Error').text('');

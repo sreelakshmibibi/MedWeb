@@ -108,7 +108,7 @@ class ClinicBranchController extends Controller
             }
 
             // Redirect to clinic index page with success message
-            return redirect()->route('settings.clinic')->with('success', $message);
+            return redirect()->route('settings.clinic', ['active_tab' => 'home7'])->with('success', $message);
 
         } catch (\Exception $e) {
             // Redirect to clinic index page with error message
@@ -123,11 +123,13 @@ class ClinicBranchController extends Controller
      */
     public function store(ClinicBranchRequest $request)
     {
+       
         try {
             $clinic = new ClinicBranch();
             $clinic->clinic_email = $request->input('clinic_email');
             $clinic->clinic_phone = $request->input('clinic_phone');
             $clinic->is_main_branch = $request->input('branch_active');
+            $clinic->is_medicine_provided = $request->input('is_medicine_provided');
             $clinic->clinic_address = $request->input('clinic_address1') . "<br>" . $request->input('clinic_address2');
             $clinic->country_id = $request->input('clinic_country');
             $clinic->state_id = $request->input('clinic_state');
@@ -135,17 +137,11 @@ class ClinicBranchController extends Controller
             $clinic->pincode = $request->input('clinic_pincode');
             $clinic->clinic_status = "Y";
             $clinic->clinic_type_id = 1;
-            // Handle clinic logo if uploaded
-            if ($request->hasFile('clinic_logo')) {
-                $logoPath = $request->file('clinic_logo')->store('clinic-logos', 'public');
-                $clinic->clinic_logo = $logoPath;
-            }
-
             // Save the clinic
             $i = $clinic->save();
-
+            
             if ($i) {
-                return redirect()->route('clinic.index')->with('success', 'Clinic created successfully');
+                return redirect()->route('settings.clinic', ['active_tab' => 'profile7'])->with('success', 'Clinic created successfully');
             }
 
         } catch (\Exception $e) {
@@ -186,6 +182,7 @@ class ClinicBranchController extends Controller
             $clinic->clinic_email = $request->clinic_email;
             $clinic->clinic_phone = $request->clinic_phone;
             $clinic->is_main_branch = $request->edit_branch_active;
+            $clinic->is_medicine_provided = $request->edit_is_medicine_provided;
             $clinic->clinic_address = $request->clinic_address1 . "<br>" . $request->clinic_address2;
             $clinic->country_id = $request->clinic_country;
             $clinic->state_id = $request->clinic_state;
@@ -195,7 +192,7 @@ class ClinicBranchController extends Controller
             // Save the updated clinic
             $i = $clinic->save();
             if ($i) {
-                return redirect()->route('clinic.index')->with('success', 'Clinic updated successfully');
+                return redirect()->route('settings.clinic', ['active_tab' => 'profile7'])->with('success', 'Clinic updated successfully');
             }
 
         } catch (\Exception $e) {
@@ -215,7 +212,7 @@ class ClinicBranchController extends Controller
         $clinicBranch->clinic_status = $statusChange;
         $clinicBranch->save();
 
-        return redirect()->route('settings.clinic')->with('success', $statusText);
+        return redirect()->route('settings.clinic', ['active_tab' => 'profile7'])->with('success', $statusText);
 
     }
 

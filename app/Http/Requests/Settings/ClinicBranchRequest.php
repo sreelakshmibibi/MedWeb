@@ -24,8 +24,6 @@ class ClinicBranchRequest extends FormRequest
         return [
             'clinic_email' => 'nullable|email|max:255',
             'clinic_phone' => 'required|string|max:20',
-            'branch_active' => 'required|in:Y,N',
-            'is_medicine_provided' => 'required|in:Y,N',
             'clinic_address1' => 'required|string|max:255',
             'clinic_address2' => 'nullable|string|max:255',
             'clinic_country' => 'required|exists:countries,id',
@@ -49,13 +47,7 @@ class ClinicBranchRequest extends FormRequest
             'clinic_phone.required' => 'Clinic contact number is required.',
             'clinic_phone.string' => 'Clinic contact number must be a string.',
             'clinic_phone.max' => 'Clinic contact number should not be greater than :max characters.',
-
-            'branch_active.required' => 'Select whether it is the main branch.',
-            'branch_active.in' => 'Invalid value for branch active status.',
-
-            'is_medicine_provided.required' => 'Select whether it is the main branch.',
-            'is_medicine_provided.in' => 'Invalid value for branch active status.',
-
+            
             'clinic_address1.required' => 'Address Line 1 is required.',
             'clinic_address1.string' => 'Address Line 1 must be a string.',
             'clinic_address1.max' => 'Address Line 1 should not be greater than :max characters.',

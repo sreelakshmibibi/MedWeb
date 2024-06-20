@@ -23,17 +23,20 @@
             <!-- Nav tabs -->
             <ul class="nav nav-tabs customtab2" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" data-bs-toggle="tab" href="#home7" role="tab">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#home7" role="tab" id="basic">
                         <span class="hidden-sm-up"><i class="ion-home"></i></span>
                         <span class="hidden-xs-down">Basic Settings</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#profile7" role="tab">
-                        <span class="hidden-sm-up"><i class="ion-person"></i></span>
-                        <span class="hidden-xs-down">Branches</span>
-                    </a>
-                </li>
+                <?php 
+                if ($clinicDetails) { ?>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#profile7" role="tab" id="branches">
+                            <span class="hidden-sm-up"><i class="ion-person"></i></span>
+                            <span class="hidden-xs-down">Branches</span>
+                        </a>
+                    </li>
+                <?php } ?>
             </ul>
             
             <!-- Tab panes -->

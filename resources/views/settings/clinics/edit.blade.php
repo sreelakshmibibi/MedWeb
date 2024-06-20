@@ -10,13 +10,6 @@
                 </div>
                 <div class="modal-body">
                     <div class="container-fluid">
-                        <div class="form-group">
-                            <label class="form-label" for="edit_clinic_name">Clinic Name</label>
-                            <input class="form-control" type="text" id="edit_clinic_name" name="clinic_name"
-                                placeholder="Clinic Name">
-                            <div id="editclinicNameError" class="invalid-feedback"></div>
-                        </div>
-
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -37,47 +30,26 @@
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="edit_clinic_logo">Logo</label>
-                                    <img id="currentClinicLogoImg" src="" alt="Current Logo"
-                                        style="max-width: 100px;">
-                                    <input class="form-control" type="file" id="edit_clinic_logo" name="clinic_logo"
-                                        placeholder="logo">
-                                    <div id="clinicLogoError" class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="edit_clinic_website">Website</label>
-                                    <input class="form-control" type="url" id="edit_clinic_website"
-                                        name="clinic_website" placeholder="http://">
-                                    <div id="clinicWebsiteError" class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6" for="branch">Is main branch?</label>
                             <input name="edit_branch_active" type="radio" class="form-control with-gap" id="edit_yes"
-                                value="Y" checked>
-                            <label for="yes">Yes</label>
+                                value="Y" >
+                            <label for="edit_yes">Yes</label>
                             <input name="edit_branch_active" type="radio" class="form-control with-gap" id="edit_no"
                                 value="N">
-                            <label for="no">No</label>
+                            <label for="edit_no">No</label>
                             <div id="clinicBranchError" class="invalid-feedback"></div>
                         </div>
 
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6" for="branch">Is medicine provided?</label>
-                            <input name="branch_active" type="radio" class="form-control with-gap" id="yes"
-                                value="Y" checked>
-                            <label for="yes">Yes</label>
-                            <input name="branch_active" type="radio" class="form-control with-gap" id="no"
+                            <input name="edit_is_medicine_provided" type="radio" class="form-control with-gap" id="edit_medicine_yes"
+                                value="Y" >
+                            <label for="edit_medicine_yes">Yes</label>
+                            <input name="edit_is_medicine_provided" type="radio" class="form-control with-gap" id="edit_medicine_no"
                                 value="N">
-                            <label for="no">No</label>
-                            <div id="clinicBranchError" class="invalid-feedback"></div>
+                            <label for="edit_medicine_no">No</label>
+                            <div id="cliniMedicinecError" class="invalid-feedback"></div>
                         </div>
 
                         <div class="row">
@@ -226,12 +198,10 @@
 
             // Gather form data
             var formData = {
-                clinic_name: $('#edit_clinic_name').val(),
                 clinic_phone: $('#edit_clinic_phone').val(),
                 clinic_email: $('#edit_clinic_email').val(),
-                clinic_website: $('#edit_clinic_website').val(),
-                branch_active: $('input[name="branch_active"]:checked').val(),
-                clinic_logo: $('#edit_clinic_logo').val(),
+                branch_active: $('input[name="edit_branch_active"]:checked').val(),
+                is_medicine_provided: $('input[name="edit_is_medicine_provided"]:checked').val(),
                 clinic_address1: $('#edit_clinic_address1').val(),
                 clinic_address2: $('#edit_clinic_address2').val(),
                 clinic_country: $('#edit_clinic_country').val(),
@@ -242,12 +212,6 @@
 
             // Basic client-side validation
             var isValid = true;
-
-            if (!formData.clinic_name.trim()) {
-                isValid = false;
-                $('#edit_clinic_name').addClass('is-invalid');
-                $('#editclinicNameError').text('Clinic name is required.');
-            }
 
             if (!formData.clinic_phone.trim()) {
                 isValid = false;
@@ -261,17 +225,7 @@
                 $('#clinicEmailError').text('Invalid email address.');
             }
 
-            if (formData.clinic_website.trim() && !isValidUrl(formData.clinic_website.trim())) {
-                isValid = false;
-                $('#edit_clinic_website').addClass('is-invalid');
-                $('#clinicWebsiteError').text('Invalid website URL.');
-            }
-
-            if (!formData.branch_active) {
-                isValid = false;
-                $('#edit_clinicBranchError').text('Select whether it is the main branch.');
-            }
-
+            
             if (!formData.clinic_address1.trim()) {
                 isValid = false;
                 $('#edit_clinic_address1').addClass('is-invalid');
@@ -330,6 +284,7 @@
                         $('#successMessage').text('Clinic updated successfully');
                         $('#successMessage').fadeIn().delay(3000)
                             .fadeOut(); // Show for 3 seconds
+                            
                         location
                             .reload(); // Optionally, you can reload or update the table here
                     },
@@ -342,12 +297,6 @@
                         if (xhr.responseJSON && xhr.responseJSON.errors) {
                             var errors = xhr.responseJSON.errors;
 
-                            // Handle clinic_name error
-                            if (errors.hasOwnProperty('clinic_name')) {
-                                $('#edit_clinic_name').addClass('is-invalid');
-                                $('#editclinicNameError').text(errors.clinic_name[0]);
-                            }
-
                             // Handle clinic_phone error
                             if (errors.hasOwnProperty('clinic_phone')) {
                                 $('#edit_clinic_phone').addClass('is-invalid');
@@ -358,18 +307,6 @@
                             if (errors.hasOwnProperty('clinic_email')) {
                                 $('#edit_clinic_email').addClass('is-invalid');
                                 $('#clinicEmailError').text(errors.clinic_email[0]);
-                            }
-
-                            // Handle clinic_website error
-
-                            if (errors.hasOwnProperty('clinic_website')) {
-                                $('#edit_clinic_website').addClass('is-invalid');
-                                $('#clinicWebsiteError').text(errors.clinic_website[0]);
-                            }
-
-                            // Handle branch_active error
-                            if (errors.hasOwnProperty('branch_active')) {
-                                $('#edit_clinicBranchError').text(errors.branch_active[0]);
                             }
 
                             // Handle clinic_address1 error
@@ -397,12 +334,6 @@
                             if (errors.hasOwnProperty('clinic_pincode')) {
                                 $('#edit_clinic_pincode').addClass('is-invalid');
                                 $('#clinicPincodeError').text(errors.clinic_pincode[0]);
-                            }
-
-                            // Handle clinic_logo error if applicable
-                            if (errors.hasOwnProperty('clinic_logo')) {
-                                $('#edit_clinic_logo').addClass('is-invalid');
-                                $('#clinicLogoError').text(errors.clinic_logo[0]);
                             }
 
                             // Scroll to the top of the modal to show the first error
