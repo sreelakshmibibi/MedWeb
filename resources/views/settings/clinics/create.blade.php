@@ -234,7 +234,6 @@
 
             // Perform AJAX submit if form is valid
             if (isValid) {
-                $('#modal-right').attr('data-bs-dismiss', 'modal');
                 var form = $('#createClinicForm');
                 var url = form.attr('action');
                 var formDataClinic = form.serialize(); // Correct serialization of form data

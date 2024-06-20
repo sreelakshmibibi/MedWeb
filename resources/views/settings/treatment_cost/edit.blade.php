@@ -1,8 +1,8 @@
 <form id="editTreatmentCostForm" method="post" action="{{ route('settings.treatment_cost.update') }}">
     @csrf
     <input type="hidden" id="edit_treatment_cost_id" name="edit_treatment_cost_id" value="">
-    <div class="modal modal-right slideInRight" id="modal-edit" tabindex="-1">
-        <div class="modal-dialog" style="width:40%; max-width: 80%;">
+    <div class="modal fade modal-right slideInRight" id="modal-edit" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fa fa-kit-medical"></i> Edit Treatment Details</h5>
@@ -14,19 +14,21 @@
 
                         <div class="form-group">
                             <label class="form-label" for="treatment">Treatment name</label>
-                            <input class="form-control" type="text" id="edit_treatment_name" name="treat_name"  placeholder="Treatment Name" autocomplete="off">
+                            <input class="form-control" type="text" id="edit_treatment_name" name="treat_name"
+                                placeholder="Treatment Name" autocomplete="off">
                             <div id="editTreatmentError" class="invalid-feedback"></div>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label" for="cost">Cost</label>
-                            <input class="form-control" type="text" id="edit_treatment_cost" name="treat_cost"    placeholder="Treatment Cost" autocomplete="off">
+                            <input class="form-control" type="text" id="edit_treatment_cost" name="treat_cost"
+                                placeholder="Treatment Cost" autocomplete="off">
                             <div id="editTreatmentCostError" class="invalid-feedback"></div>
                         </div>
 
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6">Active</label>
-                            <input name="status" type="radio"  class="form-control with-gap" id="edit_yes"
+                            <input name="status" type="radio" class="form-control with-gap" id="edit_yes"
                                 value="Y">
                             <label for="yes">Yes</label>
                             <input name="status" type="radio" class="form-control with-gap" id="edit_no"
@@ -73,11 +75,11 @@
                 $('#edit_treatment_cost').addClass('is-invalid');
                 $('#editTreatmentCostError').text('Treatment cost is required.');
                 return; // Prevent further execution
-            }else if (!$.isNumeric(treatmentCost)) {
+            } else if (!$.isNumeric(treatmentCost)) {
                 $('#edit_treatment_cost').addClass('is-invalid');
                 $('#editTreatmentCostError').text('The treatment cost must be a number.');
                 return; // Prevent further execution
-            }else {
+            } else {
                 $('#edit_treatment_cost').removeClass('is-invalid');
                 $('#editTreatmentCostError').text('');
             }
@@ -103,7 +105,8 @@
                     // If successful, hide modal and show success message
                     $('#modal-edit').modal('hide');
                     $('#successMessage').text('Treatment cost updated successfully');
-                    $('#successMessage').fadeIn().delay(3000).fadeOut(); // Show for 3 seconds
+                    $('#successMessage').fadeIn().delay(3000)
+                        .fadeOut(); // Show for 3 seconds
                     // table.draw(); // Refresh DataTable
                     location.reload();
                 },
@@ -148,7 +151,7 @@
 
             // Fetch department details via AJAX
             $.ajax({
-                url: '{{ url("treatment_cost", "") }}' + "/" + treatmentId + "/edit",
+                url: '{{ url('treatment_cost', '') }}' + "/" + treatmentId + "/edit",
                 method: 'GET',
                 success: function(response) {
                     // Populate form fields
@@ -172,4 +175,3 @@
         });
     });
 </script>
-

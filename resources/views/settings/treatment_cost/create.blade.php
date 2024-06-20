@@ -1,7 +1,7 @@
 <form id="createTreatmentCostForm" method="post" action="{{ route('settings.treatment_cost.store') }}">
     @csrf
-    <div class="modal modal-right slideInRight" id="modal-right" tabindex="-1">
-        <div class="modal-dialog" style="width:40%; max-width: 80%;">
+    <div class="modal fade modal-right slideInRight" id="modal-right" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fa fa-briefcase"></i> Treatment Details</h5>
@@ -13,14 +13,16 @@
                         <!-- Treatment Name -->
                         <div class="form-group">
                             <label class="form-label" for="treatment">Treatment name</label>
-                            <input class="form-control" type="text" id="treat_name" name="treat_name"  placeholder="Treatment Name">
+                            <input class="form-control" type="text" id="treat_name" name="treat_name"
+                                placeholder="Treatment Name">
                             <div id="treatmentError" class="invalid-feedback"></div>
                         </div>
 
                         <!-- Treatment Cost -->
                         <div class="form-group">
                             <label class="form-label" for="cost">Cost</label>
-                            <input class="form-control" type="text" id="treat_cost" name="treat_cost"  placeholder="Treatment Cost">
+                            <input class="form-control" type="text" id="treat_cost" name="treat_cost"
+                                placeholder="Treatment Cost">
                             <div id="treatmentCostError" class="invalid-feedback"></div>
                         </div>
 
@@ -43,7 +45,7 @@
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-success float-end" id="saveTreatmentCostBtn">Save</button>
                 </div>
-                
+
             </div>
 
         </div>
@@ -78,11 +80,11 @@
                 $('#treat_cost').addClass('is-invalid');
                 $('#treatmentCostError').text('Treatment cost is required.');
                 return; // Prevent further execution
-            }else if (!$.isNumeric(treatmentCost)) {
+            } else if (!$.isNumeric(treatmentCost)) {
                 $('#treat_cost').addClass('is-invalid');
                 $('#treatmentCostError').text('The treatment cost must be a number.');
                 return; // Prevent further execution
-            }else {
+            } else {
                 $('#treat_cost').removeClass('is-invalid');
                 $('#treatmentCostError').text('');
             }
@@ -108,7 +110,8 @@
                     // If successful, hide modal and show success message
                     $('#modal-right').modal('hide');
                     $('#successMessage').text('Treatment cost created successfully');
-                    $('#successMessage').fadeIn().delay(3000).fadeOut(); // Show for 3 seconds
+                    $('#successMessage').fadeIn().delay(3000)
+                        .fadeOut(); // Show for 3 seconds
                     location.reload();
                     // Optionally, you can reload or update the table here
                 },

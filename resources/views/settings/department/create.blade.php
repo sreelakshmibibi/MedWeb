@@ -70,7 +70,6 @@
                 $('#statusError').text('');
             }
 
-            $('#modal-right').attr('data-bs-dismiss', 'modal');
             // If validation passed, submit the form via AJAX
             var form = $('#createDepartmentForm');
             var url = form.attr('action');
