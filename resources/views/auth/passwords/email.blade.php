@@ -12,6 +12,11 @@
                             <h3 class="mb-0 text-primary">Recover Password</h3>
                         </div>
                         <div class="p-40">
+                            @if (session('status'))
+                                <div class="alert alert-success" role="alert">
+                                    {{ session('status') }}
+                                </div>
+                            @endif
                             <form method="POST" action="{{ route('password.email') }}">
                                 @csrf
                                 <div class="form-group">
