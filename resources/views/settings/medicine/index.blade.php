@@ -5,6 +5,8 @@
     <div class="content-wrapper">
         <div class="container-full">
             <div class="content-header">
+                <div id="successMessage" style="display:none;" class="alert alert-success">Medicine created successfully
+                </div>
                 @if (session('success'))
                     <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-success alerttop fadeOut"
                         style="display: block;">
@@ -12,7 +14,7 @@
                     </div>
                 @endif
                 @if (session('error'))
-                    <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fade fadeOut"
+                    <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fadeOut"
                         style="display: block;">
                         <i class="ti-check"></i> {{ session('error') }} <a href="#" class="closed">×</a>
                     </div>
@@ -35,26 +37,21 @@
                                 <thead class="bg-primary-light">
                                     <tr>
                                         <th>No</th>
-                                        <th>med_bar_code</th>
+                                        <th>Barcode</th>
                                         <th>Name</th>
+                                        <th>Company</th>
+                                        <th>Price</th>
+                                        <th>Expiry Date</th>
                                         <th>Strength</th>
-                                        <th>remarks</th>
-                                        <th>price</th>
-                                        <th>med_status</th>
-                                        <th>Status</th>
-                                        <th>med_date</th>
-                                        <th>med_last_update</th>
-                                        <th>company_name</th>
-                                        <th>rep_name</th>
-                                        <th>rep_phone number</th>
-                                        <th>med_name</th>
-                                        <th>med_strength</th>
+                                        <th>Quantity</th>
+                                        <th>Stock Status</th>
+                                        <th>Remarks</th>
                                         <th>Status</th>
                                         <th width="100px">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                    <!-- Populate table rows with medicine data -->
                                 </tbody>
                             </table>
                             <!-- /.content -->
@@ -75,48 +72,84 @@
     {{-- <script type="module"> --}}
     <script type="text/javascript">
         jQuery(function($) {
-
+            
             var table = $('.data-table').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('settings.medicine') }}",
                 columns: [{
-                        data: 'id',
-                        name: 'id'
-                    },
-                    {
-                        data: 'department',
-                        name: 'department'
-                    },
-                    {
-                        data: 'status',
-                        name: 'status'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
                         orderable: false,
-                        searchable: true
+                        searchable: false,
+                        render: function(data, type, row, meta) {
+                            // Return the row index (starts from 0)
+                            return meta.row + 1; // Adding 1 to start counting from 1
+                        }
                     },
+                    { data: 'med_bar_code', name: 'med_bar_code' },
+                    { data: 'med_name', name: 'med_name' },
+                    { data: 'med_company', name: 'med_company' },
+                    { data: 'med_price', name: 'med_price' },
+                    {
+                    data: 'expiry_date',
+                    name: 'expiry_date',
+                    render: function(data, type, row) {
+                        if (data) {
+                            var date = new Date(data);
+                            var day = ("0" + date.getDate()).slice(-2);
+                            var month = ("0" + (date.getMonth() + 1)).slice(-2);
+                            var year = date.getFullYear();
+                            return day + '-' + month + '-' + year;
+                        }
+                        return data;
+                    }
+                },
+                    { data: 'med_strength', name: 'med_strength' },
+                    { data: 'quantity', name: 'quantity' },
+                    { data: 'stock_status', name: 'stock_status' },
+                    { data: 'med_remarks', name: 'med_remarks' },
+                    { data: 'status', name: 'status' },
+                    { data: 'action', name: 'action', orderable: false, searchable: true }
                 ]
             });
+
             $(document).on('click', '.btn-edit', function() {
-                var departmentId = $(this).data('id');
-                $('#edit_department_id').val(departmentId); // Set department ID in the hidden input
+               
+                var medicineId = $(this).data('id');
+                $('#edit_medicine_id').val(medicineId); // Set medicine ID in the hidden input
                 $.ajax({
-                    url: '{{ url('department', '') }}' + "/" + departmentId + "/edit",
+                    url: '{{ url('medicine', '') }}' + "/" + medicineId + "/edit",
                     method: 'GET',
                     success: function(response) {
-                        $('#edit_department_id').val(response.id);
-                        $('#edit_department').val(response.department);
-
-                        if (response.status === 'Y') {
-                            $('#edit_yes').prop('checked', true);
+                        $('#edit_medicine_id').val(response.id);
+                        $('#edit_med_name').val(response.med_name);
+                        $('#edit_med_bar_code').val(response.med_bar_code);
+                        $('#edit_med_company').val(response.med_company);
+                        $('#edit_med_price').val(response.med_price);
+                        $('#edit_expiry_date').val(response.expiry_date);
+                        $('#edit_med_strength').val(response.med_strength);
+                        $('#edit_quantity').val(response.quantity);
+                        $('#edit_med_remarks').val(response.med_remarks);
+                        // Set radio button status
+                        // if (response.status === 'Y') {
+                        //     $('#med_edit_yes').prop('checked', true);
+                        // } else {
+                        //     $('#med_edit_no').prop('checked', true);
+                        // }
+                        if (response.stock_status === 'Y') {
+                            $('#edit_in').prop('checked', true);
                         } else {
-                            $('#edit_no').prop('checked', true);
+                            $('#edit_out').prop('checked', true);
                         }
-
+                        
+                        // Reset the radio buttons in the edit modal
+                        $('#editMedicineForm input[name="status"]').prop('checked', false);
+                        if (response.status) {
+                            $('#editMedicineForm input[name="status"][value="' + response.status + '"]').prop('checked', true);
+                        }
                         $('#modal-edit').modal('show');
+
                     },
                     error: function(error) {
                         console.log(error)
@@ -124,17 +157,17 @@
                 });
 
             });
+
             $(document).on('click', '.btn-danger', function() {
-                var departmentId = $(this).data('id');
-                $('#delete_department_id').val(departmentId); // Set department ID in the hidden input
+                var medicineId = $(this).data('id');
+                $('#delete_medicine_id').val(medicineId); // Set medicine ID in the hidden input
                 $('#modal-delete').modal('show');
             });
-
+           
             $('#btn-confirm-delete').click(function() {
-                var departmentId = $('#delete_department_id').val();
-                var url = "{{ route('settings.departments.destroy', ':department') }}";
-                url = url.replace(':department', departmentId);
-
+                var medicineId = $('#delete_medicine_id').val();
+                var url = "{{ route('settings.medicine.destroy', ':medicine') }}";
+                url = url.replace(':medicine', medicineId);
                 $.ajax({
                     type: 'DELETE',
                     url: url,
@@ -142,8 +175,10 @@
                         "_token": "{{ csrf_token() }}"
                     },
                     success: function(response) {
-                        table.draw();
-
+                        table.draw(); // Refresh DataTable
+                        $('#successMessage').text('Medicine deleted successfully');
+                        $('#successMessage').fadeIn().delay(3000)
+                            .fadeOut(); // Show for 3 seconds
                     },
                     error: function(xhr) {
                         $('#modal-delete').modal('hide');
@@ -152,21 +187,38 @@
                 });
             });
 
+            $('#modal-edit').on('shown.bs.modal', function () {
+                $('#editMedicineForm input[name="status"]').prop('disabled', false);
+            });
         });
 
         // barcode
         function generateBarcode() {
+            
             // Get input value
-            var inputValue = document.getElementById("barcodeInput").value.trim();
+            var barcode = '';
+            var inputValue = '';
+            
+            if ( ($('#med_bar_code').length > 0) && ($('#med_bar_code').val()!='') ) {
+                inputValue = document.getElementById("med_bar_code").value.trim();
+                barcode = 'barcodeCanvas';
+                $('#medBarcodeError').text('');
+            } 
+            if ( ($('#edit_med_bar_code').length > 0) && ($('#edit_med_bar_code').val()!='') ) {
+                inputValue = document.getElementById("edit_med_bar_code").value.trim();
+                barcode = 'edit_barcodeCanvas';
+                $('#editMedBarcodeError').text('');
+
+            } 
 
             // Check if input value is empty
             if (inputValue === "") {
-                alert("Please enter text to generate barcode.");
+                alert('Please enter text to generate barcode.');
                 return;
             }
 
             // Generate barcode
-            JsBarcode("#barcodeCanvas", inputValue, {
+            JsBarcode("#"+barcode, inputValue, {
                 format: "CODE128", // Barcode format (you can choose other formats like EAN-13, QR Code, etc.)
                 displayValue: true, // Display value below barcode
                 fontSize: 16,
@@ -175,7 +227,7 @@
                 height: 50
             });
 
-            JsBarcode("#barcodeCanvas", inputValue, {
+            JsBarcode("#"+barcode, inputValue, {
                 format: "CODE128", // Barcode format (CODE128, EAN-13, etc.)
                 displayValue: true, // Show human-readable value below barcode
                 fontSize: 16, // Font size of the value text
