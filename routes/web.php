@@ -7,6 +7,7 @@ use App\Http\Controllers\Settings\TreatmentCostController;
 use App\Http\Controllers\Settings\MedicineController;
 use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
+use App\Http\Controllers\Staff\StaffListController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -63,3 +64,9 @@ Route::post('/today/update', [TodayController::class, 'update'])->name('patient.
 Route::delete('/today/{today}', [TodayController::class, 'destroy'])->name('patient.today.destroy');
 
 Route::get('/totalpatients', [TodayController::class, 'getTotal'])->name('totalpatients');
+
+Route::get('/staff_list', [StaffListController::class, 'index'])->name('staff.staff_list');
+Route::post('/staff_list/store', [StaffListController::class, 'store'])->name('staff.staff_list.store');
+Route::get('/staff_list/{staff_list}/edit', [StaffListController::class, 'edit'])->name('staff.staff_list.edit');
+Route::post('/staff_list/update', [StaffListController::class, 'update'])->name('staff.staff_list.update');
+Route::delete('/staff_list/{staff_list}', [StaffListController::class, 'destroy'])->name('staff.staff_list.destroy');
