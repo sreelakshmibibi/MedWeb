@@ -1,7 +1,7 @@
 <form method="post" action="{{ route('settings.medicine.store') }}">
     @csrf
-    <div class="modal modal-right slideInRight" id="modal-right" tabindex="-1">
-        <div class="modal-dialog modal-dialog-scrollable h-p100" style="width:40%; max-width: 80%">
+    <div class="modal fade modal-right slideInRight" id="modal-right" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fa-solid fa-prescription-bottle-medical"> </i> Medicine Details

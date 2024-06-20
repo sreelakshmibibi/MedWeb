@@ -1,8 +1,8 @@
 <form method="post" action="{{ route('settings.medicine.update') }}">
     @csrf
     <input type="hidden" id="edit_medicine_id" name="edit_medicine_id" value="">
-    <div class="modal modal-right slideInRight" id="modal-edit" tabindex="-1">
-        <div class="modal-dialog" style="width:40%; max-width: 80%;">
+    <div class="modal fade modal-right slideInRight" id="modal-edit" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fa fa-briefcase"> </i> Edit Medicine Details</h5>
