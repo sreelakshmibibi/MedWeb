@@ -11,19 +11,20 @@ class StaffProfile extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    protected $fillable = ['user_id', 'phone', 'department_id', 'specialization', 'years_of_experience', 'license_number', 'subspecialty', 'address', 'area', 'state', 'nationality', 'pin', 'date_of_birth', 'gender', 'photo'];
+    protected $fillable = [ 'user_id','staff_id', 'date_of_birth', 'gender', 'phone', 'email', 'address', 'city_id', 'state_id', 'country_id', 'pincode','photo', 'date_of_joining','date_of_relieving', 'qualification', 'department_id', 'specialization', 'years_of_experience', 'license_number', 'subspecialty', 'created_by','updated_by',
+    ];
     protected $dates = ['deleted_at'];
     protected static function booted()
     {
         // Before creating a new record
-        static::creating(function ($clinic) {
-            $clinic->created_by = Auth::id(); // Set created_by to current user's ID
-            $clinic->updated_by = Auth::id();
+        static::creating(function ($staffProfile) {
+            $staffProfile->created_by = Auth::id(); // Set created_by to current user's ID
+            $staffProfile->updated_by = Auth::id();
         });
 
         // Before updating an existing record
-        static::updating(function ($clinic) {
-            $clinic->updated_by = Auth::id(); // Set updated_by to current user's ID
+        static::updating(function ($staffProfile) {
+            $staffProfile->updated_by = Auth::id(); // Set updated_by to current user's ID
         });
     }
 }
