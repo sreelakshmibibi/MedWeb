@@ -61,8 +61,7 @@
     <!-- /.content-wrapper -->
 
     @include('staff.staff_list.create')
-    @include('staff.staff_list.edit')
-    @include('staff.staff_list.delete')
+   
     {{-- </div> --}}
 
     <!-- ./wrapper -->

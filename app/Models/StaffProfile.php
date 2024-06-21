@@ -7,12 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
-class PatientProfile extends Model
+class StaffProfile extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    protected $fillable = ['patient_id', 'national_id', 'first_name', 'last_name', 'gsm', 'gender', 'birth_date', 'age', 'address', 'area', 'state', 'nationality', 'pin', 'registration_date', 'visit_count', 'pstatus', 'regby','created_by',
-        'updated_by'];
+    protected $fillable = ['user_id', 'phone', 'department_id', 'specialization', 'years_of_experience', 'license_number', 'subspecialty', 'address', 'area', 'state', 'nationality', 'pin', 'date_of_birth', 'gender', 'photo'];
     protected $dates = ['deleted_at'];
     protected static function booted()
     {

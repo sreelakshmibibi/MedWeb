@@ -33,6 +33,9 @@ return new class extends Migration
             $table->index('expiry_date');
             $table->index('quantity');
             $table->index('stock_status');
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('updated_by')->constrained('users');
+           
         });
     }
 

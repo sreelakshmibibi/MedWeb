@@ -43,6 +43,9 @@ return new class extends Migration
             $table->index('gender'); 
             $table->index('national_id'); 
             $table->index('regby');
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('updated_by')->constrained('users');
+           
             $table->timestamps(); 
             $table->softDeletes(); 
         });

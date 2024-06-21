@@ -54,7 +54,9 @@ return new class extends Migration
             $table->string('imfil', 5)->default('N');
             $table->foreignId('br')->constrained('clinic_branches')->comment('Clinic Branch');
             $table->timestamps();
-
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('updated_by')->constrained('users');
+           
             $table->foreign('patient_id')
                   ->references('patient_id')
                   ->on('patient_profiles')

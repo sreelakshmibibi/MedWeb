@@ -26,6 +26,9 @@ return new class extends Migration
             $table->foreignId('prby')->constrained('users');
             $table->string('finalsave', 5)->default('NO');
             $table->string('status', 5)->default('Y');
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('updated_by')->constrained('users');
+           
             $table->timestamps();
             $table->softDeletes(); 
             $table->foreign('patient_id')

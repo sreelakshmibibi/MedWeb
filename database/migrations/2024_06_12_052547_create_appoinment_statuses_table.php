@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('tx_color');
             $table->string('stat')->nullable();
             $table->char('indrop');
+           
             $table->timestamps();
             $table->softDeletes(); 
         });

@@ -21,6 +21,8 @@ return new class extends Migration
             $table->integer('is_doctor')->nullable();
             $table->integer('is_nurse')->nullable();
             $table->integer('is_reception')->nullable();
+            $table->foreignId('created_by')->nullable()->constrained('users');
+            $table->foreignId('updated_by')->nullable()->constrained('users');
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes(); 

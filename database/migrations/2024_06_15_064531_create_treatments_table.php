@@ -22,6 +22,10 @@ return new class extends Migration
             $table->dateTime('treat_date'); // Date of the treatment
             $table->foreignId('doneby')->constrained('users'); // ID of the person who performed the treatment
             $table->string('status', 5)->default('Y'); // Treatment status  
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('updated_by')->constrained('users');
+           
+
             $table->timestamps(); 
             $table->softDeletes(); 
             $table->foreign('patient_id')

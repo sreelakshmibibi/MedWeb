@@ -20,7 +20,9 @@ return new class extends Migration
             $table->dateTime('cdate');
             $table->string('status', 5)->default('Y');
             $table->timestamp('updt')->useCurrent()->useCurrentOnUpdate();
-            
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('updated_by')->constrained('users');
+           
             $table->foreign('patient_id')
                   ->references('patient_id')
                   ->on('patient_profiles')

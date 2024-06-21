@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable
 {
@@ -25,8 +26,25 @@ class User extends Authenticatable
         'is_admin',
         'is_doctor',
         'is_nurse',
-        'is_reception'
+        'is_reception',
+        'created_by',
+        'updated_by'
     ];
+
+    protected static function booted()
+    {
+        // Before creating a new record
+        static::creating(function ($clinic) {
+            $clinic->created_by = Auth::id(); // Set created_by to current user's ID
+            $clinic->updated_by = Auth::id();
+        });
+
+        // Before updating an existing record
+        static::updating(function ($clinic) {
+            $clinic->updated_by = Auth::id(); // Set updated_by to current user's ID
+        });
+    }
+    
     protected $dates = ['deleted_at'];
     /**
      * The attributes that should be hidden for serialization.
