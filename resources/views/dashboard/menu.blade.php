@@ -13,7 +13,7 @@
         </li>
         <li><a href="#"><i class="fa-regular fa-calendar-check"><span
                         class="path1"></span><span class="path2"></span></i>Appointments</a></li>
-        <li><a href="#">
+        <li><a href="{{ route("staff.staff_list")}}">
                 <i class="fa-solid fa-user-nurse">
                     <span class="path1"></span><span class="path2"></span><span class="path3"></span></i>Staffs</a>
             <ul>
@@ -56,8 +56,6 @@
                                 class="path1"></span><span class="path2"></span></i>Departments</a></li>
                 <li><a href="{{ route('settings.medicine') }}"><i class="icon-Commit"><span class="path1"></span><span
                                 class="path2"></span></i>Medicines</a></li>
-                <li><a href="patient_details.html"><i class="icon-Commit"><span class="path1"></span><span
-                                class="path2"></span></i>Dental Diseases</a></li>
                 <li><a href="{{ route('settings.treatment_cost') }}"><i class="icon-Commit"><span
                                 class="path1"></span><span class="path2"></span></i>Treatment Cost</a></li>
                 <li><a href="patient_details.html"><i class="icon-Commit"><span class="path1"></span><span

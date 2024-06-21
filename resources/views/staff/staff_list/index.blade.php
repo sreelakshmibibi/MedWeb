@@ -127,7 +127,7 @@
                 var staffId = $(this).data('id');
                 $('#edit_staff_id').val(staffId); // Set staff ID in the hidden input
                 $.ajax({
-                    url: '{{ url('staff', '') }}' + "/" + staffId + "/edit",
+                    url: '{{ url("staff", "") }}' + "/" + staffId + "/edit",
                     method: 'GET',
                     success: function(response) {
                         $('#edit_staff_id').val(response.id);

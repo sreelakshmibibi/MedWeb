@@ -67,6 +67,7 @@ Route::delete('/today/{today}', [TodayController::class, 'destroy'])->name('pati
 Route::get('/totalpatients', [TodayController::class, 'getTotal'])->name('totalpatients');
 
 Route::get('/staff_list', [StaffListController::class, 'index'])->name('staff.staff_list');
+Route::get('/staff_list/create', [StaffListController::class, 'create'])->name('staff.staff_list.create');
 Route::post('/staff_list/store', [StaffListController::class, 'store'])->name('staff.staff_list.store');
 Route::get('/staff_list/{staff_list}/edit', [StaffListController::class, 'edit'])->name('staff.staff_list.edit');
 Route::post('/staff_list/update', [StaffListController::class, 'update'])->name('staff.staff_list.update');
