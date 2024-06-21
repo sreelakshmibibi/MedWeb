@@ -11,7 +11,7 @@
 
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="images/favicon.ico">
+    <link rel="icon" href="{{ asset('images/favicon.ico') }}">
 
     {{-- <title>MedWeb - Dashboard</title> --}}
     <title>@yield('title')</title>
@@ -71,10 +71,14 @@
     <script src="{{ asset('js/menus.js') }}"></script>
     <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('js/pages/dashboard3.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/select2/dist/js/select2.full.js') }}"></script>
 
     <!-- JsBarcode library -->
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode/dist/JsBarcode.all.min.js"></script>
 
+    <script src="{{ asset('assets/vendor_components/jquery-steps-master/build/jquery.steps.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/jquery-validation-1.17.0/dist/jquery.validate.min.js') }}"></script>
+    <script src="{{ asset('js/pages/steps.js') }}"></script>
 </body>
 
 </html>

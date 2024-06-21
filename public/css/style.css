@@ -42853,3 +42853,15 @@ width:80%;
 max-width: 80%;
 }
 }
+
+.tab-wizard .actions ul li:last-child a {
+   /* background-color: #4CAF50; /* Set background color */
+     /*color: white; /* Set text color */
+    /* padding: 10px 20px; /* Adjust padding for button */
+    /* border-radius: 5px; /* Rounded corners */
+    /* border: none; /* Remove border */
+    /* text-transform: uppercase; /* Uppercase text */
+    /* text-decoration: none; /* Remove underline */
+    /* font-size: 14px; /* Adjust font size */
+    /* background-color: success; */
+}
