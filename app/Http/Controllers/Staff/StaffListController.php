@@ -48,6 +48,11 @@ class StaffListController extends Controller
         return view('staff.staff_list.index');
     }
 
+    public function add(Request $request)
+    {
+        return view('staff.staff_list.add');
+    }
+
     /**
      * Show the form for creating a new resource.
      */
