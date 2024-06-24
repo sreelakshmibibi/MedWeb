@@ -23,6 +23,7 @@ class MedicineRequest extends FormRequest
     public function rules(): array
     {
         $medicineId = $this->route('medicine');
+
         return [
             'med_bar_code' => [
                 'required',
@@ -40,11 +41,6 @@ class MedicineRequest extends FormRequest
                 'string',
                 'max:200',
             ],
-            'med_strength' => [
-                'required',
-                'integer',
-                'min:1',
-            ],
             'med_remarks' => [
                 'nullable',
                 'string',
@@ -59,10 +55,25 @@ class MedicineRequest extends FormRequest
                 'date',
                 'after:today', // Ensure expiry date is in the future
             ],
-            'quantity' => [
+            'units_per_package' => [
                 'required',
                 'integer',
                 'min:1',
+            ],
+            'package_count' => [
+                'required',
+                'integer',
+                'min:1',
+            ],
+            'total_quantity' => [
+                'required',
+                'integer',
+                'min:0',
+            ],
+            'package_type' => [
+                'required',
+                'string',
+                'max:50',
             ],
             'stock_status' => [
                 'required',
@@ -84,30 +95,47 @@ class MedicineRequest extends FormRequest
             'med_bar_code.string' => 'The barcode must be a string.',
             'med_bar_code.max' => 'The barcode may not be greater than 100 characters.',
             'med_bar_code.unique' => 'The medicine barcode must be unique.',
+
             'med_name.required' => 'The medicine name is required.',
             'med_name.string' => 'The medicine name must be a string.',
             'med_name.max' => 'The medicine name may not be greater than 200 characters.',
-            'med_company.required' => 'The medicine company is required.',
+
+            'med_company.required' => 'The medicine company name is required.',
             'med_company.string' => 'The medicine company name must be a string.',
             'med_company.max' => 'The medicine company name may not be greater than 200 characters.',
-            'med_strength.required' => 'The medicine strength is required.',
-            'med_strength.integer' => 'The medicine strength must be a number.',
-            'med_strength.min' => 'The medicine strength must be at least 1.',
+
             'med_price.required' => 'The medicine price is required.',
             'med_price.numeric' => 'The medicine price must be a number.',
             'med_price.min' => 'The medicine price must be at least 0.',
+
             'expiry_date.required' => 'The expiry date is required.',
-            'expiry_date.date' => 'The expiry date  must be a date.',
+            'expiry_date.date' => 'The expiry date must be a valid date.',
             'expiry_date.after' => 'The expiry date must be a future date.',
-            'quantity.required' => 'The quantity is required.',
-            'quantity.integer' => 'The medicine quantity must be a number.',
-            'quantity.min' => 'The medicine quantity must be at least 1.',
+
+            'units_per_package.required' => 'The units per package are required.',
+            'units_per_package.integer' => 'The units per package must be an integer.',
+            'units_per_package.min' => 'The units per package must be at least 1.',
+
+            'package_count.required' => 'The package count is required.',
+            'package_count.integer' => 'The package count must be an integer.',
+            'package_count.min' => 'The package count must be at least 1.',
+
+            'total_quantity.required' => 'The total quantity is required.',
+            'total_quantity.integer' => 'The total quantity must be an integer.',
+            'total_quantity.min' => 'The total quantity must be at least 0.',
+
+            'package_type.required' => 'The package type is required.',
+            'package_type.string' => 'The package type must be a string.',
+            'package_type.max' => 'The package type may not be greater than 50 characters.',
+
             'stock_status.required' => 'The stock status is required.',
             'stock_status.string' => 'The stock status must be a string.',
             'stock_status.max' => 'The stock status may not be greater than 20 characters.',
+
             'status.required' => 'The status is required.',
             'status.string' => 'The status must be a string.',
             'status.size' => 'The status must be a single character.',
+
             'med_remarks.string' => 'The medicine remarks must be a string.',
         ];
     }

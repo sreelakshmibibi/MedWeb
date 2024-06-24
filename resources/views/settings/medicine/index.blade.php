@@ -42,8 +42,10 @@
                                         <th>Company</th>
                                         <th>Price</th>
                                         <th>Expiry Date</th>
-                                        <th>Strength</th>
-                                        <th>Quantity</th>
+                                        <th>Units per Package</th>
+                                        <th>Package Count</th>
+                                        <th>Total Quantity</th>
+                                        <th>Packaging Type</th>
                                         <th>Stock Status</th>
                                         <th>Remarks</th>
                                         <th>Status</th>
@@ -105,8 +107,10 @@
                         return data;
                     }
                 },
-                    { data: 'med_strength', name: 'med_strength' },
-                    { data: 'quantity', name: 'quantity' },
+                    { data: 'units_per_package', name: 'units_per_package' },
+                    { data: 'package_count', name: 'package_count' },
+                    { data: 'total_quantity', name: 'total_quantity' },
+                    { data: 'package_type', name: 'package_type' },
                     { data: 'stock_status', name: 'stock_status' },
                     { data: 'med_remarks', name: 'med_remarks' },
                     { data: 'status', name: 'status' },
@@ -128,8 +132,10 @@
                         $('#edit_med_company').val(response.med_company);
                         $('#edit_med_price').val(response.med_price);
                         $('#edit_expiry_date').val(response.expiry_date);
-                        $('#edit_med_strength').val(response.med_strength);
-                        $('#edit_quantity').val(response.quantity);
+                        $('#edit_units_per_package').val(response.units_per_package);
+                        $('#edit_package_count').val(response.package_count);
+                        $('#edit_total_quantity').val(response.total_quantity);
+                        $('#edit_package_type').val(response.package_type);
                         $('#edit_med_remarks').val(response.med_remarks);
                         $('#edit_in').prop('checked', response.stock_status === 'In Stock');
                         $('#edit_out').prop('checked', response.stock_status === 'Out of Stock');
@@ -172,10 +178,7 @@
                     }
                 });
             });
-
-            $('#modal-edit').on('shown.bs.modal', function () {
-                $('#editMedicineForm input[name="status"]').prop('disabled', false);
-            });
+            
         });
 
         // barcode
@@ -228,5 +231,7 @@
                 lineColor: "#333" // Color of the barcode bars
             });
         }
+
+        
     </script>
 @endsection

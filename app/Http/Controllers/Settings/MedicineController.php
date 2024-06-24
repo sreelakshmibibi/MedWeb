@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Settings;
 
-use App\Models\Medicine;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Settings\MedicineRequest;
+use App\Models\Medicine;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables as DataTables;
-use App\Http\Requests\Settings\MedicineRequest;
 
 class MedicineController extends Controller
 {
@@ -18,6 +18,7 @@ class MedicineController extends Controller
         if ($request->ajax()) {
 
             $medicines = Medicine::orderBy('med_name', 'asc')->get();
+
             return DataTables::of($medicines)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
@@ -55,24 +56,27 @@ class MedicineController extends Controller
             $medicineEntry->med_bar_code = $request->input('med_bar_code');
             $medicineEntry->med_name = $request->input('med_name');
             $medicineEntry->med_company = $request->input('med_company');
-            $medicineEntry->med_strength = $request->input('med_strength');
             $medicineEntry->med_remarks = $request->input('med_remarks');
             $medicineEntry->med_price = $request->input('med_price');
             $medicineEntry->expiry_date = $request->input('expiry_date');
-            $medicineEntry->quantity = $request->input('quantity');
+            $medicineEntry->units_per_package = $request->input('units_per_package');
+            $medicineEntry->package_count = $request->input('package_count');
+            $medicineEntry->total_quantity = $request->input('total_quantity');
+            $medicineEntry->package_type = $request->input('package_type');
             $medicineEntry->stock_status = $request->input('stock_status');
-            $medicineEntry->status = $request->input('status'); 
-
+            $medicineEntry->status = $request->input('status');
             $saved = $medicineEntry->save();
 
             if ($saved) {
+
                 return redirect()->back()->with('success', 'Medicine entry created successfully');
             } else {
                 return redirect()->back()->with('error', 'Failed to create medicine entry. Please try again.');
             }
-            
+
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to create medicine entry: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'Failed to create medicine entry: '.$e->getMessage());
         }
     }
 
@@ -90,11 +94,12 @@ class MedicineController extends Controller
     public function edit(string $id)
     {
         $medicine = Medicine::find($id);
-        if (!$medicine) {
+        if (! $medicine) {
             abort(404);
         }
+
         return $medicine;
-    } 
+    }
 
     /**
      * Update the specified resource in storage.
@@ -103,19 +108,21 @@ class MedicineController extends Controller
     {
         try {
             $medicine = Medicine::findOrFail($request->edit_medicine_id);
-            
+
             // Update medicine fields based on form data
             $medicine->med_bar_code = $request->med_bar_code;
             $medicine->med_name = $request->med_name;
             $medicine->med_company = $request->med_company;
-            $medicine->med_strength = $request->med_strength;
             $medicine->med_remarks = $request->med_remarks;
             $medicine->med_price = $request->med_price;
             $medicine->expiry_date = $request->expiry_date;
-            $medicine->quantity = $request->quantity;
+            $medicine->units_per_package = $request->units_per_package;
+            $medicine->package_count = $request->package_count;
+            $medicine->total_quantity = $request->total_quantity;
+            $medicine->package_type = $request->package_type;
             $medicine->stock_status = $request->stock_status;
-            $medicine->status = $request->status; 
-            
+            $medicine->status = $request->status;
+
             // Save the updated medicine
             $medicine->save();
 
@@ -126,7 +133,7 @@ class MedicineController extends Controller
 
             // Redirect back with success message for non-AJAX request
             return redirect()->back()->with('success', 'Medicine details updated successfully.');
-            
+
         } catch (\Exception $e) {
             // Handle any unexpected errors
             // Return JSON response for AJAX request

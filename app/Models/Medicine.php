@@ -11,9 +11,12 @@ class Medicine extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    protected $fillable = ['med_bar_code', 'med_name', 'med_company', 'med_remarks', 'med_price', 'expiry_date', 'med_strength', 'quantity', 'stock_status', 'status','created_by',
+
+    protected $fillable = ['med_bar_code', 'med_name', 'med_company', 'med_remarks', 'med_price', 'expiry_date', 'units_per_package', 'package_count', 'total_quantity', 'package_type', 'stock_status', 'status', 'created_by',
         'updated_by'];
+
     protected $dates = ['deleted_at'];
+
     protected static function booted()
     {
         // Before creating a new record

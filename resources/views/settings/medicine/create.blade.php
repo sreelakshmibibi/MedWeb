@@ -60,16 +60,37 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="med_strength">Strength</label>
-                                    <input class="form-control" type="text" id="med_strength" name="med_strength"  placeholder="Medicine Strength">
-                                    <div id="medStrengthError" class="invalid-feedback"></div>
+                                    <label class="form-label" for="units_per_package">Units per Package</label>
+                                    <input class="form-control" type="text" id="units_per_package" name="units_per_package"  placeholder="Number of units per package.">
+                                    <div id="medUnitPerPackError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="quantity">Quantity</label>
-                                    <input class="form-control" type="text" id="quantity" name="quantity"  placeholder="Medicine Quantity">
+                                    <label class="form-label" for="package_count">Package Count</label>
+                                    <input class="form-control" type="text" id="package_count" name="package_count"  placeholder="Total number of packages" onblur="generateTotalQuantity()">
+                                    <div id="medPackageCountError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="total_quantity">Total Quantity</label>
+                                    <input class="form-control" type="text" id="total_quantity" name="total_quantity"  placeholder=" Total number of units available across all packages" readonly>
                                     <div id="medQuantityError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="package_type">Packaging Type</label>
+                                    <select class="form-control" id="package_type" name="package_type">
+                                        <option value="" disabled selected>Select packaging type</option>
+                                        <option value="Strip">Strip</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <div id="medPackageTypeError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
@@ -121,8 +142,10 @@
             $('#medCompanyError').text('');
             $('#medPriceError').text('');
             $('#medExpDateError').text('');
-            $('#medStrengthError').text('');
+            $('#medUnitPerPackError').text('');
+            $('#medPackageCountError').text('');
             $('#medQuantityError').text('');
+            $('#medPackageTypeError').text('');
             $('#medRemarkError').text('');
             $('#medStockStatusError').text('');
             $('#medStatusError').text('');
@@ -133,9 +156,10 @@
             var medCompany = $('#med_company').val();
             var medPrice = $('#med_price').val();
             var medExpiryDate = $('#expiry_date').val();
-            var medStrength = $('#med_strength').val();
-            var medQuantity = $('#quantity').val();
-            var department = $('#department').val();
+            var medUnittPerPack = $('#units_per_package').val();
+            var packageCount = $('#package_count').val();
+            var packageType = $('#package_type').val();
+            var medQuantity = $('#total_quantity').val();
             var stockStatus = $('input[name="stock_status"]:checked').val();
             var status = $('input[name="status"]:checked').val();
 
@@ -184,29 +208,49 @@
                 $('#expiry_date').removeClass('is-invalid');
                 $('#medExpDateError').text('');
             }
-            if (medStrength.length === 0) {
-                $('#med_strength').addClass('is-invalid');
-                $('#medStrengthError').text('Medicine strength is required.');
+            if (medUnittPerPack.length === 0) {
+                $('#units_per_package').addClass('is-invalid');
+                $('#medUnitPerPackError').text('The units per package are required.');
                 return; // Prevent further execution
-            }else if (!$.isNumeric(medStrength)) {
-                $('#med_strength').addClass('is-invalid');
-                $('#medStrengthError').text('Medicine strength must be a number.');
+            }else if (!$.isNumeric(medUnittPerPack)) {
+                $('#units_per_package').addClass('is-invalid');
+                $('#medUnitPerPackError').text('The units per package must be an integer.');
                 return; // Prevent further execution
             }else {
-                $('#med_strength').removeClass('is-invalid');
-                $('#medStrengthError').text('');
+                $('#units_per_package').removeClass('is-invalid');
+                $('#medUnitPerPackError').text('');
+            }
+            if (packageCount.length === 0) {
+                $('#package_count').addClass('is-invalid');
+                $('#medPackageCountError').text('The package count is required.');
+                return; // Prevent further execution
+            }else if (!$.isNumeric(packageCount)) {
+                $('#package_count').addClass('is-invalid');
+                $('#medPackageCountError').text('The package count must be an integer.');
+                return; // Prevent further execution
+            }else {
+                $('#package_count').removeClass('is-invalid');
+                $('#medPackageCountError').text('');
             }
             if (medQuantity.length === 0) {
-                $('#quantity').addClass('is-invalid');
-                $('#medQuantityError').text('The quantity is required.');
+                $('#total_quantity').addClass('is-invalid');
+                $('#medQuantityError').text('The total quantity is required.');
                 return; // Prevent further execution
             }else if (!$.isNumeric(medQuantity)) {
-                $('#quantity').addClass('is-invalid');
-                $('#medQuantityError').text('The quantity must be a number.');
+                $('#total_quantity').addClass('is-invalid');
+                $('#medQuantityError').text('The total quantity must be an integer.');
                 return; // Prevent further execution
             }else {
-                $('#quantity').removeClass('is-invalid');
+                $('#total_quantity').removeClass('is-invalid');
                 $('#medQuantityError').text('');
+            }
+            if (packageType.length === 0) {
+                $('#package_type').addClass('is-invalid');
+                $('#medPackageTypeError').text('The package type is required.');
+                return; // Prevent further execution
+            } else {
+                $('#package_type').removeClass('is-invalid');
+                $('#medPackageTypeError').text('');
             }
             if (!stockStatus) {
                 $('#medStockStatusError').text('Medicine stock status is required.');
@@ -255,10 +299,6 @@
                         $('#med_company').addClass('is-invalid');
                         $('#medCompanyError').text(errors.med_company[0]);
                     }
-                    if (errors.hasOwnProperty('med_strength')) {
-                        $('#med_strength').addClass('is-invalid');
-                        $('#medStrengthError').text(errors.med_strength[0]);
-                    }
                     if (errors.hasOwnProperty('med_remarks')) {
                         $('#med_remarks').addClass('is-invalid');
                         $('#medRemarkError').text(errors.med_remarks[0]);
@@ -271,9 +311,21 @@
                         $('#expiry_date').addClass('is-invalid');
                         $('#medExpDateError').text(errors.expiry_date[0]);
                     }
-                    if (errors.hasOwnProperty('quantity')) {
-                        $('#quantity').addClass('is-invalid');
-                        $('#medQuantityError').text(errors.quantity[0]);
+                    if (errors.hasOwnProperty('units_per_package')) {
+                        $('#units_per_package').addClass('is-invalid');
+                        $('#medUnitPerPackError').text(errors.units_per_package[0]);
+                    }
+                    if (errors.hasOwnProperty('package_count')) {
+                        $('#package_count').addClass('is-invalid');
+                        $('#medPackageCountError').text(errors.package_count[0]);
+                    }
+                    if (errors.hasOwnProperty('total_quantity')) {
+                        $('#total_quantity').addClass('is-invalid');
+                        $('#medQuantityError').text(errors.total_quantity[0]);
+                    }
+                    if (errors.hasOwnProperty('package_type')) {
+                        $('#package_type').addClass('is-invalid');
+                        $('#medPackageTypeError').text(errors.package_type[0]);
                     }
                     if (errors.hasOwnProperty('stock_status')) {
                         $('#medStockStatusError').text(errors.stock_status[0]);
@@ -291,11 +343,13 @@
             $('#med_bar_code').removeClass('is-invalid');
             $('#med_name').removeClass('is-invalid');
             $('#med_company').removeClass('is-invalid');
-            $('#med_strength').removeClass('is-invalid');
             $('#med_remarks').removeClass('is-invalid');
             $('#med_price').removeClass('is-invalid');
             $('#expiry_date').removeClass('is-invalid');
-            $('#quantity').removeClass('is-invalid');
+            $('#units_per_package').removeClass('is-invalid');
+            $('#package_count').removeClass('is-invalid');
+            $('#package_type').removeClass('is-invalid');
+            $('#total_quantity').removeClass('is-invalid');
             $('#stock_status').removeClass('is-invalid');
             $('#status').removeClass('is-invalid');
             $('#barcodeCanvas').empty();
@@ -306,12 +360,35 @@
             $('#medCompanyError').text('');
             $('#medPriceError').text('');
             $('#medExpDateError').text('');
-            $('#medStrengthError').text('');
+            $('#medUnitPerPackError').text('');
+            $('#medPackageCountError').text('');
             $('#medQuantityError').text('');
+            $('#medPackageTypeError').text('');
             $('#medRemarkError').text('');
             $('#medStockStatusError').text('');
             $('#medStatusError').text('');
             
         });
     });
+
+    function generateTotalQuantity() {
+            var medUnittPerPack = $('#units_per_package').val();
+            var packageCount = $('#package_count').val();
+            if (medUnittPerPack.length === 0) {
+                alert('The units per package are required.');
+                return; // Prevent further execution
+            }else if (!$.isNumeric(medUnittPerPack)) {
+                alert('The units per package must be an integer.');
+                return; // Prevent further execution
+            }else if (packageCount.length === 0) {
+                alert('The package count is required.');
+                return; // Prevent further execution
+            }else if (!$.isNumeric(packageCount)) {
+                alert('The package count must be an integer.');
+                return; // Prevent further execution
+            }else {
+                var total = medUnittPerPack * packageCount;
+                $('#total_quantity').val(total);
+            }
+        }
 </script>

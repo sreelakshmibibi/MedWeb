@@ -19,23 +19,25 @@ return new class extends Migration
             $table->longText('med_remarks')->nullable(); // Additional remarks about the medicine
             $table->decimal('med_price', 10, 2); // Price of the medicine
             $table->date('expiry_date'); // Expiry date of the medicine
-            $table->integer('med_strength'); // Medicine strength (e.g., 30 TAB)
-            $table->integer('quantity'); // Quantity in stock
+            $table->integer('units_per_package'); // number of units (tablets, pills, etc.) per package
+            $table->integer('package_count'); // Number of packages
+            $table->integer('total_quantity'); // Total number of units available across all packages
+            $table->string('package_type', 50); // field helps distinguish between strips, bottles, and other packaging types
             $table->string('stock_status', 20); // Stock status (e.g., 'In Stock', 'Out of Stock')
             $table->string('status', 5)->default('Y'); // Record status (e.g., 'Y' for active, 'N' for inactive)
             $table->timestamps(); // Timestamps for created_at and updated_at
             $table->softDeletes(); // Soft delete column (deleted_at)
-            
+
             // Indexes
             $table->index('med_name');
-            $table->index('med_strength');
+            $table->index('units_per_package');
             $table->index('status');
             $table->index('expiry_date');
-            $table->index('quantity');
+            $table->index('total_quantity');
             $table->index('stock_status');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
-           
+
         });
     }
 

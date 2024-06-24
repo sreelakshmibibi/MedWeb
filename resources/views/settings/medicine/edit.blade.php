@@ -23,14 +23,9 @@
                                 <label class="form-label" for="med_bar_code">Barcode</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="edit_med_bar_code" name="med_bar_code" placeholder="Enter text..." readonly >
-                                    {{-- <input type="file" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload"> --}}
-                                    {{-- <button class="btn btn-primary btn-sm input-group-text" type="button"
-                                        id="inputGroupFileAddon04" onclick="generateBarcode()">Generate
-                                        Barcode</button> --}}
-                                        <div id="medBarcodeError" class="invalid-feedback"></div>
+                                    <div id="medBarcodeError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            {{-- <canvas id="edit_barcodeCanvas" class="col-md-4" style=" height:64px;"></canvas> --}}
                         </div>
                         
 
@@ -60,16 +55,37 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="med_strength">Strength</label>
-                                    <input class="form-control" type="text" id="edit_med_strength" name="med_strength"  placeholder="Medicine Strength">
-                                    <div id="editMedStrengthError" class="invalid-feedback"></div>
+                                    <label class="form-label" for="edit_units_per_package">Units per Package</label>
+                                    <input class="form-control" type="text" id="edit_units_per_package" name="units_per_package"  placeholder="Number of units per package.">
+                                    <div id="editMedUnitPerPackError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="quantity">Quantity</label>
-                                    <input class="form-control" type="text" id="edit_quantity" name="quantity"  placeholder="Medicine Quantity">
+                                    <label class="form-label" for="edit_package_count">Package Count</label>
+                                    <input class="form-control" type="text" id="edit_package_count" name="package_count"  placeholder="Total number of packages" onblur="generateTotalQuantity()">
+                                    <div id="editmedPackageCountErrorError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="edit_total_quantity">Total Quantity</label>
+                                    <input class="form-control" type="text" id="edit_total_quantity" name="total_quantity"  placeholder=" Total number of units available across all packages" readonly>
                                     <div id="editMedQuantityError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="edit_package_type">Packaging Type</label>
+                                    <select class="form-control" id="edit_package_type" name="package_type">
+                                        <option value="">Select packaging type</option>
+                                        <option value="Strip">Strip</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <div id="editMedPackageTypeError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
@@ -127,8 +143,10 @@
             $('#editMedCompanyError').text('');
             $('#editMedPriceError').text('');
             $('#editMedExpDateError').text('');
-            $('#editMedStrengthError').text('');
+            $('#editMedUnitPerPackError').text('');
+            $('#editmedPackageCountErrorError').text('');
             $('#editMedQuantityError').text('');
+            $('#editMedPackageTypeError').text('');
             $('#editMedRemarkError').text('');
             $('#editMedStockStatusError').text('');
             $('#editMedStatusError').text('');
@@ -139,8 +157,10 @@
             var medCompany = $('#edit_med_company').val();
             var medPrice = $('#edit_med_price').val();
             var medExpiryDate = $('#edit_expiry_date').val();
-            var medStrength = $('#edit_med_strength').val();
-            var medQuantity = $('#edit_quantity').val();
+            var medUnittPerPack = $('#edit_units_per_package').val();
+            var packageCount = $('#edit_package_count').val();
+            var packageType = $('#edit_package_type').val();
+            var medQuantity = $('#edit_total_quantity').val();
             var medRemarks = $('#edit_med_remarks').val();
             var stockStatus = $('input[name="stock_status"]:checked').val();
             var status = $('input[name="status"]:checked').val();
@@ -190,29 +210,49 @@
                 $('#edit_expiry_date').removeClass('is-invalid');
                 $('#editMedExpDateError').text('');
             }
-            if (medStrength.length === 0) {
-                $('#edit_med_strength').addClass('is-invalid');
-                $('#editMedStrengthError').text('Medicine strength is required.');
+            if (medUnittPerPack.length === 0) {
+                $('#edit_units_per_package').addClass('is-invalid');
+                $('#editMedUnitPerPackError').text('The units per package are required.');
                 return; // Prevent further execution
-            }else if (!$.isNumeric(medStrength)) {
-                $('#edit_med_strength').addClass('is-invalid');
-                $('#editMedStrengthError').text('Medicine strength must be a number.');
+            }else if (!$.isNumeric(medUnittPerPack)) {
+                $('#edit_units_per_package').addClass('is-invalid');
+                $('#medUnitPerPackError').text('The units per package must be an integer.');
                 return; // Prevent further execution
             }else {
-                $('#edit_med_strength').removeClass('is-invalid');
-                $('#editMedStrengthError').text('');
+                $('#edit_units_per_package').removeClass('is-invalid');
+                $('#editMedUnitPerPackError').text('');
+            }
+            if (packageCount.length === 0) {
+                $('#edit_package_count').addClass('is-invalid');
+                $('#editMedPackageCountError').text('The package count is required.');
+                return; // Prevent further execution
+            }else if (!$.isNumeric(packageCount)) {
+                $('#edit_package_count').addClass('is-invalid');
+                $('#editMedPackageCountError').text('The package count must be an integer.');
+                return; // Prevent further execution
+            }else {
+                $('#edit_package_count').removeClass('is-invalid');
+                $('#editMedPackageCountError').text('');
             }
             if (medQuantity.length === 0) {
-                $('#edit_quantity').addClass('is-invalid');
-                $('#editMedQuantityError').text('The quantity is required.');
+                $('#edit_total_quantity').addClass('is-invalid');
+                $('#editMedQuantityError').text('The total quantity is required.');
                 return; // Prevent further execution
             }else if (!$.isNumeric(medQuantity)) {
-                $('#edit_quantity').addClass('is-invalid');
-                $('#editMedQuantityError').text('The quantity must be a number.');
+                $('#edit_total_quantity').addClass('is-invalid');
+                $('#editMedQuantityError').text('The total quantity must be an integer.');
                 return; // Prevent further execution
             }else {
-                $('#edit_quantity').removeClass('is-invalid');
+                $('#edit_total_quantity').removeClass('is-invalid');
                 $('#editMedQuantityError').text('');
+            }
+            if (packageType.length === 0) {
+                $('#edit_package_type').addClass('is-invalid');
+                $('#editMedPackageTypeError').text('The package type is required.');
+                return; // Prevent further execution
+            } else {
+                $('#edit_package_type').removeClass('is-invalid');
+                $('#editMedPackageTypeError').text('');
             }
             if (!stockStatus) {
                 $('#editMedStockStatusError').text('Medicine stock status is required.');
@@ -262,10 +302,6 @@
                         $('#edit_med_company').addClass('is-invalid');
                         $('#editMedCompanyError').text(errors.med_company[0]);
                     }
-                    if (errors.hasOwnProperty('med_strength')) {
-                        $('#edit_med_strength').addClass('is-invalid');
-                        $('#editMedStrengthError').text(errors.med_strength[0]);
-                    }
                     if (errors.hasOwnProperty('med_remarks')) {
                         $('#edit_med_remarks').addClass('is-invalid');
                         $('#editMedRemarkError').text(errors.med_remarks[0]);
@@ -278,9 +314,21 @@
                         $('#edit_expiry_date').addClass('is-invalid');
                         $('#editMedExpDateError').text(errors.expiry_date[0]);
                     }
-                    if (errors.hasOwnProperty('quantity')) {
-                        $('#edit_quantity').addClass('is-invalid');
-                        $('#editMedQuantityError').text(errors.quantity[0]);
+                    if (errors.hasOwnProperty('units_per_package')) {
+                        $('#edit_units_per_package').addClass('is-invalid');
+                        $('#editMedUnitPerPackError').text(errors.units_per_package[0]);
+                    }
+                    if (errors.hasOwnProperty('package_count')) {
+                        $('#edit_package_count').addClass('is-invalid');
+                        $('#editMedPackageCountError').text(errors.package_count[0]);
+                    }
+                    if (errors.hasOwnProperty('total_quantity')) {
+                        $('#edit_total_quantity').addClass('is-invalid');
+                        $('#editMedQuantityError').text(errors.total_quantity[0]);
+                    }
+                    if (errors.hasOwnProperty('package_type')) {
+                        $('#edit_package_type').addClass('is-invalid');
+                        $('#editMedPackageTypeError').text(errors.package_type[0]);
                     }
                     if (errors.hasOwnProperty('stock_status')) {
                         $('#editMedStockStatusError').text(errors.stock_status[0]);
@@ -300,8 +348,10 @@
             $('#edit_med_company').removeClass('is-invalid');
             $('#edit_med_price').removeClass('is-invalid');
             $('#edit_expiry_date').removeClass('is-invalid');
-            $('#edit_med_strength').removeClass('is-invalid');
-            $('#edit_quantity').removeClass('is-invalid');
+            $('#edit_units_per_package').removeClass('is-invalid');
+            $('#edit_package_count').removeClass('is-invalid');
+            $('#edit_total_quantity').removeClass('is-invalid');
+            $('#edit_package_type').removeClass('is-invalid');
             $('#edit_med_remarks').removeClass('is-invalid');
             
             $('#edit_med_name').next('.invalid-feedback').text('');
@@ -309,8 +359,10 @@
             $('#edit_med_company').next('.invalid-feedback').text('');
             $('#edit_med_price').next('.invalid-feedback').text('');
             $('#edit_expiry_date').next('.invalid-feedback').text('');
-            $('#edit_med_strength').next('.invalid-feedback').text('');
-            $('#edit_quantity').next('.invalid-feedback').text('');
+            $('#edit_units_per_package').next('.invalid-feedback').text('');
+            $('#edit_total_quantity').next('.invalid-feedback').text('');
+            $('#edit_package_count').next('.invalid-feedback').text('');
+            $('#edit_package_type').next('.invalid-feedback').text('');
             $('#edit_med_remarks').next('.invalid-feedback').text('');
 
             $('#editMedNameError').text('');
@@ -318,8 +370,10 @@
             $('#editMedCompanyError').text('');
             $('#editMedPriceError').text('');
             $('#editMedExpDateError').text('');
-            $('#editMedStrengthError').text('');
+            $('#editMedUnitPerPackError').text('');
+            $('#editmedPackageCountErrorError').text('');
             $('#editMedQuantityError').text('');
+            $('#editMedPackageTypeError').text('');
             $('#editMedRemarkError').text('');
             $('#editMedStockStatusError').text('');
             $('#editMedStatusError').text('');
@@ -344,8 +398,10 @@
                     $('#edit_med_company').val('').focus().val(response.med_company);
                     $('#edit_med_price').val('').focus().val(response.med_price);
                     $('#edit_expiry_date').val('').focus().val(response.expiry_date);
-                    $('#edit_med_strength').val('').focus().val(response.med_strength);
-                    $('#edit_quantity').val('').focus().val(response.quantity);
+                    $('#edit_units_per_package').val(response.units_per_package);
+                    $('#edit_package_count').val(response.package_count);
+                    $('#edit_total_quantity').val(response.total_quantity);
+                    $('#edit_package_type').val(response.package_type);
                     $('#edit_med_remarks').val('').focus().val(response.med_remarks);
                     // Set radio button status
                     if (response.status === 'Y') {
@@ -366,4 +422,24 @@
             });
         });
     });
+    function generateTotalQuantity() {
+            var medUnittPerPack = $('#edit_units_per_package').val();
+            var packageCount = $('#edit_package_count').val();
+            if (medUnittPerPack.length === 0) {
+                alert('The units per package are required.');
+                return; // Prevent further execution
+            }else if (!$.isNumeric(medUnittPerPack)) {
+                alert('The units per package must be an integer.');
+                return; // Prevent further execution
+            }else if (packageCount.length === 0) {
+                alert('The package count is required.');
+                return; // Prevent further execution
+            }else if (!$.isNumeric(packageCount)) {
+                alert('The package count must be an integer.');
+                return; // Prevent further execution
+            }else {
+                var total = medUnittPerPack * packageCount;
+                $('#edit_total_quantity').val(total);
+            }
+        }
 </script>
