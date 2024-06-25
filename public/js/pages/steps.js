@@ -1,15 +1,4 @@
-$(".tab-wizard").steps({
-    headerTag: "h6",
-    bodyTag: "section",
-    transitionEffect: "slideLeft",
-    titleTemplate: "#title#",
-    labels: {
-        finish: '<span><i class="fa fa-save"></i> Save</span>',
-    },
-    onFinished: function (event, currentIndex) {
-        swal("Form submitted");
-    },
-});
+
 
 var form = $(".validation-wizard").show();
 
