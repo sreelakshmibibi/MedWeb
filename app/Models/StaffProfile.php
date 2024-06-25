@@ -11,7 +11,7 @@ class StaffProfile extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    protected $fillable = [ 'user_id','staff_id', 'date_of_birth', 'gender', 'phone', 'email', 'address', 'city_id', 'state_id', 'country_id', 'pincode','photo', 'date_of_joining','date_of_relieving', 'qualification', 'department_id', 'specialization', 'years_of_experience', 'license_number', 'subspecialty', 'created_by','updated_by',
+    protected $fillable = [ 'user_id','staff_id', 'date_of_birth', 'gender', 'phone', 'email', 'address1', 'address2', 'city_id', 'state_id', 'country_id', 'pincode','photo', 'date_of_joining','date_of_relieving', 'qualification', 'department_id', 'specialization', 'years_of_experience', 'license_number', 'subspecialty', 'created_by','updated_by',
     ];
     protected $dates = ['deleted_at'];
     protected static function booted()

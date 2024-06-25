@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('gender', 10)->nullable(); 
             $table->string('phone', 20); 
             $table->string('email')->nullable(); 
-            $table->text('address')->nullable(); 
+            $table->text('address1')->nullable(); 
+            $table->text('address2')->nullable(); 
             $table->foreignId('city_id')->constrained('cities'); 
             $table->foreignId('state_id')->constrained('states'); 
             $table->foreignId('country_id')->constrained('countries'); 

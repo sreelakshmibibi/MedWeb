@@ -19,6 +19,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\DataTables as DataTables;
+use Illuminate\Support\Str;
 
 class StaffListController extends Controller
 {
@@ -103,7 +104,8 @@ class StaffListController extends Controller
             }
 
             // Set default password
-            $user->password = Hash::make('password@123');
+            $password = Str::random(10);
+            $user->password = Hash::make($password);
             $user->save();
 
             // Create staff profile
@@ -123,6 +125,7 @@ class StaffListController extends Controller
             }
 
             DB::commit();
+            
             return redirect()->back()->with('success', 'Staff created successfully');
         } catch (\Exception $e) {
             DB::rollBack();
