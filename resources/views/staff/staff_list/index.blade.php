@@ -22,7 +22,7 @@
                     {{-- <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
                         data-bs-target="#modal-right"> <i class="fa fa-add"></i> Add New</button> --}}
                     <a type="button" class="waves-effect waves-light btn btn-primary"
-                        href="{{ route('staff.staff_list.add') }}"> <i class="fa fa-add"></i> Add New</a>
+                        href="{{ route('staff.staff_list.create') }}"> <i class="fa fa-add"></i> Add New</a>
 
                 </div>
             </div>
@@ -129,7 +129,7 @@
                 var staffId = $(this).data('id');
                 $('#edit_staff_id').val(staffId); // Set staff ID in the hidden input
                 $.ajax({
-                    url: '{{ url('staff', '') }}' + "/" + staffId + "/edit",
+                    url: '{{ url("staff", "") }}' + "/" + staffId + "/edit",
                     method: 'GET',
                     success: function(response) {
                         $('#edit_staff_id').val(response.id);

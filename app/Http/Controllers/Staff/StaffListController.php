@@ -4,12 +4,20 @@ namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Staff\StaffListRequest;
+use App\Http\Requests\Staff\StaffProfileRequest;
+use App\Models\City;
+use App\Models\Country;
+use App\Models\DoctorWorkingHour;
 use App\Models\PatientProfile;
+use App\Models\StaffProfile;
+use App\Models\State;
 use App\Models\User;
+use App\Models\UserType;
+use App\Models\WeekDay;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
-
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\DataTables as DataTables;
 
 class StaffListController extends Controller
@@ -44,13 +52,10 @@ class StaffListController extends Controller
                 ->rawColumns(['status', 'action'])
                 ->make(true);
         }
-
-        return view('staff.staff_list.index');
-    }
-
-    public function add(Request $request)
-    {
-        return view('staff.staff_list.add');
+        $countries = Country::all();
+        $states = State::all();
+        $cities = City::all();
+        return view('staff.staff_list.index', compact('countries', 'states', 'cities'));
     }
 
     /**
@@ -58,30 +63,95 @@ class StaffListController extends Controller
      */
     public function create()
     {
-        //
+        $countries = Country::all();
+        $states = State::all();
+        $cities = City::all();
+        $userTypes = UserType::where('status', 'Y')->get();
+        return view('staff.staff_list.add', compact('countries', 'states', 'cities', 'userTypes'));
+        
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StaffListRequest $request)
+    public function store(Request $request)
     {
         try {
-            // Create a new department instance
-            $patient = new PatientProfile();
-            $patient->patient = $request->input('patient');
-            $patient->status = $request->input('status');
-            $patient->clinic_type_id = 1;
+            DB::beginTransaction();
 
-            // Save the department
-            $patient->save();
+            // Create a new user instance
+            $user = new User();
+            $user->name = $request->firstname . " " . $request->lastname;
+            $user->email = $request->email;
 
-            return redirect()->back()->with('success', 'Patient created successfully');
+            // Set user role based on request
+            switch ($request->role) {
+                case User::IS_ADMIN:
+                    $user->is_admin = true;
+                    break;
+                case User::IS_DOCTOR:
+                    $user->is_doctor = true;
+                    break;
+                case User::IS_NURSE:
+                    $user->is_nurse = true;
+                    break;
+                case User::IS_RECEPTION:
+                    $user->is_reception = true;
+                    break;
+                default:
+                    throw new \Exception('Invalid role specified.');
+            }
+
+            // Set default password
+            $user->password = Hash::make('password@123');
+            $user->save();
+
+            // Create staff profile
+            $staffProfile = new StaffProfile();
+            $staffProfile->user_id = $user->id;
+            $staffProfile->staff_id = "MEDWEB" . $user->id;
+            $staffProfile->fill($request->only([
+                'date_of_birth', 'phone', 'gender', 'address1', 'address2', 'city', 'state', 
+                'country', 'pincode', 'date_of_joining', 'qualification', 'department_id', 
+                'specialization', 'years_of_experience', 'license_number', 'subspecialty'
+            ]));
+            $staffProfile->save();
+
+            // If user is a doctor, save availability
+            if ($user->is_doctor) {
+                $this->saveDoctorAvailability($request, $user->id);
+            }
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Staff created successfully');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to create patient: ' . $e->getMessage());
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Failed to create staff: ' . $e->getMessage());
         }
-
     }
+
+    private function saveDoctorAvailability(Request $request, $userId)
+    {
+        $weekDays = [
+            WeekDay::MONDAY, WeekDay::TUESDAY, WeekDay::WEDNESDAY, WeekDay::THURSDAY,
+            WeekDay::FRIDAY, WeekDay::SATURDAY, WeekDay::SUNDAY
+        ];
+
+        foreach ($weekDays as $day) {
+            $fromKey = strtolower($day) . '_from';
+            $toKey = strtolower($day) . '_to';
+
+            if ($request->$fromKey !== null) {
+                $availability = new DoctorWorkingHour();
+                $availability->user_id = $userId;
+                $availability->week_day = $day;
+                $availability->from_time = $request->$fromKey;
+                $availability->to_time = $request->$toKey;
+                $availability->save();
+            }
+        }
+    }
+
 
     /**
      * Display the specified resource.

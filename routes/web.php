@@ -27,6 +27,7 @@ Route::get('/get-states/{countryId}', [HelperController::class, 'getStates'])->n
 Route::get('/get-cities/{stateId}', [HelperController::class, 'getCities'])->name('get.cities');
 
 Route::get('/clinic', [ClinicBranchController::class, 'index'])->name('settings.clinic');
+Route::post('/clinic/create', [ClinicBranchController::class, 'create'])->name('settings.clinic.create');
 Route::post('/clinic/store', [ClinicBranchController::class, 'store'])->name('settings.clinic.store');
 Route::get('/clinic/{clinic}/edit', [ClinicBranchController::class, 'edit'])->name('settings.clinic.edit');
 Route::post('/clinic/update', [ClinicBranchController::class, 'update'])->name('settings.clinic.update');
@@ -68,9 +69,8 @@ Route::get('/totalpatients', [TodayController::class, 'getTotal'])->name('totalp
 
 
 Route::get('/staff_list', [StaffListController::class, 'index'])->name('staff.staff_list');
+Route::get('/staff_list/add', [StaffListController::class, 'create'])->name('staff.staff_list.create');
 Route::post('/staff_list/store', [StaffListController::class, 'store'])->name('staff.staff_list.store');
 Route::get('/staff_list/{staff_list}/edit', [StaffListController::class, 'edit'])->name('staff.staff_list.edit');
 Route::post('/staff_list/update', [StaffListController::class, 'update'])->name('staff.staff_list.update');
 Route::delete('/staff_list/{staff_list}', [StaffListController::class, 'destroy'])->name('staff.staff_list.destroy');
-
-Route::get('/staff_list/add', [StaffListController::class, 'add'])->name('staff.staff_list.add');
