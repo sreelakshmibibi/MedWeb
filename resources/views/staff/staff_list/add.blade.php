@@ -25,7 +25,8 @@
             <section class="content">
                 <div class="box">
                     <div class="box-body wizard-content">
-                        <form action="#" class="tab-wizard wizard-circle">
+                        <form method="post" class="tab-wizard wizard-circle" action="{{ route('staff.staff_list.store') }}" enctype="multipart/form-data">
+                            @csrf
                             <!-- Step 1 -->
                             <h6>Personal Info</h6>
                             <section>
@@ -33,29 +34,28 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label class="form-label" for="fname">First Name</label>
-                                            <input type="text" class="form-control" id="fname" name="fname"
+                                            <label class="form-label" for="firstname">First Name</label>
+                                            <input type="text" class="form-control" id="firstname" name="firstname"
                                                 placeholder="First Name" required>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label class="form-label" for="lname">Last Name</label>
-                                            <input type="text" class="form-control" id="lname" name="lname"
+                                            <label class="form-label" for="lastname">Last Name</label>
+                                            <input type="text" class="form-control" id="lastname" name="lastname"
                                                 placeholder="Last Name" required>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label class="form-label">Gender</label>
-                                            <div class="c-inputs-stacked">
-                                                <input name="group123" type="radio" id="radio_123" value="M">
-                                                <label for="radio_123" class="me-30">Male</label>
-                                                <input name="group456" type="radio" id="radio_456" value="F">
-                                                <label for="radio_456" class="me-30">Female</label>
-                                                <input name="group789" type="radio" id="radio_789" value="O">
-                                                <label for="radio_789" class="me-30">Other</label>
-                                            </div>
+                                                <label class="form-label" for="role">Role</label>
+                                                <select class="form-select" id="gender" name="gender" required>
+                                                    <option value="">Select Gender</option>
+                                                    <option value="M">Male</option>
+                                                    <option value="F">Female</option>
+                                                    <option value="O">Others</option>
+                                                </select>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -63,15 +63,15 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label class="form-label" for="dob">Date of Birth</label>
-                                            <input type="date" class="form-control" id="dob" name="dob">
+                                            <label class="form-label" for="date_of_birth">Date of Birth</label>
+                                            <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="form-label" for="email">E-mail Address</label>
                                             <input type="email" class="form-control" id="email" name="email"
-                                                placeholder="E-mail">
+                                                placeholder="E-mail" required>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -79,7 +79,7 @@
                                             <label class="form-label" for="phone">Contact
                                                 Number</label>
                                             <input type="text" class="form-control" id="phone" name="phone"
-                                                placeholder="Phone Number">
+                                                placeholder="Phone Number" required>
                                         </div>
                                     </div>
                                 </div>
@@ -90,83 +90,80 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label class="form-label" for="address">Address Line
+                                            <label class="form-label" for="address1">Address Line
                                                 1</label>
-                                            <input type="text" class="form-control" id="address" name="address"
-                                                placeholder="Adress line 1">
+                                            <input type="text" class="form-control" id="address1" name="address1"
+                                                placeholder="Adress line 1" required>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label class="form-label" for="address">Address Line
+                                            <label class="form-label" for="address2">Address Line
                                                 2</label>
-                                            <input type="text" class="form-control" id="address" name="address"
-                                                placeholder="Adress line 2">
+                                            <input type="text" class="form-control" id="address2" name="address2"
+                                                placeholder="Adress line 2" required>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label class="form-label" for="location3">City</label>
-                                            <select class="form-select" id="location3" name="location">
-                                                <option value="">Select City</option>
-                                                <option value="Hyderabad">Hyderabad</option>
-                                                <option value="Dubai">Dubai</option>
-                                                <option value="Delhi">Delhi</option>
+                                            <label class="form-label" for="country">Country</label>
+                                            <select class="form-select" id="country" name="country" required>
+                                                <option value="">Select Country</option>
+                                                    @foreach ($countries as $country)
+                                                        <option value="{{ $country->id }}" <?php if ($country->id == 101) {
+                                                            echo 'selected';
+                                                        } ?>>
+                                                            {{ $country->country }}</option>
+                                                    @endforeach
                                             </select>
                                         </div>
                                     </div>
+                                    
                                 </div>
 
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label class="form-label" for="location3">State</label>
-                                            <select class="form-select" id="location3" name="location">
-                                                <option value="">Select State</option>
-                                                <option value="Kerala">Kerala</option>
-                                                <option value="Karnataka">Karnataka</option>
-                                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                            <label class="form-label" for="state">State</label>
+                                            <select class="form-select" id="state" name="state" required>
+                                                
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label class="form-label" for="location3">Country</label>
-                                            <select class="form-select" id="location3" name="location">
-                                                <option value="">Select Country</option>
-                                                <option value="dept1">dept1</option>
-                                                <option value="dept2">dept2</option>
+                                            <label class="form-label" for="city">City</label>
+                                            <select class="form-select" id="city" name="city" required>
+                                               
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="form-label" for="pincode">Pin Code</label>
-                                            <input class="form-control" type="text" id="pincode" name="pincode"
+                                            <input class="form-control" type="text" id="pincode" name="pincode" required
                                                 placeholder="XXX XXX">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label">Role</label>
-                                            <div class="c-inputs-stacked">
-                                                <input name="occupation" type="radio" id="radio_od" value="doctor">
-                                                <label for="radio_od" class="me-30">Doctor</label>
-                                                <input name="occupation" type="radio" id="radio_on" value="nurse">
-                                                <label for="radio_on" class="me-30">Nurse</label>
-                                                <input name="occupation" type="radio" id="radio_oo" value="other">
-                                                <label for="radio_00" class="me-30">Other Staff</label>
-                                            </div>
+                                    <div class="form-group">
+                                            <label class="form-label" for="role">Role</label>
+                                            <select class="form-select" id="role" name="role" required>
+                                                <option value="">Select Role</option>
+                                                @foreach ($userTypes as $userType)
+                                                    <option value="{{ $userType->id }}">{{ $userType->title }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label class="form-label" for="logo">Photo</label>
-                                            <input class="form-control @error('clinic_logo') is-invalid @enderror"
-                                                type="file" id="clinic_logo" name="clinic_logo" placeholder="logo">
-                                            @error('clinic_logo')
+                                            <label class="form-label" for="profile_photo">Photo</label>
+                                            <input class="form-control @error('profile_photo') is-invalid @enderror"
+                                                type="file" id="profile_photo" name="profile_photo" placeholder="logo">
+                                            @error('profile_photo')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
@@ -201,11 +198,9 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="form-label" for="department">Department</label>
-                                            <select class="form-select" id="dept3" name="dept">
-                                                <option value="">Select Country</option>
-                                                <option value="India">India</option>
-                                                <option value="UAE">UAE</option>
-                                                <option value="USA">USA</option>
+                                            <select class="form-select" id="department" name="department" required>
+                                                <option value="">Select department</option>
+                                                
                                             </select>
                                         </div>
                                     </div>
@@ -221,15 +216,15 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label class="form-label" for="join_date">Date of Joining</label>
-                                            <input class="form-control" type="date" id="join_date" name="join_date">
+                                            <label class="form-label" for="date_of_joining">Date of Joining</label>
+                                            <input class="form-control" type="date" id="date_of_joining" name="date_of_joining" required>
 
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label class="form-label" for="join_date">Date of Relieving</label>
-                                            <input class="form-control" type="date" id="join_date" name="join_date"
+                                            <label class="form-label" for="date_of_relieving">Date of Relieving</label>
+                                            <input class="form-control" type="date" id="date_of_relieving" name="date_of_relieving"
                                                 disabled>
 
                                         </div>
@@ -238,18 +233,25 @@
 
                                 <!--for doctors-->
                                 <div class="row doctorFields" style="display: none;">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="form-label" for="specialization">Specialization</label>
                                             <input type="text" class="form-control" id="specialization"
                                                 name="specialization" placeholder="Specialization" required>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="form-label" for="subspecial">Subspeciality</label>
                                             <input type="text" class="form-control" id="subspecial" name="subspecial"
                                                 placeholder="Subspeciality" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="form-label" for="licence">Licence</label>
+                                            <input type="text" class="form-control" id="licence" name="licence"
+                                                placeholder="Council No." required>
                                         </div>
                                     </div>
                                 </div>
@@ -261,51 +263,52 @@
 
                                 <!--availability-->
                                 <div class="row doctorFields" style="display: none;">
+                                    
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label class="form-label" for="designation">Sunday</label>
+                                            <label class="form-label" for="sunday">Sunday</label>
                                             <div class="input-group">
-                                                <input type="time" class="form-control" id="specialization"
-                                                    name="specialization" placeholder="from">
+                                                <input type="time" class="form-control" id="sunday_from"
+                                                    name="sunday_from" placeholder="from">
                                                 <span class="input-group-text col-md-1">-</span>
-                                                <input type="time" class="form-control" id="specialization"
-                                                    name="specialization" placeholder="to">
+                                                <input type="time" class="form-control" id="sunday_to"
+                                                    name="sunday_to" placeholder="to">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label class="form-label" for="join_date">Monday</label>
+                                            <label class="form-label" for="monday">Monday</label>
                                             <div class="input-group">
-                                                <input type="time" class="form-control" id="specialization"
-                                                    name="specialization" placeholder="from">
+                                                <input type="time" class="form-control" id="monday_from"
+                                                    name="monday_from" placeholder="from">
                                                 <span class="input-group-text col-md-1">-</span>
-                                                <input type="time" class="form-control" id="specialization"
-                                                    name="specialization" placeholder="to">
+                                                <input type="time" class="form-control" id="monday_to"
+                                                    name="monday_to" placeholder="to">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label class="form-label" for="join_date">Tuesday</label>
+                                            <label class="form-label" for="tuesday">Tuesday</label>
                                             <div class="input-group">
-                                                <input type="time" class="form-control" id="specialization"
-                                                    name="specialization" placeholder="from">
-                                                <span class="input-group-text col-md-1">-</span>
-                                                <input type="time" class="form-control" id="specialization"
-                                                    name="specialization" placeholder="to">
+                                                <input type="time" class="form-control" id="tuesday_from"
+                                                    name="tuesday_from" placeholder="from">
+                                                <span class="input-group-tfromext col-md-1">-</span>
+                                                <input type="time" class="form-control" id="tuesday_to"
+                                                    name="tuesday_to" placeholder="to">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label class="form-label" for="join_date">Wednesday</label>
+                                            <label class="form-label" for="wednesday">Wednesday</label>
                                             <div class="input-group">
-                                                <input type="time" class="form-control" id="specialization"
-                                                    name="specialization" placeholder="from">
+                                                <input type="time" class="form-control" id="wednesday_from"
+                                                    name="wednesday_from" placeholder="from">
                                                 <span class="input-group-text col-md-1">-</span>
-                                                <input type="time" class="form-control" id="specialization"
-                                                    name="specialization" placeholder="to">
+                                                <input type="time" class="form-control" id="wednesday_to"
+                                                    name="wednesday_to" placeholder="to">
                                             </div>
                                         </div>
                                     </div>
@@ -314,37 +317,37 @@
                                 <div class="row doctorFields" style="display: none;">
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label class="form-label" for="designation">Thursday</label>
+                                            <label class="form-label" for="thursday">Thursday</label>
                                             <div class="input-group">
-                                                <input type="time" class="form-control" id="specialization"
-                                                    name="specialization" placeholder="from">
+                                                <input type="time" class="form-control" id="thursday_from"
+                                                    name="thursday_from" placeholder="from">
                                                 <span class="input-group-text col-md-1">-</span>
-                                                <input type="time" class="form-control" id="specialization"
-                                                    name="specialization" placeholder="to">
+                                                <input type="time" class="form-control" id="thursday_to"
+                                                    name="thursday_to" placeholder="to">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label class="form-label" for="join_date">Friday</label>
+                                            <label class="form-label" for="friday">Friday</label>
                                             <div class="input-group">
-                                                <input type="time" class="form-control" id="specialization"
-                                                    name="specialization" placeholder="from">
+                                                <input type="time" class="form-control" id="friday_from"
+                                                    name="friday_from" placeholder="from">
                                                 <span class="input-group-text col-md-1">-</span>
-                                                <input type="time" class="form-control" id="specialization"
-                                                    name="specialization" placeholder="to">
+                                                <input type="time" class="form-control" id="friday_to"
+                                                    name="friday_to" placeholder="to">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label class="form-label" for="join_date">Saturday</label>
+                                            <label class="form-label" for="saturday">Saturday</label>
                                             <div class="input-group">
-                                                <input type="time" class="form-control" id="specialization"
-                                                    name="specialization" placeholder="from">
+                                                <input type="time" class="form-control" id="saturday_from"
+                                                    name="saturday_from" placeholder="from">
                                                 <span class="input-group-text col-md-1">-</span>
-                                                <input type="time" class="form-control" id="specialization"
-                                                    name="specialization" placeholder="to">
+                                                <input type="time" class="form-control" id="saturday_to"
+                                                    name="saturday_to" placeholder="to">
                                             </div>
                                         </div>
                                     </div>
@@ -363,14 +366,157 @@
 
             $(".tab-wizard .actions ul li:last-child a").addClass("bg-success btn btn-success");
 
-            $('input[type=radio][name=occupation]').change(function() {
-                if (this.value === 'doctor') {
+            $('select[name=role]').change(function() {
+                if (this.value === '3') {
                     $('.doctorFields').show();
                 } else {
                     $('.doctorFields').hide();
                 }
             });
 
+            var initialCountryId = $('#country').val(); // Assuming India is selected initially
+            loadStates(initialCountryId);
+
+            // Handle change event for country dropdown
+            $('#country').change(function() {
+                var countryId = $(this).val();
+                loadStates(countryId);
+            });
+
+            // Handle change event for state dropdown
+            $('#state').change(function() {
+                var stateId = $(this).val();
+                loadCities(stateId);
+            });
+
+            // Function to load states based on country ID
+            function loadStates(countryId) {
+                if (countryId) {
+                    $.ajax({
+                        url: '{{ route("get.states", "") }}' + '/' + countryId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            $('#state').empty();
+                            $('#state').append('<option value="">Select State</option>');
+                            $.each(data, function(key, value) {
+                                $('#state').append('<option value="' + key + '">' +
+                                    value + '</option>');
+                            });
+                            var initialStateId = $('#state').val();
+                            loadCities(initialStateId);
+                        }
+                    });
+                } else {
+                    $('#state').empty();
+                }
+            }
+
+            // Function to load cities based on state ID
+            function loadCities(stateId) {
+                if (stateId) {
+                    $.ajax({
+                        url: '{{ route("get.cities", "") }}' + '/' + stateId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            $('#city').empty();
+                            $('#city').append('<option value="">Select City</option>');
+                            $.each(data, function(key, value) {
+                                $('#city').append('<option value="' + key + '">' +
+                                    value + '</option>');
+                            });
+                        }
+                    });
+                } else {
+                    $('#city').empty();
+                }
+            }
+
+            
+            function validateWeekdayTime(day) {
+                var fromValue = $('#'+day+'_from').val();
+                var toValue = $('#'+day+'_to').val();
+
+                // Check if fromValue is filled and toValue is empty
+                if (fromValue && !toValue) {
+                    $('#'+day+'_to').addClass('is-invalid'); // Add Bootstrap's is-invalid class
+                    return false;
+                } else {
+                    $('#'+day+'_to').removeClass('is-invalid'); // Remove is-invalid class if valid
+                    return true;
+                }
+            }
+
+            // Event handlers for weekday inputs
+            ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].forEach(function(day) {
+                // Validate on change of weekday from
+                $('#' + day + '_from').change(function() {
+                    validateWeekdayTime(day);
+                });
+
+                // Validate on change of weekday to
+                $('#' + day + '_to').change(function() {
+                    validateWeekdayTime(day);
+                });
+            });
+                    // Form submit validation
+            $('form.tab-wizard').submit(function(event) {
+                var isValid = true;
+
+                // Validate all weekdays
+                ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].forEach(function(day) {
+                    if (!validateWeekdayTime(day)) {
+                        isValid = false;
+                    }
+                });
+                
+                if (!isValid) {
+                    console.log('hi');
+                    
+                    event.preventDefault(); // Prevent form submission if validation fails
+                    $('.error-message').text('Please fill all weekday times');
+                } else {
+                    $('.error-message').text(''); // Clear error message if validation passes
+                }
+            });
+            $(".tab-wizard").steps({
+                headerTag: "h6",
+                bodyTag: "section",
+                transitionEffect: "slideLeft",
+                titleTemplate: "#title#",
+                labels: {
+                    finish: '<span><i class="fa fa-save"></i> Save</span>',
+                },
+                onFinished: function (event, currentIndex) {
+                    var formDataStaff = $('.tab-wizard').serialize(); // Correct serialization of form data
+                    console.log(formDataStaff);
+                    $.ajax({
+                        url: '{{ route( "staff.staff_list.store") }}',
+                        type: 'POST',
+                        data: formDataStaff, 
+                        dataType: 'json',
+                        success: function(response) {
+                            // If successful, hide modal and show success message
+                            $('#modal-right').modal('hide');
+                            $('#successMessage').text('Clinic created successfully');
+                            $('#successMessage').fadeIn().delay(3000)
+                                .fadeOut(); // Show for 3 seconds
+                            location
+                                .reload(); // Optionally, you can reload or update the table here
+                        },
+                        error: function(xhr) {
+                            $('#modal-right .modal-body').scrollTop(0);
+                            // }
+                        }
+
+                    });
+                
+                    
+                },
+            });
         });
+
+
     </script>
 @endsection
