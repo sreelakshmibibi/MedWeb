@@ -7,6 +7,7 @@ use App\Http\Requests\Staff\StaffListRequest;
 use App\Http\Requests\Staff\StaffProfileRequest;
 use App\Models\City;
 use App\Models\Country;
+use App\Models\Department;
 use App\Models\DoctorWorkingHour;
 use App\Models\PatientProfile;
 use App\Models\StaffProfile;
@@ -56,7 +57,8 @@ class StaffListController extends Controller
         $countries = Country::all();
         $states = State::all();
         $cities = City::all();
-        return view('staff.staff_list.index', compact('countries', 'states', 'cities'));
+        $departments = Department::where('status', 'Y')->get();
+        return view('staff.staff_list.index', compact('countries', 'states', 'cities', 'departments'));
     }
 
     /**
@@ -68,7 +70,8 @@ class StaffListController extends Controller
         $states = State::all();
         $cities = City::all();
         $userTypes = UserType::where('status', 'Y')->get();
-        return view('staff.staff_list.add', compact('countries', 'states', 'cities', 'userTypes'));
+        $departments = Department::where('status', 'Y')->get();
+        return view('staff.staff_list.add', compact('countries', 'states', 'cities', 'userTypes', 'departments'));
         
     }
 
@@ -113,10 +116,17 @@ class StaffListController extends Controller
             $staffProfile->user_id = $user->id;
             $staffProfile->staff_id = "MEDWEB" . $user->id;
             $staffProfile->fill($request->only([
-                'date_of_birth', 'phone', 'gender', 'address1', 'address2', 'city', 'state', 
-                'country', 'pincode', 'date_of_joining', 'qualification', 'department_id', 
+                'date_of_birth', 'phone', 'gender', 'address1', 'address2', 'city_id', 'state_id',
+                'country_id', 'pincode', 'date_of_joining', 'qualification', 'department_id',
                 'specialization', 'years_of_experience', 'license_number', 'subspecialty'
             ]));
+            
+            // Save profile photo if provided
+            if ($request->hasFile('profile')) {
+                $profilePath = $request->file('profile')->store('profile-photos', 'public');
+                $staffProfile->photo = $profilePath;
+            }
+
             $staffProfile->save();
 
             // If user is a doctor, save availability
@@ -125,13 +135,19 @@ class StaffListController extends Controller
             }
 
             DB::commit();
-            
+
+            // Send welcome email (you can implement this part)
+
             return redirect()->back()->with('success', 'Staff created successfully');
         } catch (\Exception $e) {
+            print_r($e->getMessage());
+
             DB::rollBack();
+exit;
             return redirect()->back()->with('error', 'Failed to create staff: ' . $e->getMessage());
         }
     }
+
 
     private function saveDoctorAvailability(Request $request, $userId)
     {

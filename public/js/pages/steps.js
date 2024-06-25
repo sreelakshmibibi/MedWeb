@@ -1,5 +1,45 @@
 
+$(".tab-wizard").steps({
+    headerTag: "h6",
+    bodyTag: "section",
+    transitionEffect: "slideLeft",
+    titleTemplate: "#title#",
+    labels: {
+        finish: '<span><i class="fa fa-save"></i> Save</span>',
+    },
+    onFinished: function (event, currentIndex) {
+        var formDataStaff = $('.tab-wizard').serialize(); // Correct serialization of form data
+        var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+        var storeRoute = $('#storeRoute').data('url');
 
+        console.log(formDataStaff);
+        $.ajax({
+            url: storeRoute,
+            type: 'POST',
+            data: formDataStaff, 
+            dataType: 'json',
+            headers: {
+                'X-CSRF-TOKEN': CSRF_TOKEN // Pass CSRF token via headers
+            },
+            success: function(response) {
+                // If successful, hide modal and show success message
+                $('#modal-right').modal('hide');
+                $('#successMessage').text('Clinic created successfully');
+                $('#successMessage').fadeIn().delay(3000)
+                    .fadeOut(); // Show for 3 seconds
+                location
+                    .reload(); // Optionally, you can reload or update the table here
+            },
+            error: function(xhr) {
+                $('#modal-right .modal-body').scrollTop(0);
+                // }
+            }
+
+        });
+    
+        
+    },
+});
 var form = $(".validation-wizard").show();
 
 $(".validation-wizard").steps({

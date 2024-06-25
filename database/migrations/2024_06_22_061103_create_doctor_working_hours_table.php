@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('doctor_working_hours', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('week_days_id')->constrained(('week_days'));
+            $table->string('week_day');
             $table->string('from_time');
             $table->string('to_time');
             $table->foreignId('created_by')->constrained('users');

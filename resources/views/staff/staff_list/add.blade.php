@@ -106,8 +106,8 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label class="form-label" for="country">Country</label>
-                                            <select class="form-select" id="country" name="country" required>
+                                            <label class="form-label" for="country_id">Country</label>
+                                            <select class="form-select" id="country_id" name="country_id" required>
                                                 <option value="">Select Country</option>
                                                     @foreach ($countries as $country)
                                                         <option value="{{ $country->id }}" <?php if ($country->id == 101) {
@@ -124,16 +124,16 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label class="form-label" for="state">State</label>
-                                            <select class="form-select" id="state" name="state" required>
+                                            <label class="form-label" for="state_id">State</label>
+                                            <select class="form-select" id="state_id" name="state_id" required>
                                                 
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label class="form-label" for="city">City</label>
-                                            <select class="form-select" id="city" name="city" required>
+                                            <label class="form-label" for="city_id">City</label>
+                                            <select class="form-select" id="city_id" name="city_id" required>
                                                
                                             </select>
                                         </div>
@@ -198,9 +198,14 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="form-label" for="department">Department</label>
-                                            <select class="form-select" id="department" name="department" required>
+                                            <select class="form-select" id="department_id" name="department_id" required>
                                                 <option value="">Select department</option>
-                                                
+                                                @foreach ($departments as $department)
+                                                        <option value="{{ $department->id }}" <?php if ($department->id == 101) {
+                                                            echo 'selected';
+                                                        } ?>>
+                                                            {{ $department->department }}</option>
+                                                    @endforeach
                                             </select>
                                         </div>
                                     </div>
@@ -249,8 +254,8 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label class="form-label" for="licence">Licence</label>
-                                            <input type="text" class="form-control" id="licence" name="licence"
+                                            <label class="form-label" for="license_number">Licence</label>
+                                            <input type="text" class="form-control" id="license_number" name="license_number"
                                                 placeholder="Council No." required>
                                         </div>
                                     </div>
@@ -353,6 +358,7 @@
                                     </div>
                                 </div>
                             </section>
+                            <div id="storeRoute" data-url="{{ route('staff.staff_list.store') }}"></div>
                         </form>
                     </div>
                     <!-- /.box-body -->
@@ -374,17 +380,17 @@
                 }
             });
 
-            var initialCountryId = $('#country').val(); // Assuming India is selected initially
+            var initialCountryId = $('#country_id').val(); // Assuming India is selected initially
             loadStates(initialCountryId);
 
             // Handle change event for country dropdown
-            $('#country').change(function() {
+            $('#country_id').change(function() {
                 var countryId = $(this).val();
                 loadStates(countryId);
             });
 
             // Handle change event for state dropdown
-            $('#state').change(function() {
+            $('#state_id').change(function() {
                 var stateId = $(this).val();
                 loadCities(stateId);
             });
@@ -397,18 +403,18 @@
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
-                            $('#state').empty();
-                            $('#state').append('<option value="">Select State</option>');
+                            $('#state_id').empty();
+                            $('#state_id').append('<option value="">Select State</option>');
                             $.each(data, function(key, value) {
-                                $('#state').append('<option value="' + key + '">' +
+                                $('#state_id').append('<option value="' + key + '">' +
                                     value + '</option>');
                             });
-                            var initialStateId = $('#state').val();
+                            var initialStateId = $('#state_id').val();
                             loadCities(initialStateId);
                         }
                     });
                 } else {
-                    $('#state').empty();
+                    $('#state_id').empty();
                 }
             }
 
@@ -420,16 +426,16 @@
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
-                            $('#city').empty();
-                            $('#city').append('<option value="">Select City</option>');
+                            $('#city_id').empty();
+                            $('#city_id').append('<option value="">Select City</option>');
                             $.each(data, function(key, value) {
-                                $('#city').append('<option value="' + key + '">' +
+                                $('#city_id').append('<option value="' + key + '">' +
                                     value + '</option>');
                             });
                         }
                     });
                 } else {
-                    $('#city').empty();
+                    $('#city_id').empty();
                 }
             }
 
@@ -480,41 +486,7 @@
                     $('.error-message').text(''); // Clear error message if validation passes
                 }
             });
-            $(".tab-wizard").steps({
-                headerTag: "h6",
-                bodyTag: "section",
-                transitionEffect: "slideLeft",
-                titleTemplate: "#title#",
-                labels: {
-                    finish: '<span><i class="fa fa-save"></i> Save</span>',
-                },
-                onFinished: function (event, currentIndex) {
-                    var formDataStaff = $('.tab-wizard').serialize(); // Correct serialization of form data
-                    console.log(formDataStaff);
-                    $.ajax({
-                        url: '{{ route( "staff.staff_list.store") }}',
-                        type: 'POST',
-                        data: formDataStaff, 
-                        dataType: 'json',
-                        success: function(response) {
-                            // If successful, hide modal and show success message
-                            $('#modal-right').modal('hide');
-                            $('#successMessage').text('Clinic created successfully');
-                            $('#successMessage').fadeIn().delay(3000)
-                                .fadeOut(); // Show for 3 seconds
-                            location
-                                .reload(); // Optionally, you can reload or update the table here
-                        },
-                        error: function(xhr) {
-                            $('#modal-right .modal-body').scrollTop(0);
-                            // }
-                        }
-
-                    });
-                
-                    
-                },
-            });
+           
         });
 
 
