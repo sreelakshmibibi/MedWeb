@@ -34,18 +34,16 @@
                         <div class="table-responsive">
                             <!-- Main content -->
                             <table
-                                class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center">
+                                class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center" width="100%">
                                 <thead class="bg-primary-light">
                                     <tr>
                                         <th>No</th>
                                         <th>Staff ID</th>
-                                        <th>First Name</th>
-                                        <th>Last Name</th>
-                                        <th>Designation</th>
-                                        <th>Department</th>
-                                        <th>Address</th>
+                                        <th>Name</th>
+                                        <th>Role</th>
+                                        <th>Qualification</th>
+                                        <!-- <th>Department</th> -->
                                         <th>Phone Number</th>
-                                        <th>Appointment Date</th>
                                         <th>Status</th>
                                         <th width="100px">Action</th>
                                     </tr>
@@ -76,41 +74,42 @@
                 serverSide: true,
                 ajax: "",
                 columns: [{
-                        data: 'id',
-                        name: 'id'
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row, meta) {
+                            // Return the row index (starts from 0)
+                            return meta.row + 1; // Adding 1 to start counting from 1
+                        }
                     },
                     {
-                        data: 'first_name',
-                        name: 'first_name'
+                        data: 'staff_id',
+                        name: 'staff_idid'
                     },
                     {
-                        data: 'last_name',
-                        name: 'last_name'
+                        data: 'name',
+                        name: 'name'
                     },
                     {
-                        data: 'gender',
-                        name: 'gender'
+                        data: 'role',
+                        name: 'role'
                     },
                     {
-                        data: 'address',
-                        name: 'address'
+                        data: 'qualification',
+                        name: 'qualification'
                     },
+                    
                     {
                         data: 'phone',
                         name: 'phone'
                     },
-                    {
-                        data: 'lastappointmentdate',
-                        name: 'lastappointmentdate'
-                    },
-                    {
-                        data: 'upcomingappointmentdate',
-                        name: 'upcomingappointmentdate'
-                    },
-                    {
-                        data: 'pstatus',
-                        name: 'pstatus'
-                    },
+                    
+                    
+                    // {
+                    //     data: 'department',
+                    //     name: 'role'
+                    // },
                     {
                         data: 'status',
                         name: 'status',

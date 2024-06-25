@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('week_day');
             $table->string('from_time');
             $table->string('to_time');
+            $table->string('status');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
             $table->timestamps();

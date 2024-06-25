@@ -27,37 +27,46 @@ class StaffListController extends Controller
     /**
      * Display a listing of the resource.
      */
+    
     public function index(Request $request)
     {
         if ($request->ajax()) {
+            $staff = StaffProfile::with('user')->get();
 
-            $patient = PatientProfile::query();
-            return DataTables::of($patient)
+            return DataTables::of($staff)
                 ->addIndexColumn()
-                ->addColumn('status', function ($row) {
-                    //choose from the below 3 according to the status
-                    $btn = '<span class="btn-sm badge badge-danger-light">New Patient</span>';
-                    $btn = '<span class="btn-sm badge badge-success-light">Recovered</span>';
-                    $btn = '<span class="btn-sm badge badge-warning-light">In Treatment</span>';
-
-                    return $btn;
+                ->addColumn('name', function ($row) {
+                    return $row->user->name;
+                })
+                
+                ->addColumn('role', function ($row) {
+                    $role = null;
+                    // Assuming you want to dynamically set the role badge based on user attributes
+                    if ($row->user->is_doctor) {
+                        $role .= $role.  '<span class="btn-sm badge badge-success-light">Doctor</span>';
+                    } if ($row->user->is_nurse) {
+                        $role .= $role.'<span class="btn-sm badge badge-warning-light">Nurse</span>';
+                    } if ($row->user->is_admin) {
+                        $role .= $role.'<span class="btn-sm badge badge-primary-light">Admin</span>';
+                    } if ($row->user->is_reception) {
+                        $role .= $role.'<span class="btn-sm badge badge-info-light">Others</span>';
+                    }
+                    return $role;
                 })
                 ->addColumn('action', function ($row) {
-
-                    $btn1 = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
-                        data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
-                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
-                        <i class="fa fa-trash"></i></button>';
-
-                    return $btn1;
+                    $btn1 = '<a href="' . route('staff.staff_list.edit', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
+                    $btn2 = '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete"><i class="fa fa-trash"></i></button>';
+                    return $btn1 . $btn2;
                 })
-                ->rawColumns(['status', 'action'])
+                ->rawColumns(['name','role', 'action'])
                 ->make(true);
         }
+
         $countries = Country::all();
         $states = State::all();
         $cities = City::all();
         $departments = Department::where('status', 'Y')->get();
+
         return view('staff.staff_list.index', compact('countries', 'states', 'cities', 'departments'));
     }
 
@@ -122,10 +131,11 @@ class StaffListController extends Controller
             ]));
             
             // Save profile photo if provided
-            if ($request->hasFile('profile')) {
-                $profilePath = $request->file('profile')->store('profile-photos', 'public');
+            if ($request->hasFile('profile_photo')) {
+                $profilePath = $request->file('profile_photo')->store('profile-photos', 'public');
                 $staffProfile->photo = $profilePath;
             }
+            $staffProfile->status = "Y";
 
             $staffProfile->save();
 
@@ -166,6 +176,7 @@ exit;
                 $availability->week_day = $day;
                 $availability->from_time = $request->$fromKey;
                 $availability->to_time = $request->$toKey;
+                $availability->status = 'Y';
                 $availability->save();
             }
         }
@@ -185,11 +196,21 @@ exit;
      */
     public function edit(string $id)
     {
-        $patient = PatientProfile::find($id);
-        if (!$patient) {
+        $staffProfile = StaffProfile::find($id);
+        $userDetails = User::find($staffProfile->user_id);
+        $availability = DoctorWorkingHour::where('user_id', $staffProfile->user_id)
+                        ->where('status', 'Y')
+                        ->get();
+        if (!$staffProfile) {
             abort(404);
         }
-        return $patient;
+        $countries = Country::all();
+        $states = State::all();
+        $cities = City::all();
+        $departments = Department::where('status', 'Y')->get();
+        $userTypes = UserType::where('status', 'Y')->get();
+        return view('staff.staff_list.edit', compact('countries', 'states', 'cities', 'userTypes', 'departments', 'staffProfile', 'userDetails','availability'));
+        
     }
 
     /**
@@ -197,16 +218,7 @@ exit;
      */
     public function update(Request $request)
     {
-        $patient = PatientProfile::findOrFail($request->edit_department_id);
-
-        // Update department fields based on form data
-        $patient->patient = $request->patient;
-        $patient->status = $request->status;
-
-        // Save the updated department
-        $patient->save();
-
-        return redirect()->back()->with('success', 'Patient updated successfully.');
+       
     }
 
     /**
@@ -214,9 +226,6 @@ exit;
      */
     public function destroy($id)
     {
-        $patient = PatientProfile::findOrFail($id);
-        $patient->delete();
-
-        return response()->json(['success', 'Patient deleted successfully.'], 201);
+       
     }
 }

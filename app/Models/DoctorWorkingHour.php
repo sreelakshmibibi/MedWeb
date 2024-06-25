@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Auth;
 class DoctorWorkingHour extends Model
 {
     use HasFactory;
-    protected $fillable = ['user_id' , 'week_day', 'from_time', 'to_time', 'created_by', 'updated_by'];
+
+    protected $fillable = ['user_id', 'week_day', 'from_time', 'to_time', 'status', 'created_by', 'updated_by'];
 
     protected static function booted()
     {
@@ -23,5 +24,10 @@ class DoctorWorkingHour extends Model
         static::updating(function ($doctorWorkingHours) {
             $doctorWorkingHours->updated_by = Auth::id(); // Set updated_by to current user's ID
         });
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

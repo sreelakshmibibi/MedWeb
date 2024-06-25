@@ -18,7 +18,6 @@ return new class extends Migration
             $table->date('date_of_birth')->nullable(); 
             $table->string('gender', 10)->nullable(); 
             $table->string('phone', 20); 
-            $table->string('email')->nullable(); 
             $table->text('address1')->nullable(); 
             $table->text('address2')->nullable(); 
             $table->foreignId('city_id')->constrained('cities'); 
@@ -32,9 +31,10 @@ return new class extends Migration
             $table->string('qualification');
             $table->foreignId('department_id')->constrained('departments');
             $table->string('specialization'); 
-            $table->integer('years_of_experience')->nullable(); 
+            $table->string('years_of_experience')->nullable(); 
             $table->string('license_number', 50)->unique(); 
             $table->string('subspecialty')->nullable(); 
+            $table->string('status');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
             $table->timestamps(); 

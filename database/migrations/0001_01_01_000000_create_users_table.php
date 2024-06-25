@@ -17,10 +17,10 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->integer('is_admin')->nullable();
-            $table->integer('is_doctor')->nullable();
-            $table->integer('is_nurse')->nullable();
-            $table->integer('is_reception')->nullable();
+            $table->integer('is_admin')->nullable()->default(0);
+            $table->integer('is_doctor')->nullable()->default(0);
+            $table->integer('is_nurse')->nullable()->default(0);
+            $table->integer('is_reception')->nullable()->default(0);
             $table->foreignId('created_by')->nullable()->constrained('users');
             $table->foreignId('updated_by')->nullable()->constrained('users');
             $table->rememberToken();
