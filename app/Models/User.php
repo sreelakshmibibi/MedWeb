@@ -15,6 +15,12 @@ class User extends Authenticatable
     use HasRoles;
     use SoftDeletes;
 
+    const IS_ADMIN = 2;
+    const IS_DOCTOR = 3;
+    const IS_NURSE = 4;
+    const IS_RECEPTION = 5;
+
+
     /**
      * The attributes that are mass assignable.
      *

@@ -15,7 +15,20 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         //User::factory(10)->create();
-
+        $this->call([
+            MenuItemsSeeder::class,
+            UserTypeSeeder::class,
+            SocialNetworkSeeder::class,
+            CountrySeeder::class,
+            StateSeeder::class,
+            CitySeeder::class,
+            AppointmentStatusSeeder::class,
+            AppointmentTypeSeeder::class,
+            DosageSeeder::class,
+            ClinicTypeSeeder::class,
+            WeekDaySeeder::class,
+            // Other seeders...
+        ]);
         $adminUser = User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
@@ -34,18 +47,6 @@ class DatabaseSeeder extends Seeder
         $drole = Role::findByName('Doctor');
         $doctorUser->assignRole($drole);
 
-        $this->call([
-            UserTypeSeeder::class,
-            SocialNetworkSeeder::class,
-            CountrySeeder::class,
-            StateSeeder::class,
-            CitySeeder::class,
-            AppointmentStatusSeeder::class,
-            AppointmentTypeSeeder::class,
-            DosageSeeder::class,
-            ClinicTypeSeeder::class,
-            WeekDaySeeder::class,
-            // Other seeders...
-        ]);
+        
     }
 }
