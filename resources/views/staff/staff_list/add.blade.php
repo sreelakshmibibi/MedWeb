@@ -235,7 +235,7 @@
                                         <div class="form-group">
                                             <label class="form-label" for="role">Role</label>
                                             <select class="form-control select2 form-select" required id="role"
-                                                name="role" data-placeholder=" Select a Role" style="width: 100%;"
+                                                name="role[]" data-placeholder=" Select a Role" style="width: 100%;"
                                                 multiple>
                                                 @foreach ($userTypes as $userType)
                                                     <option value="{{ $userType->id }}">{{ $userType->title }}</option>
@@ -361,7 +361,7 @@
                                         <button id="buttonAddRow" type="button"
                                             class="waves-effect waves-light btn btn-sm btn-outline-primary">
                                             <i class="fa fa-add"></i>
-                                            Add New Branch</button>
+                                            Add</button>
                                     </div>
                                     <hr class="my-15 ">
 
@@ -387,55 +387,65 @@
                                                 <tr>
                                                     <td>1</td>
                                                     <td>
-                                                        <select class="form-select" id="branch_id" name="branch_id"
+                                                        <select class="form-select" id="clinic_branch_id0" name="clinic_branch_id0"
                                                             required style="width:150px;">
                                                             <option value="">Select branch</option>
+                                                            @foreach ( $clinicBranches as $clinicBranch ) 
 
+                                                                <?php
+                                                                    $clinicAddress = explode("<br>", $clinicBranch->clinic_address);
+                                                                    $clinicAddress = implode(", ", $clinicAddress);
+                                                                    $branch = $clinicAddress. ", ".
+                                                                    $clinicBranch->city->city. ", ". $clinicBranch->state->state;
+                                                                ?>
+                                                                <option value="{{ $clinicBranch->id}}"> {{ $branch}}</option>
+                                                                
+                                                            @endforeach
                                                         </select>
                                                     </td>
                                                     <td>
                                                         <input type="time" class="form-control timeInput"
-                                                            id="sunday_from" title="from" name="sunday_from"
+                                                            id="sunday_from0" title="from" name="sunday_from0"
                                                             style="width:115px;">
-                                                        <input type="time" class="form-control" id="sunday_to"
-                                                            title="to" name="sunday_to" style="width:115px;">
+                                                        <input type="time" class="form-control" id="sunday_to0"
+                                                            title="to" name="sunday_to0" style="width:115px;">
                                                     </td>
                                                     <td>
-                                                        <input type="time" class="form-control" id="monday_from"
-                                                            name="monday_from" title="from" style="width:115px;">
-                                                        <input type="time" class="form-control" id="monday_to"
-                                                            name="monday_to" title="to" style="width:115px;">
+                                                        <input type="time" class="form-control" id="monday_from0"
+                                                            name="monday_from0" title="from" style="width:115px;">
+                                                        <input type="time" class="form-control" id="monday_to0"
+                                                            name="monday_to0" title="to" style="width:115px;">
                                                     </td>
                                                     <td>
-                                                        <input type="time" class="form-control" id="tuesday_from"
-                                                            name="tuesday_from" title="from" style="width:115px;">
-                                                        <input type="time" class="form-control" id="tuesday_to"
-                                                            name="tuesday_to" title="to" style="width:115px;">
+                                                        <input type="time" class="form-control" id="tuesday_from0"
+                                                            name="tuesday_from0" title="from" style="width:115px;">
+                                                        <input type="time" class="form-control" id="tuesday_to0"
+                                                            name="tuesday_to0" title="to" style="width:115px;">
 
                                                     </td>
                                                     <td>
-                                                        <input type="time" class="form-control" id="wednesday_from"
-                                                            name="wednesday_from" title="from" style="width:115px;">
-                                                        <input type="time" class="form-control" id="wednesday_to"
-                                                            name="wednesday_to" title="to" style="width:115px;">
+                                                        <input type="time" class="form-control" id="wednesday_from0"
+                                                            name="wednesday_from0" title="from" style="width:115px;">
+                                                        <input type="time" class="form-control" id="wednesday_to0"
+                                                            name="wednesday_to0" title="to" style="width:115px;">
                                                     </td>
                                                     <td>
-                                                        <input type="time" class="form-control" id="thursday_from"
-                                                            name="thursday_from" title="from" style="width:115px;">
-                                                        <input type="time" class="form-control" id="thursday_to"
-                                                            name="thursday_to" title="to" style="width:115px;">
+                                                        <input type="time" class="form-control" id="thursday_from0"
+                                                            name="thursday_from0" title="from" style="width:115px;">
+                                                        <input type="time" class="form-control" id="thursday_to0"
+                                                            name="thursday_to0" title="to" style="width:115px;">
                                                     </td>
                                                     <td>
-                                                        <input type="time" class="form-control" id="friday_from"
-                                                            name="friday_from" title="from" style="width:115px;">
-                                                        <input type="time" class="form-control" id="friday_to"
-                                                            name="friday_to" title="to" style="width:115px;">
+                                                        <input type="time" class="form-control" id="friday_from0"
+                                                            name="friday_from0" title="from" style="width:115px;">
+                                                        <input type="time" class="form-control" id="friday_to0"
+                                                            name="friday_to0" title="to" style="width:115px;">
                                                     </td>
                                                     <td>
-                                                        <input type="time" class="form-control" id="saturday_from"
-                                                            name="saturday_from" title="from" style="width:115px;">
-                                                        <input type="time" class="form-control" id="saturday_to"
-                                                            name="saturday_to" title="to" style="width:115px;">
+                                                        <input type="time" class="form-control" id="saturday_from0"
+                                                            name="saturday_from0" title="from" style="width:115px;">
+                                                        <input type="time" class="form-control" id="saturday_to0"
+                                                            name="saturday_to0" title="to" style="width:115px;">
                                                     </td>
                                                     <td>
                                                         <button type="button" id="btnDelete" title="delete row"
@@ -461,70 +471,78 @@
 
     <script>
         $(document).ready(function() {
-            let count = 1;
+            let count = 2;
             // Event listener for Add Row button click
             $(document).on('click', '#buttonAddRow', function() {
-                count++;
                 let newRow = `<tr>
                                 <td>${count}</td>
                                                     <td>
-                                                        <select class="form-select" id="branch_id"
-                                                            name="branch_id" required style="width:150px;">
+                                                        <select class="form-select" id="clinic_branch_id${count}"
+                                                            name="clinic_branch_id${count}" required style="width:150px;">
                                                             <option value="">Select branch</option>
-                                                           
+                                                           <?php foreach ( $clinicBranches as $clinicBranch ) 
+
+                                                                
+                                                                    $clinicAddress = explode("<br>", $clinicBranch->clinic_address);
+                                                                    $clinicAddress = implode(", ", $clinicAddress);
+                                                                    $branch = $clinicAddress. ", ".
+                                                                    $clinicBranch->city->city. ", ". $clinicBranch->state->state;
+                                                                ?>
+                                                                <option value="{{ $clinicBranch->id}}"> {{ $branch}}</option>
+                                                                
                                                         </select>
                                                     </td>
                                                     <td>
-                                                        <input type="time" class="form-control" id="sunday_from"
-                                                            name="sunday_from" title="from"
+                                                        <input type="time" class="form-control" id="sunday_from${count}"
+                                                            name="sunday_from${count}" title="from"
                                                             style="width:115px;">
-                                                        <input type="time" class="form-control" id="sunday_to"
-                                                            name="sunday_to" title="to" style="width:115px;">
+                                                        <input type="time" class="form-control" id="sunday_to${count}"
+                                                            name="sunday_to${count}" title="to" style="width:115px;">
                                                     </td>
                                                     <td>
-                                                        <input type="time" class="form-control" id="monday_from"
-                                                            name="monday_from" title="from" style="width:115px;">
-                                                        <input type="time" class="form-control" id="monday_to"
-                                                            name="monday_to" title="to" style="width:115px;">
+                                                        <input type="time" class="form-control" id="monday_from${count}"
+                                                            name="monday_from${count}" title="from" style="width:115px;">
+                                                        <input type="time" class="form-control" id="monday_to${count}"
+                                                            name="monday_to${count}" title="to" style="width:115px;">
                                                     </td>
                                                     <td>
-                                                        <input type="time" class="form-control" id="tuesday_from"
-                                                            name="tuesday_from" title="from" style="width:115px;">
-                                                        <input type="time" class="form-control" id="tuesday_to"
-                                                            name="tuesday_to" title="to" style="width:115px;">
+                                                        <input type="time" class="form-control" id="tuesday_from${count}"
+                                                            name="tuesday_from${count}" title="from" style="width:115px;">
+                                                        <input type="time" class="form-control" id="tuesday_to${count}"
+                                                            name="tuesday_to${count}" title="to" style="width:115px;">
 
                                                     </td>
                                                     <td>
-                                                        <input type="time" class="form-control" id="wednesday_from"
-                                                            name="wednesday_from" title="from"
+                                                        <input type="time" class="form-control" id="wednesday_from${count}"
+                                                            name="wednesday_from${count}" title="from"
                                                             style="width:115px;">
-                                                        <input type="time" class="form-control" id="wednesday_to"
-                                                            name="wednesday_to" title="to" style="width:115px;">
+                                                        <input type="time" class="form-control" id="wednesday_to${count}"
+                                                            name="wednesday_to${count}" title="to" style="width:115px;">
                                                     </td>
                                                     <td>
-                                                        <input type="time" class="form-control" id="thursday_from"
-                                                            name="thursday_from" title="from" style="width:115px;">
-                                                        <input type="time" class="form-control" id="thursday_to"
-                                                            name="thursday_to" title="to" style="width:115px;">
+                                                        <input type="time" class="form-control" id="thursday_from${count}"
+                                                            name="thursday_from${count}" title="from" style="width:115px;">
+                                                        <input type="time" class="form-control" id="thursday_to${count}"
+                                                            name="thursday_to${count}" title="to" style="width:115px;">
                                                     </td>
                                                     <td>
-                                                        <input type="time" class="form-control" id="friday_from"
-                                                            name="friday_from" title="from" style="width:115px;">
-                                                        <input type="time" class="form-control" id="friday_to"
-                                                            name="friday_to" title="to" style="width:115px;">
+                                                        <input type="time" class="form-control" id="friday_from${count}"
+                                                            name="friday_from${count}" title="from" style="width:115px;">
+                                                        <input type="time" class="form-control" id="friday_to${count}"
+                                                            name="friday_to${count}" title="to" style="width:115px;">
                                                     </td>
                                                     <td>
-                                                        <input type="time" class="form-control" id="saturday_from"
-                                                            name="saturday_from" title="from" style="width:115px;">
-                                                        <input type="time" class="form-control" id="saturday_to"
-                                                            name="saturday_to" title="to" style="width:115px;">
+                                                        <input type="time" class="form-control" id="saturday_from${count}"
+                                                            name="saturday_from${count}" title="from" style="width:115px;">
+                                                        <input type="time" class="form-control" id="saturday_to${count}"
+                                                            name="saturday_to${count}" title="to" style="width:115px;">
                                                     </td>
                                                     <td>
                                                         <button type="button" id="btnDelete" title="delete row"
                                                             class="waves-effect waves-light btn btn-danger btn-sm"> <i
                                                                 class="fa fa-trash"></i></button>
                                                     </td>
-                                                </tr>`;
+                                                </tr><input type="hidden" name="row_count" value="${count}">`;
 
                 $('#tablebody').append(newRow);
                 count++;
@@ -535,7 +553,20 @@
                 // Remove the row when Delete button is clicked
                 $(this).closest('tr').remove();
                 count--;
+                updateRowCount(); 
             });
+
+            function updateRowCount() {
+                // Update count for each row after deletion
+                $('#tablebody tr').each(function(index) {
+                    $(this).find('td:first').text(index + 1); // Update visible row number
+                    // Update hidden input value if you have one
+                    // $(this).find('input[name="row_count[]"]').val(index + 1);
+                });
+                
+                // Update count variable to reflect the number of rows
+                count = $('#tablebody tr').length;
+            }
 
             $("#add_checkbox").change(function() {
                 if (!this.checked) {
@@ -547,7 +578,7 @@
 
             $(".tab-wizard .actions ul li:last-child a").addClass("bg-success btn btn-success");
 
-            $('select[name=role]').change(function() {
+            $('select[name="role[]"]').change(function() {
                 // if (this.value === '3') {
                 if (this.value && this.value.includes('3')) {
                     $('.doctorFields').show();
@@ -579,7 +610,7 @@
             function loadStates(countryId) {
                 if (countryId) {
                     $.ajax({
-                        url: '{{ route('get.states', '') }}' + '/' + countryId,
+                        url: '{{ route("get.states", "") }}' + '/' + countryId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -602,7 +633,7 @@
             function loadCities(stateId) {
                 if (stateId) {
                     $.ajax({
-                        url: '{{ route('get.cities', '') }}' + '/' + stateId,
+                        url: '{{ route("get.cities", "") }}' + '/' + stateId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {

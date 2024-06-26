@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id(); 
             $table->foreignId('user_id')->constrained('users');
             $table->string('staff_id');
+            $table->foreignId('clinic_branch_id')->constrained('clinic_branches'); 
+            $table->string('title');
+            $table->string('aadhaar_no');
             $table->date('date_of_birth')->nullable(); 
             $table->string('gender', 10)->nullable(); 
             $table->string('phone', 20); 
@@ -24,6 +27,14 @@ return new class extends Migration
             $table->foreignId('state_id')->constrained('states'); 
             $table->foreignId('country_id')->constrained('countries'); 
             $table->integer('pincode')->nullable(); 
+            
+            $table->text('com_address1')->nullable(); //com = communication
+            $table->text('com_address2')->nullable(); 
+            $table->foreignId('com_city_id')->constrained('cities'); 
+            $table->foreignId('com_state_id')->constrained('states'); 
+            $table->foreignId('com_country_id')->constrained('countries'); 
+            $table->integer('com_pincode')->nullable(); 
+            
             $table->string('photo', 255)->nullable(); 
             $table->date('date_of_joining');
             $table->date('date_of_relieving')->nullable();

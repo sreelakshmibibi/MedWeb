@@ -9,7 +9,7 @@ $(".tab-wizard").steps({
         finish: '<span><i class="fa fa-save"></i> Save</span>',
     },
     onStepChanging: function (event, currentIndex) {
-        let role = $("select[name=role]").val();
+        let role = $("select[name='role[]']").val();
 
         if (currentIndex === 0 && (role === "3" || role.includes("3"))) {
             var doctorContent = $(".doctordiv").html();

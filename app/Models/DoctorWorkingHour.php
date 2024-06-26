@@ -10,7 +10,7 @@ class DoctorWorkingHour extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'week_day', 'from_time', 'to_time', 'status', 'created_by', 'updated_by'];
+    protected $fillable = ['user_id','clinic_branch_id', 'week_day', 'from_time', 'to_time', 'status', 'created_by', 'updated_by'];
 
     protected static function booted()
     {
