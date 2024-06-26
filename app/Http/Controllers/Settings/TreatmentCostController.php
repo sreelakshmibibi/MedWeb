@@ -6,19 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\TreatmentCostRequest;
 use App\Models\Treatment;
 use App\Models\TreatmentType;
-use App\Services\CommonService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables as DataTables;
 
 class TreatmentCostController extends Controller
 {
-    protected $commonService;
-
-    public function __construct(CommonService $commonService)
-    {
-        $this->commonService = $commonService;
-    }
-
     /**
      * Display a listing of the resource.
      */
@@ -43,10 +35,6 @@ class TreatmentCostController extends Controller
                 ->make(true);
         }
 
-        //return view('settings.treatment_cost.index');
-        $menuItems = $this->commonService->getMenuItems();
-
-        // Return the view with menu items
         return view('settings.treatment_cost.index');
     }
 

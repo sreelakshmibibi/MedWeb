@@ -5,19 +5,11 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\MedicineRequest;
 use App\Models\Medicine;
-use App\Services\CommonService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables as DataTables;
 
 class MedicineController extends Controller
 {
-    protected $commonService;
-
-    public function __construct(CommonService $commonService)
-    {
-        $this->commonService = $commonService;
-    }
-
     /**
      * Display a listing of the resource.
      */
@@ -42,10 +34,6 @@ class MedicineController extends Controller
                 ->make(true);
         }
 
-        //return view('settings.medicine.index');
-        $menuItems = $this->commonService->getMenuItems();
-
-        // Return the view with menu items
         return view('settings.medicine.index');
     }
 

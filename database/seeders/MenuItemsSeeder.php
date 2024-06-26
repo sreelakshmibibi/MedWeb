@@ -137,11 +137,16 @@ class MenuItemsSeeder extends Seeder
             ['name' => 'Staff Details', 'url' => '#', 'route_name' => '#', 'icon' => 'icon-Commit', 'order_no' => 2],
         ]);
 
+        $patientSubmenus = $patients->children()->createMany([
+            ['name' => 'Patient List', 'url' => '/patient_list', 'route_name' => 'patient.patient_list', 'icon' => 'icon-Commit', 'order_no' => 1],
+            ['name' => 'Patient Details', 'url' => '#', 'route_name' => '#', 'icon' => 'icon-Commit', 'order_no' => 2],
+        ]);
+
         // Attach roles to menu items
         $dashboard->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $nurse->id, $reception->id]);
         $appointments->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $nurse->id, $reception->id]);
         $staffs->roles()->attach([$superadmin->id, $admin->id, $doctor->id]);
-        $patients->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $nurse->id]);
+        $patients->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $nurse->id, $reception->id]);
         $settings->roles()->attach([$superadmin->id, $admin->id]);
         $reports->roles()->attach([$superadmin->id, $admin->id]);
         $billing->roles()->attach([$superadmin->id, $admin->id]);
@@ -152,6 +157,9 @@ class MenuItemsSeeder extends Seeder
         // Fetching the created submenus
         $staffList = $staffSubmenus->where('name', 'Staff List')->first();
         $staffDetails = $staffSubmenus->where('name', 'Staff Details')->first();
+        foreach ($patientSubmenus as $submenu) {
+            $submenu->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $nurse->id, $reception->id]);
+        }
 
         // Fetching roles
         $admin = Role::findByName('Admin');
