@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\DepartmentRequest;
 use App\Models\Department;
-use App\Services\CommonService;
+// use App\Services\CommonService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables as DataTables;
 
@@ -13,10 +13,10 @@ class DepartmentController extends Controller
 {
     protected $commonService;
 
-    public function __construct(CommonService $commonService)
-    {
-        $this->commonService = $commonService;
-    }
+    // public function __construct(CommonService $commonService)
+    // {
+    //     $this->commonService = $commonService;
+    // }
 
     /**
      * Display a listing of the resource.
@@ -43,10 +43,10 @@ class DepartmentController extends Controller
         }
 
         //return view('settings.department.index');
-        $menuItems = $this->commonService->getMenuItems();
+        // $menuItems = $this->commonService->getMenuItems();
 
         // Return the view with menu items
-        return view('settings.department.index', ['menuItems' => $menuItems]);
+        return view('settings.department.index');
     }
 
     /**

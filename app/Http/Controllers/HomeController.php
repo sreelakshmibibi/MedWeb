@@ -54,7 +54,7 @@ class HomeController extends Controller
         $menuItems = $this->commonService->getMenuItems();
 
         // Return the view with menu items
-        return view($dashboardView, ['menuItems' => $menuItems]);
+        return view($dashboardView);
 
     }
 }

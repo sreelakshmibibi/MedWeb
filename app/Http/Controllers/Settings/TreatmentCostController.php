@@ -47,7 +47,7 @@ class TreatmentCostController extends Controller
         $menuItems = $this->commonService->getMenuItems();
 
         // Return the view with menu items
-        return view('settings.treatment_cost.index', ['menuItems' => $menuItems]);
+        return view('settings.treatment_cost.index');
     }
 
     /**

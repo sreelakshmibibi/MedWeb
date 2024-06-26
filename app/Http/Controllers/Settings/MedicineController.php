@@ -46,7 +46,7 @@ class MedicineController extends Controller
         $menuItems = $this->commonService->getMenuItems();
 
         // Return the view with menu items
-        return view('settings.medicine.index', ['menuItems' => $menuItems]);
+        return view('settings.medicine.index');
     }
 
     /**

@@ -49,8 +49,12 @@
         <div id="loader"></div>
 
         @include('dashboard.header')
-
-        @include('dashboard.menu')
+        <?php
+            use App\Services\CommonService;
+            $commonService = new CommonService();
+            $menuItems = $commonService->getMenuItems();
+        ?>
+        @include('dashboard.menu', ['menuItems' => $menuItems])
 
         @yield('content')
 
