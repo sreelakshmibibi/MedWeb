@@ -461,11 +461,12 @@
 
     <script>
         $(document).ready(function() {
-            let count = 2;
+            let count = 1;
             // Event listener for Add Row button click
             $(document).on('click', '#buttonAddRow', function() {
+                count++;
                 let newRow = `<tr>
-                                <td>1</td>
+                                <td>${count}</td>
                                                     <td>
                                                         <select class="form-select" id="branch_id"
                                                             name="branch_id" required style="width:150px;">
