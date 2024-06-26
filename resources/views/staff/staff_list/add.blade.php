@@ -31,434 +31,16 @@
                             <!-- Step 1 -->
                             <h6 class="tabHeading">Personal Info</h6>
                             <section class="tabSection">
-                                <!--name and gender-->
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="firstname">First Name</label>
-                                            <input type="text" class="form-control" id="firstname" name="firstname"
-                                                placeholder="First Name" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="lastname">Last Name</label>
-                                            <input type="text" class="form-control" id="lastname" name="lastname"
-                                                placeholder="Last Name" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="gender">Gender</label>
-                                            <select class="form-select" id="gender" name="gender" required>
-                                                <option value="">Select Gender</option>
-                                                <option value="M">Male</option>
-                                                <option value="F">Female</option>
-                                                <option value="O">Others</option>
-                                            </select>
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--dob, email, mob-->
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="date_of_birth">Date of Birth</label>
-                                            <input type="date" class="form-control" id="date_of_birth"
-                                                name="date_of_birth" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="email">E-mail Address</label>
-                                            <input type="email" class="form-control" id="email" name="email"
-                                                placeholder="E-mail" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="phone">Contact
-                                                Number</label>
-                                            <input type="text" class="form-control" id="phone" name="phone"
-                                                placeholder="Phone Number" required>
-                                        </div>
-                                    </div>
-                                </div>
-                                <h5 class="box-title text-info mb-0 mt-2"><i class="fa fa-address-card me-15"></i>Permanent
-                                    Address
-                                </h5>
-                                <hr class="my-15">
-                                <!--address-->
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="address1">Address Line
-                                                1</label>
-                                            <input type="text" class="form-control" id="address1" name="address1"
-                                                placeholder="Adress line 1" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="address2">Address Line
-                                                2</label>
-                                            <input type="text" class="form-control" id="address2" name="address2"
-                                                placeholder="Adress line 2" required>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="country_id">Country</label>
-                                            <select class="select2" id="country_id" name="country_id" required
-                                                data-placeholder="Select a Country" style="width: 100%;">
-                                                @foreach ($countries as $country)
-                                                    <option value="{{ $country->id }}" <?php if ($country->id == 101) {
-                                                        echo 'selected';
-                                                    } ?>>
-                                                        {{ $country->country }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="state_id">State</label>
-                                            <select class="select2" id="state_id" name="state_id" required
-                                                data-placeholder="Select a State" style="width: 100%;">
-
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="city_id">City</label>
-                                            <select class="select2" required id="city_id" name="city_id"
-                                                data-placeholder="Select a City" style="width: 100%;">
-
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="pincode">Pin Code</label>
-                                            <input class="form-control" type="text" id="pincode" name="pincode"
-                                                required placeholder="XXX XXX">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="add_checkbox" class="filled-in chk-col-success"
-                                            checked />
-                                        <label for="add_checkbox">Is permanent address and contact address same?</label>
-                                    </div>
-                                </div>
-
-                                <h5 class="box-title text-info mb-0 mt-2 addressDiv" style="display: none;"><i
-                                        class="fa fa-address-card me-15"></i>Contact Address
-                                </h5>
-                                <hr class="my-15 addressDiv" style="display: none;">
-
-                                <div class="row addressDiv" style="display: none;">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="address1">Address Line
-                                                1</label>
-                                            <input type="text" class="form-control" id="address1" name="address1"
-                                                placeholder="Adress line 1" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="address2">Address Line
-                                                2</label>
-                                            <input type="text" class="form-control" id="address2" name="address2"
-                                                placeholder="Adress line 2" required>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="country_id">Country</label>
-                                            <select class="select2" id="country_id" name="country_id" required
-                                                data-placeholder="Select a Country" style="width: 100%;">
-                                                @foreach ($countries as $country)
-                                                    <option value="{{ $country->id }}" <?php if ($country->id == 101) {
-                                                        echo 'selected';
-                                                    } ?>>
-                                                        {{ $country->country }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <div class="row addressDiv" style="display: none;">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="state_id">State</label>
-                                            <select class="select2" id="state_id" name="state_id" required
-                                                data-placeholder="Select a State" style="width: 100%;">
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="city_id">City</label>
-                                            <select class="select2" required id="city_id" name="city_id"
-                                                data-placeholder="Select a City" style="width: 100%;">
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="pincode">Pin Code</label>
-                                            <input class="form-control" type="text" id="pincode" name="pincode"
-                                                required placeholder="XXX XXX">
-                                        </div>
-                                    </div>
-                                </div>
-                                {{-- <hr class="my-15 addressDiv" style="display: none;"> --}}
-
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="role">Role</label>
-                                            <select class="form-control select2 form-select" required id="role"
-                                                name="role[]" data-placeholder=" Select a Role" style="width: 100%;"
-                                                multiple>
-                                                @foreach ($userTypes as $userType)
-                                                    <option value="{{ $userType->id }}">{{ $userType->title }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="profile_photo">Photo</label>
-                                            <input class="form-control @error('profile_photo') is-invalid @enderror"
-                                                type="file" id="profile_photo" name="profile_photo"
-                                                placeholder="logo">
-                                            @error('profile_photo')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <canvas id="logoCanvas" style="height: 64px;"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
+                                @include('staff.staff_list.personal_info')
                             </section>
 
                             <!--Education-->
                             <h6 class="tabHeading">Experience</h6>
                             <section class="tabSection">
-                                <!--qualification-->
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="qualification">Qualification</label>
-                                            <input type="text" class="form-control" id="qualification"
-                                                name="qualification" placeholder="qualification" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="experience">Experience</label>
-                                            <input type="text" class="form-control" id="experience" name="experience"
-                                                placeholder="experience" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="department">Department</label>
-                                            <select class="form-select" id="department_id" name="department_id" required>
-                                                <option value="">Select department</option>
-                                                @foreach ($departments as $department)
-                                                    <option value="{{ $department->id }}" <?php if ($department->id == 101) {
-                                                        echo 'selected';
-                                                    } ?>>
-                                                        {{ $department->department }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="designation">Designation</label>
-                                            <input type="text" class="form-control" id="designation"
-                                                name="designation" placeholder="Designation" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="date_of_joining">Date of Joining</label>
-                                            <input class="form-control" type="date" id="date_of_joining"
-                                                name="date_of_joining" required>
-
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="date_of_relieving">Date of Relieving</label>
-                                            <input class="form-control" type="date" id="date_of_relieving"
-                                                name="date_of_relieving" disabled>
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!--for doctors-->
-                                <div class="row doctorFields" style="display: none;">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="specialization">Specialization</label>
-                                            <input type="text" class="form-control" id="specialization"
-                                                name="specialization" placeholder="Specialization" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="subspecial">Subspeciality</label>
-                                            <input type="text" class="form-control" id="subspecial" name="subspecial"
-                                                placeholder="Subspeciality" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label" for="license_number">Licence</label>
-                                            <input type="text" class="form-control" id="license_number"
-                                                name="license_number" placeholder="Council No." required>
-                                        </div>
-                                    </div>
-                                </div>
-
-
+                                @include('staff.staff_list.experience')
                             </section>
 
-                            <div class="doctordiv" style="display: none;">
-                                <section id="finalStepContent" class="tabHideSection">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <h5 class="box-title text-info mb-0 mt-2 "><i class="fa fa-clock me-15"></i>
-                                            Availability
-                                        </h5>
-                                        <button id="buttonAddRow" type="button"
-                                            class="waves-effect waves-light btn btn-sm btn-outline-primary">
-                                            <i class="fa fa-add"></i>
-                                            Add</button>
-                                    </div>
-                                    <hr class="my-15 ">
-
-                                    <div class="table-responsive">
-                                        <table id="myTable"
-                                            class="table table-bordered table-hover table-striped mb-0 text-center">
-
-                                            <thead>
-                                                <tr class="bg-primary-light">
-                                                    <th>No</th>
-                                                    <th>Branch</th>
-                                                    <th>Sunday</th>
-                                                    <th>Monday</th>
-                                                    <th>Tuesday</th>
-                                                    <th>Wednesday</th>
-                                                    <th>Thursday</th>
-                                                    <th>Friday</th>
-                                                    <th>Saturday</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="tablebody">
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>
-                                                        <select class="form-select" id="clinic_branch_id0" name="clinic_branch_id0"
-                                                            required style="width:150px;">
-                                                            <option value="">Select branch</option>
-                                                            @foreach ( $clinicBranches as $clinicBranch ) 
-
-                                                                <?php
-                                                                    $clinicAddress = $clinicBranch->clinic_address;
-                                                                    $clinicAddress = explode("<br>", $clinicBranch->clinic_address);
-                                                                    $clinicAddress = implode(", ", $clinicAddress);
-                                                                    $branch = $clinicAddress. ", ".
-                                                                    $clinicBranch->city->city. ", ". $clinicBranch->state->state;
-                                                                ?>
-                                                                <option value="{{ $clinicBranch->id}}"> {{ $branch}}</option>
-                                                                
-                                                            @endforeach
-                                                        </select>
-                                                    </td>
-                                                    <td>
-                                                        <input type="time" class="form-control timeInput"
-                                                            id="sunday_from0" title="from" name="sunday_from0"
-                                                            style="width:115px;">
-                                                        <input type="time" class="form-control" id="sunday_to0"
-                                                            title="to" name="sunday_to0" style="width:115px;">
-                                                    </td>
-                                                    <td>
-                                                        <input type="time" class="form-control" id="monday_from0"
-                                                            name="monday_from0" title="from" style="width:115px;">
-                                                        <input type="time" class="form-control" id="monday_to0"
-                                                            name="monday_to0" title="to" style="width:115px;">
-                                                    </td>
-                                                    <td>
-                                                        <input type="time" class="form-control" id="tuesday_from0"
-                                                            name="tuesday_from0" title="from" style="width:115px;">
-                                                        <input type="time" class="form-control" id="tuesday_to0"
-                                                            name="tuesday_to0" title="to" style="width:115px;">
-
-                                                    </td>
-                                                    <td>
-                                                        <input type="time" class="form-control" id="wednesday_from0"
-                                                            name="wednesday_from0" title="from" style="width:115px;">
-                                                        <input type="time" class="form-control" id="wednesday_to0"
-                                                            name="wednesday_to0" title="to" style="width:115px;">
-                                                    </td>
-                                                    <td>
-                                                        <input type="time" class="form-control" id="thursday_from0"
-                                                            name="thursday_from0" title="from" style="width:115px;">
-                                                        <input type="time" class="form-control" id="thursday_to0"
-                                                            name="thursday_to0" title="to" style="width:115px;">
-                                                    </td>
-                                                    <td>
-                                                        <input type="time" class="form-control" id="friday_from0"
-                                                            name="friday_from0" title="from" style="width:115px;">
-                                                        <input type="time" class="form-control" id="friday_to0"
-                                                            name="friday_to0" title="to" style="width:115px;">
-                                                    </td>
-                                                    <td>
-                                                        <input type="time" class="form-control" id="saturday_from0"
-                                                            name="saturday_from0" title="from" style="width:115px;">
-                                                        <input type="time" class="form-control" id="saturday_to0"
-                                                            name="saturday_to0" title="to" style="width:115px;">
-                                                    </td>
-                                                    <td>
-                                                        <button type="button" id="btnDelete" title="delete row"
-                                                            class="waves-effect waves-light btn btn-danger btn-sm"> <i
-                                                                class="fa fa-trash"></i></button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </section>
-                            </div>
+                            @include('staff.staff_list.availability')
 
                             <div id="storeRoute" data-url="{{ route('staff.staff_list.store') }}"></div>
                         </form>
@@ -478,19 +60,19 @@
                 let newRow = `<tr>
                                 <td>${count}</td>
                                                     <td>
-                                                        <select class="form-select" id="clinic_branch_id${count}"
-                                                            name="clinic_branch_id${count}" required style="width:150px;">
-                                                            <option value="">Select branch</option>
-                                                           <?php foreach ( $clinicBranches as $clinicBranch ) 
-                                                                    $clinicAddress = $clinicBranch->clinic_address;
-                                                                    $clinicAddress = explode("<br>", $clinicBranch->clinic_address);
-                                                                    $clinicAddress = implode(", ", $clinicAddress);
-                                                                    $branch = $clinicAddress. ", ".
-                                                                    $clinicBranch->city->city. ", ". $clinicBranch->state->state;
-                                                                ?>
-                                                                <option value="{{ $clinicBranch->id}}"> {{ $branch}}</option>
-                                                                
-                                                        </select>
+                                                        <select class="select2" id="clinic_branch_id${count}" name="clinic_branch_id${count}" required
+                                data-placeholder="Select a Branch" style="width: 100%;">
+                                @foreach ($clinicBranches as $clinicBranch)
+                                    <?php
+                                    $clinicAddress = $clinicBranch->clinic_address;
+                                    $clinicAddress = explode('<br>', $clinicBranch->clinic_address);
+                                    $clinicAddress = implode(', ', $clinicAddress);
+                                    $branch = $clinicAddress . ', ' . $clinicBranch->city->city . ', ' . $clinicBranch->state->state;
+                                    ?>
+                                    <option value="{{ $clinicBranch->id }}">
+                                        {{ $branch }}</option>
+                                @endforeach
+                            </select>
                                                     </td>
                                                     <td>
                                                         <input type="time" class="form-control" id="sunday_from${count}"
@@ -553,7 +135,7 @@
                 // Remove the row when Delete button is clicked
                 $(this).closest('tr').remove();
                 count--;
-                updateRowCount(); 
+                updateRowCount();
             });
 
             function updateRowCount() {
@@ -563,18 +145,18 @@
                     // Update hidden input value if you have one
                     // $(this).find('input[name="row_count[]"]').val(index + 1);
                 });
-                
+
                 // Update count variable to reflect the number of rows
                 count = $('#tablebody tr').length;
             }
 
-            $("#add_checkbox").change(function() {
-                if (!this.checked) {
-                    $('.addressDiv').show();
-                } else {
-                    $('.addressDiv').hide();
-                }
-            })
+            // $("#add_checkbox").change(function() {
+            //     if (!this.checked) {
+            //         $('.addressDiv').show();
+            //     } else {
+            //         $('.addressDiv').hide();
+            //     }
+            // })
 
             $(".tab-wizard .actions ul li:last-child a").addClass("bg-success btn btn-success");
 
@@ -582,14 +164,12 @@
                 // if (this.value === '3') {
                 if (this.value && this.value.includes('3')) {
                     $('.doctorFields').show();
-
+                    $('.otherFields').hide();
                 } else {
                     $('.doctorFields').hide();
-
+                    $('.otherFields').show();
                 }
             });
-
-
 
             var initialCountryId = $('#country_id').val(); // Assuming India is selected initially
             loadStates(initialCountryId);
@@ -610,7 +190,7 @@
             function loadStates(countryId) {
                 if (countryId) {
                     $.ajax({
-                        url: '{{ route("get.states", "") }}' + '/' + countryId,
+                        url: '{{ route('get.states', '') }}' + '/' + countryId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -633,7 +213,7 @@
             function loadCities(stateId) {
                 if (stateId) {
                     $.ajax({
-                        url: '{{ route("get.cities", "") }}' + '/' + stateId,
+                        url: '{{ route('get.cities', '') }}' + '/' + stateId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -697,6 +277,36 @@
                     $('.error-message').text('Please fill all weekday times');
                 } else {
                     $('.error-message').text(''); // Clear error message if validation passes
+                }
+            });
+
+            // Event listener for dropdown item click
+            $(".dropdown-menu .dropdown-item").click(function() {
+                // Get the selected salutation text
+                let salutation = $(this).text().trim();
+
+                // Update the button text with the selected salutation
+                $(".input-group .dropdown-toggle").text(salutation);
+            });
+
+            $("#add_checkbox").change(function() {
+                // Check if checkbox is checked
+                if ($(this).is(":checked")) {
+                    // Copy value from address1 to caddress1
+                    $("#caddress1").val($("#address1").val());
+                    $("#caddress2").val($("#address2").val());
+                    $("#ccity_id").val($("#city_id").val());
+                    $("#cstate_id").val($("#state_id").val());
+                    $("#ccountry_id").val($("country_id").val());
+                    $("#cpincode").val($("#pincode").val());
+                } else {
+                    // Clear caddress1 if checkbox is unchecked
+                    $("#caddress1").val("");
+                    $("#caddress2").val("");
+                    $("#ccity_id").val("");
+                    $("#cstate_id").val("");
+                    $("#ccountry_id").val("");
+                    $("#cpincode").val("");
                 }
             });
 

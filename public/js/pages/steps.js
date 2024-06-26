@@ -1,9 +1,9 @@
+let availabilityStepAdded = false;
+
 $(".tab-wizard").steps({
-    // ignore: "input[type=hidden]",
-    // headerTag: "h6",
     headerTag: "h6.tabHeading",
     bodyTag: "section.tabSection",
-    transitionEffect: "slideLeft",
+    transitionEffect: "none",
     titleTemplate: "#title#",
     labels: {
         finish: '<span><i class="fa fa-save"></i> Save</span>',
@@ -13,15 +13,34 @@ $(".tab-wizard").steps({
 
         if (currentIndex === 0 && (role === "3" || role.includes("3"))) {
             var doctorContent = $(".doctordiv").html();
-            // Add a new step dynamically as the final step
-            $(".tab-wizard").steps("add", {
-                title: "Availability", // Title of the new step
-                // content: "Content for the doctor step", // Content or HTML for the new step
-                content: doctorContent,
-                enableCancelButton: false, // Optional: Disable cancel button for this step
-                enableFinishButton: true, // Optional: Enable finish button for this step
-            });
+            // Add the Availability step if it hasn't been added
+            if (!availabilityStepAdded) {
+                // Add a new step dynamically as the final step
+                $(".tab-wizard").steps("add", {
+                    title: "Availability", // Title of the new step
+                    content: doctorContent,
+                    enableCancelButton: false, // Optional: Disable cancel button for this step
+                    enableFinishButton: true, // Optional: Enable finish button for this step
+                });
+                availabilityStepAdded = true; // Update the flag
+            }
         }
+
+        if (availabilityStepAdded && !(role === "3" || role.includes("3"))) {
+            $(".wizard-content .wizard > .steps > ul > li.last").attr(
+                "style",
+                "display:none;"
+            );
+            $(".tab-wizard").steps("remove", "Availability");
+            availabilityStepAdded = false; // Reset the flag
+
+            // Remove the tab title and its content from DOM
+            $(".tab-wizard > .content > .body")
+                .find(".content > .body")
+                .remove();
+            $(".tab-wizard > .content").find(".content").last().remove();
+        }
+
         return true;
     },
     onFinished: function (event, currentIndex) {
