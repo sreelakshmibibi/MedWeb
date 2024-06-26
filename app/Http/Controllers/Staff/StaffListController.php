@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Staff\StaffListRequest;
 use App\Http\Requests\Staff\StaffProfileRequest;
 use App\Models\City;
+use App\Models\ClinicBranch;
 use App\Models\Country;
 use App\Models\Department;
 use App\Models\DoctorWorkingHour;
@@ -66,8 +67,8 @@ class StaffListController extends Controller
         $states = State::all();
         $cities = City::all();
         $departments = Department::where('status', 'Y')->get();
-
-        return view('staff.staff_list.index', compact('countries', 'states', 'cities', 'departments'));
+        $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
+        return view('staff.staff_list.index', compact('countries', 'states', 'cities', 'departments', 'clinicBranches'));
     }
 
     /**
@@ -80,7 +81,8 @@ class StaffListController extends Controller
         $cities = City::all();
         $userTypes = UserType::where('status', 'Y')->get();
         $departments = Department::where('status', 'Y')->get();
-        return view('staff.staff_list.add', compact('countries', 'states', 'cities', 'userTypes', 'departments'));
+        $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
+        return view('staff.staff_list.add', compact('countries', 'states', 'cities', 'userTypes', 'departments', 'clinicBranches'));
         
     }
 
@@ -89,6 +91,10 @@ class StaffListController extends Controller
      */
     public function store(Request $request)
     {
+        echo "<pre>";
+        print_r($request->all());
+         echo "</pre>";
+        exit;
         try {
             DB::beginTransaction();
 
@@ -124,9 +130,11 @@ class StaffListController extends Controller
             $staffProfile = new StaffProfile();
             $staffProfile->user_id = $user->id;
             $staffProfile->staff_id = "MEDWEB" . $user->id;
-            $staffProfile->fill($request->only([
+            $staffProfile->clinic_branch_id = $request->clinic_branch_id;
+            $staffProfile->fill($request->only(['title','aadhaar_no',
                 'date_of_birth', 'phone', 'gender', 'address1', 'address2', 'city_id', 'state_id',
-                'country_id', 'pincode', 'date_of_joining', 'qualification', 'department_id',
+                'country_id', 'pincode', 'com_address1', 'com_address2', 'com_city_id', 'com_state_id',
+                'com_country_id', 'com_pincode', 'date_of_joining', 'qualification', 'department_id',
                 'specialization', 'years_of_experience', 'license_number', 'subspecialty'
             ]));
             
@@ -145,6 +153,8 @@ class StaffListController extends Controller
             }
 
             DB::commit();
+            
+            //Assign role to the user(you can implement this part)
 
             // Send welcome email (you can implement this part)
 
@@ -165,21 +175,26 @@ exit;
             WeekDay::MONDAY, WeekDay::TUESDAY, WeekDay::WEDNESDAY, WeekDay::THURSDAY,
             WeekDay::FRIDAY, WeekDay::SATURDAY, WeekDay::SUNDAY
         ];
-
-        foreach ($weekDays as $day) {
-            $fromKey = strtolower($day) . '_from';
-            $toKey = strtolower($day) . '_to';
-
-            if ($request->$fromKey !== null) {
-                $availability = new DoctorWorkingHour();
-                $availability->user_id = $userId;
-                $availability->week_day = $day;
-                $availability->from_time = $request->$fromKey;
-                $availability->to_time = $request->$toKey;
-                $availability->status = 'Y';
-                $availability->save();
+        $count = $request->row_count;
+        for ($i = 0; $i <= $count; $i++) {
+            foreach ($weekDays as $day) {
+                $fromKey = strtolower($day) . '_from'.$count;
+                $toKey = strtolower($day) . '_to'.$count;
+                $clinic_branch_id = strtolower($day).'_clinic_branch_id'.$count;
+    
+                if ($request->$fromKey !== null) {
+                    $availability = new DoctorWorkingHour();
+                    $availability->user_id = $userId;
+                    $availability->week_day = $day;
+                    $availability->clinic_branch_id = $clinic_branch_id;
+                    $availability->from_time = $request->$fromKey;
+                    $availability->to_time = $request->$toKey;
+                    $availability->status = 'Y';
+                    $availability->save();
+                }
             }
         }
+        
     }
 
 

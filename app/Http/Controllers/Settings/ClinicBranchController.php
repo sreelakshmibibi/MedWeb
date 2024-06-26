@@ -125,12 +125,16 @@ class ClinicBranchController extends Controller
     {
        
         try {
+            $clinic_address = $request->input('clinic_address1') ;
+            if ($request->input('clinic_address2')) {
+                $clinic_address .= "<br>" . $request->input('clinic_address2');
+            }
             $clinic = new ClinicBranch();
             $clinic->clinic_email = $request->input('clinic_email');
             $clinic->clinic_phone = $request->input('clinic_phone');
             $clinic->is_main_branch = $request->input('branch_active');
             $clinic->is_medicine_provided = $request->input('is_medicine_provided');
-            $clinic->clinic_address = $request->input('clinic_address1') . "<br>" . $request->input('clinic_address2');
+            $clinic->clinic_address = $clinic_address;
             $clinic->country_id = $request->input('clinic_country');
             $clinic->state_id = $request->input('clinic_state');
             $clinic->city_id = $request->input('clinic_city');
