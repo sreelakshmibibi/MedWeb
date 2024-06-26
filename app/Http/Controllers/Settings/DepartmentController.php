@@ -5,15 +5,19 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\DepartmentRequest;
 use App\Models\Department;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
+use App\Services\CommonService;
 use Illuminate\Http\Request;
-
-
 use Yajra\DataTables\DataTables as DataTables;
 
 class DepartmentController extends Controller
 {
+    protected $commonService;
+
+    public function __construct(CommonService $commonService)
+    {
+        $this->commonService = $commonService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -22,6 +26,7 @@ class DepartmentController extends Controller
         if ($request->ajax()) {
 
             $departments = Department::orderBy('department', 'asc')->get();
+
             return DataTables::of($departments)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
@@ -37,7 +42,11 @@ class DepartmentController extends Controller
                 ->make(true);
         }
 
-        return view('settings.department.index');
+        //return view('settings.department.index');
+        $menuItems = $this->commonService->getMenuItems();
+
+        // Return the view with menu items
+        return view('settings.department.index', ['menuItems' => $menuItems]);
     }
 
     /**
@@ -57,19 +66,19 @@ class DepartmentController extends Controller
             // Create a new department instance
             $department = new Department();
             $department->department = $request->input('department');
-            $department->status =  $request->input('status');
+            $department->status = $request->input('status');
             $department->clinic_type_id = 1;
 
             // Save the department
             $i = $department->save();
             if ($i) {
-                return redirect()->back()->with('success', 'Department created successfully');    
-            } 
+                return redirect()->back()->with('success', 'Department created successfully');
+            }
         } catch (\Exception $e) {
             print_r($e->getMessage());
             exit;
 
-            return redirect()->back()->with('error', 'Failed to create department: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to create department: '.$e->getMessage());
         }
 
     }
@@ -88,11 +97,12 @@ class DepartmentController extends Controller
     public function edit(string $id)
     {
         $department = Department::find($id);
-        if (!$department) {
+        if (! $department) {
             abort(404);
         }
+
         return $department;
-    } 
+    }
 
     /**
      * Update the specified resource in storage.
@@ -101,11 +111,11 @@ class DepartmentController extends Controller
     {
         try {
             $department = Department::findOrFail($request->edit_department_id);
-            
+
             // Update department fields based on form data
             $department->department = $request->department;
             $department->status = $request->status;
-            
+
             // Save the updated department
             $department->save();
 

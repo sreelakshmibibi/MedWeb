@@ -7,7 +7,7 @@
     </label>
 
     <!-- Sample menu definition -->
-    <ul id="main-menu" class="sm sm-blue">
+    {{-- <ul id="main-menu" class="sm sm-blue">
         <li><a href="{{ route('home') }}"><i class="icon-Layout-4-blocks"><span class="path1"></span><span
                         class="path2"></span></i>Dashboard</a>
         </li>
@@ -62,5 +62,37 @@
                                 class="path2"></span></i>Combo Offers</a></li>
             </ul>
         </li>
+    </ul> --}}
+    <ul id="main-menu" class="sm sm-blue">
+        @foreach ($menuItems as $item)
+            @if (auth()->user()->hasAnyRole($item->roles->pluck('name')->toArray()))
+                <li>
+                    <a href="{{ $item->route_name != '#' ? route($item->route_name) : '#' }}">
+                        <i class="{{ $item->icon }}">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                        {{ $item->name }}
+                    </a>
+                    @if ($item->children->count())
+                        <ul>
+                            @foreach ($item->children as $child)
+                                @if (auth()->user()->hasAnyRole($child->roles->pluck('name')->toArray()))
+                                    <li>
+                                        <a href="{{ $child->route_name != '#' ? route($child->route_name) : '#' }}">
+                                            <i class="{{ $child->icon }}">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                            </i>
+                                            {{ $child->name }}
+                                        </a>
+                                    </li>
+                                @endif
+                            @endforeach
+                        </ul>
+                    @endif
+                </li>
+            @endif
+        @endforeach
     </ul>
 </nav>

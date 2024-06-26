@@ -7,15 +7,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, SoftDeletes;
-
-    const IS_ADMIN = 2;
-    const IS_DOCTOR = 3;
-    const IS_NURSE = 4;
-    const IS_RECEPTION = 5;
+    use HasFactory, Notifiable;
+    use HasRoles;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -31,7 +29,7 @@ class User extends Authenticatable
         'is_nurse',
         'is_reception',
         'created_by',
-        'updated_by'
+        'updated_by',
     ];
 
     protected static function booted()
@@ -47,7 +45,7 @@ class User extends Authenticatable
             $user->updated_by = Auth::id(); // Set updated_by to current user's ID
         });
     }
-    
+
     protected $dates = ['deleted_at'];
 
     /**

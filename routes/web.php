@@ -1,12 +1,12 @@
 <?php
 
 use App\Http\Controllers\HelperController;
-use App\Http\Controllers\Settings\ClinicBranchController;
-use App\Http\Controllers\Settings\DepartmentController;
-use App\Http\Controllers\Settings\TreatmentCostController;
-use App\Http\Controllers\Settings\MedicineController;
 use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
+use App\Http\Controllers\Settings\ClinicBranchController;
+use App\Http\Controllers\Settings\DepartmentController;
+use App\Http\Controllers\Settings\MedicineController;
+use App\Http\Controllers\Settings\TreatmentCostController;
 use App\Http\Controllers\Staff\StaffListController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -33,13 +33,13 @@ Route::get('/clinic/{clinic}/edit', [ClinicBranchController::class, 'edit'])->na
 Route::post('/clinic/update', [ClinicBranchController::class, 'update'])->name('settings.clinic.update');
 Route::post('/clinic/{clinic}/{status}', [ClinicBranchController::class, 'statusChange'])->name('settings.clinic.destroy');
 
-
-Route::get('/department', [DepartmentController::class, 'index'])->name('settings.department');
-Route::post('/department/store', [DepartmentController::class, 'store'])->name('settings.department.store');
-Route::get('/department/{department}/edit', [DepartmentController::class, 'edit'])->name('settings.department.edit');
-Route::post('/department/update', [DepartmentController::class, 'update'])->name('settings.department.update');
-Route::delete('/department/{department}', [DepartmentController::class, 'destroy'])->name('settings.departments.destroy');
-
+Route::group(['middleware' => ['permission:departments']], function () {
+    Route::get('/department', [DepartmentController::class, 'index'])->name('settings.department');
+    Route::post('/department/store', [DepartmentController::class, 'store'])->name('settings.department.store');
+    Route::get('/department/{department}/edit', [DepartmentController::class, 'edit'])->name('settings.department.edit');
+    Route::post('/department/update', [DepartmentController::class, 'update'])->name('settings.department.update');
+    Route::delete('/department/{department}', [DepartmentController::class, 'destroy'])->name('settings.departments.destroy');
+});
 Route::get('/treatment_cost', [TreatmentCostController::class, 'index'])->name('settings.treatment_cost');
 Route::post('/treatment_cost/store', [TreatmentCostController::class, 'store'])->name('settings.treatment_cost.store');
 Route::get('/treatment_cost/{department}/edit', [TreatmentCostController::class, 'edit'])->name('settings.treatment_cost.edit');
@@ -66,11 +66,11 @@ Route::delete('/today/{today}', [TodayController::class, 'destroy'])->name('pati
 
 Route::get('/totalpatients', [TodayController::class, 'getTotal'])->name('totalpatients');
 
-
-
 Route::get('/staff_list', [StaffListController::class, 'index'])->name('staff.staff_list');
 Route::get('/staff_list/add', [StaffListController::class, 'create'])->name('staff.staff_list.create');
 Route::post('/staff_list/store', [StaffListController::class, 'store'])->name('staff.staff_list.store');
 Route::get('/staff_list/{staff_list}/edit', [StaffListController::class, 'edit'])->name('staff.staff_list.edit');
 Route::post('/staff_list/update', [StaffListController::class, 'update'])->name('staff.staff_list.update');
 Route::delete('/staff_list/{staff_list}', [StaffListController::class, 'destroy'])->name('staff.staff_list.destroy');
+
+Route::get('/staff_list/add', [StaffListController::class, 'add'])->name('staff.staff_list.add');

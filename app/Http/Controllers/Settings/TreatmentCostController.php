@@ -2,16 +2,23 @@
 
 namespace App\Http\Controllers\Settings;
 
-use App\Models\Treatment;
-use App\Models\TreatmentType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\TreatmentCostRequest;
+use App\Models\Treatment;
+use App\Models\TreatmentType;
+use App\Services\CommonService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables as DataTables;
 
-
 class TreatmentCostController extends Controller
 {
+    protected $commonService;
+
+    public function __construct(CommonService $commonService)
+    {
+        $this->commonService = $commonService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -20,6 +27,7 @@ class TreatmentCostController extends Controller
         if ($request->ajax()) {
 
             $treatments = TreatmentType::orderBy('treat_name', 'asc')->get();
+
             return DataTables::of($treatments)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
@@ -35,7 +43,11 @@ class TreatmentCostController extends Controller
                 ->make(true);
         }
 
-        return view('settings.treatment_cost.index');
+        //return view('settings.treatment_cost.index');
+        $menuItems = $this->commonService->getMenuItems();
+
+        // Return the view with menu items
+        return view('settings.treatment_cost.index', ['menuItems' => $menuItems]);
     }
 
     /**
@@ -59,13 +71,13 @@ class TreatmentCostController extends Controller
             $treatment->status = $request->input('status');
 
             // Save the treatment
-            $i =  $treatment->save(); 
+            $i = $treatment->save();
             if ($i) {
-                return redirect()->back()->with('success', 'Treatment cost created successfully');   
-            } 
+                return redirect()->back()->with('success', 'Treatment cost created successfully');
+            }
 
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to create treatment cost : ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to create treatment cost : '.$e->getMessage());
         }
     }
 
@@ -80,15 +92,15 @@ class TreatmentCostController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-   public function edit(string $id)
-    
-   {
+    public function edit(string $id)
+    {
         $treatment = TreatmentType::find($id);
-        if (!$treatment) {
+        if (! $treatment) {
             abort(404);
         }
+
         return $treatment;
-    } 
+    }
 
     /**
      * Update the specified resource in storage.
@@ -97,12 +109,12 @@ class TreatmentCostController extends Controller
     {
         try {
             $treatment = TreatmentType::findOrFail($request->edit_treatment_cost_id);
-            
+
             // Update treatment cost fields based on form data
             $treatment->treat_name = $request->treat_name;
             $treatment->treat_cost = $request->treat_cost;
             $treatment->status = $request->status;
-            
+
             // Save the updated treatment cost
             $treatment->save();
 
@@ -113,7 +125,7 @@ class TreatmentCostController extends Controller
 
             // Redirect back with success message for non-AJAX request
             return redirect()->back()->with('success', 'Treatment cost updated successfully.');
-            
+
         } catch (\Exception $e) {
             // Handle any unexpected errors
             // Return JSON response for AJAX request
