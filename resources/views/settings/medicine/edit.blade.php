@@ -1,8 +1,8 @@
 <form id="editMedicineForm" method="post" action="{{ route('settings.medicine.update', ['medicine' => ':id']) }}">
     @csrf
     <input type="hidden" id="edit_medicine_id" name="edit_medicine_id" value="">
-    <div class="modal modal-right slideInRight" id="modal-edit" tabindex="-1">
-        <div class="modal-dialog" style="width:40%; max-width: 80%;">
+    <div class="modal fade modal-right slideInRight" id="modal-edit" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fa fa-briefcase"> </i> Edit Medicine Details</h5>
@@ -14,24 +14,27 @@
 
                         <div class="form-group">
                             <label class="form-label" for="name">Medicine Name</label>
-                            <input class="form-control" type="text" id="edit_med_name" name="med_name" placeholder="Medicine Name">
+                            <input class="form-control" type="text" id="edit_med_name" name="med_name"
+                                placeholder="Medicine Name">
                             <div id="editMedNameError" class="invalid-feedback"></div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-8">
                                 <label class="form-label" for="med_bar_code">Barcode</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="edit_med_bar_code" name="med_bar_code" placeholder="Enter text..." readonly >
+                                    <input type="text" class="form-control" id="edit_med_bar_code"
+                                        name="med_bar_code" placeholder="Enter text..." readonly>
                                     <div id="medBarcodeError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
-                        
+
 
                         <div class="form-group">
                             <label class="form-label" for="med_company">Company Name</label>
-                            <input class="form-control" type="text" id="edit_med_company" name="med_company"  placeholder="Medicine Company Name">
+                            <input class="form-control" type="text" id="edit_med_company" name="med_company"
+                                placeholder="Medicine Company Name">
                             <div id="editMedCompanyError" class="invalid-feedback"></div>
                         </div>
 
@@ -39,7 +42,8 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="med_price">Price</label>
-                                    <input class="form-control" type="text" id="edit_med_price" name="med_price"  placeholder="Medicine Price">
+                                    <input class="form-control" type="text" id="edit_med_price" name="med_price"
+                                        placeholder="Medicine Price">
                                     <div id="editMedPriceError" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -56,14 +60,17 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="edit_units_per_package">Units per Package</label>
-                                    <input class="form-control" type="text" id="edit_units_per_package" name="units_per_package"  placeholder="Number of units per package.">
+                                    <input class="form-control" type="text" id="edit_units_per_package"
+                                        name="units_per_package" placeholder="Number of units per package.">
                                     <div id="editMedUnitPerPackError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="edit_package_count">Package Count</label>
-                                    <input class="form-control" type="text" id="edit_package_count" name="package_count"  placeholder="Total number of packages" onblur="generateTotalQuantity()">
+                                    <input class="form-control" type="text" id="edit_package_count"
+                                        name="package_count" placeholder="Total number of packages"
+                                        onblur="generateTotalQuantity()">
                                     <div id="editmedPackageCountErrorError" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -73,7 +80,9 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="edit_total_quantity">Total Quantity</label>
-                                    <input class="form-control" type="text" id="edit_total_quantity" name="total_quantity"  placeholder=" Total number of units available across all packages" readonly>
+                                    <input class="form-control" type="text" id="edit_total_quantity"
+                                        name="total_quantity"
+                                        placeholder=" Total number of units available across all packages" readonly>
                                     <div id="editMedQuantityError" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -92,7 +101,8 @@
 
                         <div class="form-group">
                             <label class="form-label" for="med_remarks">Remarks</label>
-                            <input class="form-control" type="text" id="edit_med_remarks" name="med_remarks" placeholder="Medicine Remarks">
+                            <input class="form-control" type="text" id="edit_med_remarks" name="med_remarks"
+                                placeholder="Medicine Remarks">
                             <div id="editMedRemarkError" class="invalid-feedback"></div>
                         </div>
 
@@ -137,7 +147,7 @@
 
         // Handle Update button click
         $('#updateMedicineBtn').click(function() {
-           // Reset previous error messages
+            // Reset previous error messages
             $('#editMedNameError').text('');
             $('#editMedBarcodeError').text('');
             $('#editMedCompanyError').text('');
@@ -194,11 +204,11 @@
                 $('#edit_med_price').addClass('is-invalid');
                 $('#editMedPriceError').text('Medicine price is required.');
                 return; // Prevent further execution
-            }else if (!$.isNumeric(medPrice)) {
+            } else if (!$.isNumeric(medPrice)) {
                 $('#edit_med_price').addClass('is-invalid');
                 $('#editMedPriceError').text('Medicine price must be a number.');
                 return; // Prevent further execution
-            }else {
+            } else {
                 $('#edit_med_price').removeClass('is-invalid');
                 $('#editMedPriceError').text('');
             }
@@ -214,11 +224,11 @@
                 $('#edit_units_per_package').addClass('is-invalid');
                 $('#editMedUnitPerPackError').text('The units per package are required.');
                 return; // Prevent further execution
-            }else if (!$.isNumeric(medUnittPerPack)) {
+            } else if (!$.isNumeric(medUnittPerPack)) {
                 $('#edit_units_per_package').addClass('is-invalid');
                 $('#medUnitPerPackError').text('The units per package must be an integer.');
                 return; // Prevent further execution
-            }else {
+            } else {
                 $('#edit_units_per_package').removeClass('is-invalid');
                 $('#editMedUnitPerPackError').text('');
             }
@@ -226,11 +236,11 @@
                 $('#edit_package_count').addClass('is-invalid');
                 $('#editMedPackageCountError').text('The package count is required.');
                 return; // Prevent further execution
-            }else if (!$.isNumeric(packageCount)) {
+            } else if (!$.isNumeric(packageCount)) {
                 $('#edit_package_count').addClass('is-invalid');
                 $('#editMedPackageCountError').text('The package count must be an integer.');
                 return; // Prevent further execution
-            }else {
+            } else {
                 $('#edit_package_count').removeClass('is-invalid');
                 $('#editMedPackageCountError').text('');
             }
@@ -238,11 +248,11 @@
                 $('#edit_total_quantity').addClass('is-invalid');
                 $('#editMedQuantityError').text('The total quantity is required.');
                 return; // Prevent further execution
-            }else if (!$.isNumeric(medQuantity)) {
+            } else if (!$.isNumeric(medQuantity)) {
                 $('#edit_total_quantity').addClass('is-invalid');
                 $('#editMedQuantityError').text('The total quantity must be an integer.');
                 return; // Prevent further execution
-            }else {
+            } else {
                 $('#edit_total_quantity').removeClass('is-invalid');
                 $('#editMedQuantityError').text('');
             }
@@ -282,7 +292,8 @@
                     // If successful, hide modal and show success message
                     $('#modal-edit').modal('hide');
                     $('#successMessage').text('Medicine updated successfully');
-                    $('#successMessage').fadeIn().delay(3000).fadeOut(); // Show for 3 seconds
+                    $('#successMessage').fadeIn().delay(3000)
+                .fadeOut(); // Show for 3 seconds
                     // table.draw(); // Refresh DataTable
                     location.reload();
                 },
@@ -353,7 +364,7 @@
             $('#edit_total_quantity').removeClass('is-invalid');
             $('#edit_package_type').removeClass('is-invalid');
             $('#edit_med_remarks').removeClass('is-invalid');
-            
+
             $('#edit_med_name').next('.invalid-feedback').text('');
             $('#edit_med_bar_code').next('.invalid-feedback').text('');
             $('#edit_med_company').next('.invalid-feedback').text('');
@@ -387,7 +398,7 @@
 
             // Fetch medicine details via AJAX
             $.ajax({
-                url: '{{ url("medicine", "") }}' + "/" + medicineId + "/edit",
+                url: '{{ url('medicine', '') }}' + "/" + medicineId + "/edit",
                 method: 'GET',
                 success: function(response) {
                     // Populate form fields
@@ -409,7 +420,7 @@
                     } else {
                         $('#med_edit_no').prop('checked', true);
                     }
-                    
+
                     if (response.stock_status === 'In Stock') {
                         $('#edit_in').prop('checked', true);
                     } else {
@@ -422,24 +433,25 @@
             });
         });
     });
+
     function generateTotalQuantity() {
-            var medUnittPerPack = $('#edit_units_per_package').val();
-            var packageCount = $('#edit_package_count').val();
-            if (medUnittPerPack.length === 0) {
-                alert('The units per package are required.');
-                return; // Prevent further execution
-            }else if (!$.isNumeric(medUnittPerPack)) {
-                alert('The units per package must be an integer.');
-                return; // Prevent further execution
-            }else if (packageCount.length === 0) {
-                alert('The package count is required.');
-                return; // Prevent further execution
-            }else if (!$.isNumeric(packageCount)) {
-                alert('The package count must be an integer.');
-                return; // Prevent further execution
-            }else {
-                var total = medUnittPerPack * packageCount;
-                $('#edit_total_quantity').val(total);
-            }
+        var medUnittPerPack = $('#edit_units_per_package').val();
+        var packageCount = $('#edit_package_count').val();
+        if (medUnittPerPack.length === 0) {
+            alert('The units per package are required.');
+            return; // Prevent further execution
+        } else if (!$.isNumeric(medUnittPerPack)) {
+            alert('The units per package must be an integer.');
+            return; // Prevent further execution
+        } else if (packageCount.length === 0) {
+            alert('The package count is required.');
+            return; // Prevent further execution
+        } else if (!$.isNumeric(packageCount)) {
+            alert('The package count must be an integer.');
+            return; // Prevent further execution
+        } else {
+            var total = medUnittPerPack * packageCount;
+            $('#edit_total_quantity').val(total);
         }
+    }
 </script>
