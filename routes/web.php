@@ -73,4 +73,3 @@ Route::get('/staff_list/{staff_list}/edit', [StaffListController::class, 'edit']
 Route::post('/staff_list/update', [StaffListController::class, 'update'])->name('staff.staff_list.update');
 Route::delete('/staff_list/{staff_list}', [StaffListController::class, 'destroy'])->name('staff.staff_list.destroy');
 
-Route::get('/staff_list/add', [StaffListController::class, 'add'])->name('staff.staff_list.add');

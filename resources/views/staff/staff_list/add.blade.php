@@ -393,6 +393,7 @@
                                                             @foreach ( $clinicBranches as $clinicBranch ) 
 
                                                                 <?php
+                                                                    $clinicAddress = $clinicBranch->clinic_address;
                                                                     $clinicAddress = explode("<br>", $clinicBranch->clinic_address);
                                                                     $clinicAddress = implode(", ", $clinicAddress);
                                                                     $branch = $clinicAddress. ", ".
@@ -481,8 +482,7 @@
                                                             name="clinic_branch_id${count}" required style="width:150px;">
                                                             <option value="">Select branch</option>
                                                            <?php foreach ( $clinicBranches as $clinicBranch ) 
-
-                                                                
+                                                                    $clinicAddress = $clinicBranch->clinic_address;
                                                                     $clinicAddress = explode("<br>", $clinicBranch->clinic_address);
                                                                     $clinicAddress = implode(", ", $clinicAddress);
                                                                     $branch = $clinicAddress. ", ".

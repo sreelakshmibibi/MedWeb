@@ -75,9 +75,6 @@ class DepartmentController extends Controller
                 return redirect()->back()->with('success', 'Department created successfully');
             }
         } catch (\Exception $e) {
-            print_r($e->getMessage());
-            exit;
-
             return redirect()->back()->with('error', 'Failed to create department: '.$e->getMessage());
         }
 
