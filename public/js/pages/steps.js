@@ -1,43 +1,55 @@
-
 $(".tab-wizard").steps({
-    headerTag: "h6",
-    bodyTag: "section",
+    // ignore: "input[type=hidden]",
+    // headerTag: "h6",
+    headerTag: "h6.tabHeading",
+    bodyTag: "section.tabSection",
     transitionEffect: "slideLeft",
     titleTemplate: "#title#",
     labels: {
         finish: '<span><i class="fa fa-save"></i> Save</span>',
     },
+    onStepChanging: function (event, currentIndex) {
+        let role = $("select[name=role]").val();
+
+        if (currentIndex === 0 && (role === "3" || role.includes("3"))) {
+            var doctorContent = $(".doctordiv").html();
+            // Add a new step dynamically as the final step
+            $(".tab-wizard").steps("add", {
+                title: "Availability", // Title of the new step
+                // content: "Content for the doctor step", // Content or HTML for the new step
+                content: doctorContent,
+                enableCancelButton: false, // Optional: Disable cancel button for this step
+                enableFinishButton: true, // Optional: Enable finish button for this step
+            });
+        }
+        return true;
+    },
     onFinished: function (event, currentIndex) {
-        var formDataStaff = $('.tab-wizard').serialize(); // Correct serialization of form data
-        var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-        var storeRoute = $('#storeRoute').data('url');
+        var formDataStaff = $(".tab-wizard").serialize(); // Correct serialization of form data
+        var CSRF_TOKEN = $('meta[name="csrf-token"]').attr("content");
+        var storeRoute = $("#storeRoute").data("url");
 
         console.log(formDataStaff);
         $.ajax({
             url: storeRoute,
-            type: 'POST',
-            data: formDataStaff, 
-            dataType: 'json',
+            type: "POST",
+            data: formDataStaff,
+            dataType: "json",
             headers: {
-                'X-CSRF-TOKEN': CSRF_TOKEN // Pass CSRF token via headers
+                "X-CSRF-TOKEN": CSRF_TOKEN, // Pass CSRF token via headers
             },
-            success: function(response) {
+            success: function (response) {
                 // If successful, hide modal and show success message
-                $('#modal-right').modal('hide');
-                $('#successMessage').text('Clinic created successfully');
-                $('#successMessage').fadeIn().delay(3000)
-                    .fadeOut(); // Show for 3 seconds
-                location
-                    .reload(); // Optionally, you can reload or update the table here
+                $("#modal-right").modal("hide");
+                $("#successMessage").text("Clinic created successfully");
+                $("#successMessage").fadeIn().delay(3000).fadeOut(); // Show for 3 seconds
+                location.reload(); // Optionally, you can reload or update the table here
             },
-            error: function(xhr) {
-                $('#modal-right .modal-body').scrollTop(0);
+            error: function (xhr) {
+                $("#modal-right .modal-body").scrollTop(0);
                 // }
-            }
-
+            },
         });
-    
-        
     },
 });
 var form = $(".validation-wizard").show();

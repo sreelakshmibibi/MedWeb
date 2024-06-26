@@ -42865,3 +42865,72 @@ max-width: 80%;
     /* font-size: 14px; /* Adjust font size */
     /* background-color: success; */
 }
+
+    /* Example CSS to customize Select2 */
+    .select2-container--default .select2-selection--single {
+        background-color: #333; /* Dark background color */
+        color: #fff; /* Text color for selected option */
+        background-color: #0c1a32;
+    color: #b5b5c3;
+    border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        color: #fff; /* Color of the dropdown arrow */
+        color: #b5b5c3;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: #fff; /* Color of the selected text */
+        color: #b5b5c3;
+    }
+
+    .select2-container--default .select2-results__option--highlighted {
+        background-color: #555; /* Background color of highlighted option */
+        /* color: #fff; Text color of highlighted option */
+     } 
+
+/* Target the dropdown menu */
+.select2-dropdown {
+    background-color: #333; /* Dark background color */
+    color: #fff; /* Light text color */
+    background-color: #0c1a32;
+    color: #b5b5c3;
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Optionally, adjust other styles for better readability */
+.select2-results__option {
+    color: #fff; /* Text color for options */
+}
+
+/* Adjust the hover effect color */
+.select2-results__option--highlighted {
+    background-color: #555; /* Darker background color on hover */
+    color: #fff; /* Light text color on hover */
+
+}
+
+/* .bootstrap-select{
+
+} */
+
+/* Example CSS to customize Select2 */
+.select2-container--default .select2-selection--multiple {
+    background-color: #333; /* Dark background color */
+    color: #fff; /* Text color for selected option */
+    background-color: #0c1a32;
+color: #b5b5c3;
+border-color: rgba(255, 255, 255, 0.12);
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__arrow {
+    color: #fff; /* Color of the dropdown arrow */
+    color: #b5b5c3;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__rendered {
+    color: #fff; /* Color of the selected text */
+    color: #b5b5c3;
+}
+

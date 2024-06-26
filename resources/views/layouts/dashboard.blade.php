@@ -60,7 +60,7 @@
 
     <!-- Vendor JS -->
     <script src="{{ asset('js/vendors.min.js') }}"></script>
-    <script src="{{ asset('js/pages/chat-popup.js') }}"></script>
+    {{-- <script src="{{ asset('js/pages/chat-popup.js') }}"></script> --}}
     <script src="{{ asset('assets/icons/feather-icons/feather.min.js') }}"></script>
 
     <script src="{{ asset('assets/vendor_components/apexcharts-bundle/dist/apexcharts.js') }}"></script>
@@ -79,6 +79,22 @@
     <script src="{{ asset('assets/vendor_components/jquery-steps-master/build/jquery.steps.js') }}"></script>
     <script src="{{ asset('assets/vendor_components/jquery-validation-1.17.0/dist/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('js/pages/steps.js') }}"></script>
+
+
+
+    <script src="{{ asset('assets/vendor_components/bootstrap-select/dist/js/bootstrap-select.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.js') }}"></script>
+    </script>
+    <script src="{{ asset('assets/vendor_components/select2/dist/js/select2.full.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/moment/min/moment.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}">
+    </script>
+    </script>
+    <script src="{{ asset('assets/vendor_plugins/timepicker/bootstrap-timepicker.min.js') }}"></script>
+
+
+    <script src="{{ asset('js/pages/advanced-form-element.js') }}"></script>
 </body>
 
 </html>
