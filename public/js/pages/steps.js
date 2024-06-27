@@ -96,7 +96,10 @@ $(".validation-wizard").steps({
                     "?success_message=" +
                     encodeURIComponent("Staff added successfully.");
             },
-            error: function (xhr) {},
+            error: function (xhr) {
+               console.log(xhr.responseJSON.message);
+                  
+            },
         });
     },
 }),
