@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('aadhaar_no')->nullable();
             $table->date('date_of_birth')->nullable();
             $table->string('gender', 10)->nullable();
+            $table->string('blood_group', 10)->nullable();
             $table->string('phone', 20);
             $table->string('alternate_phone', 20)->nullable();
             $table->string('email')->nullable();

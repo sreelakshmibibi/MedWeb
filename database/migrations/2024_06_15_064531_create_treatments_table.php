@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('treatments', function (Blueprint $table) {
-            
+
             $table->id(); // Primary key
             $table->unsignedBigInteger('patient_id'); // ID of the patient
             $table->unsignedBigInteger('app_id'); // ID of the appointment
@@ -21,23 +21,22 @@ return new class extends Migration
             $table->string('nursing_remark', 650)->nullable(); // Nursing remarks
             $table->dateTime('treat_date'); // Date of the treatment
             $table->foreignId('doneby')->constrained('users'); // ID of the person who performed the treatment
-            $table->string('status', 5)->default('Y'); // Treatment status  
+            $table->string('status', 5)->default('Y'); // Treatment status
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
-           
 
-            $table->timestamps(); 
-            $table->softDeletes(); 
+            $table->timestamps();
+            $table->softDeletes();
             $table->foreign('patient_id')
-            ->references('patient_id')
-            ->on('patient_profiles')
-            ->onDelete('cascade')
-            ->onUpdate('cascade');
+                ->references('patient_id')
+                ->on('patient_profiles')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
             $table->foreign('app_id')
-            ->references('app_id')
-            ->on('appoinments')
-            ->onDelete('cascade')
-            ->onUpdate('cascade');
+                ->references('app_id')
+                ->on('appointments')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
             //index
             $table->index('patient_id');
             $table->index('app_id');

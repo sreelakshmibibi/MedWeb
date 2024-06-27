@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\AppointmentType;
 use Illuminate\Database\Seeder;
-use App\Models\AppoinmentType;
 
 class AppointmentTypeSeeder extends Seeder
 {
@@ -13,7 +12,7 @@ class AppointmentTypeSeeder extends Seeder
      */
     public function run(): void
     {
-        AppoinmentType::create(['type' => 'Follow Up', 'status' => '']);
-        AppoinmentType::create(['type' => 'New', 'status' => '']);
+        AppointmentType::create(['type' => 'Follow Up', 'status' => '']);
+        AppointmentType::create(['type' => 'New', 'status' => '']);
     }
 }

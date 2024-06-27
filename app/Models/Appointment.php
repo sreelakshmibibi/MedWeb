@@ -7,55 +7,37 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
-class Appoinment extends Model
+class Appointment extends Model
 {
     use HasFactory;
     use SoftDeletes;
+
     protected $fillable = [
         'app_id',
         'patient_id',
-        'user',
-        'file_no',
-        'Date',
-        'Time',
-        'tim_to',
-        'slot',
+        'app_date',
+        'app_time',
         'doctor_id',
-        'type',
-        'status',
-        'app_note',
+        'app_branch',
+        'app_type',
+        'height_cm',
+        'weight_kg',
+        'referred_doctor',
+        'appointment_note',
         'nursing_note',
-        'docnurnote',
-        'yesno',
         'doctor_note',
-        'dcheck',
-        'dton',
-        'dref',
-        'nd',
-        'nby',
-        'dby',
-        'dtbill',
-        'ap_stat',
-        'recto',
-        'next_app_dt',
-        'nextbr',
+        'doctor_check',
+        'app_status',
+        'next_app_date',
         'next_app_time',
-        'walk_in_tim',
-        'con_strt_time',
-        'con_end_time',
-        'biltime',
-        'wby',
-        'prby',
-        'buk_by',
-        'updt_by',
-        'wkoap',
-        'filyes',
-        'imfil',
-        'br',
+        'next_app_branch',
+        'status',
         'created_by',
-        'updated_by'
+        'updated_by',
     ];
+
     protected $dates = ['deleted_at'];
+
     protected static function booted()
     {
         // Before creating a new record

@@ -31,7 +31,7 @@ return new class extends Migration
                 ->onUpdate('cascade');
             $table->foreign('app_id')
                 ->references('app_id')
-                ->on('appoinments')
+                ->on('appointments')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             // Indexesdiagnosis
