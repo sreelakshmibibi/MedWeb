@@ -1,6 +1,6 @@
 let availabilityStepAdded = false;
 
-$(".tab-wizard").steps({
+$("#staffform").steps({
     headerTag: "h6.tabHeading",
     bodyTag: "section.tabSection",
     transitionEffect: "none",

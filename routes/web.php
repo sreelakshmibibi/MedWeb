@@ -53,6 +53,7 @@ Route::post('/medicine/{medicine}/update', [MedicineController::class, 'update']
 Route::delete('/medicine/{medicine}', [MedicineController::class, 'destroy'])->name('settings.medicine.destroy');
 
 Route::get('/patient_list', [PatientListController::class, 'index'])->name('patient.patient_list');
+Route::get('/patient_list/add', [PatientListController::class, 'create'])->name('patient.patient_list.create');
 Route::post('/patient_list/store', [PatientListController::class, 'store'])->name('patient.patient_list.store');
 Route::get('/patient_list/{patient_list}/edit', [PatientListController::class, 'edit'])->name('patient.patient_list.edit');
 Route::post('/patient_list/update', [PatientListController::class, 'update'])->name('patient.patient_list.update');
