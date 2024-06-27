@@ -141,88 +141,102 @@ class StaffListController extends Controller
             // Set default password
             $password = Str::random(10);
             $user->password = Hash::make($password);
-            $user->save();
+            $j = $user->save();
+            
+            if ($j) {
+                 //Assign role to the user
+                if ($user->is_admin) {
+                    $role = Role::findById(User::IS_ADMIN);
+                    $user->assignRole($role);
+                }
+                if ($user->is_doctor) {
+                    $role = Role::findById(User::IS_DOCTOR);
+                    $user->assignRole($role);
+                }
+                if ($user->is_nurse) {
+                    $role = Role::findById(User::IS_NURSE);
+                    $user->assignRole($role);
+                }
+                if ($user->is_reception) {
+                    $role = Role::findById(User::IS_RECEPTION);
+                    $user->assignRole($role);
+                }
+                    // Create staff profile
+                $staffProfile = new StaffProfile();
+                $staffProfile->user_id = $user->id;
+                $staffProfile->staff_id = "MEDWEB" . $user->id;
+                $staffProfile->clinic_branch_id = $request->clinic_branch_id;
+                $staffProfile->fill($request->only([
+                    'aadhaar_no',
+                    'date_of_birth',
+                    'phone',
+                    'gender',
+                    'address1',
+                    'address2',
+                    'city_id',
+                    'state_id',
+                    'country_id',
+                    'pincode',
+                    'date_of_joining',
+                    'qualification',
+                    'department_id',
+                    'specialization',
+                    'years_of_experience',
+                    'license_number',
+                    'subspecialty',
+                    'designation'
+                ]));
+                if ($request->add_checkbox == "on") {
+                    $staffProfile->com_address1 = $request->address1;
+                    $staffProfile->com_address2 = $request->address2;
+                    $staffProfile->com_city_id = $request->city_id;
+                    $staffProfile->com_state_id = $request->state_id;
+                    $staffProfile->com_country_id = $request->country_id;
+                    $staffProfile->com_pincode = $request->pincode;
+                } else {
+                    $staffProfile->com_address1 = $request->com_address1;
+                    $staffProfile->com_address2 = $request->com_address1;
+                    $staffProfile->com_city_id = $request->com_address1;
+                    $staffProfile->com_state_id = $request->com_address1;
+                    $staffProfile->com_country_id = $request->com_address1;
+                    $staffProfile->com_pincode = $request->com_address1;
 
-            // Create staff profile
-            $staffProfile = new StaffProfile();
-            $staffProfile->user_id = $user->id;
-            $staffProfile->staff_id = "MEDWEB" . $user->id;
-            $staffProfile->clinic_branch_id = $request->clinic_branch_id;
-            $staffProfile->fill($request->only([
-                'aadhaar_no',
-                'date_of_birth',
-                'phone',
-                'gender',
-                'address1',
-                'address2',
-                'city_id',
-                'state_id',
-                'country_id',
-                'pincode',
-                'date_of_joining',
-                'qualification',
-                'department_id',
-                'specialization',
-                'years_of_experience',
-                'license_number',
-                'subspecialty',
-                'designation'
-            ]));
-            if ($request->add_checkbox == "on") {
-                $staffProfile->com_address1 = $request->address1;
-                $staffProfile->com_address2 = $request->address2;
-                $staffProfile->com_city_id = $request->city_id;
-                $staffProfile->com_state_id = $request->state_id;
-                $staffProfile->com_country_id = $request->country_id;
-                $staffProfile->com_pincode = $request->pincode;
+                }
+
+                // Save profile photo if provided
+                if ($request->hasFile('profile_photo')) {
+                    $profilePath = $request->file('profile_photo')->store('profile-photos', 'public');
+                    $staffProfile->photo = $profilePath;
+                }
+                $staffProfile->status = "Y";
+
+                $i = $staffProfile->save();
+                if ($i) {
+                    $k =null;
+                    if ($user->is_doctor) {
+                        $k = $this->saveDoctorAvailability($request, $user->id);
+                        if ($k) {
+                            DB::commit();
+                        } else {
+                            DB::rollBack();
+                        }
+                     } else {
+                        DB::commit();
+                     }
+                } else {
+                    DB::rollBack();
+                }
+             
             } else {
-                $staffProfile->com_address1 = $request->com_address1;
-                $staffProfile->com_address2 = $request->com_address1;
-                $staffProfile->com_city_id = $request->com_address1;
-                $staffProfile->com_state_id = $request->com_address1;
-                $staffProfile->com_country_id = $request->com_address1;
-                $staffProfile->com_pincode = $request->com_address1;
-
+                DB::rollBack();
             }
-
-            // Save profile photo if provided
-            if ($request->hasFile('profile_photo')) {
-                $profilePath = $request->file('profile_photo')->store('profile-photos', 'public');
-                $staffProfile->photo = $profilePath;
-            }
-            $staffProfile->status = "Y";
-
-            $staffProfile->save();
-
-            // If user is a doctor, save availability
-            if ($user->is_doctor) {
-                $this->saveDoctorAvailability($request, $user->id);
-            }
-
-            //Assign role to the user
-            if ($user->is_admin) {
-                $role = Role::findById(User::IS_ADMIN);
-                $user->assignRole($role);
-            }
-            if ($user->is_doctor) {
-                $role = Role::findById(User::IS_DOCTOR);
-                $user->assignRole($role);
-            }
-            if ($user->is_nurse) {
-                $role = Role::findById(User::IS_NURSE);
-                $user->assignRole($role);
-            }
-            if ($user->is_reception) {
-                $role = Role::findById(User::IS_RECEPTION);
-                $user->assignRole($role);
-            }
-
-            DB::commit();
-
-            // Send welcome email (you can implement this part)
+            
+            
+            // Send welcome email
 
             return redirect()->route('staff.staff_list')->with('success', 'Staff created successfully');
         } catch (\Exception $e) {
+            DB::rollback();
             return redirect()->back()->with('error', 'Failed to create staff: ' . $e->getMessage());
         }
     }
@@ -241,9 +255,9 @@ class StaffListController extends Controller
         ];
 
         // Get the actual number of rows (count of clinic_branch_id inputs)
-        $count = $request->input('row_count', 0);
-
-        for ($i = 0; $i <= $count; $i++) {
+        $count = $request->input('row_count') != null ? $request->input('row_count') : 1;
+        $l = 0;
+        for ($i = 1; $i <= $count; $i++) {
             foreach ($weekDays as $day) {
                 // Construct the keys dynamically
                 $fromKey = strtolower($day) . '_from' . $i;
@@ -268,10 +282,11 @@ class StaffListController extends Controller
                     $availability->from_time = $from_time;
                     $availability->to_time = $to_time;
                     $availability->status = 'Y';
-                    $availability->save();
+                    $l = $availability->save();
                 }
             }
         }
+        return $l;
     }
 
 
