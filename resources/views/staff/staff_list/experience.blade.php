@@ -9,8 +9,8 @@
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            <label class="form-label" for="experience">Experience</label>
-            <input type="text" class="form-control" id="experience" name="experience" placeholder="experience"
+            <label class="form-label" for="years_of_experience">Experience</label>
+            <input type="text" class="form-control" id="years_of_experience" name="years_of_experience" placeholder="experience"
                 required>
         </div>
     </div>
@@ -65,8 +65,8 @@
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            <label class="form-label" for="subspecial">Subspeciality</label>
-            <input type="text" class="form-control" id="subspecial" name="subspecial" placeholder="Subspeciality">
+            <label class="form-label" for="subspecialty">Subspeciality</label>
+            <input type="text" class="form-control" id="subspecialty" name="subspecialty" placeholder="Subspeciality">
         </div>
     </div>
     <div class="col-md-4">

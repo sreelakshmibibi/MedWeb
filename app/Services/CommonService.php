@@ -18,5 +18,12 @@ class CommonService
             ->get();
     }
 
+
+    public function splitNames($name)
+    {
+        $split_name = explode('<br>', $name);
+        return $split_name;
+    }
+
     // Other common methods can be added here
 }

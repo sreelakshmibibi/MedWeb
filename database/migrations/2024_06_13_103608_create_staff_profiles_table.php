@@ -39,6 +39,7 @@ return new class extends Migration
             $table->date('date_of_relieving')->nullable();
             
             $table->string('qualification');
+            $table->string('designation')->nullable();
             $table->foreignId('department_id')->constrained('departments');
             $table->string('specialization')->nullable(); 
             $table->string('years_of_experience')->nullable(); 

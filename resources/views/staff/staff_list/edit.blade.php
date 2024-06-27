@@ -26,12 +26,12 @@
                 <div class="box">
                     <div class="box-body wizard-content">
                         <form method="post" class="validation-wizard wizard-circle"
-                            action="{{ route('staff.staff_list.store') }}" enctype="multipart/form-data">
+                            action="{{ route('staff.staff_list.update') }}" enctype="multipart/form-data">
                             @csrf
                             <!-- Step 1 -->
                             <h6 class="tabHeading">Personal Info</h6>
                             <section class="tabSection">
-                                @include('staff.staff_list.edit_personal_info')
+                                @include('staff.staff_list.edit_personal_info', ['name', 'countries', 'states', 'cities', 'userTypes', 'departments', 'staffProfile', 'userDetails', 'availability', 'clinicBranches'])
                             </section>
 
                             <!--Education-->
@@ -42,8 +42,8 @@
 
 
 
-                            <div id="storeRoute" data-url="{{ route('staff.staff_list.store') }}"
-                                data-stafflist-route="{{ route('staff.staff_list') }}"></div>
+                            <div id="updateRoute" data-url="{{ route('staff.staff_list.update') }}"
+                                data-stafflist-route="{{ route('staff.staff_list') }}" data-staff-update="1"></div>
                             <input type="hidden" name="row_count" id="row_count">
                         </form>
                     </div>
@@ -57,7 +57,7 @@
     </div>
     <script>
         $(document).ready(function() {
-            let count = 1;
+            let count = '{{ $availabilityCount }}';
 
             // Event listener for Add Row button click
             $(document).on('click', '#buttonAddRow', function() {
@@ -218,17 +218,24 @@
             });
 
             // Function to load states based on country ID
-            function loadStates(countryId, stateSelectElement) {
+            function loadStates(countryId, stateSelectElement, initialSelected) {
                 if (countryId) {
                     $.ajax({
-                        url: '{{ route('get.states', '') }}' + '/' + countryId,
+                        url: '{{ route("get.states", "") }}' + '/' + countryId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
                             stateSelectElement.empty();
                             stateSelectElement.append('<option value="">Select State</option>');
                             $.each(data, function(key, value) {
-                                stateSelectElement.append('<option value="' + key + '">' +
+                                var selected = null;
+                                if (key == initialSelected) {
+                                    
+                                        selected = "selected";
+                                    
+                                } 
+                                var state = '{{$staffProfile->com_state_id}}';
+                                stateSelectElement.append('<option value="' + key + '" '+ selected +'>' +
                                     value + '</option>');
                             });
                             // Trigger change event to load initial cities
@@ -244,17 +251,23 @@
             }
 
             // Function to load cities based on state ID
-            function loadCities(stateId, citySelectElement) {
+            function loadCities(stateId, citySelectElement, initialSelected) {
                 if (stateId) {
                     $.ajax({
-                        url: '{{ route('get.cities', '') }}' + '/' + stateId,
+                        url: '{{ route("get.cities", "") }}' + '/' + stateId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
                             citySelectElement.empty();
                             citySelectElement.append('<option value="">Select City</option>');
                             $.each(data, function(key, value) {
-                                citySelectElement.append('<option value="' + key + '">' +
+                                var selected =null;
+                                if (key == initialSelected) {
+                                    
+                                    selected = "selected";
+                                
+                            } 
+                                citySelectElement.append('<option value="' + key + '" '+ selected +'>' +
                                     value + '</option>');
                             });
                         },
@@ -268,33 +281,38 @@
             }
 
             // Initializations
+            var initialSelectedStateId = '{{ $staffProfile->state_id }}'; 
+            var initialSelectedComStateId = '{{ $staffProfile->com_state_id }}'; 
+            var initialSelectedCityId = '{{ $staffProfile->city_id }}'; 
+            var initialSelectedComCityId = '{{ $staffProfile->com_city_id }}'; 
+
             var initialCountryId = $('#country_id').val(); // Assuming India is selected initially
-            loadStates(initialCountryId, $('#state_id'));
+            loadStates(initialCountryId, $('#state_id'), initialSelectedStateId);
 
             // Handle change event for country dropdown
             $('#country_id').change(function() {
                 var countryId = $(this).val();
-                loadStates(countryId, $('#state_id'));
+                loadStates(countryId, $('#state_id'), null);
             });
 
             // Handle change event for state dropdown
             $('#state_id').change(function() {
                 var stateId = $(this).val();
-                loadCities(stateId, $('#city_id'));
+                loadCities(stateId, $('#city_id'), initialSelectedCityId);
             });
 
             // Same logic for communication address
             var com_initialCountryId = $('#com_country_id').val(); // Assuming India is selected initially
-            loadStates(com_initialCountryId, $('#com_state_id'));
+            loadStates(com_initialCountryId, $('#com_state_id'), initialSelectedComStateId);
 
             $('#com_country_id').change(function() {
                 var countryId = $(this).val();
-                loadStates(countryId, $('#com_state_id'));
+                loadStates(countryId, $('#com_state_id'), null);
             });
 
             $('#com_state_id').change(function() {
                 var stateId = $(this).val();
-                loadCities(stateId, $('#com_city_id'));
+                loadCities(stateId, $('#com_city_id'), initialSelectedComCityId);
             });
 
             // Validate weekday time inputs

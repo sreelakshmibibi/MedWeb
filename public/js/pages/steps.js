@@ -168,7 +168,7 @@ $(".validation-wizard").steps({
                 minlength: 3,
                 maxlength: 255,
             },
-            experience: {
+            years_of_experience: {
                 required: true,
                 minlength: 3,
                 maxlength: 255,

@@ -1,18 +1,13 @@
-{{-- <div class="doctordiv" style="display: none;"> --}}
 <section id="finalStepContent" class="tabHideSection">
     <div class="d-flex align-items-center justify-content-between">
-        <h5 class="box-title text-info mb-0 mt-2 "><i class="fa fa-clock me-15"></i>
-            Availability
-        </h5>
+        <h5 class="box-title text-info mb-0 mt-2 "><i class="fa fa-clock me-15"></i> Availability</h5>
         <button id="buttonAddRow" type="button" class="waves-effect waves-light btn btn-sm btn-outline-primary">
-            <i class="fa fa-add"></i>
-            Add</button>
+            <i class="fa fa-add"></i> Add</button>
     </div>
     <hr class="my-15 ">
 
     <div class="table-responsive">
         <table id="myTable" class="table table-bordered table-hover table-striped mb-0 text-center">
-
             <thead>
                 <tr class="bg-primary-light">
                     <th>No</th>
@@ -28,74 +23,80 @@
                 </tr>
             </thead>
             <tbody id="tablebody">
-                <tr>
-                    <td>1</td>
-                    <td>
-                        <select class="select2" id="clinic_branch_id1" name="clinic_branch_id1" required
-                            data-placeholder="Select a Branch" style="width: 100%;">
-                            @foreach ($clinicBranches as $clinicBranch)
-                                <?php
-                                $clinicAddress = $clinicBranch->clinic_address;
-                                $clinicAddress = explode('<br>', $clinicBranch->clinic_address);
-                                $clinicAddress = implode(', ', $clinicAddress);
-                                $branch = $clinicAddress . ', ' . $clinicBranch->city->city . ', ' . $clinicBranch->state->state;
-                                ?>
-                                <option value="{{ $clinicBranch->id }}">
-                                    {{ $branch }}</option>
-                            @endforeach
-                        </select>
-                    </td>
-                    <td>
-                        <input type="time" class="form-control timeInput" id="sunday_from1" title="from"
-                            name="sunday_from1" style="width:115px;">
-                        <input type="time" class="form-control" id="sunday_to1" title="to" name="sunday_to1"
-                            style="width:115px;">
-                    </td>
-                    <td>
-                        <input type="time" class="form-control" id="monday_from1" name="monday_from1" title="from"
-                            style="width:115px;">
-                        <input type="time" class="form-control" id="monday_to1" name="monday_to1" title="to"
-                            style="width:115px;">
-                    </td>
-                    <td>
-                        <input type="time" class="form-control" id="tuesday_from1" name="tuesday_from1"
-                            title="from" style="width:115px;">
-                        <input type="time" class="form-control" id="tuesday_to1" name="tuesday_to1" title="to"
-                            style="width:115px;">
-
-                    </td>
-                    <td>
-                        <input type="time" class="form-control" id="wednesday_from1" name="wednesday_from1"
-                            title="from" style="width:115px;">
-                        <input type="time" class="form-control" id="wednesday_to1" name="wednesday_to1"
-                            title="to" style="width:115px;">
-                    </td>
-                    <td>
-                        <input type="time" class="form-control" id="thursday_from1" name="thursday_from1"
-                            title="from" style="width:115px;">
-                        <input type="time" class="form-control" id="thursday_to1" name="thursday_to1" title="to"
-                            style="width:115px;">
-                    </td>
-                    <td>
-                        <input type="time" class="form-control" id="friday_from1" name="friday_from1" title="from"
-                            style="width:115px;">
-                        <input type="time" class="form-control" id="friday_to1" name="friday_to1" title="to"
-                            style="width:115px;">
-                    </td>
-                    <td>
-                        <input type="time" class="form-control" id="saturday_from1" name="saturday_from1"
-                            title="from" style="width:115px;">
-                        <input type="time" class="form-control" id="saturday_to1" name="saturday_to1"
-                            title="to" style="width:115px;">
-                    </td>
-                    <td>
-                        <button type="button" id="btnDelete" title="delete row"
-                            class="waves-effect waves-light btn btn-danger btn-sm"> <i
-                                class="fa fa-trash"></i></button>
-                    </td>
-                </tr>
+                @php
+                $i = 1;
+                @endphp
+                @foreach($availableBranches as $branch)
+                    <tr>
+                        <td>{{$i}}</td>
+                        <td>
+                            <select class="select2" id="clinic_branch_id{{$i}}" name="clinic_branch_id{{$i}}" required
+                                data-placeholder="Select a Branch" style="width: 100%;">
+                                @foreach ($clinicBranches as $clinicBranch)
+                                    <?php
+                                    $clinicAddress = $clinicBranch->clinic_address;
+                                    $clinicAddress = explode('<br>', $clinicAddress);
+                                    $clinicAddress = implode(', ', $clinicAddress);
+                                    $branchName = $clinicAddress . ', ' . $clinicBranch->city->city . ', ' . $clinicBranch->state->state;
+                                    ?>
+                                    <option value="{{ $clinicBranch->id }}" @if($branch['clinic_branch_id'] == $clinicBranch->id) selected @endif>
+                                        {{ $branchName }}</option>
+                                @endforeach
+                            </select>
+                        </td>
+                        <td>
+                            <input type="time" class="form-control timeInput" id="sunday_from{{$i}}" title="from"
+                                name="sunday_from{{$i}}" style="width:115px;" value="{{ $branch['timings']['sunday_from'] ?? '' }}">
+                            <input type="time" class="form-control" id="sunday_to{{$i}}" title="to" name="sunday_to{{$i}}"
+                                style="width:115px;" value="{{ $branch['timings']['sunday_to'] ?? '' }}">
+                        </td>
+                        <td>
+                            <input type="time" class="form-control" id="monday_from{{$i}}" name="monday_from{{$i}}" title="from"
+                                style="width:115px;" value="{{ $branch['timings']['monday_from'] ?? '' }}">
+                            <input type="time" class="form-control" id="monday_to{{$i}}" name="monday_to{{$i}}" title="to"
+                                style="width:115px;" value="{{ $branch['timings']['monday_to'] ?? '' }}">
+                        </td>
+                        <td>
+                            <input type="time" class="form-control" id="tuesday_from{{$i}}" name="tuesday_from{{$i}}"
+                                title="from" style="width:115px;" value="{{ $branch['timings']['tuesday_from'] ?? '' }}">
+                            <input type="time" class="form-control" id="tuesday_to{{$i}}" name="tuesday_to{{$i}}" title="to"
+                                style="width:115px;" value="{{ $branch['timings']['tuesday_to'] ?? '' }}">
+                        </td>
+                        <td>
+                            <input type="time" class="form-control" id="wednesday_from{{$i}}" name="wednesday_from{{$i}}"
+                                title="from" style="width:115px;" value="{{ $branch['timings']['wednesday_from'] ?? '' }}">
+                            <input type="time" class="form-control" id="wednesday_to{{$i}}" name="wednesday_to{{$i}}"
+                                title="to" style="width:115px;" value="{{ $branch['timings']['wednesday_to'] ?? '' }}">
+                        </td>
+                        <td>
+                            <input type="time" class="form-control" id="thursday_from{{$i}}" name="thursday_from{{$i}}"
+                                title="from" style="width:115px;" value="{{ $branch['timings']['thursday_from'] ?? '' }}">
+                            <input type="time" class="form-control" id="thursday_to{{$i}}" name="thursday_to{{$i}}" title="to"
+                                style="width:115px;" value="{{ $branch['timings']['thursday_to'] ?? '' }}">
+                        </td>
+                        <td>
+                            <input type="time" class="form-control" id="friday_from{{$i}}" name="friday_from{{$i}}" title="from"
+                                style="width:115px;" value="{{ $branch['timings']['friday_from'] ?? '' }}">
+                            <input type="time" class="form-control" id="friday_to{{$i}}" name="friday_to{{$i}}" title="to"
+                                style="width:115px;" value="{{ $branch['timings']['friday_to'] ?? '' }}">
+                        </td>
+                        <td>
+                            <input type="time" class="form-control" id="saturday_from{{$i}}" name="saturday_from{{$i}}"
+                                title="from" style="width:115px;" value="{{ $branch['timings']['saturday_from'] ?? '' }}">
+                            <input type="time" class="form-control" id="saturday_to{{$i}}" name="saturday_to{{$i}}"
+                                title="to" style="width:115px;" value="{{ $branch['timings']['saturday_to'] ?? '' }}">
+                        </td>
+                        <td>
+                            <button type="button" id="btnDelete" title="delete row"
+                                class="waves-effect waves-light btn btn-danger btn-sm"> <i
+                                    class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    @php
+                    $i++;
+                    @endphp
+                @endforeach
             </tbody>
         </table>
     </div>
 </section>
-{{-- </div> --}}

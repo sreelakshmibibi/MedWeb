@@ -23,6 +23,8 @@ use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\DataTables as DataTables;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
+use App\Services\CommonService;
+use App\Services\DoctorAvaialbilityService;
 
 class StaffListController extends Controller
 {
@@ -113,7 +115,7 @@ class StaffListController extends Controller
 
             // Create a new user instance
             $user = new User();
-            $user->name = $request->title . " " . $request->firstname . " " . $request->lastname;
+            $user->name = $request->title . "<br> " . $request->firstname . "<br>" . $request->lastname;
             $user->email = $request->email;
 
             // Set user role based on request
@@ -163,7 +165,8 @@ class StaffListController extends Controller
                 'specialization',
                 'years_of_experience',
                 'license_number',
-                'subspecialty'
+                'subspecialty',
+                'designation'
             ]));
             if ($request->add_checkbox == "on") {
                 $staffProfile->com_address1 = $request->address1;
@@ -287,9 +290,12 @@ class StaffListController extends Controller
     {
         $staffProfile = StaffProfile::find($id);
         $userDetails = User::find($staffProfile->user_id);
-        $availability = DoctorWorkingHour::where('user_id', $staffProfile->user_id)
-            ->where('status', 'Y')
-            ->get();
+        $availability = null;
+        if ($userDetails->is_doctor == 1) {
+            $availability = DoctorWorkingHour::where('user_id', $staffProfile->user_id)
+                ->where('status', 'Y')
+                ->get();
+        }
         if (!$staffProfile) {
             abort(404);
         }
@@ -298,7 +304,14 @@ class StaffListController extends Controller
         $cities = City::all();
         $departments = Department::where('status', 'Y')->get();
         $userTypes = UserType::where('status', 'Y')->get();
-        return view('staff.staff_list.edit', compact('countries', 'states', 'cities', 'userTypes', 'departments', 'staffProfile', 'userDetails', 'availability'));
+        $commonService = new CommonService();
+        $name = $commonService->splitNames($userDetails->name);
+        $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
+        $availability = DoctorWorkingHour::where('user_id', $staffProfile->user_id)->get();
+        $availabilityCount = DoctorWorkingHour::where('user_id', $staffProfile->user_id)->groupBy('clinic_branch_id')->count();
+        $doctorAvailability = new DoctorAvaialbilityService();
+        $availableBranches = $doctorAvailability->availableBranchAndTimings($staffProfile->user_id);
+        return view('staff.staff_list.edit', compact('name', 'countries', 'states', 'cities', 'userTypes', 'departments', 'staffProfile', 'userDetails', 'availability', 'clinicBranches','availabilityCount', 'availability', 'availableBranches'));
 
     }
 
