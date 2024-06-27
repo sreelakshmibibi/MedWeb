@@ -4,11 +4,16 @@ namespace App\Http\Controllers\Patient;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Patient\PatientListRequest;
-use App\Models\PatientList;
-use App\Models\Department;
+use App\Models\PatientProfile;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use App\Models\City;
+use App\Models\ClinicBranch;
+use App\Models\Country;
+use App\Models\Department;
+use App\Models\State;
+use App\Models\UserType;
 
 
 use Yajra\DataTables\DataTables as DataTables;
@@ -22,34 +27,28 @@ class PatientListController extends Controller
     {
         if ($request->ajax()) {
 
-            $departments = Department::query();
-            return DataTables::of($departments)
+            $patient = PatientProfile::query();
+            return DataTables::of($patient)
                 ->addIndexColumn()
                 ->addColumn('status', function ($row) {
-
-                    $btn = '<span class="btn badge badge-danger-light">New Patient</span>';
+                    //choose from the below 3 according to the status
+                    $btn = '<span class="btn-sm badge badge-danger-light">New Patient</span>';
+                    $btn = '<span class="btn-sm badge badge-success-light">Recovered</span>';
+                    $btn = '<span class="btn-sm badge badge-warning-light">In Treatment</span>';
 
                     return $btn;
                 })
-                ->rawColumns(['status'])
-                ->make(true);
-        }
-
-        if ($request->ajax()) {
-
-            $departments = Department::query();
-            return DataTables::of($departments)
-                ->addIndexColumn()
                 ->addColumn('action', function ($row) {
 
-                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
-                        data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
-                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
-                        <i class="fa fa-trash"></i></button>';
+                    $btn1 = '<button type="button" class="waves-effect waves-light btn btn-circle btn-info btn-edit btn-xs me-1" title="view" data-id="' . $row->id . '"
+                             ><i class="fa fa-eyes"></i></button><button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
+                            data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
+                            <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
+                            <i class="fa fa-trash"></i></button>';
 
-                    return $btn;
+                    return $btn1;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['status', 'action'])
                 ->make(true);
         }
 
@@ -61,7 +60,14 @@ class PatientListController extends Controller
      */
     public function create()
     {
-        //
+        $countries = Country::all();
+        $states = State::all();
+        $cities = City::all();
+        $userTypes = UserType::where('status', 'Y')->get();
+        $departments = Department::where('status', 'Y')->get();
+        $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
+        return view('patient.patient_list.add', compact('countries', 'states', 'cities', 'userTypes', 'departments', 'clinicBranches'));
+
     }
 
     /**
@@ -71,19 +77,18 @@ class PatientListController extends Controller
     {
         try {
             // Create a new department instance
-            $department = new Department();
-            $department->department = $request->input('department');
-            $department->status = $request->input('status');
-            $department->clinic_type_id = 1;
+            $patient = new PatientProfile();
+            $patient->patient = $request->input('patient');
+            $patient->status = $request->input('status');
+            $patient->clinic_type_id = 1;
 
             // Save the department
-            $department->save();
+            $patient->save();
 
-            return redirect()->back()->with('success', 'Department created successfully');
+            return redirect()->back()->with('success', 'Patient created successfully');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to create department: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to create patient: ' . $e->getMessage());
         }
-
     }
 
     /**
@@ -99,11 +104,11 @@ class PatientListController extends Controller
      */
     public function edit(string $id)
     {
-        $department = Department::find($id);
-        if (!$department) {
+        $patient = PatientProfile::find($id);
+        if (!$patient) {
             abort(404);
         }
-        return $department;
+        return $patient;
     }
 
     /**
@@ -111,16 +116,16 @@ class PatientListController extends Controller
      */
     public function update(Request $request)
     {
-        $department = Department::findOrFail($request->edit_department_id);
+        $patient = PatientProfile::findOrFail($request->edit_department_id);
 
         // Update department fields based on form data
-        $department->department = $request->department;
-        $department->status = $request->status;
+        $patient->patient = $request->patient;
+        $patient->status = $request->status;
 
         // Save the updated department
-        $department->save();
+        $patient->save();
 
-        return redirect()->back()->with('success', 'Department updated successfully.');
+        return redirect()->back()->with('success', 'Patient updated successfully.');
     }
 
     /**
@@ -128,9 +133,9 @@ class PatientListController extends Controller
      */
     public function destroy($id)
     {
-        $department = Department::findOrFail($id);
-        $department->delete();
+        $patient = PatientProfile::findOrFail($id);
+        $patient->delete();
 
-        return response()->json(['success', 'Department deleted successfully.'], 201);
+        return response()->json(['success', 'Patient deleted successfully.'], 201);
     }
 }

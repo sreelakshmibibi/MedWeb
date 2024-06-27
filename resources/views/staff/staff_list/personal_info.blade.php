@@ -3,14 +3,14 @@
          <div class="form-group">
              <label class="form-label" for="firstname">First Name</label>
              <div class="input-group form-group">
-                 <button class="btn dropdown-toggle form-control btn-sm" type="button" data-bs-toggle="dropdown"
-                     aria-expanded="false">Title</button>
-                 <ul class="dropdown-menu">
-                     <li class="dropdown-item text-light">Dr.</li>
-                     <li class="dropdown-item text-light">Miss</li>
-                     <li class="dropdown-item text-light">Mrs.</li>
-                 </ul>
-                 <input type="text" class="form-control" id="firstname" name="firstname" placeholder="First Name"
+                <select class="form-control select-title" id="title" name="title" required>
+                    <option value="" selected disabled>Select Title</option>
+                    <option value="Dr.">Dr.</option>
+                    <option value="Mr.">Mr.</option>
+                    <option value="Miss">Miss</option>
+                    <option value="Mrs.">Mrs.</option>
+                </select>
+                <input type="text" class="form-control" id="firstname" name="firstname" placeholder="First Name"
                      required style="width: 100px;">
              </div>
          </div>
@@ -54,8 +54,8 @@
  <div class="row">
      <div class="col-md-3">
          <div class="form-group">
-             <label class="form-label" for="aadhaar">Aadhaar No</label>
-             <input type="email" class="form-control" id="aadhaar" name="aadhaar" placeholder="aadhaar no" required>
+             <label class="form-label" for="aadhaar_no">Aadhaar No</label>
+             <input type="text" class="form-control" id="aadhaar_no" name="aadhaar_no" placeholder="Aadhaar no" required>
          </div>
      </div>
 
@@ -104,19 +104,6 @@
      </div>
 
      <div class="form-group col-md-2 d-flex flex-wrap align-content-end">
-         <select class="select2" required id="city_id" name="city_id" data-placeholder="Select a City"
-             style="width: 100%;">
-         </select>
-     </div>
-
-     <div class="form-group col-md-2 d-flex flex-wrap align-content-end">
-         <select class="select2" id="state_id" name="state_id" required data-placeholder="Select a State"
-             style="width: 100%;">
-
-         </select>
-     </div>
-
-     <div class="form-group col-md-2 d-flex flex-wrap align-content-end">
          <select class="select2" id="country_id" name="country_id" required data-placeholder="Select a Country"
              style="width: 100%;">
              @foreach ($countries as $country)
@@ -129,52 +116,67 @@
      </div>
 
      <div class="form-group col-md-2 d-flex flex-wrap align-content-end">
+            <select class="select2" id="state_id" name="state_id" required data-placeholder="Select a State"
+                style="width: 100%;">
+
+            </select>
+    </div>
+
+     <div class="form-group col-md-2 d-flex flex-wrap align-content-end">
+         <select class="select2" required id="city_id" name="city_id" data-placeholder="Select a City"
+             style="width: 100%;">
+         </select>
+     </div>
+
+     <div class="form-group col-md-2 d-flex flex-wrap align-content-end">
          <input class="form-control" type="text" id="pincode" name="pincode" required placeholder="pin code">
      </div>
  </div>
 
  <div class="row">
      <div class="form-group mb-0">
-         <label class="form-label" for="caddress1">Communication Address:&nbsp;</label>&nbsp;
-         <input type="checkbox" id="add_checkbox" class="filled-in chk-col-success" />
+         <label class="form-label" for="add_checkbox">Communication Address:&nbsp;</label>&nbsp;
+         <input type="checkbox" id="add_checkbox" name="add_checkbox" class="filled-in chk-col-success" />
          <label for="add_checkbox">Same as Residential Address</label>
      </div>
-     <div class="form-group col-md-2">
-         <input type="text" class="form-control " id="caddress1" name="caddress1" placeholder="Adress line 1"
-             required>
-     </div>
+     <div class="row" id="communicationAddress">
+        <div class="form-group col-md-2">
+            <input type="text" class="form-control " id="com_address1" name="com_address1" placeholder="Adress line 1"
+                required>
+        </div>
 
-     <div class="form-group col-md-2 ">
-         <input type="text" class="form-control" id="caddress2" name="caddress2" placeholder="Adress line 2"
-             required>
-     </div>
+        <div class="form-group col-md-2 ">
+            <input type="text" class="form-control" id="com_address2" name="com_address2" placeholder="Adress line 2"
+                required>
+        </div>
 
-     <div class="form-group col-md-2 ">
-         <select class="select2" required id="ccity_id" name="ccity_id" data-placeholder="Select a City"
-             style="width: 100%;">
-         </select>
-     </div>
+        <div class="form-group col-md-2 ">
+            <select class="select2" id="com_country_id" name="com_country_id" required data-placeholder="Select a Country"
+                style="width: 100%;">
+                @foreach ($countries as $country)
+                    <option value="{{ $country->id }}" <?php if ($country->id == 101) {
+                        echo 'selected';
+                    } ?>>
+                        {{ $country->country }}</option>
+                @endforeach
+            </select>
+        </div>
 
-     <div class="form-group col-md-2 ">
-         <select class="select2" id="cstate_id" name="cstate_id" required data-placeholder="Select a State"
-             style="width: 100%;">
+        <div class="form-group col-md-2 ">
+            <select class="select2" id="com_state_id" name="com_state_id" required data-placeholder="Select a State"
+                style="width: 100%;">
 
-         </select>
-     </div>
+            </select>
+        </div>
 
-     <div class="form-group col-md-2 ">
-         <select class="select2" id="ccountry_id" name="ccountry_id" required data-placeholder="Select a Country"
-             style="width: 100%;">
-             @foreach ($countries as $country)
-                 <option value="{{ $country->id }}" <?php if ($country->id == 101) {
-                     echo 'selected';
-                 } ?>>
-                     {{ $country->country }}</option>
-             @endforeach
-         </select>
-     </div>
+        <div class="form-group col-md-2 ">
+            <select class="select2" required id="com_city_id" name="com_city_id" data-placeholder="Select a City"
+                style="width: 100%;">
+            </select>
+        </div>
 
-     <div class="form-group col-md-2 ">
-         <input class="form-control" type="text" id="cpincode" name="cpincode" required placeholder="pin code">
+        <div class="form-group col-md-2 ">
+            <input class="form-control" type="text" id="com_pincode" name="com_pincode" required placeholder="pin code">
+        </div>
      </div>
  </div>
