@@ -25,8 +25,8 @@
             <section class="content">
                 <div class="box">
                     <div class="box-body wizard-content">
-                        <form method="post" class="tab-wizard wizard-circle" action="{{ route('staff.staff_list.store') }}"
-                            enctype="multipart/form-data">
+                        <form method="post" class="tab-wizard wizard-circle" id="staffform"
+                            action="{{ route('staff.staff_list.store') }}" enctype="multipart/form-data">
                             @csrf
                             <!-- Step 1 -->
                             <h6 class="tabHeading">Personal Info</h6>
