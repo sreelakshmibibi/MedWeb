@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id(); 
             $table->foreignId('user_id')->constrained('users');
             $table->string('staff_id');
-            $table->foreignId('clinic_branch_id')->constrained('clinic_branches'); 
-            $table->string('title');
+            $table->foreignId('clinic_branch_id')->nullable()->constrained('clinic_branches'); 
             $table->string('aadhaar_no');
             $table->date('date_of_birth')->nullable(); 
             $table->string('gender', 10)->nullable(); 
