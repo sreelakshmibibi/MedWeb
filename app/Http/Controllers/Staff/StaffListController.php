@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\DataTables as DataTables;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 class StaffListController extends Controller
 {
@@ -31,6 +32,13 @@ class StaffListController extends Controller
     
     public function index(Request $request)
     {
+        $successMessage = $request->query('success_message');
+
+        if ($successMessage) {
+            // Flash success message to session
+            session()->flash('success', $successMessage);
+        }
+
         if ($request->ajax()) {
             $staff = StaffProfile::with('user')->get();
 
@@ -44,13 +52,13 @@ class StaffListController extends Controller
                     $role = null;
                     // Assuming you want to dynamically set the role badge based on user attributes
                     if ($row->user->is_doctor) {
-                        $role .= $role.  '<span class="btn-sm badge badge-success-light">Doctor</span>';
+                        $role .=   '<span class="btn-sm badge badge-success-light">Doctor</span>';
                     } if ($row->user->is_nurse) {
-                        $role .= $role.'<span class="btn-sm badge badge-warning-light">Nurse</span>';
+                        $role .= '<span class="btn-sm badge badge-warning-light">Nurse</span>';
                     } if ($row->user->is_admin) {
-                        $role .= $role.'<span class="btn-sm badge badge-primary-light">Admin</span>';
+                        $role .= '<span class="btn-sm badge badge-primary-light">Admin</span>';
                     } if ($row->user->is_reception) {
-                        $role .= $role.'<span class="btn-sm badge badge-info-light">Others</span>';
+                        $role .= '<span class="btn-sm badge badge-info-light">Others</span>';
                     }
                     return $role;
                 })
@@ -91,34 +99,32 @@ class StaffListController extends Controller
      */
     public function store(Request $request)
     {
-        echo "<pre>";
-        print_r($request->all());
-         echo "</pre>";
-        exit;
         try {
             DB::beginTransaction();
 
             // Create a new user instance
             $user = new User();
-            $user->name = $request->firstname . " " . $request->lastname;
+            $user->name = $request->title. " ".$request->firstname . " " . $request->lastname;
             $user->email = $request->email;
 
             // Set user role based on request
-            switch ($request->role) {
-                case User::IS_ADMIN:
-                    $user->is_admin = true;
-                    break;
-                case User::IS_DOCTOR:
-                    $user->is_doctor = true;
-                    break;
-                case User::IS_NURSE:
-                    $user->is_nurse = true;
-                    break;
-                case User::IS_RECEPTION:
-                    $user->is_reception = true;
-                    break;
-                default:
-                    throw new \Exception('Invalid role specified.');
+            foreach ($request->role as $role) {
+                switch ($role) {
+                    case User::IS_ADMIN:
+                        $user->is_admin = true;
+                        break;
+                    case User::IS_DOCTOR:
+                        $user->is_doctor = true;
+                        break;
+                    case User::IS_NURSE:
+                        $user->is_nurse = true;
+                        break;
+                    case User::IS_RECEPTION:
+                        $user->is_reception = true;
+                        break;
+                    default:
+                        throw new \Exception('Invalid role specified.');
+                }
             }
 
             // Set default password
@@ -131,12 +137,27 @@ class StaffListController extends Controller
             $staffProfile->user_id = $user->id;
             $staffProfile->staff_id = "MEDWEB" . $user->id;
             $staffProfile->clinic_branch_id = $request->clinic_branch_id;
-            $staffProfile->fill($request->only(['title','aadhaar_no',
+            $staffProfile->fill($request->only(['aadhaar_no',
                 'date_of_birth', 'phone', 'gender', 'address1', 'address2', 'city_id', 'state_id',
-                'country_id', 'pincode', 'com_address1', 'com_address2', 'com_city_id', 'com_state_id',
-                'com_country_id', 'com_pincode', 'date_of_joining', 'qualification', 'department_id',
+                'country_id', 'pincode', 'date_of_joining', 'qualification', 'department_id',
                 'specialization', 'years_of_experience', 'license_number', 'subspecialty'
             ]));
+            if ($request->add_checkbox == "on") {
+                $staffProfile->com_address1 = $request->address1;
+                $staffProfile->com_address2 = $request->address2;
+                $staffProfile->com_city_id = $request->city_id;
+                $staffProfile->com_state_id = $request->state_id;
+                $staffProfile->com_country_id = $request->country_id;
+                $staffProfile->com_pincode = $request->pincode;
+            }else {
+                $staffProfile->com_address1 = $request->com_address1;
+                $staffProfile->com_address2 = $request->com_address1;
+                $staffProfile->com_city_id = $request->com_address1;
+                $staffProfile->com_state_id = $request->com_address1;
+                $staffProfile->com_country_id = $request->com_address1;
+                $staffProfile->com_pincode = $request->com_address1;
+            
+            }
             
             // Save profile photo if provided
             if ($request->hasFile('profile_photo')) {
@@ -152,18 +173,30 @@ class StaffListController extends Controller
                 $this->saveDoctorAvailability($request, $user->id);
             }
 
+            //Assign role to the user
+            if ($user->is_admin) {
+                $role = Role::findById(User::IS_ADMIN);
+                $user->assignRole($role);
+            }
+            if ($user->is_doctor) {
+                $role = Role::findById(User::IS_DOCTOR);
+                $user->assignRole($role);
+            }
+            if ($user->is_nurse) {
+                $role = Role::findById(User::IS_NURSE);
+                $user->assignRole($role);
+            }
+            if ($user->is_reception) {
+                $role = Role::findById(User::IS_RECEPTION);
+                $user->assignRole($role);
+            }
+            
             DB::commit();
             
-            //Assign role to the user(you can implement this part)
-
             // Send welcome email (you can implement this part)
 
-            return redirect()->back()->with('success', 'Staff created successfully');
+            return redirect()->route('staff.staff_list')->with('success', 'Staff created successfully');
         } catch (\Exception $e) {
-            print_r($e->getMessage());
-
-            DB::rollBack();
-exit;
             return redirect()->back()->with('error', 'Failed to create staff: ' . $e->getMessage());
         }
     }
@@ -175,28 +208,41 @@ exit;
             WeekDay::MONDAY, WeekDay::TUESDAY, WeekDay::WEDNESDAY, WeekDay::THURSDAY,
             WeekDay::FRIDAY, WeekDay::SATURDAY, WeekDay::SUNDAY
         ];
-        $count = $request->row_count;
+        
+        // Get the actual number of rows (count of clinic_branch_id inputs)
+        $count = $request->input('row_count', 0);
+    
         for ($i = 0; $i <= $count; $i++) {
             foreach ($weekDays as $day) {
-                $fromKey = strtolower($day) . '_from'.$count;
-                $toKey = strtolower($day) . '_to'.$count;
-                $clinic_branch_id = strtolower($day).'_clinic_branch_id'.$count;
+                // Construct the keys dynamically
+                $fromKey = strtolower($day) . '_from' . $i;
+                $toKey = strtolower($day) . '_to' . $i;
+                $clinicBranchKey = 'clinic_branch_id' . $i;
     
-                if ($request->$fromKey !== null) {
+                // Check if fromKey is present in request, if not continue to next iteration
+                if (!$request->has($fromKey)) {
+                    continue;
+                }
+    
+                // Extract values from request
+                $clinic_branch_id = $request->input($clinicBranchKey);
+                $from_time = $request->input($fromKey);
+                $to_time = $request->input($toKey);
+                if ($from_time !=null) {
+                    // Create and save DoctorWorkingHour instance
                     $availability = new DoctorWorkingHour();
                     $availability->user_id = $userId;
                     $availability->week_day = $day;
                     $availability->clinic_branch_id = $clinic_branch_id;
-                    $availability->from_time = $request->$fromKey;
-                    $availability->to_time = $request->$toKey;
+                    $availability->from_time = $from_time;
+                    $availability->to_time = $to_time;
                     $availability->status = 'Y';
                     $availability->save();
                 }
             }
         }
-        
     }
-
+    
 
     /**
      * Display the specified resource.
