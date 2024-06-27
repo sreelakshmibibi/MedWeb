@@ -36,7 +36,6 @@ function handleAvailabilityStep(role) {
     }
 }
 
-
 var form = $(".validation-wizard").show();
 
 $(".validation-wizard").steps({
@@ -70,7 +69,7 @@ $(".validation-wizard").steps({
     },
     onFinished: function (event, currentIndex) {
         var formDataStaff = new FormData($(".validation-wizard")[0]); // Serialize form data including files
-
+        // var formDataStaff = new FormData($(".validation-wizard"));
         var CSRF_TOKEN = $('meta[name="csrf-token"]').attr("content");
         var storeRoute = $("#storeRoute").data("url");
 
@@ -90,13 +89,14 @@ $(".validation-wizard").steps({
 
                 // Redirect to stafflist route
                 var routeReturn = $("#storeRoute").data("stafflist-route");
-        
+
                 // Redirect to the stafflist route
-                window.location.href = routeReturn + '?success_message=' + encodeURIComponent("Staff added successfully.");
+                window.location.href =
+                    routeReturn +
+                    "?success_message=" +
+                    encodeURIComponent("Staff added successfully.");
             },
-            error: function (xhr) {
-                
-            },
+            error: function (xhr) {},
         });
     },
 }),
@@ -120,38 +120,37 @@ $(".validation-wizard").steps({
             firstname: {
                 required: true,
                 minlength: 3,
-                maxlength: 255
+                maxlength: 255,
             },
             lastname: {
                 required: true,
-                maxlength: 255
+                maxlength: 255,
             },
             date_of_birth: {
                 required: true,
-                date: true
+                date: true,
             },
-            
+
             phone: {
                 required: true,
-               
             },
             address1: {
                 required: true,
                 minlength: 3,
-                maxlength: 255
+                maxlength: 255,
             },
             address2: {
                 required: true,
                 minlength: 3,
-                maxlength: 255
+                maxlength: 255,
             },
-            
+
             pincode: {
                 required: true,
-                maxlength: 10
+                maxlength: 10,
             },
-           
-            aadhaar_no : {
+
+            aadhaar_no: {
                 required: true,
                 minlength: 12,
                 maxlength: 12,
@@ -159,32 +158,31 @@ $(".validation-wizard").steps({
             designation: {
                 required: true,
                 minlength: 3,
-                maxlength: 255
+                maxlength: 255,
             },
             qualification: {
                 required: true,
                 minlength: 3,
-                maxlength: 255
+                maxlength: 255,
             },
             experience: {
                 required: true,
                 minlength: 3,
-                maxlength: 255
+                maxlength: 255,
             },
-            date_of_joining : {
+            date_of_joining: {
                 required: true,
-                date: true
+                date: true,
             },
-            specialization: {
-                required: true,
-                minlength: 3,
-                maxlength: 255
-            },
-            subspecialty :{
-                required: true,
-                minlength: 3,
-                maxlength: 255
-            }
-           
+            // specialization: {
+            //     required: true,
+            //     minlength: 3,
+            //     maxlength: 255,
+            // },
+            // subspecialty: {
+            //     required: true,
+            //     minlength: 3,
+            //     maxlength: 255,
+            // },
         },
     });

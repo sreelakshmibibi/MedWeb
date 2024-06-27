@@ -60,21 +60,20 @@
         <div class="form-group">
             <label class="form-label" for="specialization">Specialization</label>
             <input type="text" class="form-control" id="specialization" name="specialization"
-                placeholder="Specialization" required>
+                placeholder="Specialization">
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
             <label class="form-label" for="subspecial">Subspeciality</label>
-            <input type="text" class="form-control" id="subspecial" name="subspecial" placeholder="Subspeciality"
-                required>
+            <input type="text" class="form-control" id="subspecial" name="subspecial" placeholder="Subspeciality">
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
             <label class="form-label" for="license_number">Licence</label>
             <input type="text" class="form-control" id="license_number" name="license_number"
-                placeholder="Council No." required>
+                placeholder="Council No.">
         </div>
     </div>
 </div>
@@ -84,8 +83,8 @@
     <div class="col-md-4">
         <div class="form-group">
             <label class="form-label" for="specialization">Branch</label>
-            <select class="select2" id="clinic_branch_id" name="clinic_branch_id" required
-                data-placeholder="Select a Branch" style="width: 100%;">
+            <select class="select2" id="clinic_branch_id" name="clinic_branch_id" data-placeholder="Select a Branch"
+                style="width: 100%;">
                 @foreach ($clinicBranches as $clinicBranch)
                     <?php
                     $clinicAddress = $clinicBranch->clinic_address;
