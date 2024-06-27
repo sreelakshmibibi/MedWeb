@@ -34,16 +34,19 @@
                         <div class="table-responsive">
                             <!-- Main content -->
                             <table
-                                class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center" width="100%">
+                                class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center"
+                                width="100%">
                                 <thead class="bg-primary-light">
                                     <tr>
                                         <th>No</th>
                                         <th>Staff ID</th>
+                                        <th>Photo</th>
                                         <th>Name</th>
                                         <th>Role</th>
                                         <th>Qualification</th>
                                         <!-- <th>Department</th> -->
                                         <th>Phone Number</th>
+                                        <th>Email</th>
                                         <th>Status</th>
                                         <th width="100px">Action</th>
                                     </tr>
@@ -62,6 +65,8 @@
     <!-- /.content-wrapper -->
 
     {{-- @include('staff.staff_list.create') --}}
+    @include('staff.staff_list.delete')
+    @include('staff.staff_list.status')
 
     {{-- </div> --}}
 
@@ -88,6 +93,18 @@
                         name: 'staff_idid'
                     },
                     {
+                        data: 'photo',
+                        name: 'photo',
+                        render: function(data, type, full, meta) {
+                            data = "{{ asset('storage/') }}/" + data;
+                            return '<img src="' + data +
+                                '" height="50" style="border-radius:50%;"/>';
+                        },
+                        orderable: false,
+                        searchable: false
+
+                    },
+                    {
                         data: 'name',
                         name: 'name'
                     },
@@ -99,13 +116,16 @@
                         data: 'qualification',
                         name: 'qualification'
                     },
-                    
+
                     {
                         data: 'phone',
                         name: 'phone'
                     },
-                    
-                    
+                    {
+                        data: 'email',
+                        name: 'email'
+                    },
+
                     // {
                     //     data: 'department',
                     //     name: 'role'
@@ -128,7 +148,7 @@
                 var staffId = $(this).data('id');
                 $('#edit_staff_id').val(staffId); // Set staff ID in the hidden input
                 $.ajax({
-                    url: '{{ url("staff", "") }}' + "/" + staffId + "/edit",
+                    url: '{{ url('staff', '') }}' + "/" + staffId + "/edit",
                     method: 'GET',
                     success: function(response) {
                         $('#edit_staff_id').val(response.id);
@@ -175,6 +195,9 @@
                     }
                 });
             });
+
+
+
 
         });
     </script>

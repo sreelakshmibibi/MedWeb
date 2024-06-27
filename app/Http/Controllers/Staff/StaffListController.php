@@ -29,7 +29,7 @@ class StaffListController extends Controller
     /**
      * Display a listing of the resource.
      */
-    
+
     public function index(Request $request)
     {
         $successMessage = $request->query('success_message');
@@ -47,27 +47,33 @@ class StaffListController extends Controller
                 ->addColumn('name', function ($row) {
                     return $row->user->name;
                 })
-                
+
                 ->addColumn('role', function ($row) {
                     $role = null;
                     // Assuming you want to dynamically set the role badge based on user attributes
                     if ($row->user->is_doctor) {
-                        $role .=   '<span class="btn-sm badge badge-success-light">Doctor</span>';
-                    } if ($row->user->is_nurse) {
+                        $role .= '<span class="btn-sm badge badge-success-light">Doctor</span>';
+                    }if ($row->user->is_nurse) {
                         $role .= '<span class="btn-sm badge badge-warning-light">Nurse</span>';
-                    } if ($row->user->is_admin) {
+                    }if ($row->user->is_admin) {
                         $role .= '<span class="btn-sm badge badge-primary-light">Admin</span>';
-                    } if ($row->user->is_reception) {
+                    }if ($row->user->is_reception) {
                         $role .= '<span class="btn-sm badge badge-info-light">Others</span>';
                     }
                     return $role;
                 })
                 ->addColumn('action', function ($row) {
+                    // $btn1 = '<a href="' . route('staff.staff_list.edit', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
+                    // $btn2 = '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete"><i class="fa fa-trash"></i></button>';
+                    // return $btn1 . $btn2;
+                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view">
+                    <i class="fa fa-eye"></i></button>';
                     $btn1 = '<a href="' . route('staff.staff_list.edit', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
                     $btn2 = '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete"><i class="fa fa-trash"></i></button>';
-                    return $btn1 . $btn2;
+                    $btn3 = '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
+                    return $btn . $btn1 . $btn2 . $btn3;
                 })
-                ->rawColumns(['name','role', 'action'])
+                ->rawColumns(['name', 'role', 'action'])
                 ->make(true);
         }
 
@@ -91,7 +97,7 @@ class StaffListController extends Controller
         $departments = Department::where('status', 'Y')->get();
         $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
         return view('staff.staff_list.add', compact('countries', 'states', 'cities', 'userTypes', 'departments', 'clinicBranches'));
-        
+
     }
 
     /**
@@ -104,7 +110,7 @@ class StaffListController extends Controller
 
             // Create a new user instance
             $user = new User();
-            $user->name = $request->title. " ".$request->firstname . " " . $request->lastname;
+            $user->name = $request->title . " " . $request->firstname . " " . $request->lastname;
             $user->email = $request->email;
 
             // Set user role based on request
@@ -137,10 +143,24 @@ class StaffListController extends Controller
             $staffProfile->user_id = $user->id;
             $staffProfile->staff_id = "MEDWEB" . $user->id;
             $staffProfile->clinic_branch_id = $request->clinic_branch_id;
-            $staffProfile->fill($request->only(['aadhaar_no',
-                'date_of_birth', 'phone', 'gender', 'address1', 'address2', 'city_id', 'state_id',
-                'country_id', 'pincode', 'date_of_joining', 'qualification', 'department_id',
-                'specialization', 'years_of_experience', 'license_number', 'subspecialty'
+            $staffProfile->fill($request->only([
+                'aadhaar_no',
+                'date_of_birth',
+                'phone',
+                'gender',
+                'address1',
+                'address2',
+                'city_id',
+                'state_id',
+                'country_id',
+                'pincode',
+                'date_of_joining',
+                'qualification',
+                'department_id',
+                'specialization',
+                'years_of_experience',
+                'license_number',
+                'subspecialty'
             ]));
             if ($request->add_checkbox == "on") {
                 $staffProfile->com_address1 = $request->address1;
@@ -149,16 +169,16 @@ class StaffListController extends Controller
                 $staffProfile->com_state_id = $request->state_id;
                 $staffProfile->com_country_id = $request->country_id;
                 $staffProfile->com_pincode = $request->pincode;
-            }else {
+            } else {
                 $staffProfile->com_address1 = $request->com_address1;
                 $staffProfile->com_address2 = $request->com_address1;
                 $staffProfile->com_city_id = $request->com_address1;
                 $staffProfile->com_state_id = $request->com_address1;
                 $staffProfile->com_country_id = $request->com_address1;
                 $staffProfile->com_pincode = $request->com_address1;
-            
+
             }
-            
+
             // Save profile photo if provided
             if ($request->hasFile('profile_photo')) {
                 $profilePath = $request->file('profile_photo')->store('profile-photos', 'public');
@@ -190,9 +210,9 @@ class StaffListController extends Controller
                 $role = Role::findById(User::IS_RECEPTION);
                 $user->assignRole($role);
             }
-            
+
             DB::commit();
-            
+
             // Send welcome email (you can implement this part)
 
             return redirect()->route('staff.staff_list')->with('success', 'Staff created successfully');
@@ -205,30 +225,35 @@ class StaffListController extends Controller
     private function saveDoctorAvailability(Request $request, $userId)
     {
         $weekDays = [
-            WeekDay::MONDAY, WeekDay::TUESDAY, WeekDay::WEDNESDAY, WeekDay::THURSDAY,
-            WeekDay::FRIDAY, WeekDay::SATURDAY, WeekDay::SUNDAY
+            WeekDay::MONDAY,
+            WeekDay::TUESDAY,
+            WeekDay::WEDNESDAY,
+            WeekDay::THURSDAY,
+            WeekDay::FRIDAY,
+            WeekDay::SATURDAY,
+            WeekDay::SUNDAY
         ];
-        
+
         // Get the actual number of rows (count of clinic_branch_id inputs)
         $count = $request->input('row_count', 0);
-    
+
         for ($i = 0; $i <= $count; $i++) {
             foreach ($weekDays as $day) {
                 // Construct the keys dynamically
                 $fromKey = strtolower($day) . '_from' . $i;
                 $toKey = strtolower($day) . '_to' . $i;
                 $clinicBranchKey = 'clinic_branch_id' . $i;
-    
+
                 // Check if fromKey is present in request, if not continue to next iteration
                 if (!$request->has($fromKey)) {
                     continue;
                 }
-    
+
                 // Extract values from request
                 $clinic_branch_id = $request->input($clinicBranchKey);
                 $from_time = $request->input($fromKey);
                 $to_time = $request->input($toKey);
-                if ($from_time !=null) {
+                if ($from_time != null) {
                     // Create and save DoctorWorkingHour instance
                     $availability = new DoctorWorkingHour();
                     $availability->user_id = $userId;
@@ -242,7 +267,7 @@ class StaffListController extends Controller
             }
         }
     }
-    
+
 
     /**
      * Display the specified resource.
@@ -260,8 +285,8 @@ class StaffListController extends Controller
         $staffProfile = StaffProfile::find($id);
         $userDetails = User::find($staffProfile->user_id);
         $availability = DoctorWorkingHour::where('user_id', $staffProfile->user_id)
-                        ->where('status', 'Y')
-                        ->get();
+            ->where('status', 'Y')
+            ->get();
         if (!$staffProfile) {
             abort(404);
         }
@@ -270,8 +295,8 @@ class StaffListController extends Controller
         $cities = City::all();
         $departments = Department::where('status', 'Y')->get();
         $userTypes = UserType::where('status', 'Y')->get();
-        return view('staff.staff_list.edit', compact('countries', 'states', 'cities', 'userTypes', 'departments', 'staffProfile', 'userDetails','availability'));
-        
+        return view('staff.staff_list.edit', compact('countries', 'states', 'cities', 'userTypes', 'departments', 'staffProfile', 'userDetails', 'availability'));
+
     }
 
     /**
@@ -279,7 +304,7 @@ class StaffListController extends Controller
      */
     public function update(Request $request)
     {
-       
+
     }
 
     /**
@@ -287,6 +312,6 @@ class StaffListController extends Controller
      */
     public function destroy($id)
     {
-       
+
     }
 }

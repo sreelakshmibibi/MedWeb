@@ -18,7 +18,7 @@
                     </div>
                 @endif
                 <div class="d-flex align-items-center justify-content-between">
-                    <h3 class="page-title">Add Staff Member</h3>
+                    <h3 class="page-title">Edit Staff Member</h3>
                 </div>
             </div>
 
@@ -31,13 +31,13 @@
                             <!-- Step 1 -->
                             <h6 class="tabHeading">Personal Info</h6>
                             <section class="tabSection">
-                                @include('staff.staff_list.personal_info')
+                                @include('staff.staff_list.edit_personal_info')
                             </section>
 
                             <!--Education-->
                             <h6 class="tabHeading">Experience</h6>
                             <section class="tabSection">
-                                @include('staff.staff_list.experience')
+                                @include('staff.staff_list.edit_experience')
                             </section>
 
 
@@ -48,7 +48,7 @@
                         </form>
                     </div>
                     <div class="doctordiv" style="display: none;">
-                        @include('staff.staff_list.availability')
+                        @include('staff.staff_list.edit_availability')
                     </div>
                     <!-- /.box-body -->
                 </div>
