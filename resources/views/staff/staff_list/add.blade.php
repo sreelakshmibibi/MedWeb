@@ -221,7 +221,7 @@
             function loadStates(countryId, stateSelectElement) {
                 if (countryId) {
                     $.ajax({
-                        url: '{{ route('get.states', '') }}' + '/' + countryId,
+                        url: '{{ route("get.states", "") }}' + '/' + countryId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -247,7 +247,7 @@
             function loadCities(stateId, citySelectElement) {
                 if (stateId) {
                     $.ajax({
-                        url: '{{ route('get.cities', '') }}' + '/' + stateId,
+                        url: '{{ route("get.cities", "") }}' + '/' + stateId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {

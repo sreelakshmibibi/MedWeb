@@ -47,6 +47,9 @@ class StaffListController extends Controller
                 ->addColumn('name', function ($row) {
                     return $row->user->name;
                 })
+                ->addColumn('email', function ($row) {
+                    return $row->user->email;
+                })
 
                 ->addColumn('role', function ($row) {
                     $role = null;
@@ -69,9 +72,9 @@ class StaffListController extends Controller
                     $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view">
                     <i class="fa fa-eye"></i></button>';
                     $btn1 = '<a href="' . route('staff.staff_list.edit', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
-                    $btn2 = '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete"><i class="fa fa-trash"></i></button>';
+                    // $btn2 = '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete"><i class="fa fa-trash"></i></button>';
                     $btn3 = '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
-                    return $btn . $btn1 . $btn2 . $btn3;
+                    return $btn . $btn1 . $btn3;
                 })
                 ->rawColumns(['name', 'role', 'action'])
                 ->make(true);
