@@ -25,8 +25,8 @@
             <section class="content">
                 <div class="box">
                     <div class="box-body wizard-content">
-                        <form method="post" class="validation-wizard wizard-circle" action="{{ route('staff.staff_list.store') }}"
-                            enctype="multipart/form-data">
+                        <form method="post" class="validation-wizard wizard-circle"
+                            action="{{ route('staff.staff_list.store') }}" enctype="multipart/form-data">
                             @csrf
                             <!-- Step 1 -->
                             <h6 class="tabHeading">Personal Info</h6>
@@ -40,26 +40,29 @@
                                 @include('staff.staff_list.experience')
                             </section>
 
-                            @include('staff.staff_list.availability')
 
-                            <div id="storeRoute" data-url="{{ route('staff.staff_list.store') }}"  data-stafflist-route="{{ route('staff.staff_list') }}"></div>
+
+                            <div id="storeRoute" data-url="{{ route('staff.staff_list.store') }}"
+                                data-stafflist-route="{{ route('staff.staff_list') }}"></div>
                             <input type="hidden" name="row_count" id="row_count">
                         </form>
                     </div>
-
+                    <div class="doctordiv" style="display: none;">
+                        @include('staff.staff_list.availability')
+                    </div>
                     <!-- /.box-body -->
                 </div>
             </section>
         </div>
     </div>
     <script>
-    $(document).ready(function() {
-        let count = 1;
+        $(document).ready(function() {
+            let count = 1;
 
-// Event listener for Add Row button click
-$(document).on('click', '#buttonAddRow', function() {
-    count++;
-    let newRow = `<tr>
+            // Event listener for Add Row button click
+            $(document).on('click', '#buttonAddRow', function() {
+                count++;
+                let newRow = `<tr>
                     <td>${count}</td>
                     <td>
                         <select class="select2" id="clinic_branch_id${count}" name="clinic_branch_id${count}" required
@@ -124,251 +127,254 @@ $(document).on('click', '#buttonAddRow', function() {
                     </td>
                 </tr>`;
 
-    $('#tablebody').append(newRow);
-    updateRowCount();
-});
+                $('#tablebody').append(newRow);
+                updateRowCount();
+            });
 
-// Event listener for Delete button click
-$(document).on('click', '.btnDelete', function() {
-    $(this).closest('tr').remove();
-    updateRowCount();
-});
+            // Event listener for Delete button click
+            $(document).on('click', '.btnDelete', function() {
+                $(this).closest('tr').remove();
+                updateRowCount();
+            });
 
-// Function to update row count input field value
-function updateRowCount() {
-    $('#row_count').val(count);
-}
+            // Function to update row count input field value
+            function updateRowCount() {
+                $('#row_count').val(count);
+            }
 
-// Validation for 'from' and 'to' time fields
-$(document).on('focusout', '.fromTime, .toTime', function() {
-    let index = $(this).attr('id').match(/\d+/)[0];
-    let day = $(this).closest('td').prevAll().length; // Determine the column index
-    switch (day) {
-        case 2: 
-            fromField = $(`#sunday_from${index}`);
-            toField = $(`#sunday_to${index}`);
-            break;
-        case 3: // Monday column (index 3)
-            fromField = $(`#monday_from${index}`);
-            toField = $(`#monday_to${index}`);
-            break;
-        case 4: // Tuesday column (index 4)
-            fromField = $(`#tuesday_from${index}`);
-            toField = $(`#tuesday_to${index}`);
-            break;
-        case 5: // Wednesday column (index 5)
-            fromField = $(`#wednesday_from${index}`);
-            toField = $(`#wednesday_to${index}`);
-            break;
-        case 6: // Thursday column (index 6)
-            fromField = $(`#thursday_from${index}`);
-            toField = $(`#thursday_to${index}`);
-            break;
-        case 7: // Friday column (index 7)
-            fromField = $(`#friday_from${index}`);
-            toField = $(`#friday_to${index}`);
-            break;
-        case 8: // Saturday column (index 8)
-            fromField = $(`#saturday_from${index}`);
-            toField = $(`#saturday_to${index}`);
-            break;
-        default:
-            break;
-    }
+            // Validation for 'from' and 'to' time fields
+            $(document).on('focusout', '.fromTime, .toTime', function() {
+                let index = $(this).attr('id').match(/\d+/)[0];
+                let day = $(this).closest('td').prevAll().length; // Determine the column index
+                switch (day) {
+                    case 2:
+                        fromField = $(`#sunday_from${index}`);
+                        toField = $(`#sunday_to${index}`);
+                        break;
+                    case 3: // Monday column (index 3)
+                        fromField = $(`#monday_from${index}`);
+                        toField = $(`#monday_to${index}`);
+                        break;
+                    case 4: // Tuesday column (index 4)
+                        fromField = $(`#tuesday_from${index}`);
+                        toField = $(`#tuesday_to${index}`);
+                        break;
+                    case 5: // Wednesday column (index 5)
+                        fromField = $(`#wednesday_from${index}`);
+                        toField = $(`#wednesday_to${index}`);
+                        break;
+                    case 6: // Thursday column (index 6)
+                        fromField = $(`#thursday_from${index}`);
+                        toField = $(`#thursday_to${index}`);
+                        break;
+                    case 7: // Friday column (index 7)
+                        fromField = $(`#friday_from${index}`);
+                        toField = $(`#friday_to${index}`);
+                        break;
+                    case 8: // Saturday column (index 8)
+                        fromField = $(`#saturday_from${index}`);
+                        toField = $(`#saturday_to${index}`);
+                        break;
+                    default:
+                        break;
+                }
 
-    if ($(this).hasClass('fromTime')) {
-        if ($(this).val()) {
-            toField.rules('add', {
-                required: true,
-                messages: {
-                    required: `To Time is required when From time is entered`
+                if ($(this).hasClass('fromTime')) {
+                    if ($(this).val()) {
+                        toField.rules('add', {
+                            required: true,
+                            messages: {
+                                required: `To Time is required when From time is entered`
+                            }
+                        });
+                    } else {
+                        toField.rules('remove', 'required');
+                    }
+                }
+
+                if ($(this).hasClass('toTime')) {
+                    if ($(this).val()) {
+                        fromField.rules('add', {
+                            required: true,
+                            messages: {
+                                required: `From Time is required when To time is entered`
+                            }
+                        });
+                    } else {
+                        fromField.rules('remove', 'required');
+                    }
                 }
             });
-        } else {
-            toField.rules('remove', 'required');
-        }
-    }
 
-    if ($(this).hasClass('toTime')) {
-        if ($(this).val()) {
-            fromField.rules('add', {
-                required: true,
-                messages: {
-                    required: `From Time is required when To time is entered`
+            // Handle change event for role dropdown
+            $('select[name="role[]"]').change(function() {
+                if ($(this).val() && $(this).val().includes('3')) {
+                    $('.doctorFields').show();
+                    $('.otherFields').hide();
+                } else {
+                    $('.doctorFields').hide();
+                    $('.otherFields').show();
                 }
             });
-        } else {
-            fromField.rules('remove', 'required');
-        }
-    }
-});
 
-        // Handle change event for role dropdown
-        $('select[name="role[]"]').change(function() {
-            if ($(this).val() && $(this).val().includes('3')) {
-                $('.doctorFields').show();
-                $('.otherFields').hide();
-            } else {
-                $('.doctorFields').hide();
-                $('.otherFields').show();
+            // Function to load states based on country ID
+            function loadStates(countryId, stateSelectElement) {
+                if (countryId) {
+                    $.ajax({
+                        url: '{{ route('get.states', '') }}' + '/' + countryId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            stateSelectElement.empty();
+                            stateSelectElement.append('<option value="">Select State</option>');
+                            $.each(data, function(key, value) {
+                                stateSelectElement.append('<option value="' + key + '">' +
+                                    value + '</option>');
+                            });
+                            // Trigger change event to load initial cities
+                            stateSelectElement.trigger('change');
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.error('Error loading states:', textStatus, errorThrown);
+                        }
+                    });
+                } else {
+                    stateSelectElement.empty();
+                }
             }
-        });
 
-        // Function to load states based on country ID
-        function loadStates(countryId, stateSelectElement) {
-            if (countryId) {
-                $.ajax({
-                    url: '{{ route("get.states", "") }}' + '/' + countryId,
-                    type: "GET",
-                    dataType: "json",
-                    success: function(data) {
-                        stateSelectElement.empty();
-                        stateSelectElement.append('<option value="">Select State</option>');
-                        $.each(data, function(key, value) {
-                            stateSelectElement.append('<option value="' + key + '">' + value + '</option>');
-                        });
-                        // Trigger change event to load initial cities
-                        stateSelectElement.trigger('change');
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        console.error('Error loading states:', textStatus, errorThrown);
-                    }
-                });
-            } else {
-                stateSelectElement.empty();
+            // Function to load cities based on state ID
+            function loadCities(stateId, citySelectElement) {
+                if (stateId) {
+                    $.ajax({
+                        url: '{{ route('get.cities', '') }}' + '/' + stateId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            citySelectElement.empty();
+                            citySelectElement.append('<option value="">Select City</option>');
+                            $.each(data, function(key, value) {
+                                citySelectElement.append('<option value="' + key + '">' +
+                                    value + '</option>');
+                            });
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.error('Error loading cities:', textStatus, errorThrown);
+                        }
+                    });
+                } else {
+                    citySelectElement.empty();
+                }
             }
-        }
 
-        // Function to load cities based on state ID
-        function loadCities(stateId, citySelectElement) {
-            if (stateId) {
-                $.ajax({
-                    url: '{{ route("get.cities", "") }}' + '/' + stateId,
-                    type: "GET",
-                    dataType: "json",
-                    success: function(data) {
-                        citySelectElement.empty();
-                        citySelectElement.append('<option value="">Select City</option>');
-                        $.each(data, function(key, value) {
-                            citySelectElement.append('<option value="' + key + '">' + value + '</option>');
-                        });
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        console.error('Error loading cities:', textStatus, errorThrown);
-                    }
-                });
-            } else {
-                citySelectElement.empty();
-            }
-        }
+            // Initializations
+            var initialCountryId = $('#country_id').val(); // Assuming India is selected initially
+            loadStates(initialCountryId, $('#state_id'));
 
-        // Initializations
-        var initialCountryId = $('#country_id').val(); // Assuming India is selected initially
-        loadStates(initialCountryId, $('#state_id'));
-
-        // Handle change event for country dropdown
-        $('#country_id').change(function() {
-            var countryId = $(this).val();
-            loadStates(countryId, $('#state_id'));
-        });
-
-        // Handle change event for state dropdown
-        $('#state_id').change(function() {
-            var stateId = $(this).val();
-            loadCities(stateId, $('#city_id'));
-        });
-
-        // Same logic for communication address
-        var com_initialCountryId = $('#com_country_id').val(); // Assuming India is selected initially
-        loadStates(com_initialCountryId, $('#com_state_id'));
-
-        $('#com_country_id').change(function() {
-            var countryId = $(this).val();
-            loadStates(countryId, $('#com_state_id'));
-        });
-
-        $('#com_state_id').change(function() {
-            var stateId = $(this).val();
-            loadCities(stateId, $('#com_city_id'));
-        });
-
-        // Validate weekday time inputs
-        function validateWeekdayTime(day) {
-            var fromValue = $('#' + day + '_from').val();
-            var toValue = $('#' + day + '_to').val();
-
-            // Check if fromValue is filled and toValue is empty
-            if (fromValue && !toValue) {
-                $('#' + day + '_to').addClass('is-invalid'); // Add Bootstrap's is-invalid class
-                return false;
-            } else {
-                $('#' + day + '_to').removeClass('is-invalid'); // Remove is-invalid class if valid
-                return true;
-            }
-        }
-
-        // Event handlers for weekday inputs
-        ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].forEach(function(day) {
-            // Validate on change of weekday from
-            $('#' + day + '_from').change(function() {
-                validateWeekdayTime(day);
+            // Handle change event for country dropdown
+            $('#country_id').change(function() {
+                var countryId = $(this).val();
+                loadStates(countryId, $('#state_id'));
             });
 
-            // Validate on change of weekday to
-            $('#' + day + '_to').change(function() {
-                validateWeekdayTime(day);
+            // Handle change event for state dropdown
+            $('#state_id').change(function() {
+                var stateId = $(this).val();
+                loadCities(stateId, $('#city_id'));
             });
-        });
 
-        // Form submit validation
-        $('form.validation-wizard').submit(function(event) {
-            var isValid = true;
+            // Same logic for communication address
+            var com_initialCountryId = $('#com_country_id').val(); // Assuming India is selected initially
+            loadStates(com_initialCountryId, $('#com_state_id'));
 
-            // Validate all weekdays
+            $('#com_country_id').change(function() {
+                var countryId = $(this).val();
+                loadStates(countryId, $('#com_state_id'));
+            });
+
+            $('#com_state_id').change(function() {
+                var stateId = $(this).val();
+                loadCities(stateId, $('#com_city_id'));
+            });
+
+            // Validate weekday time inputs
+            function validateWeekdayTime(day) {
+                var fromValue = $('#' + day + '_from').val();
+                var toValue = $('#' + day + '_to').val();
+
+                // Check if fromValue is filled and toValue is empty
+                if (fromValue && !toValue) {
+                    $('#' + day + '_to').addClass('is-invalid'); // Add Bootstrap's is-invalid class
+                    return false;
+                } else {
+                    $('#' + day + '_to').removeClass('is-invalid'); // Remove is-invalid class if valid
+                    return true;
+                }
+            }
+
+            // Event handlers for weekday inputs
             ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].forEach(function(day) {
-                if (!validateWeekdayTime(day)) {
-                    isValid = false;
+                // Validate on change of weekday from
+                $('#' + day + '_from').change(function() {
+                    validateWeekdayTime(day);
+                });
+
+                // Validate on change of weekday to
+                $('#' + day + '_to').change(function() {
+                    validateWeekdayTime(day);
+                });
+            });
+
+            // Form submit validation
+            $('form.validation-wizard').submit(function(event) {
+                var isValid = true;
+
+                // Validate all weekdays
+                ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].forEach(
+                    function(day) {
+                        if (!validateWeekdayTime(day)) {
+                            isValid = false;
+                        }
+                    });
+
+                if (!isValid) {
+                    event.preventDefault(); // Prevent form submission if validation fails
+                    $('.error-message').text('Please fill all weekday times');
+                } else {
+                    $('.error-message').text(''); // Clear error message if validation passes
                 }
             });
 
-            if (!isValid) {
-                event.preventDefault(); // Prevent form submission if validation fails
-                $('.error-message').text('Please fill all weekday times');
-            } else {
-                $('.error-message').text(''); // Clear error message if validation passes
-            }
-        });
+            // Event listener for dropdown item click
+            $(".dropdown-menu .dropdown-item").click(function() {
+                // Get the selected salutation text
+                let salutation = $(this).text().trim();
 
-        // Event listener for dropdown item click
-        $(".dropdown-menu .dropdown-item").click(function() {
-            // Get the selected salutation text
-            let salutation = $(this).text().trim();
+                // Update the button text with the selected salutation
+                $(".input-group .dropdown-toggle").text(salutation);
+            });
 
-            // Update the button text with the selected salutation
-            $(".input-group .dropdown-toggle").text(salutation);
+            // Event listener for communication address checkbox
+            $("#add_checkbox").change(function() {
+                if ($(this).is(':checked')) {
+                    $('#communicationAddress').hide();
+                    $('#com_address1').removeAttr('required');
+                    $('#com_address2').removeAttr('required');
+                    $('#com_city_id').removeAttr('required');
+                    $('#com_state_id').removeAttr('required');
+                    $('#com_country_id').removeAttr('required');
+                    $('#com_pincode').removeAttr('required');
+                } else {
+                    $('#communicationAddress').show();
+                    $('#com_address1').attr('required', true);
+                    $('#com_address2').attr('required', true);
+                    $('#com_city_id').attr('required', true);
+                    $('#com_state_id').attr('required', true);
+                    $('#com_country_id').attr('required', true);
+                    $('#com_pincode').attr('required', true);
+                }
+            });
         });
-
-        // Event listener for communication address checkbox
-        $("#add_checkbox").change(function() {
-            if ($(this).is(':checked')) {
-                $('#communicationAddress').hide();
-                $('#com_address1').removeAttr('required');
-                $('#com_address2').removeAttr('required');
-                $('#com_city_id').removeAttr('required');
-                $('#com_state_id').removeAttr('required');
-                $('#com_country_id').removeAttr('required');
-                $('#com_pincode').removeAttr('required');
-            } else {
-                $('#communicationAddress').show();
-                $('#com_address1').attr('required', true);
-                $('#com_address2').attr('required', true);
-                $('#com_city_id').attr('required', true);
-                $('#com_state_id').attr('required', true);
-                $('#com_country_id').attr('required', true);
-                $('#com_pincode').attr('required', true);
-            }
-        });
-    });
-</script>
+    </script>
 
 @endsection
