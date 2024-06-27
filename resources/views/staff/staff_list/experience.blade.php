@@ -84,7 +84,7 @@
     <div class="col-md-4">
         <div class="form-group">
             <label class="form-label" for="specialization">Branch</label>
-            <select class="select2" id="clinic_branch_id0" name="clinic_branch_id0" required
+            <select class="select2" id="clinic_branch_id" name="clinic_branch_id" required
                 data-placeholder="Select a Branch" style="width: 100%;">
                 @foreach ($clinicBranches as $clinicBranch)
                     <?php

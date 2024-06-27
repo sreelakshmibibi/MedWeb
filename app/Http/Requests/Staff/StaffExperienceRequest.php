@@ -29,21 +29,8 @@ class StaffExperienceRequest extends FormRequest
             'date_of_joining' => 'required|date',
             'date_of_relieving' => 'nullable|date',
             'specialization' => 'required|string|max:255',
-            'Subspeciality' => 'required|string|max:255',
-            'sunday_from' => 'nullable|date_format:H:i',
-            'sunday_to' => 'nullable|date_format:H:i',
-            'monday_from' => 'nullable|date_format:H:i',
-            'monday_to' => 'nullable|date_format:H:i',
-            'tuesday_from' => 'nullable|date_format:H:i',
-            'tuesday_to' => 'nullable|date_format:H:i',
-            'wednesday_from' => 'nullable|date_format:H:i',
-            'wednesday_to' => 'nullable|date_format:H:i',
-            'thursday_from' => 'nullable|date_format:H:i',
-            'thursday_to' => 'nullable|date_format:H:i',
-            'friday_from' => 'nullable|date_format:H:i',
-            'friday_to' => 'nullable|date_format:H:i',
-            'saturday_from' => 'nullable|date_format:H:i',
-            'saturday_to' => 'nullable|date_format:H:i',
+            'subspecialty' => 'required|string|max:255',
+            
         ];
     }
 
