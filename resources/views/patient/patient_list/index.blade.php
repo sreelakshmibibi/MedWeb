@@ -18,9 +18,9 @@
                     </div>
                 @endif
                 <div class="d-flex align-items-center justify-content-between">
-                    <h3 class="page-title">Patient Details</h3>
-                    <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
-                        data-bs-target="#modal-right"> <i class="fa fa-add"></i> Add New</button>
+                    <h3 class="page-title">Patient List</h3>
+                    <a type="button" class="waves-effect waves-light btn btn-primary"
+                        href="{{ route('patient.patient_list.create') }}"> <i class="fa fa-add"></i> Add New</a>
                 </div>
             </div>
 
@@ -60,9 +60,6 @@
     </div>
     <!-- /.content-wrapper -->
 
-    @include('patient.patient_list.create')
-    @include('patient.patient_list.edit')
-    @include('patient.patient_list.delete')
     {{-- </div> --}}
 
     <!-- ./wrapper -->
@@ -127,7 +124,7 @@
                 var patientId = $(this).data('id');
                 $('#edit_patient_id').val(patientId); // Set patient ID in the hidden input
                 $.ajax({
-                    url: '{{ url("patient", "") }}' + "/" + patientId + "/edit",
+                    url: '{{ url('patient', '') }}' + "/" + patientId + "/edit",
                     method: 'GET',
                     success: function(response) {
                         $('#edit_patient_id').val(response.id);
