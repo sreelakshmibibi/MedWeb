@@ -53,7 +53,7 @@
 
 <!--basic-->
 <div class="row">
-    <div class="col-md-3">
+    {{-- <div class="col-md-3">
         <div class="form-group">
             <label class="form-label" for="doctor">Blood Group</label>
             <select class="select2" id="department_id" name="department_id" required
@@ -62,7 +62,7 @@
                 <option>B+</option>
             </select>
         </div>
-    </div>
+    </div> --}}
 
     <div class="col-md-3">
         <div class="form-group">
@@ -87,9 +87,7 @@
                 required>
         </div>
     </div>
-</div>
 
-<div class="row">
     <div class="col-md-3">
         <div class="form-group">
             <label class="form-label" for="rdoctor">Referrer Doctor</label>
@@ -98,3 +96,13 @@
         </div>
     </div>
 </div>
+
+{{-- <div class="row">
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label" for="rdoctor">Referrer Doctor</label>
+            <input type="text" class="form-control" id="rdoctor" name="rdoctor" placeholder="Enter doctor name"
+                required>
+        </div>
+    </div>
+</div> --}}

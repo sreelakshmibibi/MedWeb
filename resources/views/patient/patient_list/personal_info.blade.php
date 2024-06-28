@@ -21,7 +21,7 @@
              <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Last Name" required>
          </div>
      </div>
-     <div class="col-md-3">
+     <div class="col-md-2">
          <div class="form-group">
              <label class="form-label" for="gender">Gender</label>
              <select class="form-select" id="gender" name="gender" required>
@@ -29,6 +29,16 @@
                  <option value="M">Male</option>
                  <option value="F">Female</option>
                  <option value="O">Others</option>
+             </select>
+         </div>
+     </div>
+     <div class="col-md-1">
+         <div class="form-group">
+             <label class="form-label" for="doctor">Blood Group</label>
+             <select class="select2" id="department_id" name="department_id" required
+                 data-placeholder="Select a Department" style="width: 100%;">
+                 <option>A+</option>
+                 <option>B+</option>
              </select>
          </div>
      </div>
@@ -65,7 +75,8 @@
      <div class="col-md-3">
          <div class="form-group">
              <label class="form-label" for="phone">Registration Date</label>
-             <input type="date" class="form-control" id="regdate" name="regdate" required>
+             <input type="date" class="form-control" id="regdate" name="regdate" value="<?php echo date('Y-m-d'); ?>"
+                 required>
          </div>
      </div>
 
@@ -75,11 +86,13 @@
  <div class="row">
      <div class="form-group col-md-2">
          <label class="form-label" for="address1">Residential Address</label>
-         <input type="text" class="form-control" id="address1" name="address1" placeholder="Adress line 1" required>
+         <input type="text" class="form-control" id="address1" name="address1" placeholder="Adress line 1"
+             required>
      </div>
 
      <div class="form-group col-md-2 d-flex flex-wrap align-content-end">
-         <input type="text" class="form-control" id="address2" name="address2" placeholder="Adress line 2" required>
+         <input type="text" class="form-control" id="address2" name="address2" placeholder="Adress line 2"
+             required>
      </div>
 
      <div class="form-group col-md-2 d-flex flex-wrap align-content-end">
