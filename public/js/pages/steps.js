@@ -46,26 +46,39 @@ $("#staffform").steps({
     labels: {
         finish: '<span><i class="fa fa-save"></i> Save</span>',
     },
-    onStepChanging: function (event, currentIndex, newIndex) {
+    onStepChanging: function(event, currentIndex, newIndex) {
+        let form = $("#staffform"); // Replace with your actual form ID or selector
+    
+        // Validate form for current step
+        if (currentIndex < newIndex) {
+            var valid = form.valid();
+            if (!valid) {
+                form.find('.body:eq(' + currentIndex + ') label.error').remove();
+                form.find('.body:eq(' + currentIndex + ') .error').removeClass('error');
+            }
+        }
+    
+        // Handle availability step based on role selection
         let role = $("select[name='role[]']").val();
         handleAvailabilityStep(role);
-
-        return (
-            currentIndex > newIndex ||
-            (!(3 === newIndex && Number($("#age-2").val()) < 18) &&
-                (currentIndex < newIndex &&
-                    (form
-                        .find(".body:eq(" + newIndex + ") label.error")
-                        .remove(),
-                    form
-                        .find(".body:eq(" + newIndex + ") .error")
-                        .removeClass("error")),
-                (form.validate().settings.ignore = ":disabled,:hidden"),
-                form.valid()))
-        );
+    
+        // Return true if moving backwards or all validation passed
+        return currentIndex > newIndex || valid;
     },
     onFinishing: function (event, currentIndex) {
-        return (form.validate().settings.ignore = ":disabled"), form.valid();
+        var form = $(this);
+    
+        // Validate the form
+        form.validate();
+    
+        // Adjust validation settings if needed
+        form.validate().settings.ignore = ":disabled";
+    
+        // Check if the form is valid
+        var isValid = form.valid();
+    
+        // Return true or false based on validation result
+        return isValid;
     },
     onFinished: function (event, currentIndex) {
         var formDataStaff = new FormData($("#staffform")[0]); // Serialize form data including files
