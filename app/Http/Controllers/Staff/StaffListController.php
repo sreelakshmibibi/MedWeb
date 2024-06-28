@@ -120,41 +120,44 @@ class StaffListController extends Controller
             
             $user->name = $request->title . "<br> " . $request->firstname . "<br>" . $request->lastname;
             $user->email = $request->email;
-
+            $roles = [
+                User::IS_ADMIN => false,
+                User::IS_DOCTOR => false,
+                User::IS_NURSE => false,
+                User::IS_RECEPTION => false,
+            ];
+    
+            // Update roles based on request input
             foreach ($request->role as $role) {
                 switch ($role) {
                     case User::IS_ADMIN:
-                        $user->is_admin = true;
+                        $roles[User::IS_ADMIN] = true;
                         break;
                     case User::IS_DOCTOR:
-                        $user->is_doctor = true;
+                        $roles[User::IS_DOCTOR] = true;
                         break;
                     case User::IS_NURSE:
-                        $user->is_nurse = true;
+                        $roles[User::IS_NURSE] = true;
                         break;
                     case User::IS_RECEPTION:
-                        $user->is_reception = true;
+                        $roles[User::IS_RECEPTION] = true;
                         break;
                     default:
                         throw new \Exception('Invalid role specified.');
                 }
             }
-
-            
+    
+            // Set user roles
+            $user->is_admin = $roles[User::IS_ADMIN];
+            $user->is_doctor = $roles[User::IS_DOCTOR];
+            $user->is_nurse = $roles[User::IS_NURSE];
+            $user->is_reception = $roles[User::IS_RECEPTION];
+    
+            // Save the user
             if ($user->save()) {
-                
-                $roleIds = [
-                    User::IS_ADMIN => Role::findById(User::IS_ADMIN),
-                    User::IS_DOCTOR => Role::findById(User::IS_DOCTOR),
-                    User::IS_NURSE => Role::findById(User::IS_NURSE),
-                    User::IS_RECEPTION => Role::findById(User::IS_RECEPTION),
-                ];
-
-                foreach ($roleIds as $roleId) {
-                    if ($user->{$roleId->name}) {
-                        $user->assignRole($roleId);
-                    }
-                }
+                // Assign roles using Spatie/Permission package (if used)
+                $user->syncRoles(array_keys(array_filter($roles)));
+    
 
                 
                 $staffProfile->user_id = $user->id;
