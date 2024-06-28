@@ -5,7 +5,7 @@ function handleAvailabilityStep(role) {
         var doctorContent = $(".doctordiv").html();
         // Add the Availability step if it hasn't been added
         if (!availabilityStepAdded) {
-            $(".validation-wizard").steps("add", {
+            $("#staffform").steps("add", {
                 title: "Availability", // Title of the new step
                 content: doctorContent,
                 enableCancelButton: false, // Optional: Disable cancel button for this step
@@ -16,7 +16,7 @@ function handleAvailabilityStep(role) {
     } else {
         // Remove Availability step if role does not require it
         // if (availabilityStepAdded) {
-        //     $(".validation-wizard").steps("remove", "Availability");
+        //     $("#staffform").steps("remove", "Availability");
         //     availabilityStepAdded = false; // Reset the flag
         // }
         if (availabilityStepAdded && !(role === "3" || role.includes("3"))) {
@@ -24,27 +24,27 @@ function handleAvailabilityStep(role) {
                 "style",
                 "display:none;"
             );
-            $(".validation-wizard").steps("remove", "Availability");
+            $("#staffform").steps("remove", "Availability");
             availabilityStepAdded = false; // Reset the flag
 
             // Remove the tab title and its content from DOM
-            $(".validation-wizard > .content > .body")
+            $("#staffform > .content > .body")
                 .find(".content > .body")
                 .remove();
-            $(".validation-wizard > .content").find(".content").last().remove();
+            $("#staffform > .content").find(".content").last().remove();
         }
     }
 }
 
-var form = $(".validation-wizard").show();
+var form = $("#staffform").show();
 
-$(".validation-wizard").steps({
+$("#staffform").steps({
     headerTag: "h6",
     bodyTag: "section",
     transitionEffect: "none",
-    titleTemplate: '<span class="step">#index#</span> #title#',
+    titleTemplate: "#title#",
     labels: {
-        finish: "Submit",
+        finish: '<span><i class="fa fa-save"></i> Save</span>',
     },
     onStepChanging: function (event, currentIndex, newIndex) {
         let role = $("select[name='role[]']").val();
@@ -68,14 +68,13 @@ $(".validation-wizard").steps({
         return (form.validate().settings.ignore = ":disabled"), form.valid();
     },
     onFinished: function (event, currentIndex) {
-        var formDataStaff = new FormData($(".validation-wizard")[0]); // Serialize form data including files
-        // var formDataStaff = new FormData($(".validation-wizard"));
+        var formDataStaff = new FormData($("#staffform")[0]); // Serialize form data including files
         var CSRF_TOKEN = $('meta[name="csrf-token"]').attr("content");
         var storeRoute = $("#storeRoute").data("url");
         if (storeRoute == null) {
             storeRoute = $("#updateRoute").data("url");
         }
-        
+
         console.log(formDataStaff);
         $.ajax({
             url: storeRoute,
@@ -92,8 +91,7 @@ $(".validation-wizard").steps({
 
                 // Redirect to stafflist route
                 var routeReturn = $("#storeRoute").data("stafflist-route");
-                if (routeReturn == null)
-                {
+                if (routeReturn == null) {
                     routeReturn = $("#updateRoute").data("stafflist-route");
                 }
 
@@ -104,13 +102,12 @@ $(".validation-wizard").steps({
                     encodeURIComponent("Staff added successfully.");
             },
             error: function (xhr) {
-               console.log(xhr.responseJSON.message);
-                  
+                console.log(xhr.responseJSON.message);
             },
         });
     },
 }),
-    $(".validation-wizard").validate({
+    $("#staffform").validate({
         ignore: "input[type=hidden]",
         errorClass: "text-danger",
         successClass: "text-success",

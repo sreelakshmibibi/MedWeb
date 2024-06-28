@@ -25,7 +25,7 @@
             <section class="content">
                 <div class="box">
                     <div class="box-body wizard-content">
-                        <form method="post" class="validation-wizard wizard-circle"
+                        <form method="post" class="validation-wizard wizard-circle" id="staffform"
                             action="{{ route('staff.staff_list.store') }}" enctype="multipart/form-data">
                             @csrf
                             <!-- Step 1 -->
@@ -57,6 +57,8 @@
     </div>
     <script>
         $(document).ready(function() {
+            $("#staffform .actions ul li:last-child a").addClass("bg-success btn btn-success");
+
             let count = 1;
 
             // Event listener for Add Row button click
@@ -221,7 +223,7 @@
             function loadStates(countryId, stateSelectElement) {
                 if (countryId) {
                     $.ajax({
-                        url: '{{ route("get.states", "") }}' + '/' + countryId,
+                        url: '{{ route('get.states', '') }}' + '/' + countryId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -247,7 +249,7 @@
             function loadCities(stateId, citySelectElement) {
                 if (stateId) {
                     $.ajax({
-                        url: '{{ route("get.cities", "") }}' + '/' + stateId,
+                        url: '{{ route('get.cities', '') }}' + '/' + stateId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {

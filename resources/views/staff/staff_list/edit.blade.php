@@ -25,13 +25,24 @@
             <section class="content">
                 <div class="box">
                     <div class="box-body wizard-content">
-                        <form method="post" class="validation-wizard wizard-circle"
+                        <form method="post" class="validation-wizard wizard-circle" id="staffform"
                             action="{{ route('staff.staff_list.update') }}" enctype="multipart/form-data">
                             @csrf
                             <!-- Step 1 -->
                             <h6 class="tabHeading">Personal Info</h6>
                             <section class="tabSection">
-                                @include('staff.staff_list.edit_personal_info', ['name', 'countries', 'states', 'cities', 'userTypes', 'departments', 'staffProfile', 'userDetails', 'availability', 'clinicBranches'])
+                                @include('staff.staff_list.edit_personal_info', [
+                                    'name',
+                                    'countries',
+                                    'states',
+                                    'cities',
+                                    'userTypes',
+                                    'departments',
+                                    'staffProfile',
+                                    'userDetails',
+                                    'availability',
+                                    'clinicBranches',
+                                ])
                             </section>
 
                             <!--Education-->
@@ -45,7 +56,8 @@
                             <div id="updateRoute" data-url="{{ route('staff.staff_list.store') }}"
                                 data-stafflist-route="{{ route('staff.staff_list') }}"></div>
                             <input type="hidden" name="row_count" id="row_count">
-                            <input type="hidden" name="edit_user_id" id="edit_user_id" value="{{ $staffProfile->user_id}}">
+                            <input type="hidden" name="edit_user_id" id="edit_user_id"
+                                value="{{ $staffProfile->user_id }}">
                         </form>
                     </div>
                     <div class="doctordiv" style="display: none;">
@@ -58,6 +70,7 @@
     </div>
     <script>
         $(document).ready(function() {
+            $("#staffform .actions ul li:last-child a").addClass("bg-success btn btn-success");
             let count = '{{ $availabilityCount }}';
 
             // Event listener for Add Row button click
@@ -222,7 +235,7 @@
             function loadStates(countryId, stateSelectElement, initialSelected) {
                 if (countryId) {
                     $.ajax({
-                        url: '{{ route("get.states", "") }}' + '/' + countryId,
+                        url: '{{ route('get.states', '') }}' + '/' + countryId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -231,12 +244,13 @@
                             $.each(data, function(key, value) {
                                 var selected = null;
                                 if (key == initialSelected) {
-                                    
-                                        selected = "selected";
-                                    
-                                } 
-                                var state = '{{$staffProfile->com_state_id}}';
-                                stateSelectElement.append('<option value="' + key + '" '+ selected +'>' +
+
+                                    selected = "selected";
+
+                                }
+                                var state = '{{ $staffProfile->com_state_id }}';
+                                stateSelectElement.append('<option value="' + key + '" ' +
+                                    selected + '>' +
                                     value + '</option>');
                             });
                             // Trigger change event to load initial cities
@@ -255,20 +269,21 @@
             function loadCities(stateId, citySelectElement, initialSelected) {
                 if (stateId) {
                     $.ajax({
-                        url: '{{ route("get.cities", "") }}' + '/' + stateId,
+                        url: '{{ route('get.cities', '') }}' + '/' + stateId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
                             citySelectElement.empty();
                             citySelectElement.append('<option value="">Select City</option>');
                             $.each(data, function(key, value) {
-                                var selected =null;
+                                var selected = null;
                                 if (key == initialSelected) {
-                                    
+
                                     selected = "selected";
-                                
-                            } 
-                                citySelectElement.append('<option value="' + key + '" '+ selected +'>' +
+
+                                }
+                                citySelectElement.append('<option value="' + key + '" ' +
+                                    selected + '>' +
                                     value + '</option>');
                             });
                         },
@@ -282,10 +297,10 @@
             }
 
             // Initializations
-            var initialSelectedStateId = '{{ $staffProfile->state_id }}'; 
-            var initialSelectedComStateId = '{{ $staffProfile->com_state_id }}'; 
-            var initialSelectedCityId = '{{ $staffProfile->city_id }}'; 
-            var initialSelectedComCityId = '{{ $staffProfile->com_city_id }}'; 
+            var initialSelectedStateId = '{{ $staffProfile->state_id }}';
+            var initialSelectedComStateId = '{{ $staffProfile->com_state_id }}';
+            var initialSelectedCityId = '{{ $staffProfile->city_id }}';
+            var initialSelectedComCityId = '{{ $staffProfile->com_city_id }}';
 
             var initialCountryId = $('#country_id').val(); // Assuming India is selected initially
             loadStates(initialCountryId, $('#state_id'), initialSelectedStateId);
@@ -398,20 +413,20 @@
         document.addEventListener("DOMContentLoaded", function() {
             var canvas = document.getElementById('profilePic');
             var ctx = canvas.getContext('2d');
-            if( '{{ $staffProfile }}' ) { 
-            
-            var profileUrl = '{{ $staffProfile->photo ?? "" }}';
-            var photoUrl = '{{ asset("storage/") }}/' + profileUrl;
-            if (profileUrl) {
-                var img = new Image();
-                img.onload = function() {
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    ctx.drawImage(img, 0, 0);
-                };
-                img.src = photoUrl;
+            if ('{{ $staffProfile }}') {
+
+                var profileUrl = '{{ $staffProfile->photo ?? '' }}';
+                var photoUrl = '{{ asset('storage/') }}/' + profileUrl;
+                if (profileUrl) {
+                    var img = new Image();
+                    img.onload = function() {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+                    };
+                    img.src = photoUrl;
+                }
             }
-        }
         });
     </script>
 
