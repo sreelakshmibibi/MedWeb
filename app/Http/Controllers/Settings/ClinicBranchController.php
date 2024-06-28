@@ -62,7 +62,9 @@ class ClinicBranchController extends Controller
 
         // return view('settings.clinics.clinic_form', compact('countries', 'states', 'cities'));
         $clinicDetails = ClinicBasicDetail::first();
-        return view('settings.clinics.index', compact('countries', 'states', 'cities', 'clinicDetails'));
+        $data = ClinicBranch::all();
+        $total = count($data);
+        return view('settings.clinics.index', compact('countries', 'states', 'cities', 'clinicDetails', 'data', 'total'));
     }
 
     /**
@@ -123,9 +125,9 @@ class ClinicBranchController extends Controller
      */
     public function store(ClinicBranchRequest $request)
     {
-       
+
         try {
-            $clinic_address = $request->input('clinic_address1') ;
+            $clinic_address = $request->input('clinic_address1');
             if ($request->input('clinic_address2')) {
                 $clinic_address .= "<br>" . $request->input('clinic_address2');
             }
@@ -143,7 +145,7 @@ class ClinicBranchController extends Controller
             $clinic->clinic_type_id = 1;
             // Save the clinic
             $i = $clinic->save();
-            
+
             if ($i) {
                 return redirect()->route('settings.clinic', ['active_tab' => 'profile7'])->with('success', 'Clinic created successfully');
             }

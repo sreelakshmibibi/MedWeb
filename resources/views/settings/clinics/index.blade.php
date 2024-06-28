@@ -30,15 +30,15 @@
                 </li>
                 <?php 
                 if ($clinicDetails) { ?>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#profile7" role="tab" id="branches">
-                            <span class="hidden-sm-up"><i class="ion-person"></i></span>
-                            <span class="hidden-xs-down">Branches</span>
-                        </a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#profile7" role="tab" id="branches">
+                        <span class="hidden-sm-up"><i class="ion-person"></i></span>
+                        <span class="hidden-xs-down">Branches</span>
+                    </a>
+                </li>
                 <?php } ?>
             </ul>
-            
+
             <!-- Tab panes -->
             <div class="tab-content">
                 <div class="tab-pane active" id="home7" role="tabpanel">
@@ -46,23 +46,27 @@
                         <form method="post" action="{{ route('settings.clinic.create') }}" enctype="multipart/form-data">
                             @csrf
                             <!-- Main content -->
-                            <section class="content">
-                                <div class="row">
+                            <section class="content ">
+                                <div class="row d-flex justify-content-between">
                                     <div class="col-md-6 col-lg-6 col-12">
                                         <div class="box">
                                             <div class="box-body">
                                                 <div class="form-group">
                                                     <label class="form-label" for="name">Clinic Name</label>
-                                                    <input class="form-control @error('clinic_name') is-invalid @enderror" type="text" id="clinic_name"
-                                                        name="clinic_name" placeholder="Clinic Name" <?php if($clinicDetails) { ?> value="{{ old('clinic_name', $clinicDetails->clinic_name) }}" <?php }?>>
+                                                    <input class="form-control @error('clinic_name') is-invalid @enderror"
+                                                        type="text" id="clinic_name" name="clinic_name"
+                                                        placeholder="Clinic Name" <?php if($clinicDetails) { ?>
+                                                        value="{{ old('clinic_name', $clinicDetails->clinic_name) }}"
+                                                        <?php }?>>
                                                     @error('clinic_name')
                                                         <div class="invalid-feedback">{{ $message }}</div>
                                                     @enderror
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="form-label" for="logo">Logo</label>
-                                                    <input class="form-control @error('clinic_logo') is-invalid @enderror" type="file" id="clinic_logo"
-                                                        name="clinic_logo" placeholder="logo">
+                                                    <input class="form-control @error('clinic_logo') is-invalid @enderror"
+                                                        type="file" id="clinic_logo" name="clinic_logo"
+                                                        placeholder="logo">
                                                     @error('clinic_logo')
                                                         <div class="invalid-feedback">{{ $message }}</div>
                                                     @enderror
@@ -72,8 +76,12 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="form-label" for="website">Website</label>
-                                                    <input class="form-control @error('clinic_website') is-invalid @enderror" type="url" id="clinic_website"
-                                                        name="clinic_website" placeholder="http://" <?php if($clinicDetails) { ?> value="{{ old('clinic_website', $clinicDetails->clinic_website) }}" <?php } ?>>
+                                                    <input
+                                                        class="form-control @error('clinic_website') is-invalid @enderror"
+                                                        type="url" id="clinic_website" name="clinic_website"
+                                                        placeholder="http://" <?php if($clinicDetails) { ?>
+                                                        value="{{ old('clinic_website', $clinicDetails->clinic_website) }}"
+                                                        <?php } ?>>
                                                     @error('clinic_website')
                                                         <div class="invalid-feedback">{{ $message }}</div>
                                                     @enderror
@@ -85,6 +93,10 @@
                                                 </button>
                                             </div>
                                         </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        @include('settings.clinics.branch')
                                     </div>
                                 </div>
                             </section>
@@ -103,20 +115,20 @@
         document.addEventListener("DOMContentLoaded", function() {
             var canvas = document.getElementById('logoCanvas');
             var ctx = canvas.getContext('2d');
-            if( '{{ $clinicDetails }}' ) { 
-            
-            var clinicLogoUrl = '{{ $clinicDetails->clinic_logo ?? "" }}';
-            var logoUrl = '{{ asset("storage/") }}/' + clinicLogoUrl;
-            if (clinicLogoUrl) {
-                var img = new Image();
-                img.onload = function() {
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    ctx.drawImage(img, 0, 0);
-                };
-                img.src = logoUrl;
+            if ('{{ $clinicDetails }}') {
+
+                var clinicLogoUrl = '{{ $clinicDetails->clinic_logo ?? '' }}';
+                var logoUrl = '{{ asset('storage/') }}/' + clinicLogoUrl;
+                if (clinicLogoUrl) {
+                    var img = new Image();
+                    img.onload = function() {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+                    };
+                    img.src = logoUrl;
+                }
             }
-        }
         });
     </script>
 @endsection
