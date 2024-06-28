@@ -12,4 +12,10 @@ class Country extends Model
     use SoftDeletes;
     protected $fillable = ['code', 'country', 'phonecode'];
     protected $dates = ['deleted_at'];
+
+    // Define relationship with ClinicBranch
+    public function clinicBranches()
+    {
+        return $this->hasMany(ClinicBranch::class, 'country_id', 'id');
+    }
 }

@@ -16,7 +16,11 @@ return new class extends Migration
             $table->string('treat_name'); //Treatment name
             $table->decimal('treat_cost', 10, 3); //Treatment cost
             $table->string('status', 5)->default('Y');  //Treatment status (treatment available or not)
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('updated_by')->constrained('users');
+           
             $table->timestamps();
+            
             $table->softDeletes(); 
             //index
             $table->index('treat_name');

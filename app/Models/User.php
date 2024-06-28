@@ -2,16 +2,24 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
+    use HasRoles;
     use SoftDeletes;
+
+    const IS_ADMIN = 2;
+    const IS_DOCTOR = 3;
+    const IS_NURSE = 4;
+    const IS_RECEPTION = 5;
+
 
     /**
      * The attributes that are mass assignable.
@@ -25,9 +33,27 @@ class User extends Authenticatable
         'is_admin',
         'is_doctor',
         'is_nurse',
-        'is_reception'
+        'is_reception',
+        'created_by',
+        'updated_by',
     ];
+
+    protected static function booted()
+    {
+        // Before creating a new record
+        static::creating(function ($user) {
+            $user->created_by = Auth::id(); // Set created_by to current user's ID
+            $user->updated_by = Auth::id();
+        });
+
+        // Before updating an existing record
+        static::updating(function ($user) {
+            $user->updated_by = Auth::id(); // Set updated_by to current user's ID
+        });
+    }
+
     protected $dates = ['deleted_at'];
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -49,5 +75,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function staffProfile()
+    {
+        return $this->hasOne(StaffProfile::class);
+    }
+
+    public function doctorWorkingHours()
+    {
+        return $this->hasMany(DoctorWorkingHour::class);
     }
 }

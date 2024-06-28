@@ -42835,3 +42835,102 @@ img.online {
 }
 
 /*# sourceMappingURL=style.css.map */
+
+.modal-right .modal-dialog{
+    width:40%;
+}
+
+/*add ons for responsiveness */
+@media all and (max-width: 1000px) {
+    .modal-right .modal-dialog{
+    width:360px;
+    }
+    }
+
+@media all and (max-width: 600px) {
+.modal-right .modal-dialog{
+width:80%;
+max-width: 80%;
+}
+}
+
+.tab-wizard .actions ul li:last-child a {
+   /* background-color: #4CAF50; /* Set background color */
+     /*color: white; /* Set text color */
+    /* padding: 10px 20px; /* Adjust padding for button */
+    /* border-radius: 5px; /* Rounded corners */
+    /* border: none; /* Remove border */
+    /* text-transform: uppercase; /* Uppercase text */
+    /* text-decoration: none; /* Remove underline */
+    /* font-size: 14px; /* Adjust font size */
+    /* background-color: success; */
+}
+
+    /* Example CSS to customize Select2 */
+    .select2-container--default .select2-selection--single {
+        background-color: #333; /* Dark background color */
+        color: #fff; /* Text color for selected option */
+        background-color: #0c1a32;
+    color: #b5b5c3;
+    border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        color: #fff; /* Color of the dropdown arrow */
+        color: #b5b5c3;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: #fff; /* Color of the selected text */
+        color: #b5b5c3;
+    }
+
+    .select2-container--default .select2-results__option--highlighted {
+        background-color: #555; /* Background color of highlighted option */
+        /* color: #fff; Text color of highlighted option */
+     } 
+
+/* Target the dropdown menu */
+.select2-dropdown {
+    background-color: #333; /* Dark background color */
+    color: #fff; /* Light text color */
+    background-color: #0c1a32;
+    color: #b5b5c3;
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Optionally, adjust other styles for better readability */
+.select2-results__option {
+    color: #fff; /* Text color for options */
+}
+
+/* Adjust the hover effect color */
+.select2-results__option--highlighted {
+    background-color: #555; /* Darker background color on hover */
+    color: #fff; /* Light text color on hover */
+
+}
+
+/* .bootstrap-select{
+
+} */
+
+/* Example CSS to customize Select2 */
+.select2-container--default .select2-selection--multiple {
+    background-color: #333; /* Dark background color */
+    color: #fff; /* Text color for selected option */
+    background-color: #0c1a32;
+color: #b5b5c3;
+border-color: rgba(255, 255, 255, 0.12);
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__arrow {
+    color: #fff; /* Color of the dropdown arrow */
+    color: #b5b5c3;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__rendered {
+    color: #fff; /* Color of the selected text */
+    color: #b5b5c3;
+}
+

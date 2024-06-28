@@ -11,18 +11,16 @@
 
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="images/favicon.ico">
+    <link rel="icon" href="{{ asset('images/favicon.ico') }}">
 
-    <title>MedWeb - Dashboard</title>
+    {{-- <title>MedWeb - Dashboard</title> --}}
+    <title>@yield('title')</title>
 
     {{-- <title>{{ config('app.name', 'MedWeb') }}</title> --}}
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
-
-    <!-- Scripts -->
-    {{-- @vite(['resources/sass/app.scss', 'resources/js/app.js']) --}}
 
     <!-- Vendors Style-->
     <link rel="stylesheet" href="{{ asset('css/vendors_css.css') }}">
@@ -31,11 +29,17 @@
     <link rel="stylesheet" href="{{ asset('css/horizontal-menu.css') }}">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/skin_color.css') }}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Scripts -->
+    {{-- @vite(['resources/sass/app.scss', 'resources/js/app.js']) --}}
+
+    {{-- <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css" rel="stylesheet"> --}}
+
     <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
+
 </head>
 </head>
 
@@ -45,8 +49,12 @@
         <div id="loader"></div>
 
         @include('dashboard.header')
-
-        @include('dashboard.menu')
+        <?php
+        use App\Services\CommonService;
+        $commonService = new CommonService();
+        $menuItems = $commonService->getMenuItems();
+        ?>
+        @include('dashboard.menu', ['menuItems' => $menuItems])
 
         @yield('content')
 
@@ -56,7 +64,7 @@
 
     <!-- Vendor JS -->
     <script src="{{ asset('js/vendors.min.js') }}"></script>
-    <script src="{{ asset('js/pages/chat-popup.js') }}"></script>
+    {{-- <script src="{{ asset('js/pages/chat-popup.js') }}"></script> --}}
     <script src="{{ asset('assets/icons/feather-icons/feather.min.js') }}"></script>
 
     <script src="{{ asset('assets/vendor_components/apexcharts-bundle/dist/apexcharts.js') }}"></script>
@@ -67,7 +75,32 @@
     <script src="{{ asset('js/menus.js') }}"></script>
     <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('js/pages/dashboard3.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/select2/dist/js/select2.full.js') }}"></script>
 
+    <!-- JsBarcode library -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode/dist/JsBarcode.all.min.js"></script>
+
+    <script src="{{ asset('assets/vendor_components/jquery-steps-master/build/jquery.steps.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/jquery-validation-1.17.0/dist/jquery.validate.min.js') }}"></script>
+    <script src="{{ asset('js/pages/steps.js') }}"></script>
+    <script src="{{ asset('js/pages/steps_patient.js') }}"></script>
+
+
+
+
+    <script src="{{ asset('assets/vendor_components/bootstrap-select/dist/js/bootstrap-select.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.js') }}"></script>
+    </script>
+    <script src="{{ asset('assets/vendor_components/select2/dist/js/select2.full.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/moment/min/moment.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}">
+    </script>
+    </script>
+    <script src="{{ asset('assets/vendor_plugins/timepicker/bootstrap-timepicker.min.js') }}"></script>
+
+
+    <script src="{{ asset('js/pages/advanced-form-element.js') }}"></script>
 </body>
 
 </html>

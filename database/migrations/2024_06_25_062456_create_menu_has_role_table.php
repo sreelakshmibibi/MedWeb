@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('appoinment_statuses', function (Blueprint $table) {
+        Schema::create('menu_has_role', function (Blueprint $table) {
             $table->id();
-            $table->string('status');
-            $table->string('st_color');
-            $table->string('tx_color');
-            $table->string('stat')->nullable();
-            $table->char('indrop');
+            $table->foreignId('menu_item_id')->constrained()->onDelete('cascade');
+            $table->foreignId('role_id')->constrained()->onDelete('cascade');
             $table->timestamps();
-            $table->softDeletes(); 
         });
     }
 
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('appoinment_statuses');
+        Schema::dropIfExists('menu_has_role');
     }
 };

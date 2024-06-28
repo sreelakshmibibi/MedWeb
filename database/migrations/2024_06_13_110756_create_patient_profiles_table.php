@@ -12,39 +12,34 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('patient_profiles', function (Blueprint $table) {
-            $table->id(); 
-            $table->unsignedBigInteger('patient_id')->unique(); 
-            $table->string('national_id', 50)->nullable(); 
-            $table->string('first_name', 100); 
-            $table->string('last_name', 100)->nullable(); 
-            $table->string('gsm', 50)->nullable(); 
-            $table->string('gender', 20)->nullable(); 
-            $table->date('birth_date')->nullable(); 
-            $table->integer('age')->nullable(); 
-            $table->string('address')->nullable();
-            $table->foreignId('area')->constrained('cities'); 
-            $table->foreignId('state')->constrained('states'); 
-            $table->foreignId('nationality')->constrained('countries'); 
-            $table->integer('pin')->nullable(); 
-            $table->string('registration_date', 50)->nullable(); 
-            $table->integer('visit_count')->default(0); 
-            $table->string('pstatus', 1)->default('Y'); 
-            $table->string('regby', 50);
-            
-            
-            $table->index('first_name'); 
-            $table->index('last_name'); 
-            $table->index('gsm'); 
-            $table->index('area');
-            $table->index('nationality'); 
-            $table->index('visit_count'); 
-            $table->index('age'); 
-            $table->index('birth_date'); 
-            $table->index('gender'); 
-            $table->index('national_id'); 
-            $table->index('regby');
-            $table->timestamps(); 
-            $table->softDeletes(); 
+            $table->id();
+            $table->unsignedBigInteger('patient_id')->unique();
+            $table->string('first_name', 100);
+            $table->string('last_name', 100)->nullable();
+            $table->string('aadhaar_no')->nullable();
+            $table->date('date_of_birth')->nullable();
+            $table->string('gender', 10)->nullable();
+            $table->string('blood_group', 10)->nullable();
+            $table->string('phone', 20);
+            $table->string('alternate_phone', 20)->nullable();
+            $table->string('email')->nullable();
+            $table->text('address1')->nullable();
+            $table->text('address2')->nullable();
+            $table->foreignId('city_id')->constrained('cities');
+            $table->foreignId('state_id')->constrained('states');
+            $table->foreignId('country_id')->constrained('countries');
+            $table->integer('pincode')->nullable();
+            $table->integer('visit_count')->default(0);
+            $table->string('status', 1)->default('Y');
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('updated_by')->constrained('users');
+            $table->timestamps();
+            $table->softDeletes();
+
+            $table->index('patient_id');
+            $table->index('first_name');
+            $table->index('aadhaar_no');
+
         });
     }
 
@@ -54,9 +49,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('patient_profiles', function (Blueprint $table) {
-            $table->dropForeign(['area']);
-            $table->dropForeign(['state']);
-            $table->dropForeign(['nationality']);
+            $table->dropForeign(['city_id']);
+            $table->dropForeign(['state_id']);
+            $table->dropForeign(['country_id']);
+            $table->dropForeign(['created_by']);
+            $table->dropForeign(['updated_by']);
         });
         Schema::dropIfExists('patient_profiles');
     }

@@ -20,21 +20,23 @@ return new class extends Migration
             $table->dateTime('cdate');
             $table->string('status', 5)->default('Y');
             $table->timestamp('updt')->useCurrent()->useCurrentOnUpdate();
-            
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('updated_by')->constrained('users');
+
             $table->foreign('patient_id')
-                  ->references('patient_id')
-                  ->on('patient_profiles')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade');
+                ->references('patient_id')
+                ->on('patient_profiles')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
             $table->foreign('app_id')
-                  ->references('app_id')
-                  ->on('appoinments')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade');
+                ->references('app_id')
+                ->on('appointments')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
             $table->index('patient_id');
             $table->index('app_id');
             $table->index('symptom');
-            $table->softDeletes(); 
+            $table->softDeletes();
         });
     }
 

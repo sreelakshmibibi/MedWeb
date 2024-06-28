@@ -11,20 +11,32 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('clinic_branches', function (Blueprint $table) {
+        Schema::create('clinic_basic_details', function (Blueprint $table) {
             $table->id();
             $table->string('clinic_name');
-            $table->string('clinic_email')->nullable();
             $table->string('clinic_logo')->nullable();
+            $table->string('clinic_website')->nullable();
+            $table->foreignId('clinic_type_id')->constrained();
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('updated_by')->constrained('users');
+            $table->timestamps();
+            $table->softDeletes(); 
+        });
+        Schema::create('clinic_branches', function (Blueprint $table) {
+            $table->id();
+            $table->string('clinic_email')->nullable();
             $table->string('clinic_address')->nullable();
             $table->foreignId('country_id')->constrained();
             $table->foreignId('state_id')->constrained();
             $table->foreignId('city_id')->constrained();
             $table->string('pincode')->nullable();
             $table->string('is_main_branch')->nullable();
-            $table->integer('phone_number')->nullable();
-            $table->string('clinic_website')->nullable();
+            $table->string('is_medicine_provided')->nullable();
+            $table->string('clinic_phone')->nullable();
+            $table->string('clinic_status');
             $table->foreignId('clinic_type_id')->constrained();
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('updated_by')->constrained('users');
             $table->timestamps();
             $table->softDeletes(); 
         });
@@ -35,6 +47,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('clinic_basic_details');
+    
         Schema::dropIfExists('clinic_branches');
     }
 };

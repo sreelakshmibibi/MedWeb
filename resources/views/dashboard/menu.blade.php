@@ -7,27 +7,27 @@
     </label>
 
     <!-- Sample menu definition -->
-    <ul id="main-menu" class="sm sm-blue">
-        <li><a href="{{ route('home')}}"><i class="icon-Layout-4-blocks"><span class="path1"></span><span
+    {{-- <ul id="main-menu" class="sm sm-blue">
+        <li><a href="{{ route('home') }}"><i class="icon-Layout-4-blocks"><span class="path1"></span><span
                         class="path2"></span></i>Dashboard</a>
         </li>
-        <li><a href="appointments.html"><i class="fa-regular fa-calendar-check"><span class="path1"></span><span
-                        class="path2"></span></i>Appointments</a></li>
-        <li><a href="#">
+        <li><a href="#"><i class="fa-regular fa-calendar-check"><span
+                        class="path1"></span><span class="path2"></span></i>Appointments</a></li>
+        <li><a href="">
                 <i class="fa-solid fa-user-nurse">
                     <span class="path1"></span><span class="path2"></span><span class="path3"></span></i>Staffs</a>
             <ul>
-                <li><a href="doctor_list.html"><i class="icon-Commit"><span class="path1"></span><span
+                <li><a href="{{ route("staff.staff_list")}}"><i class="icon-Commit"><span class="path1"></span><span
                                 class="path2"></span></i>Staff list</a></li>
                 <li><a href="doctors.html"><i class="icon-Commit"><span class="path1"></span><span
                                 class="path2"></span></i>Staff Details</a></li>
             </ul>
         </li>
-        <li><a href="#"><i class="fa-solid fa-hospital-user"><span class="path1"></span><span
+        <li><a href=""><i class="fa-solid fa-hospital-user"><span class="path1"></span><span
                         class="path2"></span></i>Patients</a>
             <ul>
-                <li><a href="patients.html"><i class="icon-Commit"><span class="path1"></span><span
-                                class="path2"></span></i>Patient list</a></li>
+                <li><a href="#"><i class="icon-Commit"><span
+                                class="path1"></span><span class="path2"></span></i>Patient List</a></li>
                 <li><a href="patient_details.html"><i class="icon-Commit"><span class="path1"></span><span
                                 class="path2"></span></i>Patient Details</a></li>
             </ul>
@@ -52,17 +52,47 @@
             <ul>
                 <li><a href="{{ route('settings.clinic') }}"><i class="icon-Commit"><span class="path1"></span><span
                                 class="path2"></span></i>Clinics</a></li>
-                <li><a href="{{ route('settings.department') }}"><i class="icon-Commit"><span class="path1"></span><span
-                                class="path2"></span></i>Departments</a></li>
-                <li><a href="patients.html"><i class="icon-Commit"><span class="path1"></span><span
+                <li><a href="{{ route('settings.department') }}"><i class="icon-Commit"><span
+                                class="path1"></span><span class="path2"></span></i>Departments</a></li>
+                <li><a href="{{ route('settings.medicine') }}"><i class="icon-Commit"><span class="path1"></span><span
                                 class="path2"></span></i>Medicines</a></li>
-                <li><a href="patient_details.html"><i class="icon-Commit"><span class="path1"></span><span
-                                class="path2"></span></i>Dental Diseases</a></li>
-                <li><a href="patients.html"><i class="icon-Commit"><span class="path1"></span><span
-                                class="path2"></span></i>Treatment Cost</a></li>
+                <li><a href="{{ route('settings.treatment_cost') }}"><i class="icon-Commit"><span
+                                class="path1"></span><span class="path2"></span></i>Treatment Cost</a></li>
                 <li><a href="patient_details.html"><i class="icon-Commit"><span class="path1"></span><span
                                 class="path2"></span></i>Combo Offers</a></li>
             </ul>
         </li>
+    </ul> --}}
+    <ul id="main-menu" class="sm sm-blue">
+        @foreach ($menuItems as $item)
+            @if (auth()->user()->hasAnyRole($item->roles->pluck('name')->toArray()))
+                <li>
+                    <a href="{{ $item->route_name != '#' ? route($item->route_name) : '#' }}">
+                        <i class="{{ $item->icon }}">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                        {{ $item->name }}
+                    </a>
+                    @if ($item->children->count())
+                        <ul>
+                            @foreach ($item->children as $child)
+                                @if (auth()->user()->hasAnyRole($child->roles->pluck('name')->toArray()))
+                                    <li>
+                                        <a href="{{ $child->route_name != '#' ? route($child->route_name) : '#' }}">
+                                            <i class="{{ $child->icon }}">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                            </i>
+                                            {{ $child->name }}
+                                        </a>
+                                    </li>
+                                @endif
+                            @endforeach
+                        </ul>
+                    @endif
+                </li>
+            @endif
+        @endforeach
     </ul>
 </nav>

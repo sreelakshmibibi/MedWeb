@@ -19,18 +19,21 @@ return new class extends Migration
             $table->foreignId('doctor_id')->constrained('users');
             $table->dateTime('cdate');
             $table->string('status', 5)->default('Y');
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('updated_by')->constrained('users');
+
             $table->timestamp('updt')->useCurrent()->useCurrentOnUpdate();
-            $table->softDeletes(); 
+            $table->softDeletes();
             $table->foreign('patient_id')
-                  ->references('patient_id')
-                  ->on('patient_profiles')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade');
+                ->references('patient_id')
+                ->on('patient_profiles')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
             $table->foreign('app_id')
-                  ->references('app_id')
-                  ->on('appoinments')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade');
+                ->references('app_id')
+                ->on('appointments')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
             // Indexesdiagnosis
             $table->index('patient_id');
             $table->index('app_id');
@@ -47,6 +50,8 @@ return new class extends Migration
             $table->dropForeign(['app_id']);
             $table->dropForeign(['patient_id']);
             $table->dropForeign(['doctor_id']);
+            $table->dropForeign(['created_by']);
+            $table->dropForeign(['updated_by']);
         });
         Schema::dropIfExists('diagnoses');
     }

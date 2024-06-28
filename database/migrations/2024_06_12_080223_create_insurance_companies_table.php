@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('type')->nullable();
             $table->string('status')->nullable();
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('updated_by')->constrained('users');
             $table->timestamps();
             $table->softDeletes(); 
         });
