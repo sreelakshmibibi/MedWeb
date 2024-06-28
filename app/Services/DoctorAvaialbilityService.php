@@ -12,6 +12,7 @@ class DoctorAvaialbilityService
     {
         $clinicBranches = DoctorWorkingHour::select('clinic_branch_id')
         ->where('user_id', $userId)
+        ->where('status', 'Y')
         ->groupBy('clinic_branch_id')
         ->get();
         

@@ -72,7 +72,10 @@ $(".validation-wizard").steps({
         // var formDataStaff = new FormData($(".validation-wizard"));
         var CSRF_TOKEN = $('meta[name="csrf-token"]').attr("content");
         var storeRoute = $("#storeRoute").data("url");
-
+        if (storeRoute == null) {
+            storeRoute = $("#updateRoute").data("url");
+        }
+        
         console.log(formDataStaff);
         $.ajax({
             url: storeRoute,
@@ -89,6 +92,10 @@ $(".validation-wizard").steps({
 
                 // Redirect to stafflist route
                 var routeReturn = $("#storeRoute").data("stafflist-route");
+                if (routeReturn == null)
+                {
+                    routeReturn = $("#updateRoute").data("stafflist-route");
+                }
 
                 // Redirect to the stafflist route
                 window.location.href =

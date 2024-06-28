@@ -1,27 +1,26 @@
- <div class="row">
+<?php 
+    use App\Models\User;
+?>
+<div class="row">
      <div class="col-md-3">
          <div class="form-group">
              <label class="form-label" for="firstname">First Name</label>
              <div class="input-group form-group">
                 <select class="form-control select-title" id="title" name="title" required>
-                    <option value="Dr." <?php
-
-use App\Models\User;
-
- if (trim($name[0]) == "Dr.") echo "selected";?>>Dr.</option>
+                    <option value="Dr." <?php if (trim($name[0]) == "Dr.") echo "selected";?>>Dr.</option>
                     <option value="Mr." <?php if (trim($name[0]) == "Mr.") echo "selected";?>>Mr.</option>
                     <option value="Miss" <?php if (trim($name[0]) == "Miss.") echo "selected";?>>Miss</option>
                     <option value="Mrs." <?php if (trim($name[0]) == "Mrs.") echo "selected";?>>Mrs.</option>
                 </select>
                 <input type="text" class="form-control" id="firstname" name="firstname" placeholder="First Name"
-                     required style="width: 100px;" value="{{ $name[0] ? $name[0] : ''}}">
+                     required style="width: 100px;" value="{{ $name[1] ? $name[1] : ''}}">
              </div>
          </div>
      </div>
      <div class="col-md-3">
          <div class="form-group">
              <label class="form-label" for="lastname">Last Name</label>
-             <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Last Name" required value="{{ $name[0] ? $name[0] : ''}}">
+             <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Last Name" required value="{{ $name[2] ? $name[2] : ''}}">
          </div>
      </div>
      <div class="col-md-2">
@@ -91,7 +90,7 @@ use App\Models\User;
      </div>
      <div class="col-md-2">
          <div class="form-group">
-             <canvas id="logoCanvas" style="height: 64px;"></canvas>
+             <canvas id="profilePic" style="height: 64px;"></canvas>
          </div>
      </div>
  </div>

@@ -42,9 +42,10 @@
 
 
 
-                            <div id="updateRoute" data-url="{{ route('staff.staff_list.update') }}"
-                                data-stafflist-route="{{ route('staff.staff_list') }}" data-staff-update="1"></div>
+                            <div id="updateRoute" data-url="{{ route('staff.staff_list.store') }}"
+                                data-stafflist-route="{{ route('staff.staff_list') }}"></div>
                             <input type="hidden" name="row_count" id="row_count">
+                            <input type="hidden" name="edit_user_id" id="edit_user_id" value="{{ $staffProfile->user_id}}">
                         </form>
                     </div>
                     <div class="doctordiv" style="display: none;">
@@ -392,6 +393,25 @@
                     $('#com_pincode').attr('required', true);
                 }
             });
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var canvas = document.getElementById('profilePic');
+            var ctx = canvas.getContext('2d');
+            if( '{{ $staffProfile }}' ) { 
+            
+            var profileUrl = '{{ $staffProfile->photo ?? "" }}';
+            var photoUrl = '{{ asset("storage/") }}/' + profileUrl;
+            if (profileUrl) {
+                var img = new Image();
+                img.onload = function() {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                };
+                img.src = photoUrl;
+            }
+        }
         });
     </script>
 
