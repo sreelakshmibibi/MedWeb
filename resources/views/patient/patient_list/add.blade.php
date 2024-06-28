@@ -25,7 +25,7 @@
             <section class="content">
                 <div class="box">
                     <div class="box-body wizard-content">
-                        <form method="post" class="tab-wizard wizard-circle" id="patientform"
+                        <form method="post" class="validation-wizard wizard-circle" id="patientform"
                             action="{{ route('patient.patient_list.store') }}" enctype="multipart/form-data">
                             @csrf
                             <!-- Step 1 -->
@@ -40,7 +40,6 @@
                                 @include('patient.patient_list.appointment')
                             </section>
 
-                            {{-- @include('staff.staff_list.availability') --}}
 
                             <div id="storeRoute" data-url="{{ route('patient.patient_list.store') }}"></div>
                         </form>
@@ -56,24 +55,24 @@
     <script>
         $(document).ready(function() {
 
-            $("#patientform").steps({
-                headerTag: "h6.tabHeading",
-                bodyTag: "section.tabSection",
-                transitionEffect: "none",
-                titleTemplate: "#title#",
-                labels: {
-                    finish: '<span><i class="fa fa-save"></i> Save</span>',
-                },
-                onFinished: function(event, currentIndex) {
-                    swal(
-                        "Your Order Submitted!",
-                        "Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor."
-                    );
-                },
-            });
+            // $("#patientform").steps({
+            //     headerTag: "h6.tabHeading",
+            //     bodyTag: "section.tabSection",
+            //     transitionEffect: "none",
+            //     titleTemplate: "#title#",
+            //     labels: {
+            //         finish: '<span><i class="fa fa-save"></i> Save</span>',
+            //     },
+            //     onFinished: function(event, currentIndex) {
+            //         swal(
+            //             "Your Order Submitted!",
+            //             "Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor."
+            //         );
+            //     },
+            // }); please check steps_patient
 
 
-            $(".tab-wizard .actions ul li:last-child a").addClass("bg-success btn btn-success");
+            $("#patientform .actions ul li:last-child a").addClass("bg-success btn btn-success");
 
 
 
