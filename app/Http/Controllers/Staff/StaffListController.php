@@ -105,10 +105,10 @@ class StaffListController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         try {
             DB::beginTransaction();
-            if (isset($request->edit_user_id) &&  $request->edit_user_id != null) {
+            if (isset($request->edit_user_id) && $request->edit_user_id != null) {
                 $user = User::find($request->edit_user_id);
                 $staffProfile = StaffProfile::where('user_id', $request->edit_user_id)->first();
             } else {
@@ -117,7 +117,7 @@ class StaffListController extends Controller
                 $user->password = Hash::make($password);
                 $staffProfile = new StaffProfile();
             }
-            
+
             $user->name = $request->title . "<br> " . $request->firstname . "<br>" . $request->lastname;
             $user->email = $request->email;
             $roles = [
@@ -126,7 +126,7 @@ class StaffListController extends Controller
                 User::IS_NURSE => false,
                 User::IS_RECEPTION => false,
             ];
-    
+
             // Update roles based on request input
             foreach ($request->role as $role) {
                 switch ($role) {
@@ -146,25 +146,42 @@ class StaffListController extends Controller
                         throw new \Exception('Invalid role specified.');
                 }
             }
-    
+
             // Set user roles
             $user->is_admin = $roles[User::IS_ADMIN];
             $user->is_doctor = $roles[User::IS_DOCTOR];
             $user->is_nurse = $roles[User::IS_NURSE];
             $user->is_reception = $roles[User::IS_RECEPTION];
-    
+
             // Save the user
             if ($user->save()) {
                 // Assign roles using Spatie/Permission package (if used)
                 $user->syncRoles(array_keys(array_filter($roles)));
-    
 
-                
+
+
                 $staffProfile->user_id = $user->id;
                 $staffProfile->staff_id = "MEDWEB" . $user->id;
                 $staffProfile->clinic_branch_id = $request->clinic_branch_id;
                 $staffProfile->fill($request->only([
-                    'aadhaar_no', 'date_of_birth', 'phone', 'gender', 'address1', 'address2', 'city_id', 'state_id', 'country_id', 'pincode', 'date_of_joining', 'qualification', 'department_id', 'specialization', 'years_of_experience', 'license_number', 'subspecialty', 'designation'
+                    'aadhaar_no',
+                    'date_of_birth',
+                    'phone',
+                    'gender',
+                    'address1',
+                    'address2',
+                    'city_id',
+                    'state_id',
+                    'country_id',
+                    'pincode',
+                    'date_of_joining',
+                    'qualification',
+                    'department_id',
+                    'specialization',
+                    'years_of_experience',
+                    'license_number',
+                    'subspecialty',
+                    'designation'
                 ]));
 
                 if ($request->add_checkbox == "on") {
@@ -210,12 +227,14 @@ class StaffListController extends Controller
             return redirect()->route('staff.staff_list')->with('success', 'Staff created successfully');
         } catch (\Exception $e) {
             echo "<pre>";
-            print_r( $e->getMessage());
-            exit;
+            print_r($e->getMessage());
+
             DB::rollback();
+            exit;
             return redirect()->back()->with('error', 'Failed to create staff: ' . $e->getMessage());
         }
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -239,6 +258,6 @@ class StaffListController extends Controller
         return view('staff.staff_list.edit', compact('name', 'countries', 'userTypes', 'departments', 'staffProfile', 'userDetails', 'availability', 'clinicBranches', 'availabilityCount', 'availability', 'availableBranches'));
     }
 
-    
+
 }
 

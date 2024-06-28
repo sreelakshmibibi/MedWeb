@@ -36,7 +36,8 @@ function handleAvailabilityStep(role) {
     }
 }
 
-var form = $("#staffform").show();
+// var form = $("#staffform").show();
+var form = $(".validation-wizard").show();
 
 $("#staffform").steps({
     headerTag: "h6",
@@ -46,37 +47,66 @@ $("#staffform").steps({
     labels: {
         finish: '<span><i class="fa fa-save"></i> Save</span>',
     },
-    onStepChanging: function(event, currentIndex, newIndex) {
-        let form = $("#staffform"); // Replace with your actual form ID or selector
-    
+    onStepChanging: function (event, currentIndex, newIndex) {
+        // Validate form for current step
+        var valid = false;
+        form = $(".validation-wizard");
         // Validate form for current step
         if (currentIndex < newIndex) {
-            var valid = form.valid();
-            if (!valid) {
-                form.find('.body:eq(' + currentIndex + ') label.error').remove();
-                form.find('.body:eq(' + currentIndex + ') .error').removeClass('error');
+            var validator = form.validate(); // Initialize validator
+            var valid = true;
+            // Check validation only if the validator is initialized
+            if (validator) {
+                // Find inputs in the current step only
+                var inputs = form
+                    .find("section")
+                    .eq(currentIndex)
+                    .find("input");
+                // Validate only inputs in the current step
+                inputs.each(function () {
+                    if (!validator.element(this)) {
+                        valid = false;
+                    }
+                });
             }
+            // If form is not valid, handle error messages
+            if (!valid) {
+                form.find(".error").removeClass("error"); // Remove error classes
+            }
+            // Return true or false based on validation result
+            // return valid;
         }
-    
+        // if (currentIndex < newIndex) {
+        //     var valid = form.valid();
+        //     if (!valid) {
+        //         form.find(
+        //             ".body:eq(" + currentIndex + ") label.error"
+        //         ).remove();
+        //         form.find(".body:eq(" + currentIndex + ") .error").removeClass(
+        //             "error"
+        //         );
+        //     }
+        // }
+
         // Handle availability step based on role selection
         let role = $("select[name='role[]']").val();
         handleAvailabilityStep(role);
-    
+
         // Return true if moving backwards or all validation passed
         return currentIndex > newIndex || valid;
     },
     onFinishing: function (event, currentIndex) {
         var form = $(this);
-    
+
         // Validate the form
         form.validate();
-    
+
         // Adjust validation settings if needed
         form.validate().settings.ignore = ":disabled";
-    
+
         // Check if the form is valid
         var isValid = form.valid();
-    
+
         // Return true or false based on validation result
         return isValid;
     },
@@ -100,7 +130,7 @@ $("#staffform").steps({
                 "X-CSRF-TOKEN": CSRF_TOKEN, // Pass CSRF token via headers
             },
             success: function (response) {
-                var successMessage = response.success; // Adjust as per your actual response structure
+                // var successMessage = response.success; // Adjust as per your actual response structure
 
                 // Redirect to stafflist route
                 var routeReturn = $("#storeRoute").data("stafflist-route");
@@ -116,11 +146,12 @@ $("#staffform").steps({
             },
             error: function (xhr) {
                 console.log(xhr.responseJSON.message);
+                // console.log(response.error);
             },
         });
     },
 }),
-    $("#staffform").validate({
+    $(".validation-wizard").validate({
         ignore: "input[type=hidden]",
         errorClass: "text-danger",
         successClass: "text-success",
