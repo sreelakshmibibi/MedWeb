@@ -50,9 +50,9 @@
 
         @include('dashboard.header')
         <?php
-            use App\Services\CommonService;
-            $commonService = new CommonService();
-            $menuItems = $commonService->getMenuItems();
+        use App\Services\CommonService;
+        $commonService = new CommonService();
+        $menuItems = $commonService->getMenuItems();
         ?>
         @include('dashboard.menu', ['menuItems' => $menuItems])
 
@@ -83,6 +83,8 @@
     <script src="{{ asset('assets/vendor_components/jquery-steps-master/build/jquery.steps.js') }}"></script>
     <script src="{{ asset('assets/vendor_components/jquery-validation-1.17.0/dist/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('js/pages/steps.js') }}"></script>
+    <script src="{{ asset('js/pages/steps_patient.js') }}"></script>
+
 
 
 
