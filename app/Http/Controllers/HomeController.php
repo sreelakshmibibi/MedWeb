@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\City;
 use App\Models\ClinicBasicDetail;
+use App\Models\ClinicBranch;
 use App\Models\Country;
 use App\Models\State;
 use Illuminate\Support\Facades\Auth;
@@ -52,10 +53,13 @@ class HomeController extends Controller
             $states = State::all();
             $cities = City::all();
             $clinicDetails = ClinicBasicDetail::first();
+            $data = ClinicBranch::all();
+            $total = count($data);
+
             // Set the flash message
             session()->flash('error', 'Please enter clinics and branch details before proceeding.');
 
-            return view('settings.clinics.index', compact('countries', 'states', 'cities', 'clinicDetails'));
+            return view('settings.clinics.index', compact('countries', 'states', 'cities', 'clinicDetails', 'data', 'total'));
 
         }
     }
