@@ -42,13 +42,9 @@
                                         <th>Company</th>
                                         <th>Price</th>
                                         <th>Expiry Date</th>
-                                        <th>Units per Package</th>
-                                        <th>Package Count</th>
                                         <th>Total Quantity</th>
                                         <th>Packaging Type</th>
                                         <th>Stock Status</th>
-                                        <th>Remarks</th>
-                                        <th>Status</th>
                                         <th width="100px">Action</th>
                                     </tr>
                                 </thead>
@@ -107,13 +103,10 @@
                         return data;
                     }
                 },
-                    { data: 'units_per_package', name: 'units_per_package' },
-                    { data: 'package_count', name: 'package_count' },
+                    
                     { data: 'total_quantity', name: 'total_quantity' },
                     { data: 'package_type', name: 'package_type' },
                     { data: 'stock_status', name: 'stock_status' },
-                    { data: 'med_remarks', name: 'med_remarks' },
-                    { data: 'status', name: 'status' },
                     { data: 'action', name: 'action', orderable: false, searchable: true }
                 ]
             });

@@ -61,7 +61,7 @@
                                 <div class="form-group">
                                     <label class="form-label" for="edit_units_per_package">Units per Package</label>
                                     <input class="form-control" type="text" id="edit_units_per_package"
-                                        name="units_per_package" placeholder="Number of units per package.">
+                                        name="units_per_package" placeholder="Number of units per package." onblur="generateEditTotalQuantity()">
                                     <div id="editMedUnitPerPackError" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -70,7 +70,7 @@
                                     <label class="form-label" for="edit_package_count">Package Count</label>
                                     <input class="form-control" type="text" id="edit_package_count"
                                         name="package_count" placeholder="Total number of packages"
-                                        onblur="generateTotalQuantity()">
+                                        onblur="generateEditTotalQuantity()">
                                     <div id="editmedPackageCountErrorError" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -434,7 +434,7 @@
         });
     });
 
-    function generateTotalQuantity() {
+    function generateEditTotalQuantity() {
         var medUnittPerPack = $('#edit_units_per_package').val();
         var packageCount = $('#edit_package_count').val();
         if (medUnittPerPack.length === 0) {

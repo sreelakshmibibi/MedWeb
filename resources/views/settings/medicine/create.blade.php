@@ -66,7 +66,7 @@
                                 <div class="form-group">
                                     <label class="form-label" for="units_per_package">Units per Package</label>
                                     <input class="form-control" type="text" id="units_per_package"
-                                        name="units_per_package" placeholder="Number of units per package.">
+                                        name="units_per_package" placeholder="Number of units per package." onblur="generateTotalQuantity()">
                                     <div id="medUnitPerPackError" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -384,8 +384,10 @@
     });
 
     function generateTotalQuantity() {
+        
         var medUnittPerPack = $('#units_per_package').val();
         var packageCount = $('#package_count').val();
+       
         if (medUnittPerPack.length === 0) {
             alert('The units per package are required.');
             return; // Prevent further execution
