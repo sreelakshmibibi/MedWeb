@@ -47,9 +47,9 @@ class StaffListController extends Controller
                 ->addColumn('name', function ($row) {
                     return str_replace("<br>", " ", $row->user->name);
                 })
-                ->addColumn('email', function ($row) {
-                    return $row->user->email;
-                })
+                // ->addColumn('email', function ($row) {
+                //     return $row->user->email;
+                // })
                 ->addColumn('role', function ($row) {
                     $role = '';
                     if ($row->user->is_doctor) {
@@ -70,6 +70,7 @@ class StaffListController extends Controller
                     $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></button>';
                     $btn .= '<a href="' . route('staff.staff_list.edit', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
                     $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
+                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-trash"></i></button>';
                     return $btn;
                 })
                 ->rawColumns(['name', 'role', 'action'])
@@ -226,11 +227,11 @@ class StaffListController extends Controller
 
             return redirect()->route('staff.staff_list')->with('success', 'Staff created successfully');
         } catch (\Exception $e) {
-            echo "<pre>";
-            print_r($e->getMessage());
+            // echo "<pre>";
+            // print_r($e->getMessage());
 
             DB::rollback();
-            exit;
+            // exit;
             return redirect()->back()->with('error', 'Failed to create staff: ' . $e->getMessage());
         }
     }
@@ -256,6 +257,33 @@ class StaffListController extends Controller
         $availableBranches = $doctorAvailability->availableBranchAndTimings($staffProfile->user_id);
         $countries = Country::all();
         return view('staff.staff_list.edit', compact('name', 'countries', 'userTypes', 'departments', 'staffProfile', 'userDetails', 'availability', 'clinicBranches', 'availabilityCount', 'availability', 'availableBranches'));
+    }
+
+    public function changeStatus(string $id)
+    {
+        $staffProfile = StaffProfile::with('user')->find($id);
+        abort_if(!$staffProfile, 404);
+        if ($staffProfile) {
+            $active = 'N';
+            $inActive = 'Y';
+            if ($staffProfile->status == $active)
+            {
+                $staffProfile->status = $inActive;
+            } else {
+                $staffProfile->status = $active;
+            }
+            $staffProfile->save();
+            return redirect()->route('staff.staff_list')->with('success', 'Status updated successfully');
+        }
+   
+    }
+
+    public function destroy($id)
+    {
+        $staffProfile = StaffProfile::findOrFail($id);
+        $staffProfile->delete();
+
+        return response()->json(['success', 'Staff deleted successfully.'], 201);
     }
 
 

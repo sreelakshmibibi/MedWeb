@@ -71,6 +71,7 @@ Route::get('/staff_list', [StaffListController::class, 'index'])->name('staff.st
 Route::get('/staff_list/add', [StaffListController::class, 'create'])->name('staff.staff_list.create');
 Route::post('/staff_list/store', [StaffListController::class, 'store'])->name('staff.staff_list.store');
 Route::get('/staff_list/{staff_list}/edit', [StaffListController::class, 'edit'])->name('staff.staff_list.edit');
+Route::post('/staff_list/{staffId}', [StaffListController::class, 'changeStatus'])->name('staff.staff_list.changeStatus');
 Route::post('/staff_list/update', [StaffListController::class, 'update'])->name('staff.staff_list.update');
-Route::delete('/staff_list/{staff_list}', [StaffListController::class, 'destroy'])->name('staff.staff_list.destroy');
+Route::delete('/staff_list/{staffId}', [StaffListController::class, 'destroy'])->name('staff.staff_list.destroy');
 

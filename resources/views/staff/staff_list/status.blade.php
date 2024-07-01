@@ -1,7 +1,6 @@
 <form id="form-delete" method="POST">
     @csrf
-    @method('DELETE')
-    <!-- delete modal-->
+    <!-- status modal-->
     <div class="modal fade" id="modal-status" role="dialog">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -11,12 +10,13 @@
                 </div>
                 <div class="modal-body">
                     <p>Are you sure you want to change the status of the staff?</p>
-                    <input type="hidden" id="delete_department_id" name="delete_department_id" value="">
+                    <input type="hidden" id="staff_id" name="delete_staff_id" value="">
+                    <input type="hidden" id="change_staff_status" name="change_staff_status" value="">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-danger float-end" data-bs-dismiss="modal"
-                        id="btn-confirm-delete">Change</button>
+                        id="btn-confirm-status">Change</button>
                 </div>
             </div>
             <!-- /.modal-content -->
