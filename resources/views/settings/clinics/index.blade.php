@@ -63,18 +63,6 @@
                                                     @enderror
                                                 </div>
                                                 <div class="form-group">
-                                                    <label class="form-label" for="logo">Logo</label>
-                                                    <input class="form-control @error('clinic_logo') is-invalid @enderror"
-                                                        type="file" id="clinic_logo" name="clinic_logo"
-                                                        placeholder="logo">
-                                                    @error('clinic_logo')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                                <div class="row form-group">
-                                                    <canvas id="logoCanvas" class="col-md-4" style="height: 64px;"></canvas>
-                                                </div>
-                                                <div class="form-group">
                                                     <label class="form-label" for="website">Website</label>
                                                     <input
                                                         class="form-control @error('clinic_website') is-invalid @enderror"
@@ -86,6 +74,41 @@
                                                         <div class="invalid-feedback">{{ $message }}</div>
                                                     @enderror
                                                 </div>
+                                                <div class="row">
+                                                    <div class="col-lg-10">
+                                                        <div class="form-group ">
+                                                            <label class="form-label" for="logo">Logo</label>
+                                                            <input
+                                                                class="form-control @error('clinic_logo') is-invalid @enderror"
+                                                                type="file" id="clinic_logo" name="clinic_logo"
+                                                                placeholder="logo">
+                                                            @error('clinic_logo')
+                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                            @enderror
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <div class="form-group">
+                                                            <canvas id="logoCanvas" style="height: 64px;"></canvas>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {{-- <div class="row form-group">
+                                                    <canvas id="logoCanvas" class="col-md-2" style="height: 64px;"></canvas>
+                                                </div> --}}
+                                                {{-- <div class="form-group">
+                                                    <label class="form-label" for="website">Website</label>
+                                                    <input
+                                                        class="form-control @error('clinic_website') is-invalid @enderror"
+                                                        type="url" id="clinic_website" name="clinic_website"
+                                                        placeholder="http://" <?php if($clinicDetails) { ?>
+                                                        value="{{ old('clinic_website', $clinicDetails->clinic_website) }}"
+                                                        <?php } ?>>
+                                                    @error('clinic_website')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </div> --}}
                                             </div>
                                             <div class="box-footer text-end">
                                                 <button type="submit" class="btn btn-success">
@@ -129,6 +152,35 @@
                     img.src = logoUrl;
                 }
             }
+
+            var input = document.getElementById('clinic_logo');
+            var canvas = document.getElementById('logoCanvas');
+            var ctx = canvas.getContext('2d');
+
+            input.addEventListener('change', function(event) {
+                var file = event.target.files[0];
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    var img = new Image();
+                    img.onload = function() {
+                        // canvas.width = img.width;
+                        // canvas.height = img.height;
+                        // ctx.drawImage(img, 0, 0, img.width, img.height);
+                        canvas.width = img.height;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0, img.height, img.height);
+                    };
+                    img.src = e.target.result;
+                };
+
+                if (file) {
+                    reader.readAsDataURL(file);
+                }
+            });
+
         });
     </script>
+
+
 @endsection
