@@ -26,6 +26,8 @@ use Spatie\Permission\Models\Role;
 use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
 
+use App\Notifications\WelcomeVerifyNotification;
+
 class StaffListController extends Controller
 {
     /**
@@ -67,7 +69,7 @@ class StaffListController extends Controller
                     return $role;
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></button>';
+                    $btn = '<a href="' . route('staff.staff_list.view', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
                     $btn .= '<a href="' . route('staff.staff_list.edit', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
                     $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
                     $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-trash"></i></button>';
@@ -225,6 +227,16 @@ class StaffListController extends Controller
                 DB::rollBack();
             }
 
+            //example user
+            $user = User::find('19');
+
+            $token = $request->route()->parameter('token');
+
+            $user->token = $token;
+
+            // Send welcome notification
+            $user->notify(new WelcomeVerifyNotification($user->name, $user->email, $user->password, $user->$token));
+
             return redirect()->route('staff.staff_list')->with('success', 'Staff created successfully');
         } catch (\Exception $e) {
             // echo "<pre>";
@@ -235,6 +247,8 @@ class StaffListController extends Controller
             return redirect()->back()->with('error', 'Failed to create staff: ' . $e->getMessage());
         }
     }
+
+
 
 
     /**
@@ -266,8 +280,7 @@ class StaffListController extends Controller
         if ($staffProfile) {
             $active = 'N';
             $inActive = 'Y';
-            if ($staffProfile->status == $active)
-            {
+            if ($staffProfile->status == $active) {
                 $staffProfile->status = $inActive;
             } else {
                 $staffProfile->status = $active;
@@ -275,7 +288,7 @@ class StaffListController extends Controller
             $staffProfile->save();
             return redirect()->route('staff.staff_list')->with('success', 'Status updated successfully');
         }
-   
+
     }
 
     public function destroy($id)
@@ -284,6 +297,25 @@ class StaffListController extends Controller
         $staffProfile->delete();
 
         return response()->json(['success', 'Staff deleted successfully.'], 201);
+    }
+
+    public function view(string $id)
+    {
+        $staffProfile = StaffProfile::with('user')->find($id);
+        abort_if(!$staffProfile, 404);
+
+        $userDetails = $staffProfile->user;
+        $departments = Department::where('status', 'Y')->get();
+        $userTypes = UserType::where('status', 'Y')->get();
+        $commonService = new CommonService();
+        $name = $commonService->splitNames($userDetails->name);
+        $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
+        $availability = DoctorWorkingHour::where('user_id', $staffProfile->user_id)->get();
+        $availabilityCount = DoctorWorkingHour::where('user_id', $staffProfile->user_id)->groupBy('clinic_branch_id')->count();
+        $doctorAvailability = new DoctorAvaialbilityService();
+        $availableBranches = $doctorAvailability->availableBranchAndTimings($staffProfile->user_id);
+        $countries = Country::all();
+        return view('staff.staff_list.view', compact('name', 'countries', 'userTypes', 'departments', 'staffProfile', 'userDetails', 'availability', 'clinicBranches', 'availabilityCount', 'availability', 'availableBranches'));
     }
 
 
