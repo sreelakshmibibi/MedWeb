@@ -15,7 +15,9 @@ use App\Models\StaffProfile;
 use App\Models\State;
 use App\Models\User;
 use App\Models\UserType;
+use App\Models\UserVerify;
 use App\Models\WeekDay;
+use App\Notifications\WelcomeVerifyNotification;
 use App\Services\StaffService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -118,8 +120,8 @@ class StaffListController extends Controller
                 $user->password = Hash::make($password);
                 $staffProfile = new StaffProfile();
             }
-
-            $user->name = $request->title . "<br> " . $request->firstname . "<br>" . $request->lastname;
+            $staffName = $request->title . "<br> " . $request->firstname . "<br>" . $request->lastname;
+            $user->name = $staffName;
             $user->email = $request->email;
             $roles = [
                 User::IS_ADMIN => false,
@@ -209,14 +211,38 @@ class StaffListController extends Controller
 
                 if ($staffProfile->save()) {
                     if ($user->is_doctor) {
-                        $staffService = new StaffService();
+                        $staffService = new
+                         StaffService();
                         if ($staffService->saveDoctorAvailability($request, $user->id)) {
                             DB::commit();
+                            if (!isset($request->edit_user_id)) {
+                                $token = Str::random(64);
+                                UserVerify::create([
+                                      'user_id' => $user->id, 
+                                      'token' => $token
+                        
+                                ]);
+                                $welcomeNotification = new WelcomeVerifyNotification($staffName, $request->email, $password, $token);
+                                $user->notify($welcomeNotification);
+                                
+                            }
+
                         } else {
                             DB::rollBack();
                         }
                     } else {
                         DB::commit();
+                        if (!isset($request->edit_user_id)) {
+                            $token = Str::random(64);
+                            UserVerify::create([
+                                      'user_id' => $user->id, 
+                                      'token' => $token
+                        
+                            ]);
+                            $welcomeNotification = new WelcomeVerifyNotification($staffName, $request->email, $password, $token);
+                            $user->notify($welcomeNotification);
+                           
+                        }
                     }
                 } else {
                     DB::rollBack();
@@ -227,11 +253,11 @@ class StaffListController extends Controller
 
             return redirect()->route('staff.staff_list')->with('success', 'Staff created successfully');
         } catch (\Exception $e) {
-            // echo "<pre>";
-            // print_r($e->getMessage());
+            echo "<pre>";
+            print_r($e->getMessage());
 
             DB::rollback();
-            // exit;
+            exit;
             return redirect()->back()->with('error', 'Failed to create staff: ' . $e->getMessage());
         }
     }

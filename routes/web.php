@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Auth\StaffVerificationController;
+use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\HelperController;
 use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
@@ -82,4 +84,6 @@ Route::get('/staff_list/{staff_list}/edit', [StaffListController::class, 'edit']
 Route::post('/staff_list/{staffId}', [StaffListController::class, 'changeStatus'])->name('staff.staff_list.changeStatus');
 Route::post('/staff_list/update', [StaffListController::class, 'update'])->name('staff.staff_list.update');
 Route::delete('/staff_list/{staffId}', [StaffListController::class, 'destroy'])->name('staff.staff_list.destroy');
+
+Route::get('account/verify/{token}', [StaffVerificationController::class, 'verifyAccount'])->name('user.verify'); 
 

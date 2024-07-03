@@ -36,6 +36,7 @@ class User extends Authenticatable
         'is_reception',
         'created_by',
         'updated_by',
+        'is_email_verified',
     ];
 
     protected static function booted()
@@ -86,4 +87,5 @@ class User extends Authenticatable
     {
         return $this->hasMany(DoctorWorkingHour::class);
     }
+    
 }
