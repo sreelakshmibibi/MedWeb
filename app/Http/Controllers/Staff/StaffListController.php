@@ -122,8 +122,8 @@ class StaffListController extends Controller
                 $user->password = Hash::make($password);
                 $staffProfile = new StaffProfile();
             }
-            $staffName = $request->title . "<br> " . $request->firstname . "<br>" . $request->lastname;
-            $user->name = $staffName;
+            $staffName = $request->title . "". $request->firstname . " " . $request->lastname;
+            $user->name = $request->title . "<br> " . $request->firstname . "<br>" . $request->lastname;
             $user->email = $request->email;
             $roles = [
                 User::IS_ADMIN => false,
@@ -265,11 +265,11 @@ class StaffListController extends Controller
 
             return redirect()->route('staff.staff_list')->with('success', 'Staff created successfully');
         } catch (\Exception $e) {
-            echo "<pre>";
-            print_r($e->getMessage());
+            // echo "<pre>";
+            // print_r($e->getMessage());
 
             DB::rollback();
-            exit;
+            // exit;
             return redirect()->back()->with('error', 'Failed to create staff: ' . $e->getMessage());
         }
     }
