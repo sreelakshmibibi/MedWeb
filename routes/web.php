@@ -5,6 +5,7 @@ use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
 use App\Http\Controllers\Settings\ClinicBranchController;
 use App\Http\Controllers\Settings\DepartmentController;
+use App\Http\Controllers\Settings\DiseaseController;
 use App\Http\Controllers\Settings\MedicineController;
 use App\Http\Controllers\Settings\TreatmentCostController;
 use App\Http\Controllers\Staff\StaffListController;
@@ -32,6 +33,13 @@ Route::post('/clinic/store', [ClinicBranchController::class, 'store'])->name('se
 Route::get('/clinic/{clinic}/edit', [ClinicBranchController::class, 'edit'])->name('settings.clinic.edit');
 Route::post('/clinic/update', [ClinicBranchController::class, 'update'])->name('settings.clinic.update');
 Route::post('/clinic/{clinic}/{status}', [ClinicBranchController::class, 'statusChange'])->name('settings.clinic.destroy');
+
+Route::get('/disease', [DiseaseController::class, 'index'])->name('settings.disease');
+Route::post('/disease/create', [DiseaseController::class, 'create'])->name('settings.disease.create');
+Route::post('/disease/store', [DiseaseController::class, 'store'])->name('settings.disease.store');
+Route::get('/disease/{disease}/edit', [DiseaseController::class, 'edit'])->name('settings.disease.edit');
+Route::post('/disease/update', [DiseaseController::class, 'update'])->name('settings.disease.update');
+Route::delete('/disease/{disease}', [DiseaseController::class, 'destroy'])->name('settings.disease.destroy');
 
 Route::group(['middleware' => ['permission:departments']], function () {
     Route::get('/department', [DepartmentController::class, 'index'])->name('settings.department');
