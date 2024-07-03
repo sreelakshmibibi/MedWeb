@@ -25,8 +25,15 @@ class VerificationController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
-
+    // protected $redirectTo = '/home';
+    protected $redirectTo = '/password/reset/{token}';
+    /**
+     * The password reset token.
+     *
+     * @var string
+     */
+    // public $token;
+    // protected $redirectTo = '/password/reset/'.$token;
     /**
      * Create a new controller instance.
      *
