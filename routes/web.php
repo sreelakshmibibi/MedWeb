@@ -8,6 +8,7 @@ use App\Http\Controllers\Settings\DepartmentController;
 use App\Http\Controllers\Settings\MedicineController;
 use App\Http\Controllers\Settings\TreatmentCostController;
 use App\Http\Controllers\Staff\StaffListController;
+use App\Http\Controllers\Staff\DoctorListController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +21,14 @@ Route::get('/formclinic', function () {
 });
 
 Auth::routes();
+
+// Example for email verification route
+Auth::routes(['verify' => true]);
+
+// Route::get('/password/reset/{token}', function () {
+//     return view('auth.passwords.reset');
+// });
+
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
@@ -72,6 +81,13 @@ Route::get('/staff_list/add', [StaffListController::class, 'create'])->name('sta
 Route::post('/staff_list/store', [StaffListController::class, 'store'])->name('staff.staff_list.store');
 Route::get('/staff_list/{staff_list}/edit', [StaffListController::class, 'edit'])->name('staff.staff_list.edit');
 Route::post('/staff_list/{staffId}', [StaffListController::class, 'changeStatus'])->name('staff.staff_list.changeStatus');
+Route::get('/staff_list/{staff_list}/view', [StaffListController::class, 'view'])->name('staff.staff_list.view');
 Route::post('/staff_list/update', [StaffListController::class, 'update'])->name('staff.staff_list.update');
 Route::delete('/staff_list/{staffId}', [StaffListController::class, 'destroy'])->name('staff.staff_list.destroy');
 
+Route::get('/doctor_list', [DoctorListController::class, 'index'])->name('staff.doctor_list');
+Route::get('/doctor_list/add', [DoctorListController::class, 'create'])->name('staff.doctor_list.create');
+Route::post('/doctor_list/store', [DoctorListController::class, 'store'])->name('staff.doctor_list.store');
+Route::get('/doctor_list/{doctor_list}/edit', [DoctorListController::class, 'edit'])->name('staff.doctor_list.edit');
+Route::post('/doctor_list/update', [DoctorListController::class, 'update'])->name('staff.doctor_list.update');
+Route::delete('/doctor_list/{doctor_list}', [DoctorListController::class, 'destroy'])->name('staff.doctor_list.destroy');
