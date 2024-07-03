@@ -42,17 +42,19 @@ class ClinicBranchController extends Controller
                 })
                 ->addColumn('action', function ($row) {
 
-                    $btn = '<div class="d-flex">
+                    $btn = '<div class="d-flex justify-content-center">
                     <button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
                         data-bs-target="#modal-edit-clinic" ><i class="fa fa-pencil"></i></button>
                       ';
                     if ($row->clinic_status == 'Y') {
-                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete-clinic" data-id="' . $row->id . '" data-status="' . $row->clinic_status . '"  title="Make inactive">
-                        <i class="fa fa-trash"></i></button> </div>';
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete-clinic" data-id="' . $row->id . '" data-status="' . $row->clinic_status . '"  title="Make inactive" >
+                        <i class="fa fa-ban"></i></button>';
+
                     } else {
-                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete-clinic" data-id="' . $row->id . '" data-status="' . $row->clinic_status . '" title="Make active">
-                        <i class="fa fa-trash"></i></button> </div>';
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete-clinic" data-id="' . $row->id . '" data-status="' . $row->clinic_status . '" title="Make active" >
+                        <i class="fa-solid fa-sliders"></i></button>';
                     }
+                    $btn .= '</div>';
 
                     return $btn;
                 })
