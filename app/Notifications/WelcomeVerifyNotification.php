@@ -95,11 +95,10 @@ class WelcomeVerifyNotification extends Notification
     public function toMail($notifiable)
     {
         $verificationUrl = URL::temporarySignedRoute(
-            'verification.verify',
+            'user.verify',
             now()->addMinutes(config('auth.verification.expire', 60)),
             [
-                'id' => $notifiable->getKey(),
-                'hash' => sha1($notifiable->getEmailForVerification()),
+                'token' => $this->token,
             ]
         );
 

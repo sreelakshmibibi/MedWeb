@@ -13,7 +13,11 @@
                             <p class="mb-0">Sign in to continue to MedWeb.</p>
                         </div>
                         <div class="p-40">
-
+                            @if (session('message'))
+                                <div class="alert alert-success" role="alert">
+                                    {{ session('message') }}
+                                </div>
+                            @endif
                             <form method="POST" action="{{ route('login') }}">
                                 @csrf
                                 <div class="form-group">
