@@ -71,6 +71,34 @@
     <script>
         $(document).ready(function() {
             $("#staffform .actions ul li:last-child a").addClass("bg-success btn btn-success");
+
+            var input = document.getElementById('profile_photo');
+            var canvas = document.getElementById('profilePic');
+            var ctx = canvas.getContext('2d');
+
+            input.addEventListener('change', function(event) {
+                var file = event.target.files[0];
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    var img = new Image();
+                    img.onload = function() {
+                        // canvas.width = img.width;
+                        // canvas.height = img.height;
+                        // ctx.drawImage(img, 0, 0, img.width, img.height);
+                        canvas.width = img.height;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0, img.height, img.height);
+                    };
+                    img.src = e.target.result;
+                };
+
+                if (file) {
+                    reader.readAsDataURL(file);
+                }
+            });
+
+
             let count = '{{ $availabilityCount }}';
 
             // Event listener for Add Row button click
@@ -142,6 +170,11 @@
                 </tr>`;
 
                 $('#tablebody').append(newRow);
+                // Reinitialize Select2 on the newly added select element
+                $(`#clinic_branch_id${count}`).select2({
+                    width: '100%',
+                    placeholder: 'Select a Branch'
+                });
                 updateRowCount();
             });
 
@@ -235,7 +268,7 @@
             function loadStates(countryId, stateSelectElement, initialSelected) {
                 if (countryId) {
                     $.ajax({
-                        url: '{{ route("get.states", "") }}' + '/' + countryId,
+                        url: '{{ route('get.states', '') }}' + '/' + countryId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -269,7 +302,7 @@
             function loadCities(stateId, citySelectElement, initialSelected) {
                 if (stateId) {
                     $.ajax({
-                        url: '{{ route("get.cities", "") }}' + '/' + stateId,
+                        url: '{{ route('get.cities', '') }}' + '/' + stateId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -415,8 +448,8 @@
             var ctx = canvas.getContext('2d');
             if ('{{ $staffProfile }}') {
 
-                var profileUrl = '{{ $staffProfile->photo ?? "" }}';
-                var photoUrl = '{{ asset("storage/") }}/' + profileUrl;
+                var profileUrl = '{{ $staffProfile->photo ?? '' }}';
+                var photoUrl = '{{ asset('storage/') }}/' + profileUrl;
                 if (profileUrl) {
                     var img = new Image();
                     img.onload = function() {
