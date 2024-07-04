@@ -5,8 +5,8 @@
     <div class="content-wrapper">
         <div class="container-full">
             <div class="content-header">
-            <div id="successMessage" style="display:none;" class="alert alert-success">Department created successfully
-            </div>
+                <div id="successMessage" style="display:none;" class="alert alert-success">Department created successfully
+                </div>
                 @if (session('success'))
                     <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-success alerttop fadeOut"
                         style="display: block;">
@@ -66,7 +66,6 @@
     </div>
     <!-- /.content-wrapper -->
 
-    {{-- @include('staff.staff_list.create') --}}
     @include('staff.staff_list.delete')
     @include('staff.staff_list.status')
 
@@ -150,7 +149,7 @@
                 var staffId = $(this).data('id');
                 $('#edit_staff_id').val(staffId); // Set staff ID in the hidden input
                 $.ajax({
-                    url: '{{ url("staff", "") }}' + "/" + staffId + "/edit",
+                    url: '{{ url('staff', '') }}' + "/" + staffId + "/edit",
                     method: 'GET',
                     success: function(response) {
                         $('#edit_staff_id').val(response.id);
@@ -211,7 +210,7 @@
                 var staffId = $('#delete_staff_id').val();
                 var url = "{{ route('staff.staff_list.changeStatus', [':staffId']) }}";
                 url = url.replace(':staffId', staffId);
-                
+
                 $.ajax({
                     type: 'DELETE',
                     url: url,
