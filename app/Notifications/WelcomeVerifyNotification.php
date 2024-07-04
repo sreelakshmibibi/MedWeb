@@ -109,7 +109,8 @@ class WelcomeVerifyNotification extends Notification
             ->line(Lang::get('Your username is: ' . $this->email))
             ->line(Lang::get('Your temporary password is: ' . $this->password))
             ->action(Lang::get('Verify Email Address'), $verificationUrl)
-            ->line(Lang::get('After verifying your email, you will be redirected to change your password.'))
+            // ->line(Lang::get('After verifying your email, you will be redirected to change your password.'))
+            ->line(Lang::get('For security reasons, we recommend you change your password after logging in.'))
             ->line(Lang::get('If you have any questions, feel free to contact us.'));
 
 
