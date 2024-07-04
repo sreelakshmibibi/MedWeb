@@ -37,6 +37,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::get('/get-states/{countryId}', [HelperController::class, 'getStates'])->name('get.states');
 Route::get('/get-cities/{stateId}', [HelperController::class, 'getCities'])->name('get.cities');
+Route::get('/fetch-doctors/{branchId}', [PatientListController::class, 'fetchDoctors'])->name('get.doctors');
 
 Route::get('/clinic', [ClinicBranchController::class, 'index'])->name('settings.clinic');
 Route::post('/clinic/create', [ClinicBranchController::class, 'create'])->name('settings.clinic.create');
@@ -95,5 +96,4 @@ Route::get('/staff_list/{staff_list}/view', [StaffListController::class, 'view']
 Route::post('/staff_list/update', [StaffListController::class, 'update'])->name('staff.staff_list.update');
 Route::delete('/staff_list/{staffId}', [StaffListController::class, 'destroy'])->name('staff.staff_list.destroy');
 
-Route::get('account/verify/{token}', [StaffVerificationController::class, 'verifyAccount'])->name('user.verify'); 
-
+Route::get('account/verify/{token}', [StaffVerificationController::class, 'verifyAccount'])->name('user.verify');
