@@ -20,6 +20,10 @@
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Add Patient</h3>
                 </div>
+                <div id="error-message-container">
+                    <p id="error-message" class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fadeOut"
+                     style="display: none;"></p>
+                </div>
             </div>
 
             <section class="content">
@@ -41,7 +45,7 @@
                             </section>
 
 
-                            <div id="storeRoute" data-url="{{ route('patient.patient_list.store') }}"></div>
+                            <div id="storeRoute" data-url="{{ route('patient.patient_list.store') }}" data-patientlist-route="{{ route('patient.patient_list') }}"></div>
                         </form>
                     </div>
 
@@ -135,55 +139,58 @@
                 }
             }
 
-
-            function validateWeekdayTime(day) {
-                var fromValue = $('#' + day + '_from').val();
-                var toValue = $('#' + day + '_to').val();
-
-                // Check if fromValue is filled and toValue is empty
-                if (fromValue && !toValue) {
-                    $('#' + day + '_to').addClass('is-invalid'); // Add Bootstrap's is-invalid class
-                    return false;
-                } else {
-                    $('#' + day + '_to').removeClass('is-invalid'); // Remove is-invalid class if valid
-                    return true;
-                }
-            }
-
-            // Event handlers for weekday inputs
-            ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].forEach(function(
-                day) {
-                // Validate on change of weekday from
-                $('#' + day + '_from').change(function() {
-                    validateWeekdayTime(day);
-                });
-
-                // Validate on change of weekday to
-                $('#' + day + '_to').change(function() {
-                    validateWeekdayTime(day);
-                });
+            // Handle change event for branch dropdown
+            $('#clinic_branch_id0').change(function() {
+                
+                var branchId = $(this).val();
+                loadDoctors(branchId);
             });
-            // Form submit validation
-            $('form.tab-wizard').submit(function(event) {
-                var isValid = true;
 
-                // Validate all weekdays
-                ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].forEach(
-                    function(day) {
-                        if (!validateWeekdayTime(day)) {
-                            isValid = false;
+             // Function to load doctors based on branch ID
+             function loadDoctors(branchId) {
+                if (branchId) {
+                    
+                    $.ajax({
+                        url: '{{ route('get.doctors', '') }}' + '/' + branchId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                           
+                            $('#doctor2').empty();
+                            $('#doctor2').append('<option value="">Select a doctor</option>');
+                            $.each(data, function(key, value) {
+                                var doctorName = value.user.name.replace(/<br>/g, ' ');
+                                $('#doctor2').append('<option value="' + value.user_id + '">' +
+                                    doctorName + '</option>');
+                            });
                         }
                     });
-
-                if (!isValid) {
-                    console.log('hi');
-
-                    event.preventDefault(); // Prevent form submission if validation fails
-                    $('.error-message').text('Please fill all weekday times');
                 } else {
-                    $('.error-message').text(''); // Clear error message if validation passes
+                    $('#doctor2').empty();
                 }
-            });
+            }
+          
+            // Form submit validation
+            // $('form.tab-wizard').submit(function(event) {
+            //     var isValid = true;
+
+            //     // Validate all weekdays
+            //     ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].forEach(
+            //         function(day) {
+            //             if (!validateWeekdayTime(day)) {
+            //                 isValid = false;
+            //             }
+            //         });
+
+            //     if (!isValid) {
+            //         console.log('hi');
+
+            //         event.preventDefault(); // Prevent form submission if validation fails
+            //         $('.error-message').text('Please fill all weekday times');
+            //     } else {
+            //         $('.error-message').text(''); // Clear error message if validation passes
+            //     }
+            // });
 
             // Event listener for dropdown item click
             $(".dropdown-menu .dropdown-item").click(function() {
@@ -193,29 +200,7 @@
                 // Update the button text with the selected salutation
                 $(".input-group .dropdown-toggle").text(salutation);
             });
-
-            $("#add_checkbox").change(function() {
-                // Check if checkbox is checked
-                if ($(this).is(":checked")) {
-                    // Copy value from address1 to caddress1
-                    $("#caddress1").val($("#address1").val());
-                    $("#caddress2").val($("#address2").val());
-                    $("#ccity_id").val($("#city_id").val());
-                    $("#cstate_id").val($("#state_id").val());
-                    $("#ccountry_id").val($("country_id").val());
-                    $("#cpincode").val($("#pincode").val());
-                } else {
-                    // Clear caddress1 if checkbox is unchecked
-                    $("#caddress1").val("");
-                    $("#caddress2").val("");
-                    $("#ccity_id").val("");
-                    $("#cstate_id").val("");
-                    $("#ccountry_id").val("");
-                    $("#cpincode").val("");
-                }
-            });
-
-
+            
         });
     </script>
 @endsection

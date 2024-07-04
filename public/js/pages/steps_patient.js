@@ -8,25 +8,73 @@ $("#patientform").steps({
     labels: {
         finish: '<span><i class="fa fa-save"></i> Save</span>',
     },
+    onStepChanging: function (event, currentIndex, newIndex) {
+        // Validate form for current step
+        var valid = false;
+        form = $(".validation-wizard");
+        // Validate form for current step
+        if (currentIndex < newIndex) {
+            var validator = form.validate(); // Initialize validator
+            var valid = true;
+            // Check validation only if the validator is initialized
+            if (validator) {
+                // Find inputs in the current step only
+                var inputs = form
+                    .find("section")
+                    .eq(currentIndex)
+                    .find("input");
+                // Validate only inputs in the current step
+                inputs.each(function () {
+                    if (!validator.element(this)) {
+                        valid = false;
+                    }
+                });
+            }
+            // If form is not valid, handle error messages
+            if (!valid) {
+                form.find(".error").removeClass("error"); // Remove error classes
+            }
+            // Return true or false based on validation result
+            // return valid;
+        }
+        // if (currentIndex < newIndex) {
+        //     var valid = form.valid();
+        //     if (!valid) {
+        //         form.find(
+        //             ".body:eq(" + currentIndex + ") label.error"
+        //         ).remove();
+        //         form.find(".body:eq(" + currentIndex + ") .error").removeClass(
+        //             "error"
+        //         );
+        //     }
+        // }
+
+        // Handle availability step based on role selection
+        //let role = $("select[name='role[]']").val();
+        //handleAvailabilityStep(role);
+
+        // Return true if moving backwards or all validation passed
+        return currentIndex > newIndex || valid;
+    },
     onFinishing: function (event, currentIndex) {
         return (form.validate().settings.ignore = ":disabled"), form.valid();
     },
     onFinished: function (event, currentIndex) {
-        var formDataStaff = new FormData($("#patientform")[0]); // Serialize form data including files
+        var formDataPatient = new FormData($("#patientform")[0]); // Serialize form data including files
         var CSRF_TOKEN = $('meta[name="csrf-token"]').attr("content");
         var storeRoute = $("#storeRoute").data("url");
         if (storeRoute == null) {
             storeRoute = $("#updateRoute").data("url");
         }
 
-        console.log(formDataStaff);
+        console.log(formDataPatient);
         $.ajax({
             url: storeRoute,
             type: "POST",
-            data: formDataStaff,
+            data: formDataPatient,
             dataType: "json",
             processData: false, // Important: To send FormData object, set processData to false
-            contentType: false, // Important: To send FormData object, set contentType to false
+            contentType: false, // Important: To send FormData object, set contentType to falsestafflist-route
             headers: {
                 "X-CSRF-TOKEN": CSRF_TOKEN, // Pass CSRF token via headers
             },
@@ -34,19 +82,29 @@ $("#patientform").steps({
                 var successMessage = response.success; // Adjust as per your actual response structure
 
                 // Redirect to stafflist route
-                var routeReturn = $("#storeRoute").data("stafflist-route");
+                var routeReturn = $("#storeRoute").data("patientlist-route");
                 if (routeReturn == null) {
-                    routeReturn = $("#updateRoute").data("stafflist-route");
+                    routeReturn = $("#updateRoute").data("patientlist-route");
                 }
 
                 // Redirect to the stafflist route
                 window.location.href =
                     routeReturn +
                     "?success_message=" +
-                    encodeURIComponent("Staff added successfully.");
+                    encodeURIComponent("Patient added successfully.");
             },
             error: function (xhr) {
-                console.log(xhr.responseJSON.message);
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    console.log(xhr.responseJSON.error); // Log the error message to console
+    
+                    // Display error message on the page
+                    $('#error-message').text(xhr.responseJSON.error);
+                    $('#error-message').show(); // Show the error message element
+                } else {
+                    console.error('Error occurred but no error message received.');
+                    $('#error-message').text('An error occurred.');
+                    $('#error-message').show(); // Show a generic error message
+                }
             },
         });
     },
@@ -65,8 +123,8 @@ $("#patientform").steps({
             error.insertAfter(element);
         },
         rules: {
-            email: {
-                email: !0,
+            title: {
+                required: true,
             },
             firstname: {
                 required: true,
@@ -77,13 +135,28 @@ $("#patientform").steps({
                 required: true,
                 maxlength: 255,
             },
+            gender: {
+                required: true,
+            },
             date_of_birth: {
                 required: true,
                 date: true,
             },
-
+            aadhaar_no: {
+                minlength: 12,
+                maxlength: 12,
+                digits: true,
+            },
+            email: {
+                email: true,
+            },
             phone: {
                 required: true,
+                digits: true,
+            },
+            regdate: {
+                required: true,
+                date: true,
             },
             address1: {
                 required: true,
@@ -95,45 +168,40 @@ $("#patientform").steps({
                 minlength: 3,
                 maxlength: 255,
             },
-
+            country_id: {
+                required: true,
+            },
+            state_id: {
+                required: true,
+            },
+            city_id: {
+                required: true,
+            },
             pincode: {
                 required: true,
+                digits: true,
                 maxlength: 10,
             },
-
-            aadhaar_no: {
+            clinic_branch_id0: {
                 required: true,
-                minlength: 12,
-                maxlength: 12,
             },
-            designation: {
+            doctor2: {
                 required: true,
-                minlength: 3,
-                maxlength: 255,
             },
-            qualification: {
+            appdate: {
                 required: true,
-                minlength: 3,
-                maxlength: 255,
             },
-            years_of_experience: {
+            appstatus: {
                 required: true,
-                minlength: 3,
-                maxlength: 255,
             },
-            date_of_joining: {
-                required: true,
-                date: true,
+            bp: {
+                digits: true,
             },
-            // specialization: {
-            //     required: true,
-            //     minlength: 3,
-            //     maxlength: 255,
-            // },
-            // subspecialty: {
-            //     required: true,
-            //     minlength: 3,
-            //     maxlength: 255,
-            // },
+            height: {
+                digits: true,
+            },
+            weight: {
+                digits: true,
+            },
         },
     });

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('prescriptions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('patient_id');
-            $table->unsignedBigInteger('app_id');
+            $table->foreignId('app_id')->constrained('appointments');
             $table->foreignId('medid')->constrained('medicines');
             $table->dateTime('endate');
             $table->string('medd_name', 200);
@@ -36,11 +36,7 @@ return new class extends Migration
                 ->on('patient_profiles')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->foreign('app_id')
-                ->references('app_id')
-                ->on('appointments')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+
             // Indexes
             $table->index('patient_id');
             $table->index('app_id');
@@ -64,6 +60,8 @@ return new class extends Migration
             $table->dropForeign(['patient_id']);
             $table->dropForeign(['medid']);
             $table->dropForeign(['prby']);
+            $table->dropForeign(['created_by']);
+            $table->dropForeign(['updated_by']);
         });
         Schema::dropIfExists('prescriptions');
     }

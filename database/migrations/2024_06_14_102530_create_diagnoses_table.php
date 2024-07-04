@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('diagnoses', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('patient_id');
-            $table->unsignedBigInteger('app_id');
+            $table->foreignId('app_id')->constrained('appointments');
             $table->string('diagnosis', 500);
             $table->foreignId('doctor_id')->constrained('users');
             $table->dateTime('cdate');
@@ -27,11 +27,6 @@ return new class extends Migration
             $table->foreign('patient_id')
                 ->references('patient_id')
                 ->on('patient_profiles')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-            $table->foreign('app_id')
-                ->references('app_id')
-                ->on('appointments')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             // Indexesdiagnosis

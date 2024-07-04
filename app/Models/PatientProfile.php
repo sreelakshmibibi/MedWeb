@@ -20,14 +20,54 @@ class PatientProfile extends Model
     protected static function booted()
     {
         // Before creating a new record
-        static::creating(function ($clinic) {
-            $clinic->created_by = Auth::id(); // Set created_by to current user's ID
-            $clinic->updated_by = Auth::id();
+        static::creating(function ($patient) {
+            $patient->created_by = Auth::id(); // Set created_by to current user's ID
+            $patient->updated_by = Auth::id();
         });
 
         // Before updating an existing record
-        static::updating(function ($clinic) {
-            $clinic->updated_by = Auth::id(); // Set updated_by to current user's ID
+        static::updating(function ($patient) {
+            $patient->updated_by = Auth::id(); // Set updated_by to current user's ID
         });
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'patient_id', 'patient_id');
+    }
+
+    public function latestAppointment()
+    {
+        return $this->hasOne(Appointment::class, 'patient_id', 'patient_id')
+            ->where('app_date', '<=', now())
+            ->latest('app_date')
+            ->latest('app_time');
+        //return $this->hasOne(Appointment::class, 'patient_id', 'patient_id')->latest();
+    }
+
+    public function nextAppointment()
+    {
+        return $this->hasOne(Appointment::class, 'patient_id', 'patient_id')
+            ->where('app_date', '>', now())
+            ->oldest('app_date')
+            ->oldest('app_time');
+    }
+
+    // Define the relationship with Country
+    public function country()
+    {
+        return $this->belongsTo(Country::class, 'country_id', 'id');
+    }
+
+    // Define the relationship with State
+    public function state()
+    {
+        return $this->belongsTo(State::class, 'state_id', 'id');
+    }
+
+    // Define the relationship with City
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'city_id', 'id');
     }
 }

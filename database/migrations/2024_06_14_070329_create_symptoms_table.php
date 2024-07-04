@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('symptoms', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('patient_id');
-            $table->unsignedBigInteger('app_id');
+            $table->foreignId('app_id')->constrained('appointments');
             $table->string('symptom', 500);
             $table->foreignId('doctor_id')->constrained('users');
             $table->dateTime('cdate');
@@ -28,11 +28,11 @@ return new class extends Migration
                 ->on('patient_profiles')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->foreign('app_id')
-                ->references('app_id')
-                ->on('appointments')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+            // $table->foreign('app_id')
+            //     ->references('app_id')
+            //     ->on('appointments')
+            //     ->onDelete('cascade')
+            //     ->onUpdate('cascade');
             $table->index('patient_id');
             $table->index('app_id');
             $table->index('symptom');
@@ -49,7 +49,8 @@ return new class extends Migration
             $table->dropForeign(['app_id']);
             $table->dropForeign(['patient_id']);
             $table->dropForeign(['doctor_id']);
-            //$table->dropColumn('patient_id');
+            $table->dropForeign(['created_by']);
+            $table->dropForeign(['updated_by']);
         });
         Schema::dropIfExists('symptoms');
     }

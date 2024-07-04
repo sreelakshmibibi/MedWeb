@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('patient_id')->unique();
             $table->string('first_name', 100);
             $table->string('last_name', 100)->nullable();
-            $table->string('aadhaar_no')->nullable();
+            $table->string('aadhaar_no')->unique()->nullable();
             $table->date('date_of_birth')->nullable();
             $table->string('gender', 10)->nullable();
             $table->string('blood_group', 10)->nullable();

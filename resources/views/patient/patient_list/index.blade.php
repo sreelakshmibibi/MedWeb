@@ -12,7 +12,7 @@
                     </div>
                 @endif
                 @if (session('error'))
-                    <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fade fadeOut"
+                    <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fadeOut"
                         style="display: block;">
                         <i class="ti-check"></i> {{ session('error') }} <a href="#" class="closed">×</a>
                     </div>
@@ -71,8 +71,18 @@
                 serverSide: true,
                 ajax: "",
                 columns: [{
-                        data: 'id',
-                        name: 'id'
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row, meta) {
+                            // Return the row index (starts from 0)
+                            return meta.row + 1; // Adding 1 to start counting from 1
+                        }
+                    },
+                    {
+                        data: 'patient_id',
+                        name: 'patient_id'
                     },
                     {
                         data: 'first_name',
@@ -86,6 +96,7 @@
                         data: 'gender',
                         name: 'gender'
                     },
+
                     {
                         data: 'address',
                         name: 'address'
@@ -95,20 +106,16 @@
                         name: 'phone'
                     },
                     {
-                        data: 'lastappointmentdate',
-                        name: 'lastappointmentdate'
+                        data: 'appointment',
+                        name: 'appointment'
                     },
                     {
-                        data: 'upcomingappointmentdate',
-                        name: 'upcomingappointmentdate'
+                        data: 'next_appointment',
+                        name: 'next_appointment'
                     },
                     {
-                        data: 'pstatus',
-                        name: 'pstatus'
-                    },
-                    {
-                        data: 'status',
-                        name: 'status',
+                        data: 'appointment_status',
+                        name: 'appointment_status',
                         orderable: false,
                         searchable: true
                     },

@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Settings;
+namespace App\Http\Requests\Patient;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class PatientListRequest extends FormRequest
 {

@@ -12,39 +12,49 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('appointments', function (Blueprint $table) {
+
             $table->id();
-            $table->unsignedBigInteger('app_id')->unique();
+            $table->string('app_id')->unique();
             $table->unsignedBigInteger('patient_id');
             $table->date('app_date');
             $table->time('app_time');
+            $table->integer('token_no');
             $table->foreignId('doctor_id')->constrained('users');
             $table->foreignId('app_branch')->constrained('clinic_branches');
             $table->foreignId('app_type')->constrained('appointment_types');
-            $table->decimal('height_cm', 5, 2); // For height in centimeters
-            $table->decimal('weight_kg', 5, 2); // For weight in kilograms
+            $table->decimal('height_cm', 5, 2)->nullable();
+            $table->decimal('weight_kg', 5, 2)->nullable();
+            $table->string('blood_pressure', 10)->nullable();
             $table->string('referred_doctor', 100)->nullable();
             $table->string('appointment_note', 300)->nullable();
             $table->string('nursing_note', 500)->nullable();
             $table->string('doctor_note', 500)->nullable();
             $table->string('doctor_check', 5)->default('N');
             $table->foreignId('app_status')->constrained('appointment_statuses');
-            $table->date('next_app_date')->nullable();
-            $table->time('next_app_time')->nullable();
-            $table->foreignId('next_app_branch')->constrained('clinic_branches');
-            $table->string('status', 20);
+            $table->unsignedBigInteger('app_parent_id')->nullable();
+            $table->time('consult_start_time')->nullable();
+            $table->time('consult_end_time')->nullable();
+            $table->string('status', 5)->default('Y');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
             $table->timestamps();
             $table->softDeletes();
 
+            // Indexes and foreign key constraints
             $table->foreign('patient_id')
                 ->references('patient_id')
                 ->on('patient_profiles')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
+
+            $table->foreign('app_parent_id')
+                ->references('id')
+                ->on('appointments')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+
             $table->index('app_id');
             $table->index('doctor_id');
-
         });
     }
 
@@ -59,7 +69,7 @@ return new class extends Migration
             $table->dropForeign(['app_branch']);
             $table->dropForeign(['app_type']);
             $table->dropForeign(['app_status']);
-            $table->dropForeign(['next_app_branch']);
+            $table->dropForeign(['app_parent_id']);
             $table->dropForeign(['created_by']);
             $table->dropForeign(['updated_by']);
         });
