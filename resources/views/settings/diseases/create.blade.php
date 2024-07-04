@@ -10,6 +10,12 @@
 
                 <div class="modal-body">
                     <div class="container-fluid">
+                        <div class="form-group">
+                            <label class="form-label" for="icd_code">ICD Code</label>
+                            <input class="form-control" type="text" id="icd_code" name="icd_code"
+                                placeholder="Disease ICD Code">
+                            <div id="codeError" class="invalid-feedback"></div>
+                        </div>
                         <!-- Disease Name -->
                         <div class="form-group">
                             <label class="form-label" for="name">Disease</label>
@@ -53,22 +59,32 @@
         // Handle Save button click
         $('#saveDiseaseBtn').click(function() {
             // Reset previous error messages
+            $('#codeError').text('');
             $('#diseaseError').text('');
             $('#descriptionError').text('');
             $('#statusError').text('');
 
             // Validate form inputs
+            var icdCode = $('#icd_code').val();
             var disease = $('#name').val();
             var description = $('#description').val();
             var status = $('input[name="status"]:checked').val();
 
             // Basic client-side validation (you can add more as needed)
+            if (icdCode.length === 0) {
+                $('#icd_code').addClass('is-invalid');
+                $('#codeError').text('ICD Code is required.');
+                return; // Prevent further execution
+            } else {
+                $('#icd_code').removeClass('is-invalid');
+                $('#codeError').text('');
+            }
             if (disease.length === 0) {
-                $('#disease').addClass('is-invalid');
+                $('#name').addClass('is-invalid');
                 $('#diseaseError').text('Disease name is required.');
                 return; // Prevent further execution
             } else {
-                $('#disease').removeClass('is-invalid');
+                $('#name').removeClass('is-invalid');
                 $('#diseaseError').text('');
             }
 
@@ -101,10 +117,13 @@
                 error: function(xhr) {
                     // If error, update modal to show errors
                     var errors = xhr.responseJSON.errors;
-
-                    if (errors.hasOwnProperty('disease')) {
-                        $('#disease').addClass('is-invalid');
-                        $('#diseaseError').text(errors.disease[0]);
+                    if (errors.hasOwnProperty('icd_code')) {
+                        $('#icd_code').addClass('is-invalid');
+                        $('#codeError').text(errors.disease[0]);
+                    }
+                    if (errors.hasOwnProperty('name')) {
+                        $('#name').addClass('is-invalid');
+                        $('#diseaseError').text(errors.name[0]);
                     }
 
                     if (errors.hasOwnProperty('status')) {
@@ -117,7 +136,9 @@
         // Reset form and errors on modal close
         $('#modal-right').on('hidden.bs.modal', function() {
             $('#createDiseaseForm').trigger('reset');
-            $('#disease').removeClass('is-invalid');
+            $('#icd_code').removeClass('is-invalid');
+            $('#codeError').text('');
+            $('#name').removeClass('is-invalid');
             $('#diseaseError').text('');
             $('#descriptionError').text('');
             $('#statusError').text('');

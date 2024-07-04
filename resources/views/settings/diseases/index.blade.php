@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Departments')
+@section('title', 'Diseases')
 @section('content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
@@ -20,7 +20,7 @@
                     </div>
                 @endif
                 <div class="d-flex align-items-center justify-content-between">
-                    <h3 class="page-title">Department Details</h3>
+                    <h3 class="page-title">Diseases</h3>
                     <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
                         data-bs-target="#modal-right"> <i class="fa fa-add"></i> Add New</button>
                 </div>
@@ -35,6 +35,7 @@
                                 <thead class="bg-primary-light">
                                     <tr>
                                         <th>No</th>
+                                        <th>ICD Code</th>
                                         <th>Name</th>
                                         <th>Status</th>
                                         <th width="100px">Action</th>
@@ -73,6 +74,10 @@
                         }
                     },
                     {
+                        data: 'icd_code',
+                        name: 'icd_code'
+                    },
+                    {
                         data: 'name',
                         name: 'name'
                     },
@@ -97,6 +102,7 @@
                     method: 'GET',
                     success: function(response) {
                         $('#edit_disease_id').val(response.id);
+                        $('#edit_icd_code').val(response.icd_code);
                         $('#edit_disease').val(response.name);
                         $('#edit_description').val(response.description);
                         $('#edit_yes').prop('checked', response.status === 'Y');

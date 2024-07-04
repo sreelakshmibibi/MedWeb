@@ -11,6 +11,12 @@
 
                 <div class="modal-body">
                     <div class="container-fluid">
+                    <div class="form-group">
+                            <label class="form-label" for="edit_icd_code">Disease</label>
+                            <input class="form-control" type="text" id="edit_icd_code" name="edit_icd_code" required
+                                minlength="3" placeholder="ICD Code" autocomplete="off">
+                            <div class="invalid-feedback"></div>
+                        </div>
                         <div class="form-group">
                             <label class="form-label" for="edit_disease">Disease</label>
                             <input class="form-control" type="text" id="edit_disease" name="edit_disease" required
@@ -54,6 +60,8 @@
         // Handle Update button click
         $('#updateDiseaseBtn').click(function() {
             // Reset previous error messages
+            $('#edit_icd_code').removeClass('is-invalid');
+            $('#edit_icd_code').next('.invalid-feedback').text('');
             $('#edit_disease').removeClass('is-invalid');
             $('#edit_disease').next('.invalid-feedback').text('');
             $('#edit_description').removeClass('is-invalid');
@@ -61,6 +69,7 @@
             $('#statusError').text('');
 
             // Validate form inputs
+            var icdCode = $('#edit_icd_code').val();
             var disease = $('#edit_disease').val();
             var status = $('input[name="status"]:checked').val();
 
@@ -68,6 +77,11 @@
             if (disease.length === 0) {
                 $('#edit_disease').addClass('is-invalid');
                 $('#edit_disease').next('.invalid-feedback').text('Disease name is required.');
+                return; // Prevent further execution
+            }
+            if (icdCode.length === 0) {
+                $('#edit_icd_code').addClass('is-invalid');
+                $('#edit_icd_code').next('.invalid-feedback').text('ICD Code is required.');
                 return; // Prevent further execution
             }
 
@@ -92,11 +106,15 @@
                 error: function(xhr) {
                     // If error, update modal to show errors
                     var errors = xhr.responseJSON.errors;
-
-                    if (errors.hasOwnProperty('disease')) {
+                    if (errors.hasOwnProperty('name')) {
                         $('#edit_disease').addClass('is-invalid');
                         $('#edit_disease').next('.invalid-feedback').text(errors
-                            .disease[0]);
+                            .name[0]);
+                    }
+                    if (errors.hasOwnProperty('icd_code')) {
+                        $('#edit_icd_code').addClass('is-invalid');
+                        $('#edit_icd_code').next('.invalid-feedback').text(errors
+                            .icd_code[0]);
                     }
 
                     if (errors.hasOwnProperty('status')) {
@@ -111,6 +129,11 @@
             $('#editDiseaseForm').trigger('reset');
             $('#edit_disease').removeClass('is-invalid');
             $('#edit_disease').next('.invalid-feedback').text('');
+            $('#edit_description').removeClass('is-invalid');
+            $('#edit_description').next('.invalid-feedback').text('');
+            $('#edit_icd_code').removeClass('is-invalid');
+            $('#edit_icd_code').next('.invalid-feedback').text('');
+          
             $('#statusError').text('');
         });
 
@@ -126,6 +149,7 @@
                 success: function(response) {
                     // Populate form fields
                     $('#edit_disease_id').val(response.id);
+                    $('#edit_icd_code').val(response.icd_code);
                     $('#edit_disease').val(response.name);
                     $('#edit_decription').val(response.description);
 

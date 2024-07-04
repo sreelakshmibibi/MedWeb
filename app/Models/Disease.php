@@ -11,7 +11,7 @@ class Disease extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    protected $fillable = ['name', 'description', 'status', 'created_by',
+    protected $fillable = ['icd_code', 'name', 'description', 'status', 'created_by',
     'updated_by'];
 
 

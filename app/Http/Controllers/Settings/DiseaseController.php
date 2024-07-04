@@ -56,6 +56,7 @@ class DiseaseController extends Controller
         try {
             // Create a new department instance
             $disease = new Disease();
+            $disease->icd_code = $request->input('icd_code');
             $disease->name = $request->input('name');
             $disease->description = $request->input('description');
             $disease->status = $request->input('status');
@@ -103,6 +104,7 @@ class DiseaseController extends Controller
             $disease = Disease::findOrFail($request->edit_disease_id);
 
             // Update department fields based on form data
+            $disease->icd_code = $request->edit_icd_code;
             $disease->name = $request->edit_disease;
             $disease->description = $request->edit_description;
             $disease->status = $request->status;
