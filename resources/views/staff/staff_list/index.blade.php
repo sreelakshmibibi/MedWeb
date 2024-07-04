@@ -5,7 +5,7 @@
     <div class="content-wrapper">
         <div class="container-full">
             <div class="content-header">
-                <div id="successMessage" style="display:none;" class="alert alert-success">Department created successfully
+                <div id="successMessage" style="display:none;" class="alert alert-success">
                 </div>
                 @if (session('success'))
                     <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-success alerttop fadeOut"

@@ -28,8 +28,6 @@ use Spatie\Permission\Models\Role;
 use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
 
-use App\Notifications\WelcomeVerifyNotification;
-
 class StaffListController extends Controller
 {
     /**
