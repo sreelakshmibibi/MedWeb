@@ -145,8 +145,17 @@ $("#staffform").steps({
                     encodeURIComponent("Staff added successfully.");
             },
             error: function (xhr) {
-                console.log(xhr.responseJSON.message);
-                // console.log(response.error);
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    console.log(xhr.responseJSON.error); // Log the error message to console
+    
+                    // Display error message on the page
+                    $('#error-message').text(xhr.responseJSON.error);
+                    $('#error-message').show(); // Show the error message element
+                } else {
+                    console.error('Error occurred but no error message received.');
+                    $('#error-message').text('An error occurred.');
+                    $('#error-message').show(); // Show a generic error message
+                }
             },
         });
     },

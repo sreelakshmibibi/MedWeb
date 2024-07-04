@@ -14,7 +14,7 @@
                     </div>
                 @endif
                 @if (session('error'))
-                    <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fade fadeOut"
+                    <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fadeOut"
                         style="display: block;">
                         <i class="ti-check"></i> {{ session('error') }} <a href="#" class="closed">×</a>
                     </div>
