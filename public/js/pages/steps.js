@@ -37,7 +37,7 @@ function handleAvailabilityStep(role) {
 }
 
 // var form = $("#staffform").show();
-var form = $(".validation-wizard").show();
+var form = $("#staffform").show();
 
 $("#staffform").steps({
     headerTag: "h6",
@@ -50,7 +50,7 @@ $("#staffform").steps({
     onStepChanging: function (event, currentIndex, newIndex) {
         // Validate form for current step
         var valid = false;
-        form = $(".validation-wizard");
+        form = $("#staffform");
         // Validate form for current step
         if (currentIndex < newIndex) {
             var validator = form.validate(); // Initialize validator
@@ -131,10 +131,11 @@ $("#staffform").steps({
             },
             success: function (response) {
                 // var successMessage = response.success; // Adjust as per your actual response structure
-
+                var message = "Staff added successfully.";
                 // Redirect to stafflist route
                 var routeReturn = $("#storeRoute").data("stafflist-route");
                 if (routeReturn == null) {
+                    message = "Staff details updated successfully.";
                     routeReturn = $("#updateRoute").data("stafflist-route");
                 }
 
@@ -142,25 +143,53 @@ $("#staffform").steps({
                 window.location.href =
                     routeReturn +
                     "?success_message=" +
-                    encodeURIComponent("Staff added successfully.");
+                    encodeURIComponent(message);
             },
             error: function (xhr) {
-                if (xhr.responseJSON && xhr.responseJSON.error) {
-                    console.log(xhr.responseJSON.error); // Log the error message to console
-    
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    // Validation error occurred
+                    console.log(xhr.responseJSON.errors); // Log the validation errors to console
+                    var errorMessage = '<ul>'; // Start an unordered list for error messages
+
+                    // Loop through the errors and concatenate them into list items
+                    $.each(xhr.responseJSON.errors, function(key, value) {
+                        errorMessage += '<li>' + value[0] + '</li>'; // Wrap each error message in <li> tags
+                    });
+            
+                    errorMessage += '</ul>'; // Close the unordered list
+            
+                    $('#error-message').html(errorMessage);
+                    $('#error-message').show();
+
+                } else if (xhr.responseJSON && xhr.responseJSON.error) {
+                    // Other server-side error occurred
+                    console.log(xhr.responseJSON.error); // Log the server error message to console
+        
                     // Display error message on the page
                     $('#error-message').text(xhr.responseJSON.error);
                     $('#error-message').show(); // Show the error message element
                 } else {
-                    console.error('Error occurred but no error message received.');
+                    console.error('Error occurred but no specific error message received.');
                     $('#error-message').text('An error occurred.');
                     $('#error-message').show(); // Show a generic error message
                 }
+                // console.log(xhr.responseJSON);
+                // if (xhr.responseJSON && xhr.responseJSON.error) {
+                //     console.log(xhr.responseJSON.error); // Log the error message to console
+    
+                //     // Display error message on the page
+                //     $('#error-message').text(xhr.responseJSON.error);
+                //     $('#error-message').show(); // Show the error message element
+                // } else {
+                //     console.error('Error occurred but no error message received.');
+                //     $('#error-message').text('An error occurred.');
+                //     $('#error-message').show(); // Show a generic error message
+                // }
             },
         });
     },
 }),
-    $(".validation-wizard").validate({
+    $("#staffform").validate({
         ignore: "input[type=hidden]",
         errorClass: "text-danger",
         successClass: "text-success",

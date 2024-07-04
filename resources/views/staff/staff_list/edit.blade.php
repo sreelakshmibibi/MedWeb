@@ -5,18 +5,7 @@
     <div class="content-wrapper">
         <div class="container-full">
             <div class="content-header">
-                @if (session('success'))
-                    <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-success alerttop fadeOut"
-                        style="display: block;">
-                        <i class="ti-check"></i> {{ session('success') }} <a href="#" class="closed">×</a>
-                    </div>
-                @endif
-                @if (session('error'))
-                    <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fade fadeOut"
-                        style="display: block;">
-                        <i class="ti-check"></i> {{ session('error') }} <a href="#" class="closed">×</a>
-                    </div>
-                @endif
+               
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Edit Staff Member</h3>
                 </div>

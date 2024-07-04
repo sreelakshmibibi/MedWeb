@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Staff;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StaffProfileRequest extends FormRequest
 {
@@ -24,9 +25,20 @@ class StaffProfileRequest extends FormRequest
         return [
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
-            'Gender' => 'required|in:M,F,O',
+            'gender' => 'required|in:M,F,O',
             'date_of_birth' => 'required|date',
-            'email' => 'required|email|max:255',
+            'email' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('Users')->ignore($this->edit_user_id),
+            ],
+            'aadhaar_no' => [
+                'required',
+                'string',
+                'max:12',
+                Rule::unique('staff_profiles')->ignore($this->edit_user_id, 'user_id'),
+            ],
             'phone' => 'required|string|max:20',
             'address1' => 'required|string|max:255',
             'address2' => 'required|string|max:255',
@@ -36,6 +48,17 @@ class StaffProfileRequest extends FormRequest
             'pincode' => 'required|string|max:10',
             'role' => 'required',
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'qualification' => 'required|string|max:255',
+            'experience' => 'required|string|max:255',
+            'department_id' => 'required',
+            'designation' => 'required|string|max:255',
+            'date_of_joining' => 'required|date',
+            'date_of_relieving' => 'nullable|date',
+            'licence_number' =>  [
+                'nullable',
+                'string',
+                Rule::unique('staff_profiles')->ignore($this->edit_user_id, 'user_id'),
+            ],
         ];
     }
 
@@ -55,8 +78,8 @@ class StaffProfileRequest extends FormRequest
             'lastname.string' => 'The last name must be a string.',
             'lastname.max' => 'The last name may not be greater than :max characters.',
             
-            'Gender.required' => 'The gender field is required.',
-            'Gender.in' => 'The gender must be one of the following: M, F, O.',
+            'gender.required' => 'The gender field is required.',
+            'gender.in' => 'The gender must be one of the following: M, F, O.',
             
             'date_of_birth.required' => 'The date of birth field is required.',
             'date_of_birth.date' => 'The date of birth must be a valid date.',
@@ -64,7 +87,13 @@ class StaffProfileRequest extends FormRequest
             'email.required' => 'The email field is required.',
             'email.email' => 'The email must be a valid email address.',
             'email.max' => 'The email may not be greater than :max characters.',
-            
+            'email.unique' => 'Email already exists.',
+
+            'aadhaar_no.required' => 'The aadhaar no field is required.',
+            'aadhaar_no.email' => 'The aadhaar no must be a valid email address.',
+            'aadhaar_no.max' => 'The aadhaar no may not be greater than :max characters.',
+            'aadhaar_no.unique' => 'Aadhaar no has already been taken. Try another.',
+
             'phone.required' => 'The phone field is required.',
             'phone.string' => 'The phone must be a string.',
             'phone.max' => 'The phone may not be greater than :max characters.',
@@ -98,6 +127,28 @@ class StaffProfileRequest extends FormRequest
             'profile_photo.image' => 'The profile photo must be an image file.',
             'profile_photo.mimes' => 'The profile photo must be a file of type: jpeg, png, jpg, gif.',
             'profile_photo.max' => 'The profile photo may not be greater than :max kilobytes.',
+
+            'qualification.required' => 'The qualification field is required.',
+            'qualification.string' => 'The qualification must be a string.',
+            'qualification.max' => 'The qualification may not be greater than :max characters.',
+
+            'experience.required' => 'The experience field is required.',
+            'experience.string' => 'The experience must be a string.',
+            'experience.max' => 'The experience may not be greater than :max characters.',
+
+            'department_id.required' => 'The department field is required.',
+
+            'designation.required' => 'The designation field is required.',
+            'designation.string' => 'The designation must be a string.',
+            'designation.max' => 'The designation may not be greater than :max characters.',
+
+            'date_of_joining.required' => 'The date of joining field is required.',
+            'date_of_joining.date' => 'The date of joining must be a valid date.',
+
+            'date_of_relieving.date' => 'The date of relieving must be a valid date.',
+
+            'licence_number.string' => 'The experience must be a string.',
+            'licence_number.unique' => 'Licence number already exists.',
         ];
     }
 }

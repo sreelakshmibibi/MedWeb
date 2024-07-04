@@ -106,7 +106,7 @@ class StaffListController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StaffProfileRequest $request)
     {
 
         try {
@@ -252,14 +252,14 @@ class StaffListController extends Controller
             }
 
             //example user
-            $user = User::find('19');
+            // $user = User::find('19');
 
-            $token = $request->route()->parameter('token');
+            // $token = $request->route()->parameter('token');
 
-            $user->token = $token;
+            // $user->token = $token;
 
-            // Send welcome notification
-            $user->notify(new WelcomeVerifyNotification($user->name, $user->email, $user->password, $user->$token));
+            // // Send welcome notification
+            // $user->notify(new WelcomeVerifyNotification($user->name, $user->email, $user->password, $user->$token));
 
             return redirect()->route('staff.staff_list')->with('success', 'Staff created successfully');
         } catch (\Exception $e) {
