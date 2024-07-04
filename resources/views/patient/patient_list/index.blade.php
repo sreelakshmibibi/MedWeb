@@ -5,6 +5,8 @@
     <div class="content-wrapper">
         <div class="container-full">
             <div class="content-header">
+                <div id="successMessage" style="display:none;" class="alert alert-success">
+                </div>
                 @if (session('success'))
                     <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-success alerttop fadeOut"
                         style="display: block;">
@@ -43,6 +45,7 @@
                                         <th>Phone Number</th>
                                         <th>Last Appointment Date</th>
                                         <th>Upcoming (if any)</th>
+                                        <th>Appointment Status</th>
                                         <th>Status</th>
                                         <th width="100px">Action</th>
                                     </tr>
@@ -59,6 +62,8 @@
         </div>
     </div>
     <!-- /.content-wrapper -->
+    @include('patient.patient_list.delete')
+    @include('patient.patient_list.status')
 
     {{-- </div> --}}
 
@@ -120,6 +125,12 @@
                         searchable: true
                     },
                     {
+                        data: 'record_status',
+                        name: 'record_status',
+                        orderable: false,
+                        searchable: true
+                    },
+                    {
                         data: 'action',
                         name: 'action',
                         orderable: false,
@@ -158,8 +169,8 @@
             });
 
             $('#btn-confirm-delete').click(function() {
-                var departmentId = $('#delete_patient_id').val();
-                var url = "";
+                var patientId = $('#delete_patient_id').val();
+                var url = "{{ route('patient.patient_list.changeStatus', [':patientId']) }}";
                 url = url.replace(':patient', patientId);
 
                 $.ajax({
@@ -169,11 +180,45 @@
                         "_token": "{{ csrf_token() }}"
                     },
                     success: function(response) {
+                        $('#successMessage').text('Patient deleted successfully');
+                        $('#successMessage').fadeIn().delay(3000)
+                            .fadeOut(); // Show for 3 seconds
                         table.draw();
 
                     },
                     error: function(xhr) {
                         $('#modal-delete').modal('hide');
+                        swal("Error!", xhr.responseJSON.message, "error");
+                    }
+                });
+            });
+
+            $(document).on('click', '.btn-warning', function() {
+                var patientId = $(this).data('id');
+                console.log(patientId);
+                $('#patient_id').val(patientId); // Set staff ID in the hidden input
+                $('#modal-status').modal('show');
+            });
+            $('#btn-confirm-status').click(function() {
+                var patientId = $('#patient_id').val();
+                var url = "{{ route('patient.patient_list.changeStatus', [':patientId']) }}";
+                url = url.replace(':patientId', patientId);
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        $('#successMessage').text('Patient status changed successfully');
+                        $('#successMessage').fadeIn().delay(3000)
+                            .fadeOut(); // Show for 3 seconds
+                        table.draw(); // Assuming 'table' is your DataTable instance
+                    },
+                    error: function(xhr) {
+                        // Handle error response, e.g., hide modal and show error message
+                        $('#modal-status').modal('hide');
                         swal("Error!", xhr.responseJSON.message, "error");
                     }
                 });

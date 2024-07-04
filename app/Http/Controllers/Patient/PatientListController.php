@@ -34,6 +34,9 @@ class PatientListController extends Controller
                 ->addColumn('first_name', function ($row) {
                     return str_replace('<br>', ' ', $row->first_name);
                 })
+                ->addColumn('record_status', function ($row) {
+                    return $row->status;
+                })
                 ->addColumn('appointment_status', function ($row) {
                     if ($row->latestAppointment) {
                         $btn = '';
@@ -87,14 +90,12 @@ class PatientListController extends Controller
                     return 'N/A';
                 })
                 ->addColumn('action', function ($row) {
+                    $btn = '<a href="'.route('staff.staff_list.view', $row->id).'" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
+                    $btn .= '<a href="'.route('staff.staff_list.edit', $row->id).'" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
+                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="'.$row->id.'" title="change status"><i class="fa-solid fa-sliders"></i></button>';
+                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="'.$row->id.'" title="Delete"><i class="fa-solid fa-trash"></i></button>';
 
-                    $btn1 = '<button type="button" class="waves-effect waves-light btn btn-circle btn-info btn-edit btn-xs me-1" title="view" data-id="'.$row->id.'"
-                             ><i class="fa fa-eyes"></i></button><button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="'.$row->id.'"
-                            data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
-                            <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="'.$row->id.'" title="delete">
-                            <i class="fa fa-trash"></i></button>';
-
-                    return $btn1;
+                    return $btn;
                 })
                 ->rawColumns(['appointment_status', 'action'])
                 ->make(true);
@@ -149,12 +150,28 @@ class PatientListController extends Controller
     {
         //
         try {
-            Log::info('$appId: '.$request);
+            //Log::info('$appId: '.$request);
             DB::beginTransaction();
             // Generate a unique patient ID using the current date
             $date = now()->format('Ymd'); // Get the current date in YYYYMMDD format
-            $dailyCount = PatientProfile::whereDate('created_at', now()->toDateString())->count() + 1; // Get the count of patients created today and add 1
-            $uniquePatientId = $date.sprintf('%03d', $dailyCount); // Combine the date and the daily count (padded to 4 digits)
+            $today = Carbon::today();
+
+            // Get the maximum patient_id for today and increment it
+            $latestPatient = DB::table('patient_profiles')
+                ->whereDate('created_at', $today)
+                ->orderByDesc('patient_id')
+                ->first();
+
+            if ($latestPatient) {
+                // Extract the count from the latest patient_id (last 3 digits)
+                $latestCount = (int) substr($latestPatient->patient_id, -3);
+                $dailyCount = $latestCount + 1;
+            } else {
+                // No patient IDs for today, start with 001
+                $dailyCount = 1;
+            }
+
+            $uniquePatientId = $date.sprintf('%03d', $dailyCount);
 
             // Store the patient data
             $patient = new PatientProfile();
