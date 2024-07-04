@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Auth\StaffVerificationController;
-use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\HelperController;
 use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
@@ -11,7 +10,6 @@ use App\Http\Controllers\Settings\DiseaseController;
 use App\Http\Controllers\Settings\MedicineController;
 use App\Http\Controllers\Settings\TreatmentCostController;
 use App\Http\Controllers\Staff\StaffListController;
-use App\Http\Controllers\Staff\DoctorListController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -31,7 +29,6 @@ Auth::routes(['verify' => true]);
 // Route::get('/password/reset/{token}', function () {
 //     return view('auth.passwords.reset');
 // });
-
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
