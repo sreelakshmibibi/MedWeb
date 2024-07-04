@@ -6,10 +6,7 @@ $(function () {
     var datepaginator = (function () {
         return {
             init: function () {
-                $("#paginator1").datepaginator({
-                    minDate: moment().startOf("day"), // Start from today
-                    maxDate: moment().add(6, "days").endOf("day"), // 7 days from today
-                }),
+                $("#paginator1").datepaginator(),
                     $("#paginator2").datepaginator({
                         size: "large",
                     }),

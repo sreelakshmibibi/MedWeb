@@ -10,6 +10,8 @@ use App\Http\Controllers\Settings\DiseaseController;
 use App\Http\Controllers\Settings\MedicineController;
 use App\Http\Controllers\Settings\TreatmentCostController;
 use App\Http\Controllers\Staff\StaffListController;
+use App\Http\Controllers\Appointment\AppointmentController;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -94,3 +96,10 @@ Route::post('/staff_list/update', [StaffListController::class, 'update'])->name(
 Route::delete('/staff_list/{staffId}', [StaffListController::class, 'destroy'])->name('staff.staff_list.destroy');
 
 Route::get('account/verify/{token}', [StaffVerificationController::class, 'verifyAccount'])->name('user.verify');
+
+Route::get('/appointment', [AppointmentController::class, 'index'])->name('appointment');
+Route::get('/appointment/add', [AppointmentController::class, 'create'])->name('appointment.create');
+Route::post('/appointment/store', [AppointmentController::class, 'store'])->name('appointment.store');
+Route::get('/appointment/{appointment}/edit', [AppointmentController::class, 'edit'])->name('appointment.edit');
+Route::post('/appointment/update', [AppointmentController::class, 'update'])->name('appointment.update');
+Route::delete('/appointment/{appointment}', [AppointmentController::class, 'destroy'])->name('appointment.destroy');

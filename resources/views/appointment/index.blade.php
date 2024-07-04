@@ -20,12 +20,7 @@
                     </div>
                 @endif
                 <div class="d-flex align-items-center justify-content-between">
-                    <h3 class="page-title">Staff List</h3>
-                    {{-- <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
-                        data-bs-target="#modal-right"> <i class="fa fa-add"></i> Add New</button> --}}
-                    <a type="button" class="waves-effect waves-light btn btn-primary"
-                        href="{{ route('staff.staff_list.create') }}"> <i class="fa fa-add"></i> Add New</a>
-
+                    <h3 class="page-title">Appointment List</h3>
                 </div>
             </div>
 
@@ -33,7 +28,7 @@
                 <div class="box">
                     {{-- <div class="box-body p-0"> --}}
                     <div class="box-body">
-                        <div id="paginator1"></div>
+                        <div id="paginator"></div>
                         <br />
                         <div class="table-responsive">
                             <!-- Main content -->
@@ -43,21 +38,18 @@
                                 <thead class="bg-primary-light">
                                     <tr>
                                         <th>No</th>
-                                        {{-- <th>Patient ID</th>
+                                        <th>Token No</th>
+                                        <th>Patient ID</th>
                                         <th>Patient Name</th>
-                                        <th>Age</th>
+                                        {{-- <th>Age</th> --}}
                                         <th>Consulting Doctor</th>
-                                        <th>Department</th>
-                                        <th>Disease</th>
+                                        {{-- <th>Department</th> --}}
+                                        {{-- <th>Disease</th> --}}
+                                        <th>Phone number</th>
+                                        <th>Branch</th>
                                         <th>Date</th>
-                                        <th>Time</th> --}}
-                                        <th>Photo</th>
-                                        <th>Name</th>
-                                        <th>Role</th>
-                                        <th>Qualification</th>
-                                        <!-- <th>Department</th> -->
-                                        <th>Phone Number</th>
-                                        <!-- <th>Email</th> -->
+                                        <th>Time</th>
+                                        <th>Upcoming (if any)</th>
                                         <th>Status</th>
                                         <th width="150px">Action</th>
                                     </tr>
@@ -75,20 +67,51 @@
     </div>
     <!-- /.content-wrapper -->
 
-    {{-- @include('staff.staff_list.create') --}}
-    {{-- @include('staff.staff_list.delete')
-    @include('staff.staff_list.status') --}}
+    @include('appointment.booking')
+    @include('appointment.reschedule')
+    @include('appointment.cancel')
 
     {{-- </div> --}}
 
     <!-- ./wrapper -->
     <script type="text/javascript">
+        var selectedDate;
+        var table;
+
+        $(document).ready(function() {
+
+            $("#paginator").datepaginator({
+                onSelectedDateChanged: function(a, t) {
+                    selectedDate = moment(t).format("YYYY-MM-DD");
+                    // Reload DataTable with new data based on selected date
+                    // reloadTableData();
+                    table.ajax.reload();
+                },
+            });
+
+            var initialDate = $("#paginator").datepaginator("getDate");
+            selectedDate = moment(initialDate).format("YYYY-MM-DD")
+
+        });
+
+
         jQuery(function($) {
 
-            var table = $('.data-table').DataTable({
+            table = $('.data-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "",
+                // ajax: "",
+
+                ajax: {
+                    url: "{{ route('appointment') }}",
+                    type: 'GET',
+                    // data: {
+                    //     selectedDate: selectedDate
+                    // }
+                    data: function(d) {
+                        d.selectedDate = selectedDate; // Add selectedDate as a query parameter
+                    }
+                },
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
@@ -100,47 +123,49 @@
                         }
                     },
                     {
-                        data: 'staff_id',
-                        name: 'staff_idid'
+                        data: 'token_no',
+                        name: 'token_no'
                     },
                     {
-                        data: 'photo',
-                        name: 'photo',
-                        render: function(data, type, full, meta) {
-                            data = "{{ asset('storage/') }}/" + data;
-                            return '<img src="' + data +
-                                '" height="50" style="border-radius:50%;"/>';
-                        },
-                        orderable: false,
-                        searchable: false
-
+                        data: 'patient_id',
+                        name: 'patient_id'
                     },
+
                     {
                         data: 'name',
                         name: 'name'
                     },
                     {
-                        data: 'role',
-                        name: 'role'
+                        data: 'doctor_id',
+                        name: 'doctor_id'
                     },
-                    {
-                        data: 'qualification',
-                        name: 'qualification'
-                    },
-
                     {
                         data: 'phone',
                         name: 'phone'
                     },
-                    // {
-                    //     data: 'email',
-                    //     name: 'email'
-                    // },
+                    {
+                        data: 'app_branch',
+                        name: 'app_branch'
+                    },
+                    {
+                        data: 'app_date',
+                        name: 'app_date'
+                    },
+
+                    {
+                        data: 'app_time',
+                        name: 'app_time'
+                    },
+                    {
+                        data: 'next_app_date',
+                        name: 'next_app_date'
+                    },
 
                     // {
-                    //     data: 'department',
-                    //     name: 'role'
+                    //     data: 'phone',
+                    //     name: 'phone'
                     // },
+
                     {
                         data: 'status',
                         name: 'status',
@@ -155,15 +180,17 @@
                     },
                 ]
             });
+
+
             $(document).on('click', '.btn-edit', function() {
-                var staffId = $(this).data('id');
-                $('#edit_staff_id').val(staffId); // Set staff ID in the hidden input
+                var appId = $(this).data('id');
+                $('#reschedule_app_id').val(appId); // Set app ID in the hidden input
                 $.ajax({
-                    url: '{{ url('staff', '') }}' + "/" + staffId + "/edit",
+                    url: '{{ url('appointment', '') }}' + "/" + appId + "/edit",
                     method: 'GET',
                     success: function(response) {
-                        $('#edit_staff_id').val(response.id);
-                        $('#edit_staff').val(response.staff);
+                        $('#reschedule_app_id').val(response.id);
+                        // $('#edit_staff').val(response.staff);
 
                         if (response.status === 'Y') {
                             $('#edit_yes').prop('checked', true);
@@ -179,67 +206,11 @@
                 });
 
             });
-            $(document).on('click', '.btn-warning', function() {
-                var staffId = $(this).data('id');
-                console.log(staffId);
-                $('#staff_id').val(staffId); // Set staff ID in the hidden input
-                $('#modal-status').modal('show');
-            });
-            $('#btn-confirm-status').click(function() {
-                var staffId = $('#staff_id').val();
-                var url = "{{ route('staff.staff_list.changeStatus', [':staffId']) }}";
-                url = url.replace(':staffId', staffId);
 
-                $.ajax({
-                    type: 'POST',
-                    url: url,
-                    data: {
-                        "_token": "{{ csrf_token() }}"
-                    },
-                    success: function(response) {
-                        $('#successMessage').text('Staff status changed successfully');
-                        $('#successMessage').fadeIn().delay(3000)
-                            .fadeOut(); // Show for 3 seconds
-                        table.draw(); // Assuming 'table' is your DataTable instance
-                    },
-                    error: function(xhr) {
-                        // Handle error response, e.g., hide modal and show error message
-                        $('#modal-status').modal('hide');
-                        swal("Error!", xhr.responseJSON.message, "error");
-                    }
-                });
-            });
-
-            $(document).on('click', '.btn-danger', function() {
-                var staffId = $(this).data('id');
-                $('#delete_staff_id').val(staffId); // Set staff ID in the hidden input
-                $('#modal-delete').modal('show');
-            });
-
-            $('#btn-confirm-delete').click(function() {
-                var staffId = $('#delete_staff_id').val();
-                var url = "{{ route('staff.staff_list.changeStatus', [':staffId']) }}";
-                url = url.replace(':staffId', staffId);
-
-                $.ajax({
-                    type: 'DELETE',
-                    url: url,
-                    data: {
-                        "_token": "{{ csrf_token() }}"
-                    },
-                    success: function(response) {
-                        $('#successMessage').text('Staff deleted successfully');
-                        $('#successMessage').fadeIn().delay(3000)
-                            .fadeOut(); // Show for 3 seconds
-                        table.draw();
-
-                    },
-                    error: function(xhr) {
-                        $('#modal-delete').modal('hide');
-                        swal("Error!", xhr.responseJSON.message, "error");
-                    }
-                });
-            });
         });
+
+        function reloadTableData() {
+            table.ajax.reload();
+        }
     </script>
 @endsection
