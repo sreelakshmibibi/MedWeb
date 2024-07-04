@@ -140,8 +140,8 @@
             var ctx = canvas.getContext('2d');
             if ('{{ $clinicDetails }}') {
 
-                var clinicLogoUrl = '{{ $clinicDetails->clinic_logo ?? '' }}';
-                var logoUrl = '{{ asset('storage/') }}/' + clinicLogoUrl;
+                var clinicLogoUrl = '{{ $clinicDetails->clinic_logo ?? "" }}';
+                var logoUrl = '{{ asset("storage/") }}/' + clinicLogoUrl;
                 if (clinicLogoUrl) {
                     var img = new Image();
                     img.onload = function() {

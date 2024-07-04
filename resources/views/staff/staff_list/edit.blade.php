@@ -261,7 +261,7 @@
             function loadStates(countryId, stateSelectElement, initialSelected) {
                 if (countryId) {
                     $.ajax({
-                        url: '{{ route('get.states', '') }}' + '/' + countryId,
+                        url: '{{ route("get.states", "") }}' + '/' + countryId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -295,7 +295,7 @@
             function loadCities(stateId, citySelectElement, initialSelected) {
                 if (stateId) {
                     $.ajax({
-                        url: '{{ route('get.cities', '') }}' + '/' + stateId,
+                        url: '{{ route("get.cities", "") }}' + '/' + stateId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -441,8 +441,8 @@
             var ctx = canvas.getContext('2d');
             if ('{{ $staffProfile }}') {
 
-                var profileUrl = '{{ $staffProfile->photo ?? '' }}';
-                var photoUrl = '{{ asset('storage/') }}/' + profileUrl;
+                var profileUrl = '{{ $staffProfile->photo ?? "" }}';
+                var photoUrl = '{{ asset("storage/") }}/' + profileUrl;
                 if (profileUrl) {
                     var img = new Image();
                     img.onload = function() {
