@@ -101,6 +101,22 @@
 
 
     <script src="{{ asset('js/pages/advanced-form-element.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/nestable/jquery.nestable.js') }}"></script>
+    <script src="{{ asset('js/pages/nestable.js') }}"></script>
+
+    <script src="{{ asset('assets/vendor_components/date-paginator/moment.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}">
+    </script>
+    <script src="{{ asset('assets/vendor_components/date-paginator/bootstrap-datepaginator.min.js') }}"></script>
+
+
+
+    <script src="{{ asset('js/pages/date-paginator.js') }}"></script>
+
+    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-datepaginator/bootstrap-datepaginator.min.css"> --}}
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepaginator/bootstrap-datepaginator.min.js"></script> --}}
+
 </body>
 
 </html>
