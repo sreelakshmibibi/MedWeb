@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Patient;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Patient\PatientListRequest;
 use App\Models\Appointment;
 use App\Models\AppointmentStatus;
 use App\Models\City;
@@ -144,10 +145,11 @@ class PatientListController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PatientListRequest $request)
     {
         //
         try {
+            Log::info('$appId: '.$request);
             DB::beginTransaction();
             // Generate a unique patient ID using the current date
             $date = now()->format('Ymd'); // Get the current date in YYYYMMDD format
