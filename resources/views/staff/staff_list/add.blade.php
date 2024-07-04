@@ -20,6 +20,10 @@
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Add Staff Member</h3>
                 </div>
+                <div id="error-message-container">
+                    <p id="error-message" class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fadeOut"
+                     style="display: none;"></p>
+                </div>
             </div>
 
             <section class="content">

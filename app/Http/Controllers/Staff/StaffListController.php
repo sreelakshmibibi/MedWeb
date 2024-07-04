@@ -258,7 +258,7 @@ class StaffListController extends Controller
 
             DB::rollback();
             // exit;
-            return redirect()->back()->with('error', 'Failed to create staff: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to create staff: ' . $e->getMessage()], 422);
         }
     }
 
