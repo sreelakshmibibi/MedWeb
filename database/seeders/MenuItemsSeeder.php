@@ -79,8 +79,8 @@ class MenuItemsSeeder extends Seeder
 
         $appointments = MenuItem::create([
             'name' => 'Appointments',
-            'url' => '#',
-            'route_name' => '#',
+            'url' => '/appointment',
+            'route_name' => 'appointment',
             'icon' => 'fa-regular fa-calendar-check',
             'order_no' => 2,
         ]);
@@ -142,6 +142,11 @@ class MenuItemsSeeder extends Seeder
             ['name' => 'Patient List', 'url' => '/patient_list', 'route_name' => 'patient.patient_list', 'icon' => 'icon-Commit', 'order_no' => 1],
             ['name' => 'Patient Details', 'url' => '#', 'route_name' => '#', 'icon' => 'icon-Commit', 'order_no' => 2],
         ]);
+
+        // $appointmentSubmenus = $patients->children()->createMany([
+        //     ['name' => 'Appointment List', 'url' => '/appointment', 'route_name' => 'appointment', 'icon' => 'icon-Commit', 'order_no' => 1],
+            
+        // ]);
 
         // Attach roles to menu items
         $dashboard->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $nurse->id, $reception->id]);

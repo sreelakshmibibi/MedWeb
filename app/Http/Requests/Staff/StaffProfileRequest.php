@@ -49,7 +49,7 @@ class StaffProfileRequest extends FormRequest
             'role' => 'required',
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'qualification' => 'required|string|max:255',
-            'experience' => 'required|string|max:255',
+            'years_of_experience' => 'required|string|max:255',
             'department_id' => 'required',
             'designation' => 'required|string|max:255',
             'date_of_joining' => 'required|date',
@@ -132,9 +132,9 @@ class StaffProfileRequest extends FormRequest
             'qualification.string' => 'The qualification must be a string.',
             'qualification.max' => 'The qualification may not be greater than :max characters.',
 
-            'experience.required' => 'The experience field is required.',
-            'experience.string' => 'The experience must be a string.',
-            'experience.max' => 'The experience may not be greater than :max characters.',
+            'years_of_experience.required' => 'The experience field is required.',
+            'years_of_experience.string' => 'The experience must be a string.',
+            'years_of_experience.max' => 'The experience may not be greater than :max characters.',
 
             'department_id.required' => 'The department field is required.',
 

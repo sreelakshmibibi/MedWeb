@@ -45,11 +45,19 @@ class AppointmentController extends Controller
             $selectedDate = $request->input('selectedDate');
 
             // Example: Fetch data from your model based on selected date
-            $appointments = Appointment::whereDate('app_date', $selectedDate)->get();
+            $appointments = Appointment::whereDate('app_date', $selectedDate)
+                            ->with('patient')
+                            ->get();
             // $appointments = Appointment::orderBy('token', 'asc')->get();
 
             return DataTables::of($appointments)
                 ->addIndexColumn()
+                ->addColumn('name', function ($row) {
+                    return str_replace("<br>", " ", $row->patient->first_name." ".$row->patient->last_name);
+                })
+                ->addColumn('phone', function ($row) {
+                    return $row->patient->phone;
+                })
                 ->addColumn('action', function ($row) {
 
                     $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="new booking" data-bs-toggle="modal" data-id="' . $row->id . '"

@@ -49,7 +49,6 @@
                                         <th>Branch</th>
                                         <th>Date</th>
                                         <th>Time</th>
-                                        <th>Upcoming (if any)</th>
                                         <th>Status</th>
                                         <th width="150px">Action</th>
                                     </tr>
@@ -156,10 +155,7 @@
                         data: 'app_time',
                         name: 'app_time'
                     },
-                    {
-                        data: 'next_app_date',
-                        name: 'next_app_date'
-                    },
+                    
 
                     // {
                     //     data: 'phone',
