@@ -61,10 +61,14 @@ class HomeController extends Controller
 
             $staffDetails = StaffProfile::where('user_id', $user->id)->first();
             $username = str_replace("<br>", " ", $user->name);
+
+            session(['username' => $username]);
+            session(['role' => $role]);
+
             if ($staffDetails) {
                 session(['staffPhoto' => $staffDetails->photo]);
             }
-            return view($dashboardView, compact('username', 'role'));
+            return view($dashboardView);
 
         } else {
             $countries = Country::all();

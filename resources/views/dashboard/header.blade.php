@@ -1,6 +1,8 @@
 @php
     $logoPath = session('logoPath');
     $clinicName = session('clinicName');
+    $username = session('username');
+    $role = session('role');
     $staffPhoto = session('staffPhoto');
 @endphp
 <header class="main-header">
@@ -64,19 +66,14 @@
                                     {{-- <p class="pt-5 fs-14 mb-0 fw-700 text-primary">Johen Doe</p> --}}
                                     {{-- <small class="fs-10 mb-0 text-uppercase text-mute">Admin</small> --}}
 
-                                    <?php 
-                                    if($username) {
-                                        ?>
-                                    <p class="pt-5 fs-14 mb-0 fw-700 text-primary">{{ $username }}</p>
-                                    <small class="fs-10 mb-0 text-uppercase text-mute">{{ $role }}</small>
-                                    <?php
-                                    } else {
-                                        ?>
-                                    <p class="pt-5 fs-14 mb-0 fw-700 text-primary">Johen Doe</p>
-                                    <small class="fs-10 mb-0 text-uppercase text-mute">Admin</small>
-                                    <?php
-                                    }
-                                    ?>
+                                    @if ($username)
+                                        <p class="pt-5 fs-14 mb-0 fw-700 text-primary">{{ $username }}</p>
+                                        <small class="fs-10 mb-0 text-uppercase text-mute">{{ $role }}</small>
+                                    @else
+                                        <p class="pt-5 fs-14 mb-0 fw-700 text-primary">Johen Doe</p>
+                                        <small class="fs-10 mb-0 text-uppercase text-mute">Admin</small>
+                                    @endif
+
                                 </div>
                                 @if ($staffPhoto)
                                     <img src="{{ asset('storage/' . $staffPhoto) }}"
