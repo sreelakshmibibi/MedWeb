@@ -133,8 +133,8 @@
 {{-- @include('patient.today.edit')
 @include('patient.today.delete') --}}
 
-@include('patient.patient_list.edit')
-@include('patient.patient_list.delete')
+{{-- @include('patient.patient_list.edit')
+@include('patient.patient_list.delete') --}}
 
 
 <script type="text/javascript">
