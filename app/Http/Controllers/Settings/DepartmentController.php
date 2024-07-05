@@ -9,6 +9,10 @@ use App\Models\Department;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables as DataTables;
 
+use App\Models\User;
+
+use App\Notifications\WelcomeVerifyNotification;
+
 class DepartmentController extends Controller
 {
     protected $commonService;
@@ -31,9 +35,9 @@ class DepartmentController extends Controller
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
 
-                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="'.$row->id.'"
+                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
                         data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
-                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="'.$row->id.'" title="delete">
+                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-del btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
                         <i class="fa fa-trash"></i></button>';
 
                     return $btn;
@@ -41,9 +45,6 @@ class DepartmentController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-
-        //return view('settings.department.index');
-        // $menuItems = $this->commonService->getMenuItems();
 
         // Return the view with menu items
         return view('settings.department.index');
@@ -65,7 +66,9 @@ class DepartmentController extends Controller
         try {
             // Create a new department instance
             $department = new Department();
-            $department->department = $request->input('department');
+            // $department->department = $request->input('department');
+            // Capitalize each word in the department name before assigning it
+            $department->department = ucwords(strtolower($request->input('department')));
             $department->status = $request->input('status');
             $department->clinic_type_id = 1;
 
@@ -75,7 +78,7 @@ class DepartmentController extends Controller
                 return redirect()->back()->with('success', 'Department created successfully');
             }
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to create department: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Failed to create department: ' . $e->getMessage());
         }
 
     }
@@ -94,7 +97,7 @@ class DepartmentController extends Controller
     public function edit(string $id)
     {
         $department = Department::find($id);
-        if (! $department) {
+        if (!$department) {
             abort(404);
         }
 

@@ -56,44 +56,25 @@
     @include('settings.department.edit')
     @include('settings.department.delete')
 
+@endsection
+
+@section('scripts')
+
+    <script>
+        var departmentUrl = "{{ route('settings.department') }}";
+    </script>
+
+    <!-- custom JavaScript file -->
+    <script src="{{ asset('js/departments.js') }}"></script>
+
     <script type="text/javascript">
         jQuery(function($) {
-            var table = $('.data-table').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: "{{ route('settings.department') }}",
-                columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: false,
-                        render: function(data, type, row, meta) {
-                            // Return the row index (starts from 0)
-                            return meta.row + 1; // Adding 1 to start counting from 1
-                        }
-                    },
-                    {
-                        data: 'department',
-                        name: 'department'
-                    },
-                    {
-                        data: 'status',
-                        name: 'status'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: true
-                    },
-                ]
-            });
 
             $(document).on('click', '.btn-edit', function() {
                 var departmentId = $(this).data('id');
                 $('#edit_department_id').val(departmentId); // Set department ID in the hidden input
                 $.ajax({
-                    url: '{{ url("department") }}' + "/" + departmentId + "/edit",
+                    url: '{{ url('department') }}' + "/" + departmentId + "/edit",
                     method: 'GET',
                     success: function(response) {
                         $('#edit_department_id').val(response.id);
@@ -108,7 +89,7 @@
                 });
             });
 
-            $(document).on('click', '.btn-danger', function() {
+            $(document).on('click', '.btn-del', function() {
                 var departmentId = $(this).data('id');
                 $('#delete_department_id').val(departmentId); // Set department ID in the hidden input
                 $('#modal-delete').modal('show');
