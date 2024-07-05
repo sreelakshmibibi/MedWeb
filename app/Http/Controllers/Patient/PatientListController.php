@@ -18,6 +18,13 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\DataTables as DataTables;
 
+use App\Models\StaffProfile;
+use App\Models\Department;
+use App\Models\UserType;
+
+use App\Services\CommonService;
+use App\Services\DoctorAvaialbilityService;
+
 class PatientListController extends Controller
 {
     /**
@@ -68,32 +75,32 @@ class PatientListController extends Controller
                     return 'N/A';
                 })
                 ->addColumn('address', function ($row) {
-                    $address = $row->address1.', '.$row->address2.', '.$row->city->city.', '.
-                    $row->state->state.', '.
-                    $row->country->country.', '.
-                    'Pincode - '.$row->pincode;
+                    $address = $row->address1 . ', ' . $row->address2 . ', ' . $row->city->city . ', ' .
+                        $row->state->state . ', ' .
+                        $row->country->country . ', ' .
+                        'Pincode - ' . $row->pincode;
 
                     return $address;
                 })
                 ->addColumn('appointment', function ($row) {
                     if ($row->latestAppointment) {
-                        return $row->latestAppointment->app_date.' '.$row->latestAppointment->app_time;
+                        return $row->latestAppointment->app_date . ' ' . $row->latestAppointment->app_time;
                     }
 
                     return 'N/A';
                 })
                 ->addColumn('next_appointment', function ($row) {
                     if ($row->nextAppointment) {
-                        return $row->nextAppointment->app_date.' '.$row->nextAppointment->app_time;
+                        return $row->nextAppointment->app_date . ' ' . $row->nextAppointment->app_time;
                     }
 
                     return 'N/A';
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="'.route('staff.staff_list.view', $row->id).'" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
-                    $btn .= '<a href="'.route('staff.staff_list.edit', $row->id).'" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
-                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="'.$row->id.'" title="change status"><i class="fa-solid fa-sliders"></i></button>';
-                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="'.$row->id.'" title="Delete"><i class="fa-solid fa-trash"></i></button>';
+                    $btn = '<a href="' . route('staff.staff_list.view', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
+                    $btn .= '<a href="' . route('patient.patient_list.edit', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
+                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
+                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="Delete"><i class="fa-solid fa-trash"></i></button>';
 
                     return $btn;
                 })
@@ -176,12 +183,12 @@ class PatientListController extends Controller
                 $dailyCount = 1;
             }
 
-            $uniquePatientId = $date.sprintf('%03d', $dailyCount);
+            $uniquePatientId = $date . sprintf('%03d', $dailyCount);
 
             // Store the patient data
             $patient = new PatientProfile();
             $patient->patient_id = $uniquePatientId; // Generate a unique patient_id
-            $patient->first_name = $request->input('title').'<br> '.$request->input('firstname');
+            $patient->first_name = $request->input('title') . '<br> ' . $request->input('firstname');
             $patient->last_name = $request->input('lastname');
             $patient->gender = $request->input('gender');
             $patient->date_of_birth = $request->input('date_of_birth');
@@ -264,10 +271,11 @@ class PatientListController extends Controller
             DB::rollback();
 
             // exit;
-            return response()->json(['error' => 'Failed to create patient: '.$e->getMessage()], 422);
+            return response()->json(['error' => 'Failed to create patient: ' . $e->getMessage()], 422);
         }
 
     }
+
 
     public function generateUniqueAppointmentId()
     {
@@ -281,7 +289,7 @@ class PatientListController extends Controller
         $newAppointmentNumber = $appointmentCount + 1;
 
         // Concatenate the year, month, and the incremented count to form the appointment ID
-        $appId = 'APP'.$yearMonth.str_pad($newAppointmentNumber, 4, '0', STR_PAD_LEFT);
+        $appId = 'APP' . $yearMonth . str_pad($newAppointmentNumber, 4, '0', STR_PAD_LEFT);
         //Log::info('$appId: '.$appId);
 
         return $appId;
@@ -301,11 +309,24 @@ class PatientListController extends Controller
     public function edit(string $id)
     {
         $patient = PatientProfile::find($id);
-        if (! $patient) {
+        if (!$patient) {
             abort(404);
         }
+        $staffProfile = StaffProfile::with('user')->find($id);
+        $userDetails = $staffProfile->user;
+        $departments = Department::where('status', 'Y')->get();
+        $userTypes = UserType::where('status', 'Y')->get();
+        $commonService = new CommonService();
+        $name = $commonService->splitNames($userDetails->name);
+        $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
+        $availability = DoctorWorkingHour::where('user_id', $staffProfile->user_id)->get();
+        $availabilityCount = DoctorWorkingHour::where('user_id', $staffProfile->user_id)->groupBy('clinic_branch_id')->count();
+        $doctorAvailability = new DoctorAvaialbilityService();
+        $availableBranches = $doctorAvailability->availableBranchAndTimings($staffProfile->user_id);
+        $countries = Country::all();
+        return view('patient.patient_list.edit', compact('name', 'countries', 'userTypes', 'departments', 'staffProfile', 'userDetails', 'availability', 'clinicBranches', 'availabilityCount', 'availability', 'availableBranches'));
 
-        return $patient;
+
     }
 
     /**
@@ -328,7 +349,7 @@ class PatientListController extends Controller
     public function changeStatus(string $id)
     {
         $patientProfile = PatientProfile::find($id);
-        abort_if(! $patientProfile, 404);
+        abort_if(!$patientProfile, 404);
         if ($patientProfile) {
             $active = 'N';
             $inActive = 'Y';

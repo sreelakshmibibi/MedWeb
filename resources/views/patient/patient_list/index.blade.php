@@ -162,6 +162,7 @@
                 });
 
             });
+
             $(document).on('click', '.btn-danger', function() {
                 var patientId = $(this).data('id');
                 $('#delete_patient_id').val(patientId); // Set patient ID in the hidden input

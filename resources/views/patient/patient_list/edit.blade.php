@@ -1,217 +1,166 @@
-<form method="post" action="">
-    @csrf
-    <input type="hidden" id="edit_patient_id" name="edit_patient_id" value="">
-    <div class="modal modal-right slideInRight" id="modal-edit" tabindex="-1">
-        <div class="modal-dialog modal-dialog-scrollable h-p100">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><i class="fa fa-hospital-user"> </i> Edit Patient Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+@extends('layouts.dashboard')
+@section('title', 'Patient')
+@section('content')
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <div class="container-full">
+            <div class="content-header">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h3 class="page-title">Edit Patient</h3>
                 </div>
-
-                <div class="modal-body">
-                    <div class="container-fluid">
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="pid">Patient ID</label>
-                                    <input type="text" class="form-control" id="pid" name="pid"
-                                        placeholder="Patient ID" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="nid">National ID</label>
-                                    <input type="text" class="form-control" id="nid" name="nid"
-                                        placeholder="National ID" required>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="fname">First Name</label>
-                                    <input type="text" class="form-control" id="fname" name="fname"
-                                        placeholder="First Name" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="lname">Last Name</label>
-                                    <input type="text" class="form-control" id="lname" name="lname"
-                                        placeholder="Last Name" required>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group mt-2">
-                            <label class="form-label col-md-6">Gender</label>
-                            <input name="gender" type="radio" checked class="form-control with-gap" id="male"
-                                value="M">
-                            <label for="male">Male</label>
-                            <input name="gender" type="radio" class="form-control with-gap" id="female"
-                                value="F">
-                            <label for="female">Female</label>
-                            <input name="gender" type="radio" class="form-control with-gap" id="other"
-                                value="O">
-                            <label for="other">Other</label>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="dob">Date of Birth</label>
-                                    <input type="date" class="form-control" id="dob" name="dob">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="age">Age</label>
-                                    <input type="text" class="form-control" id="age" name="age"
-                                        placeholder="age">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="address">Address Line
-                                        1</label>
-                                    <input type="text" class="form-control" id="address" name="address"
-                                        placeholder="Adress line 1">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="address">Address Line
-                                        2</label>
-                                    <input type="text" class="form-control" id="address" name="address"
-                                        placeholder="Adress line 2">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="location3">City</label>
-                                    <select class="form-select" id="location3" name="location">
-                                        <option value="">Select City</option>
-                                        <option value="Hyderabad">Hyderabad</option>
-                                        <option value="Dubai">Dubai</option>
-                                        <option value="Delhi">Delhi</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="location3">State</label>
-                                    <select class="form-select" id="location3" name="location">
-                                        <option value="">Select State</option>
-                                        <option value="Kerala">Kerala</option>
-                                        <option value="Karnataka">Karnataka</option>
-                                        <option value="Tamil Nadu">Tamil Nadu</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="location3">Country</label>
-                                    <select class="form-select" id="location3" name="location">
-                                        <option value="">Select Country</option>
-                                        <option value="India">India</option>
-                                        <option value="UAE">UAE</option>
-                                        <option value="USA">USA</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="pincode">Pin Code</label>
-                                    <input class="form-control" type="text" id="pincode" name="pincode"
-                                        placeholder="XXX XXX">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="email">E-mail</label>
-                                    <input type="email" class="form-control" id="email" name="email"
-                                        placeholder="E-mail">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="phone">Contact
-                                        Number</label>
-                                    <input type="text" class="form-control" id="phone" name="phone"
-                                        placeholder="Phone Number">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="rdate">Registration Date</label>
-                                    <input class="form-control" type="date" id="rdate" name="rdate">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="adate">Appointment Date</label>
-                                    <input class="form-control" type="date" id="adate" name="adate">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="gsm">GSM</label>
-                                    <input type="text" class="form-control" id="gsm" name="gsm"
-                                        placeholder="GSM">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="regby">Regby</label>
-                                    <input type="text" class="form-control" id="regby" name="regby"
-                                        placeholder="Regby">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="nationality">Nationality</label>
-                            <input class="form-control" type="text" id="nationality" name="nationality" required
-                                minlength="3" placeholder="Nationality">
-                        </div>
-
-                        <div class="form-group mt-2">
-                            <label class="form-label col-md-6">Active</label>
-                            <input name="status" type="radio" checked class="form-control with-gap"
-                                id="yes" value="Y">
-                            <label for="yes">Yes</label>
-                            <input name="status" type="radio" class="form-control with-gap" id="no"
-                                value="N">
-                            <label for="no">No</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer modal-footer-uniform">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success float-end" id="buttonalert">Update</button>
+                <div id="error-message-container">
+                    <p id="error-message"
+                        class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fadeOut"
+                        style="display: none;"></p>
                 </div>
             </div>
+
+            <section class="content">
+                <div class="box">
+                    <div class="box-body wizard-content">
+                        <form method="post" class="validation-wizard wizard-circle" id="patientform"
+                            action="{{ route('patient.patient_list.store') }}" enctype="multipart/form-data">
+                            @csrf
+                            <!-- Step 1 -->
+                            <h6 class="tabHeading">Personal Info</h6>
+                            <section class="tabSection">
+                                @include('patient.patient_list.edit_personal_info')
+                            </section>
+
+                            <!--Education-->
+                            <h6 class="tabHeading">Appointment</h6>
+                            <section class="tabSection">
+                                @include('patient.patient_list.edit_appointment')
+                            </section>
+
+
+                            <div id="storeRoute" data-url="{{ route('patient.patient_list.store') }}"
+                                data-patientlist-route="{{ route('patient.patient_list') }}"></div>
+                        </form>
+                    </div>
+
+                    <!-- /.box-body -->
+                </div>
+            </section>
         </div>
     </div>
-</form>
+
+
+    <script>
+        $(document).ready(function() {
+
+            $("#patientform .actions ul li:last-child a").addClass("bg-success btn btn-success");
+
+            var initialCountryId = $('#country_id').val(); // Assuming India is selected initially
+            loadStates(initialCountryId);
+
+            // Handle change event for country dropdown
+            $('#country_id').change(function() {
+                var countryId = $(this).val();
+                loadStates(countryId);
+            });
+
+            // Handle change event for state dropdown
+            $('#state_id').change(function() {
+                var stateId = $(this).val();
+                loadCities(stateId);
+            });
+
+            // Function to load states based on country ID
+            function loadStates(countryId) {
+                if (countryId) {
+                    $.ajax({
+                        url: '{{ route('get.states', '') }}' + '/' + countryId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            $('#state_id').empty();
+                            $('#state_id').append('<option value="">Select State</option>');
+                            $.each(data, function(key, value) {
+                                $('#state_id').append('<option value="' + key + '">' +
+                                    value + '</option>');
+                            });
+                            var initialStateId = $('#state_id').val();
+                            loadCities(initialStateId);
+                        }
+                    });
+                } else {
+                    $('#state_id').empty();
+                }
+            }
+
+            // Function to load cities based on state ID
+            function loadCities(stateId) {
+                if (stateId) {
+                    $.ajax({
+                        url: '{{ route('get.cities', '') }}' + '/' + stateId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            $('#city_id').empty();
+                            $('#city_id').append('<option value="">Select City</option>');
+                            $.each(data, function(key, value) {
+                                $('#city_id').append('<option value="' + key + '">' +
+                                    value + '</option>');
+                            });
+                        }
+                    });
+                } else {
+                    $('#city_id').empty();
+                }
+            }
+
+            // Handle change event for branch dropdown
+            // $('#clinic_branch_id0').change(function() {
+
+            //     var branchId = $(this).val();
+            //     var appDate = $('#appdate').val();
+            //     loadDoctors(branchId, appDate);
+            // });
+            // Handle change event for branch dropdown and appdate
+            $('#clinic_branch_id0, #appdate').change(function() {
+                var branchId = $('#clinic_branch_id0').val();
+                var appDate = $('#appdate').val();
+                loadDoctors(branchId, appDate);
+            });
+
+
+            // Function to load doctors based on branch ID
+            function loadDoctors(branchId, appDate) {
+                if (branchId && appDate) {
+
+                    $.ajax({
+                        url: '{{ route('get.doctors', '') }}' + '/' + branchId,
+                        type: "GET",
+                        data: {
+                            appdate: appDate
+                        },
+                        dataType: "json",
+                        success: function(data) {
+
+                            $('#doctor2').empty();
+                            $('#doctor2').append('<option value="">Select a doctor</option>');
+                            $.each(data, function(key, value) {
+                                var doctorName = value.user.name.replace(/<br>/g, ' ');
+                                $('#doctor2').append('<option value="' + value.user_id + '">' +
+                                    doctorName + '</option>');
+                            });
+                        }
+                    });
+                } else {
+                    $('#doctor2').empty();
+                }
+            }
+
+            // Event listener for dropdown item click
+            $(".dropdown-menu .dropdown-item").click(function() {
+                // Get the selected salutation text
+                let salutation = $(this).text().trim();
+
+                // Update the button text with the selected salutation
+                $(".input-group .dropdown-toggle").text(salutation);
+            });
+
+        });
+    </script>
+@endsection
