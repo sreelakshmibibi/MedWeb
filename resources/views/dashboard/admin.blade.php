@@ -1,5 +1,8 @@
 @extends('layouts.dashboard')
 @section('title', 'Dashboard')
+@section('loader')
+    <div id="loader"></div>
+@endsection
 @section('content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">

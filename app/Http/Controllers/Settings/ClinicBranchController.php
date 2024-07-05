@@ -111,6 +111,11 @@ class ClinicBranchController extends Controller
                 $message = "Clinic details added successfully";
             }
 
+            $clinicDetails = ClinicBasicDetail::first();
+            // Set session variable
+            session(['logoPath' => $clinicDetails->clinic_logo]);
+            session(['clinicName' => $clinicDetails->clinic_name]);
+
             // Redirect to clinic index page with success message
             return redirect()->route('settings.clinic', ['active_tab' => 'home7'])->with('success', $message);
 
@@ -119,7 +124,6 @@ class ClinicBranchController extends Controller
             return redirect()->route('settings.clinic')->with('error', "Something went wrong!");
         }
     }
-
 
 
     /**

@@ -29,7 +29,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-
         $user = Auth::user();
 
         // Check if there are entries in clinic_branches and clinic_basic_details tables
@@ -46,6 +45,11 @@ class HomeController extends Controller
             } else {
                 $dashboardView = 'dashboard.user';
             }
+
+            $clinicDetails = ClinicBasicDetail::first();
+            // Set session variable
+            session(['logoPath' => $clinicDetails->clinic_logo]);
+            session(['clinicName' => $clinicDetails->clinic_name]);
 
             return view($dashboardView);
         } else {
