@@ -116,17 +116,18 @@ class PatientListController extends Controller
         $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
         // Get the first branch ID
         $firstBranchId = optional($clinicBranches->first())->id;
-        $workingDoctors = $this->getTodayWorkingDoctors($firstBranchId);
+        $currentDayName = Carbon::now()->englishDayOfWeek;
+        $workingDoctors = $this->getTodayWorkingDoctors($firstBranchId, $currentDayName);
         $appointmentStatuses = AppointmentStatus::all(); // Get all appointment statuses
 
         return view('patient.patient_list.add', compact('countries', 'states', 'cities', 'clinicBranches', 'workingDoctors', 'appointmentStatuses'));
 
     }
 
-    public function getTodayWorkingDoctors($branchId)
+    public function getTodayWorkingDoctors($branchId, $weekday)
     {
-        $currentDayName = Carbon::now()->englishDayOfWeek;
-        $query = DoctorWorkingHour::where('week_day', $currentDayName)
+
+        $query = DoctorWorkingHour::where('week_day', $weekday)
             ->where('status', 'Y');
 
         if ($branchId) {
@@ -136,9 +137,13 @@ class PatientListController extends Controller
         return $query->with('user')->get();
     }
 
-    public function fetchDoctors($branchId)
+    public function fetchDoctors($branchId, Request $request)
     {
-        $workingDoctors = $this->getTodayWorkingDoctors($branchId);
+        // Extract the date part from appdate
+        $date = Carbon::parse($request->input('appdate'))->toDateString(); // 'Y-m-d'
+        $carbonDate = Carbon::parse($date);
+        $weekday = $carbonDate->format('l');
+        $workingDoctors = $this->getTodayWorkingDoctors($branchId, $weekday);
 
         return response()->json($workingDoctors);
     }
@@ -206,6 +211,17 @@ class PatientListController extends Controller
                 $appDateTime = Carbon::parse($request->input('appdate'));
                 $appDate = $appDateTime->toDateString(); // Extract date
                 $appTime = $appDateTime->toTimeString(); // Extract time
+
+                // Check if an appointment with the same date and time already exists for any patient
+                $existingAppointment = Appointment::where('app_date', $appDate)
+                    ->where('app_time', $appTime)
+                    ->first();
+
+                if ($existingAppointment) {
+                    DB::rollBack();
+
+                    return response()->json(['error' => 'An appointment already exists for the given date and time.'], 422);
+                }
 
                 // Store the appointment data
                 $appointment = new Appointment();

@@ -24,6 +24,14 @@
 
     <div class="col-md-3">
         <div class="form-group">
+            <label class="form-label" for="appdate">Appointment Date & Time</label>
+            <input class="form-control" type="datetime-local" id="appdate" name="appdate" value="{{ now()->setTimezone('Asia/Kolkata')->format('Y-m-d\TH:i') }}" required>
+
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="form-group">
             <label class="form-label" for="doctor2">Doctor</label>
             <select class="select2" id="doctor2" name="doctor2" required data-placeholder="Select a Doctor"
                 style="width: 100%;">
@@ -36,13 +44,7 @@
         </div>
     </div>
 
-    <div class="col-md-3">
-        <div class="form-group">
-            <label class="form-label" for="appdate">Appointment Date & Time</label>
-            <input class="form-control" type="datetime-local" id="appdate" name="appdate" value="{{ now()->setTimezone('Asia/Kolkata')->format('Y-m-d\TH:i') }}" required>
-
-        </div>
-    </div>
+    
 
     <div class="col-md-3">
         <div class="form-group">

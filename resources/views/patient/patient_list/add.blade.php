@@ -140,19 +140,30 @@
             }
 
             // Handle change event for branch dropdown
-            $('#clinic_branch_id0').change(function() {
+            // $('#clinic_branch_id0').change(function() {
                 
-                var branchId = $(this).val();
-                loadDoctors(branchId);
+            //     var branchId = $(this).val();
+            //     var appDate = $('#appdate').val();
+            //     loadDoctors(branchId, appDate);
+            // });
+            // Handle change event for branch dropdown and appdate
+            $('#clinic_branch_id0, #appdate').change(function() {
+                var branchId = $('#clinic_branch_id0').val();
+                var appDate = $('#appdate').val();
+                loadDoctors(branchId, appDate);
             });
+            
 
              // Function to load doctors based on branch ID
-             function loadDoctors(branchId) {
-                if (branchId) {
+             function loadDoctors(branchId, appDate) {
+                if (branchId && appDate) {
                     
                     $.ajax({
                         url: '{{ route('get.doctors', '') }}' + '/' + branchId,
                         type: "GET",
+                        data: {
+                            appdate: appDate
+                        },
                         dataType: "json",
                         success: function(data) {
                            
