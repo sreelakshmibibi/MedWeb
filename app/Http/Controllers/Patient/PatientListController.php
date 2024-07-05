@@ -212,15 +212,16 @@ class PatientListController extends Controller
                 $appDate = $appDateTime->toDateString(); // Extract date
                 $appTime = $appDateTime->toTimeString(); // Extract time
 
-                // Check if an appointment with the same date and time already exists for any patient
-                $existingAppointment = Appointment::where('app_date', $appDate)
+                // Check if an appointment with the same date and time already exists for the given doctor
+                $existingAppointment = Appointment::where('doctor_id', $doctorId)
+                    ->where('app_date', $appDate)
                     ->where('app_time', $appTime)
                     ->first();
 
                 if ($existingAppointment) {
                     DB::rollBack();
 
-                    return response()->json(['error' => 'An appointment already exists for the given date and time.'], 422);
+                    return response()->json(['error' => 'An appointment already exists for the given date, time, and doctor.'], 422);
                 }
 
                 // Store the appointment data
