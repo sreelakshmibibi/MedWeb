@@ -79,18 +79,6 @@
                             </div>
                         </div>
 
-                        <div class="form-group mt-2">
-                            <label class="form-label col-md-6">Active</label>
-                            <div>
-                                <input name="status" type="radio" class="form-control-input" id="edit_yes"
-                                    value="Y">
-                                <label class="form-check-label" for="edit_yes">Yes</label>
-                                <input name="status" type="radio" class="form-control-input" id="edit_no"
-                                    value="N">
-                                <label class="form-check-label" for="edit_no">No</label>
-                            </div>
-                            <div class="text-danger" id="statusError"></div>
-                        </div>
                     </div>
                 </div>
 
@@ -108,7 +96,7 @@
 
 
         // Reset form and errors on modal close
-        $('#modal-edit').on('hidden.bs.modal', function() {
+        $('#modal-reschedule').on('hidden.bs.modal', function() {
             $('#rescheduleAppointmentForm').trigger('reset');
             $('#reschedule_app').removeClass('is-invalid');
             $('#reschedule_app').next('.invalid-feedback').text('');
@@ -116,25 +104,20 @@
         });
 
         // Pre-populate form fields when modal opens for editing
-        $('#modal-edit').on('show.bs.modal', function(event) {
+        $('#modal-reschedule').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var appId = button.data('id'); // Extract app ID from data-id attribute
 
             // Fetch app details via AJAX
             $.ajax({
-                url: '{{ url('app') }}' + "/" + appId + "/edit",
+                url: '{{ url("app") }}' + "/" + appId + "/edit",
                 method: 'GET',
                 success: function(response) {
                     // Populate form fields
                     $('#reschedule_app_id').val(response.id);
                     $('#reschedule_app').val(response.app);
 
-                    // Set radio button status
-                    if (response.status === 'Y') {
-                        $('#edit_yes').prop('checked', true);
-                    } else {
-                        $('#edit_no').prop('checked', true);
-                    }
+                    
                 },
                 error: function(error) {
                     console.log(error);
