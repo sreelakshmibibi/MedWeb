@@ -76,7 +76,8 @@ Route::get('/patient_list/add', [PatientListController::class, 'create'])->name(
 Route::post('/patient_list/store', [PatientListController::class, 'store'])->name('patient.patient_list.store');
 Route::get('/patient_list/{patient_list}/edit', [PatientListController::class, 'edit'])->name('patient.patient_list.edit');
 Route::post('/patient_list/update', [PatientListController::class, 'update'])->name('patient.patient_list.update');
-Route::delete('/patient_list/{patient_list}', [PatientListController::class, 'destroy'])->name('patient.patient_list.destroy');
+Route::delete('/patient_list/{patientId}', [PatientListController::class, 'destroy'])->name('patient.patient_list.destroy');
+Route::post('/patient_list/{patientId}', [PatientListController::class, 'changeStatus'])->name('patient.patient_list.changeStatus');
 
 Route::get('/today', [TodayController::class, 'index'])->name('patient.today');
 Route::post('/today/store', [TodayController::class, 'store'])->name('patient.today.store');

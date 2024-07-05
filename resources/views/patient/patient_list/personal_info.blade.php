@@ -68,9 +68,8 @@
      </div>
      <div class="col-md-3">
          <div class="form-group">
-             <label class="form-label" for="phone">Registration Date</label>
-             <input type="date" class="form-control" id="regdate" name="regdate" value="<?php echo date('Y-m-d'); ?>"
-                 required>
+             <label class="form-label" for="regdate">Registration Date</label>
+             <input type="date" class="form-control" id="regdate" name="regdate" value="<?php echo date('Y-m-d'); ?>" required>
          </div>
      </div>
 
@@ -78,7 +77,7 @@
  <div class="row">
     <div class="col-md-3">
         <div class="form-group">
-            <label class="form-label" for="doctor">Blood Group</label>
+            <label class="form-label" for="blood_group">Blood Group</label>
             <select class="select2" id="blood_group" name="blood_group" 
                 data-placeholder="Select a blood group" style="width: 100%;">
                 <option value="">Select Blood Group</option>
@@ -97,7 +96,7 @@
     
     <div class="col-md-3">
         <div class="form-group">
-            <label class="form-label" for="phone">Alternate Contact Number</label>
+            <label class="form-label" for="alter_phone">Alternate Contact Number</label>
             <input type="text" class="form-control" id="alter_phone" name="alter_phone" placeholder="Phone Number">
         </div>
     </div>
