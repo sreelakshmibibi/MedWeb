@@ -37,7 +37,7 @@
                                 width="100%">
                                 <thead class="bg-primary-light">
                                     <tr>
-                                        <th>No</th>
+                                        <!-- <th>No</th> -->
                                         <th>Token No</th>
                                         <th>Patient ID</th>
                                         <th>Patient Name</th>
@@ -111,16 +111,17 @@
                         d.selectedDate = selectedDate; // Add selectedDate as a query parameter
                     }
                 },
-                columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: false,
-                        render: function(data, type, row, meta) {
-                            // Return the row index (starts from 0)
-                            return meta.row + 1; // Adding 1 to start counting from 1
-                        }
-                    },
+                columns: [
+                    // {
+                    //     data: 'DT_RowIndex',
+                    //     name: 'DT_RowIndex',
+                    //     orderable: false,
+                    //     searchable: false,
+                    //     render: function(data, type, row, meta) {
+                    //         // Return the row index (starts from 0)
+                    //         return meta.row + 1; // Adding 1 to start counting from 1
+                    //     }
+                    // },
                     {
                         data: 'token_no',
                         name: 'token_no'
@@ -135,16 +136,16 @@
                         name: 'name'
                     },
                     {
-                        data: 'doctor_id',
-                        name: 'doctor_id'
+                        data: 'doctor',
+                        name: 'doctor'
                     },
                     {
                         data: 'phone',
                         name: 'phone'
                     },
                     {
-                        data: 'app_branch',
-                        name: 'app_branch'
+                        data: 'branch',
+                        name: 'branch'
                     },
                     {
                         data: 'app_date',
@@ -182,19 +183,14 @@
                 var appId = $(this).data('id');
                 $('#reschedule_app_id').val(appId); // Set app ID in the hidden input
                 $.ajax({
-                    url: '{{ url('appointment', '') }}' + "/" + appId + "/edit",
+                    url: '{{ url("appointment", "") }}' + "/" + appId + "/edit",
                     method: 'GET',
                     success: function(response) {
                         $('#reschedule_app_id').val(response.id);
                         // $('#edit_staff').val(response.staff);
 
-                        if (response.status === 'Y') {
-                            $('#edit_yes').prop('checked', true);
-                        } else {
-                            $('#edit_no').prop('checked', true);
-                        }
-
-                        $('#modal-edit').modal('show');
+                       
+                        $('#modal-reschedule').modal('show');
                     },
                     error: function(error) {
                         console.log(error)

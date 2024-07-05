@@ -1,7 +1,7 @@
 <form id="rescheduleAppointmentForm" method="post" action="{{ route('appointment.update') }}">
     @csrf
     <input type="hidden" id="reschedule_app_id" name="reschedule_app_id" value="">
-    <div class="modal fade modal-right slideInRight" id="modal-edit" tabindex="-1">
+    <div class="modal fade modal-right slideInRight" id="modal-reschedule" tabindex="-1">
         <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
@@ -79,18 +79,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group mt-2">
-                            <label class="form-label col-md-6">Active</label>
-                            <div>
-                                <input name="status" type="radio" class="form-control-input" id="edit_yes"
-                                    value="Y">
-                                <label class="form-check-label" for="edit_yes">Yes</label>
-                                <input name="status" type="radio" class="form-control-input" id="edit_no"
-                                    value="N">
-                                <label class="form-check-label" for="edit_no">No</label>
-                            </div>
-                            <div class="text-danger" id="statusError"></div>
-                        </div>
+                        
                     </div>
                 </div>
 
