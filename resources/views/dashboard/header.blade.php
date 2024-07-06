@@ -17,13 +17,16 @@
                         <img src="{{ asset('storage/' . $logoPath) }}" alt="Logo"
                             style="width: 50px; margin-right:10px;">
                     @else
-                        <img src="{{ asset('images/serieux_logo.png') }}" alt="Logo"
-                            style="width: 50px; margin-right:10px; border-radius:50%;">
+                        {{-- <img src="{{ asset('images/serieux_logo.png') }}" alt="Logo"
+                            style="width: 50px; margin-right:10px; border-radius:50%;"> --}}
+                        <img src="{{ asset('images/logo-lt.png') }}" alt="Logo">
                     @endif
                     @if ($clinicName)
-                        <h3>{{ $clinicName }}</h3>
+                        <h4>{{ $clinicName }}</h4>
                     @else
-                        <h3>MedWeb</h3>
+                        <h4 class="align-self-center medweb_text"
+                            style="margin-left:-5px; margin-bottom: 0; font-size: 1.75rem;">
+                            MedWeb</h4>
                         {{-- <span >MedWeb</span> --}}
                     @endif
                 </div>

@@ -34215,7 +34215,7 @@ time {
         opacity: 0;
     }
 }
-@-webkit-keyframes "mappulse" {
+@-webkit-keyframes mappulse {
     0% {
         -webkit-transform: scale(0);
         opacity: 0;
@@ -42934,3 +42934,19 @@ border-color: rgba(255, 255, 255, 0.12);
     color: #b5b5c3;
 }
 
+.medweb_text{
+   /* background-image: linear-gradient(to right, white, green, white, green);
+        -webkit-background-clip: text;linear-gradient(130deg, white, green, white, white); 
+        font-family: inherit
+        background-clip: text;
+        color: transparent;
+        margin-left: -10px;
+        font-weight: bold;
+        font-size: 1.75rem;
+        /* font-family: monospace; */
+        /* text-shadow: 1px -1px 1px black; */
+        /* text-shadow: 0 0 2px rgba(0, 0, 0, 0.1); */
+/* text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);      */
+text-shadow: -1px -1px 2px rgba(62, 156, 57, 0.6);
+    /* text-shadow: -1px -1px 2px #008000b5; */
+}
