@@ -1,4 +1,4 @@
-<form id="bookingForm" method="post" action="{{ route('appointment.update') }}">
+<form id="bookingForm" method="post" action="{{ route('appointment.store') }}">
     @csrf
     <input type="hidden" id="reschedule_app_id" name="reschedule_app_id" value="">
     <div class="modal fade modal-right slideInRight" id="modal-booking" tabindex="-1">
@@ -15,14 +15,14 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="patient_id">Patient ID</label>
-                                    <input class="form-control" type="text" id="edit_patient_id" name="patient_id"
+                                    <input class="form-control" type="text" id="patient_id" name="patient_id"
                                         placeholder="Patient ID" readonly>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="patient_name">Patient Name</label>
-                                    <input class="form-control" type="text" id="edit_patient_name"
+                                    <input class="form-control" type="text" id="patient_name"
                                         name="patient_name" placeholder="Patient name" readonly>
                                 </div>
                             </div>
@@ -31,17 +31,8 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="doctor">Doctor</label>
-                                    <select class="select2" id="doctor_id" name="doctor_id" required
-                                        data-placeholder="Select a Doctor" style="width: 100%;">
-                                        <option>select a doctor</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
                                     <label class="form-label" for="clinic_branch_id">Branch</label>
-                                    <select class="select2" id="clinic_branch_id" name="clinic_branch_id" required
+                                    <select class="form-select" id="clinic_branch_id" name="clinic_branch_id" required
                                         data-placeholder="Select a Branch" style="width: 100%;">
                                         @foreach ($clinicBranches as $clinicBranch)
                                             <?php
@@ -56,9 +47,6 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="appdate">Booking Date & Time</label>
@@ -67,13 +55,30 @@
 
                                 </div>
                             </div>
+                            
+                        </div>
+
+                        <div class="row">
+                        <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="doctor">Doctor</label>
+                                    <select  class="form-select" id="doctor_id" name="doctor_id" required data-placeholder="Select a Doctor" style="width: 100%;">
+                                        <option value="">Select a doctor</option>
+                                        @foreach ($workingDoctors as $doctor)
+                                            <?php $doctorName = str_replace("<br>", " ", $doctor->user->name); ?>
+                                            <option value="{{ $doctor->user_id }}">{{ $doctorName }}</option>  
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="appstatus">Appointment Status</label>
                                     <select class="form-select" id="appstatus" name="appstatus" required>
-                                        <option value="">Select Status</option>
-                                        <option value="W">Waiting</option>
-                                        <option value="S">Success</option>
+                                        @foreach ($appointmentStatuses as $status )
+                                        <option value="{{ $status->id }}">{{ $status->status }}</option> 
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -84,7 +89,7 @@
 
                 <div class="modal-footer modal-footer-uniform">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success float-end" id="updateDepartmentBtn">Save</button>
+                    <button type="button" class="btn btn-success float-end" id="newAppointmentBtn">Save</button>
                 </div>
             </div>
         </div>

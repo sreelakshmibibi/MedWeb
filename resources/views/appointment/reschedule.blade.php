@@ -111,7 +111,7 @@
 
             // Fetch app details via AJAX
             $.ajax({
-                url: '{{ url('app') }}' + "/" + appId + "/edit",
+                url: '{{ url("app") }}' + "/" + appId + "/edit",
                 method: 'GET',
                 success: function(response) {
                     // Populate form fields

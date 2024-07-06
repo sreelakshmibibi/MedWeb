@@ -178,6 +178,16 @@
                 ]
             });
 
+            $(document).on('click', '.btn-add', function() {
+                var patientId = $(this).data('patient-id');
+                var patientName = $(this).data('patient-name');
+                $('#patient_id').val(patientId); // Set app ID in the hidden input
+                $('#patient_name').val(patientName); // Set app ID in the hidden input
+                
+                $('#modal-booking').modal('show');
+                   
+
+            });
 
             $(document).on('click', '.btn-edit', function() {
                 var appId = $(this).data('id');
@@ -187,9 +197,8 @@
                     method: 'GET',
                     success: function(response) {
                         $('#reschedule_app_id').val(response.id);
-                        // $('#edit_staff').val(response.staff);
 
-                       
+                        // $('#edit_staff').val(response.staff);
                         $('#modal-reschedule').modal('show');
                     },
                     error: function(error) {
@@ -200,6 +209,40 @@
             });
 
         });
+        $('#clinic_branch_id, #appdate').change(function() {
+                var branchId = $('#clinic_branch_id').val();
+                var appDate = $('#appdate').val();
+                loadDoctors(branchId, appDate);
+            });
+            
+
+             // Function to load doctors based on branch ID
+             function loadDoctors(branchId, appDate) {
+                if (branchId && appDate) {
+                    
+                    $.ajax({
+                        url: '{{ route('get.doctors', '') }}' + '/' + branchId,
+                        type: "GET",
+                        data: {
+                            appdate: appDate
+                        },
+                        dataType: "json",
+                        success: function(data) {
+                           
+                            $('#doctor_id').empty();
+                            $('#doctor_id').append('<option value="">Select a doctor</option>');
+                            $.each(data, function(key, value) {
+                                var doctorName = value.user.name.replace(/<br>/g, ' ');
+                                $('#doctor_id').append('<option value="' + value.user_id + '">' +
+                                    doctorName + '</option>');
+                            });
+                        }
+                    });
+                } else {
+                    $('#doctor_id').empty();
+                }
+            }
+          
 
         function reloadTableData() {
             table.ajax.reload();
