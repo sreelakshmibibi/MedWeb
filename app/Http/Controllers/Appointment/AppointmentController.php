@@ -10,6 +10,7 @@ use App\Models\Country;
 use App\Models\Department;
 use App\Models\DoctorWorkingHour;
 use App\Models\Appointment;
+use App\Models\AppointmentStatus;
 use App\Models\StaffProfile;
 use App\Models\State;
 use App\Models\User;
@@ -26,6 +27,7 @@ use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
 
 use App\Notifications\WelcomeVerifyNotification;
+use Carbon\Carbon;
 
 class AppointmentController extends Controller
 {
@@ -110,7 +112,7 @@ class AppointmentController extends Controller
                 })
                 ->addColumn('action', function ($row) {
 
-                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="new booking" data-bs-toggle="modal" data-id="' . $row->id . '"
+                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1" title="new booking" data-bs-toggle="modal" data-id="' . $row->id . '" data-patient-id="' . $row->patient->patient_id . '" data-patient-name="' . str_replace("<br>", " ", $row->patient->first_name." ".$row->patient->last_name) . '"
                         data-bs-target="#modal-booking" ><i class="fa fa-plus"></i></button>
                         <button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-edit btn-xs me-1" title="reschedule" data-bs-toggle="modal" data-id="' . $row->id . '"
                         data-bs-target="#modal-reschedule" ><i class="fa-solid fa-calendar-days"></i></button>
@@ -123,28 +125,13 @@ class AppointmentController extends Controller
                 ->make(true);
         }
 
-        $countries = Country::all();
-        $states = State::all();
-        $cities = City::all();
-        $departments = Department::where('status', 'Y')->get();
         $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
-
-        return view('appointment.index', compact('countries', 'states', 'cities', 'departments', 'clinicBranches'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        $countries = Country::all();
-        $states = State::all();
-        $cities = City::all();
-        $userTypes = UserType::where('status', 'Y')->get();
-        $departments = Department::where('status', 'Y')->get();
-        $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
-
-        return view('appointment.add', compact('countries', 'states', 'cities', 'userTypes', 'departments', 'clinicBranches'));
+        $firstBranchId = optional($clinicBranches->first())->id;
+        $currentDayName = Carbon::now()->englishDayOfWeek;
+        $doctorAvailabilityService = new DoctorAvaialbilityService();
+        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($firstBranchId, $currentDayName);
+        $appointmentStatuses = AppointmentStatus::all();
+        return view('appointment.index', compact('clinicBranches', 'firstBranchId', 'currentDayName', 'workingDoctors', 'appointmentStatuses'));
     }
 
     /**
@@ -153,18 +140,19 @@ class AppointmentController extends Controller
     public function store(Request $request)
     {
 
-        // try {
-        //     DB::beginTransaction();
+        echo "hi";
+        exit;
+        try {
+            DB::beginTransaction();
         
-        //     return redirect()->route('staff.staff_list')->with('success', 'Staff created successfully');
-        // } catch (\Exception $e) {
-        //     // echo "<pre>";
-        //     // print_r($e->getMessage());
+        } catch (\Exception $e) {
+            // echo "<pre>";
+            // print_r($e->getMessage());
 
-        //     DB::rollback();
-        //     // exit;
-        //     return redirect()->back()->with('error', 'Failed to create staff: ' . $e->getMessage());
-        // }
+            DB::rollback();
+            // exit;
+            return redirect()->back()->with('error', 'Failed to create staff: ' . $e->getMessage());
+        }
     }
 
 
@@ -175,21 +163,23 @@ class AppointmentController extends Controller
      */
     public function edit(string $id)
     {
-        $Appointment = Appointment::with('user')->find($id);
-        abort_if(!$Appointment, 404);
+        $appointment = Appointment::with(['patient', 'doctor', 'branch'])
+                        ->find($id);
+        abort_if(!$appointment, 404);
+        return $appointment;
 
-        $userDetails = $Appointment->user;
-        $departments = Department::where('status', 'Y')->get();
-        $userTypes = UserType::where('status', 'Y')->get();
-        $commonService = new CommonService();
-        $name = $commonService->splitNames($userDetails->name);
-        $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
-        $availability = DoctorWorkingHour::where('user_id', $Appointment->user_id)->get();
-        $availabilityCount = DoctorWorkingHour::where('user_id', $Appointment->user_id)->groupBy('clinic_branch_id')->count();
-        $doctorAvailability = new DoctorAvaialbilityService();
-        $availableBranches = $doctorAvailability->availableBranchAndTimings($Appointment->user_id);
-        $countries = Country::all();
-        return view('appointment.edit', compact('name', 'countries', 'userTypes', 'departments', 'Appointment', 'userDetails', 'availability', 'clinicBranches', 'availabilityCount', 'availability', 'availableBranches'));
+        // $userDetails = $Appointment->user;
+        // $departments = Department::where('status', 'Y')->get();
+        // $userTypes = UserType::where('status', 'Y')->get();
+        // $commonService = new CommonService();
+        // $name = $commonService->splitNames($userDetails->name);
+        // $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
+        // $availability = DoctorWorkingHour::where('user_id', $Appointment->user_id)->get();
+        // $availabilityCount = DoctorWorkingHour::where('user_id', $Appointment->user_id)->groupBy('clinic_branch_id')->count();
+        // $doctorAvailability = new DoctorAvaialbilityService();
+        // $availableBranches = $doctorAvailability->availableBranchAndTimings($Appointment->user_id);
+        // $countries = Country::all();
+        // return view('appointment.edit', compact('name', 'countries', 'userTypes', 'departments', 'Appointment', 'userDetails', 'availability', 'clinicBranches', 'availabilityCount', 'availability', 'availableBranches'));
     }
 
 

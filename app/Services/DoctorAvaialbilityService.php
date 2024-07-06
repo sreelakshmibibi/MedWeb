@@ -76,6 +76,20 @@ class DoctorAvaialbilityService
         return $availableBranches;
     }
 
+    public function getTodayWorkingDoctors($branchId, $weekday)
+    {
+
+        $query = DoctorWorkingHour::where('week_day', $weekday)
+            ->where('status', 'Y');
+
+        if ($branchId) {
+            $query->where('clinic_branch_id', $branchId);
+        }
+
+        return $query->with('user')->get();
+    }
+
+
 
     
 }
