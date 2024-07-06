@@ -16,7 +16,7 @@
                                     <label class="form-label" for="edit_clinic_email">E-mail</label>
                                     <input type="email" class="form-control" id="edit_clinic_email"
                                         name="clinic_email" placeholder="E-mail">
-                                    <div id="clinicEmailError" class="invalid-feedback"></div>
+                                    <div id="edit_clinicEmailError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -25,7 +25,7 @@
                                         Number</label>
                                     <input type="text" class="form-control" id="edit_clinic_phone"
                                         name="clinic_phone" placeholder="Phone">
-                                    <div id="clinicPhoneError" class="invalid-feedback"></div>
+                                    <div id="edit_clinicPhoneError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
@@ -33,23 +33,23 @@
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6" for="branch">Is main branch?</label>
                             <input name="edit_branch_active" type="radio" class="form-control with-gap" id="edit_yes"
-                                value="Y" >
+                                value="Y">
                             <label for="edit_yes">Yes</label>
                             <input name="edit_branch_active" type="radio" class="form-control with-gap" id="edit_no"
                                 value="N">
                             <label for="edit_no">No</label>
-                            <div id="clinicBranchError" class="invalid-feedback"></div>
+                            <div id="edit_clinicBranchError" class="invalid-feedback"></div>
                         </div>
 
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6" for="branch">Is medicine provided?</label>
-                            <input name="edit_is_medicine_provided" type="radio" class="form-control with-gap" id="edit_medicine_yes"
-                                value="Y" >
+                            <input name="edit_is_medicine_provided" type="radio" class="form-control with-gap"
+                                id="edit_medicine_yes" value="Y">
                             <label for="edit_medicine_yes">Yes</label>
-                            <input name="edit_is_medicine_provided" type="radio" class="form-control with-gap" id="edit_medicine_no"
-                                value="N">
+                            <input name="edit_is_medicine_provided" type="radio" class="form-control with-gap"
+                                id="edit_medicine_no" value="N">
                             <label for="edit_medicine_no">No</label>
-                            <div id="cliniMedicinecError" class="invalid-feedback"></div>
+                            <div id="edit_cliniMedicinecError" class="invalid-feedback"></div>
                         </div>
 
                         <div class="row">
@@ -58,8 +58,8 @@
                                     <label class="form-label" for="edit_clinic_address1">Address Line
                                         1</label>
                                     <input type="text" class="form-control" id="edit_clinic_address1"
-                                        name="clinic_address1" placeholder="adress line 1">
-                                    <div id="clinicAddress1Error" class="invalid-feedback"></div>
+                                        name="edit_clinic_address1" placeholder="adress line 1">
+                                    <div id="edit_clinicAddress1Error" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -67,8 +67,8 @@
                                     <label class="form-label" for="edit_clinic_address2">Address Line
                                         2</label>
                                     <input type="text" class="form-control" id="edit_clinic_address2"
-                                        name="clinic_address2" placeholder="adress line 2">
-                                    <div id="clinicAddress2Error" class="invalid-feedback"></div>
+                                        name="edit_clinic_address2" placeholder="adress line 2">
+                                    <div id="edit_clinicAddress2Error" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
@@ -86,7 +86,7 @@
                                                 {{ $country->country }}</option>
                                         @endforeach
                                     </select>
-                                    <div id="clinicCountryError" class="invalid-feedback"></div>
+                                    <div id="edit_clinicCountryError" class="invalid-feedback"></div>
                                 </div>
                             </div>
 
@@ -96,7 +96,7 @@
                                     <select class="form-select" id="edit_clinic_state" name="clinic_state">
 
                                     </select>
-                                    <div id="clinicStateError" class="invalid-feedback"></div>
+                                    <div id="edit_clinicStateError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
@@ -108,7 +108,7 @@
                                     <select class="form-select" id="edit_clinic_city" name="clinic_city">
 
                                     </select>
-                                    <div id="clinicCityError" class="invalid-feedback"></div>
+                                    <div id="edit_clinicCityError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -116,7 +116,7 @@
                                     <label class="form-label" for="edit_clinic_pincode">Pin Code</label>
                                     <input class="form-control" type="text" id="edit_clinic_pincode"
                                         name="clinic_pincode" placeholder="XXX XXX">
-                                    <div id="clinicPincodeError" class="invalid-feedback"></div>
+                                    <div id="edit_clinicPincodeError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
@@ -151,7 +151,7 @@
         function loadStates(countryId) {
             if (countryId) {
                 $.ajax({
-                    url: '{{ route("get.states", "") }}' + '/' + countryId,
+                    url: '{{ route('get.states', '') }}' + '/' + countryId,
                     type: "GET",
                     dataType: "json",
                     success: function(data) {
@@ -167,6 +167,7 @@
                 });
             } else {
                 $('#edit_clinic_state').empty();
+                $('#edit_clinic_state').append('<option value="">Select State</option>');
             }
         }
 
@@ -174,7 +175,7 @@
         function loadCities(stateId) {
             if (stateId) {
                 $.ajax({
-                    url: '{{ route("get.cities", "") }}' + '/' + stateId,
+                    url: '{{ route('get.cities', '') }}' + '/' + stateId,
                     type: "GET",
                     dataType: "json",
                     success: function(data) {
@@ -188,18 +189,23 @@
                 });
             } else {
                 $('#edit_clinic_city').empty();
+                $('#edit_clinic_city').append('<option value="">Select City</option>');
             }
         }
 
         // Handle Save button click
-        $('#updateClinicBtn').click(function() {
+        $('#updateClinicBtn').click(function(event) {
             // Reset previous error messages
             resetErrors();
+            event.preventDefault(); // Prevent default form submission
+
+            // Basic client-side validation
+            var isValid = true;
 
             // Gather form data
             var formData = {
-                clinic_phone: $('#edit_clinic_phone').val(),
                 clinic_email: $('#edit_clinic_email').val(),
+                clinic_phone: $('#edit_clinic_phone').val(),
                 branch_active: $('input[name="edit_branch_active"]:checked').val(),
                 is_medicine_provided: $('input[name="edit_is_medicine_provided"]:checked').val(),
                 clinic_address1: $('#edit_clinic_address1').val(),
@@ -209,64 +215,61 @@
                 clinic_city: $('#edit_clinic_city').val(),
                 clinic_pincode: $('#edit_clinic_pincode').val(),
             };
-
-            // Basic client-side validation
-            var isValid = true;
+            // if (formData.clinic_email.trim() && !isValidEmail(formData.clinic_email.trim())) {
+            if (!isValidEmail(formData.clinic_email.trim())) {
+                isValid = false;
+                $('#edit_clinic_email').addClass('is-invalid');
+                $('#edit_clinicEmailError').text('Invalid email address.');
+            }
 
             if (!formData.clinic_phone.trim()) {
                 isValid = false;
                 $('#edit_clinic_phone').addClass('is-invalid');
-                $('#clinicPhoneError').text('Clinic contact number is required.');
+                $('#edit_clinicPhoneError').text('Clinic contact number is required.');
             }
 
-            if (formData.clinic_email.trim() && !isValidEmail(formData.clinic_email.trim())) {
-                isValid = false;
-                $('#edit_clinic_email').addClass('is-invalid');
-                $('#clinicEmailError').text('Invalid email address.');
-            }
-
-            
             if (!formData.clinic_address1.trim()) {
                 isValid = false;
                 $('#edit_clinic_address1').addClass('is-invalid');
-                $('#clinicAddress1Error').text('Address Line 1 is required.');
+                $('#edit_clinicAddress1Error').text('Address Line 1 is required.');
             }
             if (!formData.clinic_address2.trim()) {
                 isValid = false;
                 $('#edit_clinic_address2').addClass('is-invalid');
-                $('#clinicAddress2Error').text('Address Line 2 is required.');
+                $('#edit_clinicAddress2Error').text('Address Line 2 is required.');
             }
 
             if (!formData.clinic_country) {
                 isValid = false;
                 $('#edit_clinic_country').addClass('is-invalid');
-                $('#clinicCountryError').text('Select a country.');
+                $('#edit_clinicCountryError').text('Select a country.');
             }
 
             if (!formData.clinic_state) {
                 isValid = false;
                 $('#edit_clinic_state').addClass('is-invalid');
-                $('#clinicStateError').text('Select a state.');
+                $('#edit_clinicStateError').text('Select a state.');
             }
 
             if (!formData.clinic_city) {
                 isValid = false;
                 $('#edit_clinic_city').addClass('is-invalid');
-                $('#clinicCityError').text('Select a city.');
+                $('#edit_clinicCityError').text('Select a city.');
             }
 
             if (!formData.clinic_pincode.trim()) {
                 isValid = false;
                 $('#edit_clinic_pincode').addClass('is-invalid');
-                $('#clinicPincodeError').text('Pin code is required.');
+                $('#edit_clinicPincodeError').text('Pin code is required.');
             } else if (!isValidPincode(formData.clinic_pincode.trim())) {
                 isValid = false;
                 $('#edit_clinic_pincode').addClass('is-invalid');
-                $('#clinicPincodeError').text('Invalid pin code format.');
+                $('#edit_clinicPincodeError').text('Invalid pin code format.');
             }
 
             // Perform AJAX submit if form is valid
             if (isValid) {
+                // alert('inside the if')
                 var form = $('#editClinicForm');
                 var url = form.attr('action');
                 var formDataClinic = form.serialize();
@@ -279,14 +282,17 @@
                     },
                     dataType: 'json',
                     success: function(response) {
+                        alert(response);
                         // If successful, hide modal and show success message
                         $('#modal-edit-clinic').modal('hide');
                         $('#successMessage').text('Clinic updated successfully');
                         $('#successMessage').fadeIn().delay(3000)
                             .fadeOut(); // Show for 3 seconds
-                            
-                        location
-                            .reload(); // Optionally, you can reload or update the table here
+
+                        // location
+                        //     .reload(); // Optionally, you can reload or update the table here
+                        table.ajax.reload();
+                        reloadbranch();
                     },
                     error: function(xhr) {
                         // Reset previous errors
@@ -300,29 +306,31 @@
                             // Handle clinic_phone error
                             if (errors.hasOwnProperty('clinic_phone')) {
                                 $('#edit_clinic_phone').addClass('is-invalid');
-                                $('#clinicPhoneError').text(errors.clinic_phone[0]);
+                                $('#edit_clinicPhoneError').text(errors.clinic_phone[0]);
                             }
 
                             // Handle clinic_email error
                             if (errors.hasOwnProperty('clinic_email')) {
                                 $('#edit_clinic_email').addClass('is-invalid');
-                                $('#clinicEmailError').text(errors.clinic_email[0]);
+                                $('#edit_clinicEmailError').text(errors.clinic_email[0]);
                             }
 
                             // Handle clinic_address1 error
                             if (errors.hasOwnProperty('clinic_address1')) {
                                 $('#edit_clinic_address1').addClass('is-invalid');
-                                $('#clinicAddress1Error').text(errors.clinic_address1[0]);
+                                $('#edit_clinicAddress1Error').text(errors.clinic_address1[
+                                    0]);
                             }
 
                             // Handle clinic_country error
                             if (errors.hasOwnProperty('clinic_country')) {
-                                $('#clinicCountryError').text(errors.clinic_country[0]);
+                                $('#edit_clinicCountryError').text(errors.clinic_country[
+                                    0]);
                             }
 
                             // Handle clinic_state error
                             if (errors.hasOwnProperty('clinic_state')) {
-                                $('#clinicStateError').text(errors.clinic_state[0]);
+                                $('#edit_clinicStateError').text(errors.clinic_state[0]);
                             }
 
                             // Handle clinic_city error
@@ -333,7 +341,8 @@
                             // Handle clinic_pincode error
                             if (errors.hasOwnProperty('clinic_pincode')) {
                                 $('#edit_clinic_pincode').addClass('is-invalid');
-                                $('#clinicPincodeError').text(errors.clinic_pincode[0]);
+                                $('#edit_clinicPincodeError').text(errors.clinic_pincode[
+                                    0]);
                             }
 
                             // Scroll to the top of the modal to show the first error
@@ -348,18 +357,18 @@
         // Function to reset form errors
         function resetErrors() {
             $('#edit_clinic_name').removeClass('is-invalid');
-            $('#clinicPhoneError').text('');
-            $('#clinicEmailError').text('');
-            $('#clinicWebsiteError').text('');
-            $('#clinicBranchError').text('');
-            $('#clinicAddress1Error').text('');
-            $('#clinicCountryError').text('');
-            $('#clinicStateError').text('');
-            $('#clinicCityError').text('');
-            $('#clinicPincodeError').text('');
+            $('#edit_clinicPhoneError').text('');
+            $('#edit_clinicEmailError').text('');
+            $('#edit_clinicWebsiteError').text('');
+            $('#edit_clinicBranchError').text('');
+            $('#edit_clinicAddress1Error').text('');
+            $('#edit_clinicCountryError').text('');
+            $('#edit_clinicStateError').text('');
+            $('#edit_clinicCityError').text('');
+            $('#edit_clinicPincodeError').text('');
         }
 
-        // Function to validate email format
+
 
         // Reset form and errors on modal close
         $('#modal-edit-clinic').on('hidden.bs.modal', function() {

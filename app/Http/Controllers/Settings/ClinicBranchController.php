@@ -47,11 +47,11 @@ class ClinicBranchController extends Controller
                         data-bs-target="#modal-edit-clinic" ><i class="fa fa-pencil"></i></button>
                       ';
                     if ($row->clinic_status == 'Y') {
-                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete-clinic" data-id="' . $row->id . '" data-status="' . $row->clinic_status . '"  title="Make inactive" >
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-status btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete-clinic" data-id="' . $row->id . '" data-status="' . $row->clinic_status . '"  title="Make inactive" >
                         <i class="fa fa-ban"></i></button>';
 
                     } else {
-                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete-clinic" data-id="' . $row->id . '" data-status="' . $row->clinic_status . '" title="Make active" >
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-status btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete-clinic" data-id="' . $row->id . '" data-status="' . $row->clinic_status . '" title="Make active" >
                         <i class="fa-solid fa-sliders"></i></button>';
                     }
                     $btn .= '</div>';
@@ -111,10 +111,10 @@ class ClinicBranchController extends Controller
                 $message = "Clinic details added successfully";
             }
 
-            $clinicDetails = ClinicBasicDetail::first();
-            // Set session variable
-            session(['logoPath' => $clinicDetails->clinic_logo]);
-            session(['clinicName' => $clinicDetails->clinic_name]);
+            // $clinicDetails = ClinicBasicDetail::first();
+            // // Set session variable
+            // session(['logoPath' => $clinicDetails->clinic_logo]);
+            // session(['clinicName' => $clinicDetails->clinic_name]);
 
             // Redirect to clinic index page with success message
             return redirect()->route('settings.clinic', ['active_tab' => 'home7'])->with('success', $message);
@@ -142,7 +142,7 @@ class ClinicBranchController extends Controller
             $clinic->clinic_phone = $request->input('clinic_phone');
             $clinic->is_main_branch = $request->input('branch_active');
             $clinic->is_medicine_provided = $request->input('is_medicine_provided');
-            $clinic->clinic_address = $clinic_address;
+            $clinic->clinic_address = ucwords(strtolower($clinic_address));
             $clinic->country_id = $request->input('clinic_country');
             $clinic->state_id = $request->input('clinic_state');
             $clinic->city_id = $request->input('clinic_city');
@@ -151,9 +151,11 @@ class ClinicBranchController extends Controller
             $clinic->clinic_type_id = 1;
             // Save the clinic
             $i = $clinic->save();
-
+            $data = ClinicBranch::all();
             if ($i) {
+                // return redirect()->route('settings.clinic', ['active_tab' => 'profile7'] + compact('data'))->with('success', 'Clinic created successfully');
                 return redirect()->route('settings.clinic', ['active_tab' => 'profile7'])->with('success', 'Clinic created successfully');
+
             }
 
         } catch (\Exception $e) {
@@ -195,7 +197,7 @@ class ClinicBranchController extends Controller
             $clinic->clinic_phone = $request->clinic_phone;
             $clinic->is_main_branch = $request->edit_branch_active;
             $clinic->is_medicine_provided = $request->edit_is_medicine_provided;
-            $clinic->clinic_address = $request->clinic_address1 . "<br>" . $request->clinic_address2;
+            $clinic->clinic_address = $request->edit_clinic_address1 . "<br>" . $request->edit_clinic_address2;
             $clinic->country_id = $request->clinic_country;
             $clinic->state_id = $request->clinic_state;
             $clinic->city_id = $request->clinic_city;
