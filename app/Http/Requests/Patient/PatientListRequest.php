@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Patient;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class PatientListRequest extends FormRequest
 {
@@ -52,7 +53,7 @@ class PatientListRequest extends FormRequest
             'aadhaar_no' => [
                 'nullable',
                 'digits:12',
-                'unique:patient_profiles,aadhaar_no',
+                Rule::unique('patient_profiles')->ignore($this->edit_patient_id, 'id'),
             ],
             'email' => [
                 'nullable',

@@ -34,8 +34,11 @@
                             </section>
 
 
-                            <div id="storeRoute" data-url="{{ route('patient.patient_list.store') }}"
-                                data-patientlist-route="{{ route('patient.patient_list') }}"></div>
+                            <div id="updateRoute" data-url="{{ route('patient.patient_list.update') }}"
+                             data-patientlist-route="{{ route('patient.patient_list') }}"></div>
+                            <input type="hidden" name="edit_app_id" id="edit_app_id" value="{{ $appointment->id  }}">
+                            <input type="hidden" name="edit_patient_id" id="edit_patient_id"
+                                value="{{ $patientProfile->id  }}">
                         </form>
                     </div>
 
@@ -51,72 +54,90 @@
 
             $("#patientform .actions ul li:last-child a").addClass("bg-success btn btn-success");
 
+            // Initializations
+            var initialSelectedStateId = '{{ $patientProfile->state_id }}';
+            var initialSelectedCityId = '{{ $patientProfile->city_id }}';
+
             var initialCountryId = $('#country_id').val(); // Assuming India is selected initially
-            loadStates(initialCountryId);
+            loadStates(initialCountryId, $('#state_id'), initialSelectedStateId);
 
             // Handle change event for country dropdown
             $('#country_id').change(function() {
                 var countryId = $(this).val();
-                loadStates(countryId);
+                loadStates(countryId, $('#state_id'), null);
             });
 
             // Handle change event for state dropdown
             $('#state_id').change(function() {
                 var stateId = $(this).val();
-                loadCities(stateId);
+                loadCities(stateId, $('#city_id'), initialSelectedCityId);
             });
 
             // Function to load states based on country ID
-            function loadStates(countryId) {
+            function loadStates(countryId, stateSelectElement, initialSelected) {
                 if (countryId) {
                     $.ajax({
-                        url: '{{ route('get.states', '') }}' + '/' + countryId,
+                        url: '{{ route("get.states", "") }}' + '/' + countryId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
-                            $('#state_id').empty();
-                            $('#state_id').append('<option value="">Select State</option>');
+                            stateSelectElement.empty();
+                            stateSelectElement.append('<option value="">Select State</option>');
                             $.each(data, function(key, value) {
-                                $('#state_id').append('<option value="' + key + '">' +
+                                var selected = null;
+                                if (key == initialSelected) {
+
+                                    selected = "selected";
+
+                                }
+                                
+                                stateSelectElement.append('<option value="' + key + '" ' +
+                                    selected + '>' +
                                     value + '</option>');
                             });
-                            var initialStateId = $('#state_id').val();
-                            loadCities(initialStateId);
+                            // Trigger change event to load initial cities
+                            stateSelectElement.trigger('change');
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.error('Error loading states:', textStatus, errorThrown);
                         }
                     });
                 } else {
-                    $('#state_id').empty();
+                    stateSelectElement.empty();
                 }
             }
 
             // Function to load cities based on state ID
-            function loadCities(stateId) {
+            function loadCities(stateId, citySelectElement, initialSelected) {
                 if (stateId) {
                     $.ajax({
-                        url: '{{ route('get.cities', '') }}' + '/' + stateId,
+                        url: '{{ route("get.cities", "") }}' + '/' + stateId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
-                            $('#city_id').empty();
-                            $('#city_id').append('<option value="">Select City</option>');
+                            citySelectElement.empty();
+                            citySelectElement.append('<option value="">Select City</option>');
                             $.each(data, function(key, value) {
-                                $('#city_id').append('<option value="' + key + '">' +
+                                var selected = null;
+                                if (key == initialSelected) {
+
+                                    selected = "selected";
+
+                                }
+                                citySelectElement.append('<option value="' + key + '" ' +
+                                    selected + '>' +
                                     value + '</option>');
                             });
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.error('Error loading cities:', textStatus, errorThrown);
                         }
                     });
                 } else {
-                    $('#city_id').empty();
+                    citySelectElement.empty();
                 }
             }
 
-            // Handle change event for branch dropdown
-            // $('#clinic_branch_id0').change(function() {
-
-            //     var branchId = $(this).val();
-            //     var appDate = $('#appdate').val();
-            //     loadDoctors(branchId, appDate);
-            // });
             // Handle change event for branch dropdown and appdate
             $('#clinic_branch_id0, #appdate').change(function() {
                 var branchId = $('#clinic_branch_id0').val();
