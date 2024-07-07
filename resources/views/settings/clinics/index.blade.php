@@ -108,9 +108,9 @@
                                                     <input
                                                         class="form-control @error('clinic_website') is-invalid @enderror"
                                                         type="url" id="clinic_website" name="clinic_website"
-                                                        placeholder="http://" <?php if($clinicDetails) { ?>
+                                                        placeholder="http://" <?php// if($clinicDetails) { ?> ?> ?> ?> ?> ?> ?> ?> ?>
                                                         value="{{ old('clinic_website', $clinicDetails->clinic_website) }}"
-                                                        <?php } ?>>
+                                                        <?php// } ?> ?> ?> ?> ?> ?> ?> ?> ?>>
                                                     @error('clinic_website')
                                                         <div class="invalid-feedback">{{ $message }}</div>
                                                     @enderror
@@ -151,7 +151,7 @@
             if ('{{ $clinicDetails }}') {
 
                 var clinicLogoUrl = '{{ $clinicDetails->clinic_logo ?? '' }}';
-                var logoUrl = '{{ asset('storage/') }}/' + clinicLogoUrl;
+                var logoUrl = "{{ asset('storage/') }}/" + clinicLogoUrl;
                 if (clinicLogoUrl) {
                     var img = new Image();
                     img.onload = function() {

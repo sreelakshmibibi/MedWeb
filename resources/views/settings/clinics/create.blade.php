@@ -235,6 +235,21 @@
             // Validate form fields
             var isValid = true;
 
+            // Gather form data
+            var formData = {
+                clinic_phone: $('#clinic_phone').val(),
+                clinic_email: $('#clinic_email').val(),
+                branch_active: $('input[name="branch_active"]:checked').val(),
+                is_medicine_provided: $('input[name="is_medicine_provided"]:checked').val(),
+                clinic_address1: $('#clinic_address1').val(),
+                clinic_address2: $('#clinic_address2').val(),
+                clinic_country: $('#clinic_country').val(),
+                clinic_state: $('#clinic_state').val(),
+                clinic_city: $('#clinic_city').val(),
+                clinic_pincode: $('#clinic_pincode').val(),
+                "_token": "{{ csrf_token() }}" // CSRF token for Laravel
+            };
+
             isValid = validate_form();
 
             // Perform AJAX submit if form is valid
@@ -242,7 +257,6 @@
                 var form = $('#createClinicForm');
                 var url = form.attr('action');
                 var formDataClinic = form.serialize(); // Correct serialization of form data
-
                 $.ajax({
                     type: 'POST',
                     url: url,

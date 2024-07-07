@@ -66,6 +66,7 @@ class ClinicBranchController extends Controller
         $clinicDetails = ClinicBasicDetail::first();
         $data = ClinicBranch::all();
         $total = count($data);
+
         return view('settings.clinics.index', compact('countries', 'states', 'cities', 'clinicDetails', 'data', 'total'));
     }
 
@@ -75,7 +76,7 @@ class ClinicBranchController extends Controller
     public function create(ClinicBasicDetailRequest $request)
     {
         try {
-            $clinic_name = $request->input('clinic_name');
+            $clinic_name = ucwords(strtolower($request->input('clinic_name')));
             $clinic_website = $request->input('clinic_website');
             $clinic_logo = null; // Initialize clinic_logo variable
 
@@ -133,16 +134,16 @@ class ClinicBranchController extends Controller
     {
 
         try {
-            $clinic_address = $request->input('clinic_address1');
+            $clinic_address = ucwords(strtolower($request->input('clinic_address1')));
             if ($request->input('clinic_address2')) {
-                $clinic_address .= "<br>" . $request->input('clinic_address2');
+                $clinic_address .= "<br>" . ucwords(strtolower($request->input('clinic_address2')));
             }
             $clinic = new ClinicBranch();
             $clinic->clinic_email = $request->input('clinic_email');
             $clinic->clinic_phone = $request->input('clinic_phone');
             $clinic->is_main_branch = $request->input('branch_active');
             $clinic->is_medicine_provided = $request->input('is_medicine_provided');
-            $clinic->clinic_address = ucwords(strtolower($clinic_address));
+            $clinic->clinic_address = $clinic_address;
             $clinic->country_id = $request->input('clinic_country');
             $clinic->state_id = $request->input('clinic_state');
             $clinic->city_id = $request->input('clinic_city');
@@ -189,6 +190,7 @@ class ClinicBranchController extends Controller
      */
     public function update(Request $request)
     {
+
         try {
             $clinic = ClinicBranch::findOrFail($request->edit_clinic_id);
 
@@ -197,7 +199,7 @@ class ClinicBranchController extends Controller
             $clinic->clinic_phone = $request->clinic_phone;
             $clinic->is_main_branch = $request->edit_branch_active;
             $clinic->is_medicine_provided = $request->edit_is_medicine_provided;
-            $clinic->clinic_address = $request->edit_clinic_address1 . "<br>" . $request->edit_clinic_address2;
+            $clinic->clinic_address = ucwords(strtolower($request->edit_clinic_address1)) . "<br>" . ucwords(strtolower($request->edit_clinic_address2));
             $clinic->country_id = $request->clinic_country;
             $clinic->state_id = $request->clinic_state;
             $clinic->city_id = $request->clinic_city;

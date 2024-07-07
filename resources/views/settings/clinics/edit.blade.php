@@ -5,7 +5,7 @@
         <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fa fa-clinic-medical"></i> Clinic Details</h5>
+                    <h5 class="modal-title"><i class="fa fa-clinic-medical"> </i> Edit Clinic Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -13,7 +13,8 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="edit_clinic_email">E-mail</label>
+                                    <label class="form-label" for="edit_clinic_email">E-mail <span class="text-danger">
+                                            *</span></label>
                                     <input type="email" class="form-control" id="edit_clinic_email"
                                         name="clinic_email" placeholder="E-mail">
                                     <div id="edit_clinicEmailError" class="invalid-feedback"></div>
@@ -22,7 +23,8 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="edit_clinic_phone">Contact
-                                        Number</label>
+                                        Number <span class="text-danger">
+                                            *</span></label>
                                     <input type="text" class="form-control" id="edit_clinic_phone"
                                         name="clinic_phone" placeholder="Phone">
                                     <div id="edit_clinicPhoneError" class="invalid-feedback"></div>
@@ -56,7 +58,8 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="edit_clinic_address1">Address Line
-                                        1</label>
+                                        1 <span class="text-danger">
+                                            *</span></label>
                                     <input type="text" class="form-control" id="edit_clinic_address1"
                                         name="edit_clinic_address1" placeholder="adress line 1">
                                     <div id="edit_clinicAddress1Error" class="invalid-feedback"></div>
@@ -65,7 +68,8 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="edit_clinic_address2">Address Line
-                                        2</label>
+                                        2 <span class="text-danger">
+                                            *</span></label>
                                     <input type="text" class="form-control" id="edit_clinic_address2"
                                         name="edit_clinic_address2" placeholder="adress line 2">
                                     <div id="edit_clinicAddress2Error" class="invalid-feedback"></div>
@@ -76,7 +80,9 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="edit_clinic_country">Country</label>
+                                    <label class="form-label" for="edit_clinic_country">Country <span
+                                            class="text-danger">
+                                            *</span></label>
                                     <select class="form-select" id="edit_clinic_country" name="clinic_country">
                                         <option value="">Select Country</option>
                                         @foreach ($countries as $country)
@@ -92,7 +98,9 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="edit_clinic_state">State</label>
+                                    <label class="form-label" for="edit_clinic_state">State <span
+                                            class="text-danger">
+                                            *</span></label>
                                     <select class="form-select" id="edit_clinic_state" name="clinic_state">
 
                                     </select>
@@ -104,7 +112,8 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="edit_clinic_city">City</label>
+                                    <label class="form-label" for="edit_clinic_city">City <span class="text-danger">
+                                            *</span></label>
                                     <select class="form-select" id="edit_clinic_city" name="clinic_city">
 
                                     </select>
@@ -113,7 +122,9 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="edit_clinic_pincode">Pin Code</label>
+                                    <label class="form-label" for="edit_clinic_pincode">Pin Code <span
+                                            class="text-danger">
+                                            *</span></label>
                                     <input class="form-control" type="text" id="edit_clinic_pincode"
                                         name="clinic_pincode" placeholder="XXX XXX">
                                     <div id="edit_clinicPincodeError" class="invalid-feedback"></div>
@@ -214,6 +225,7 @@
                 clinic_state: $('#edit_clinic_state').val(),
                 clinic_city: $('#edit_clinic_city').val(),
                 clinic_pincode: $('#edit_clinic_pincode').val(),
+                "_token": "{{ csrf_token() }}"
             };
             // if (formData.clinic_email.trim() && !isValidEmail(formData.clinic_email.trim())) {
             if (!isValidEmail(formData.clinic_email.trim())) {
@@ -269,20 +281,19 @@
 
             // Perform AJAX submit if form is valid
             if (isValid) {
-                // alert('inside the if')
                 var form = $('#editClinicForm');
                 var url = form.attr('action');
                 var formDataClinic = form.serialize();
                 $.ajax({
                     type: 'POST',
                     url: url,
-                    data: {
-                        formDataClinic,
-                        "_token": "{{ csrf_token() }}"
-                    },
+                    // data: {
+                    //     formDataClinic,
+                    //     "_token": "{{ csrf_token() }}"
+                    // },
+                    data: formDataClinic,
                     dataType: 'json',
                     success: function(response) {
-                        alert(response);
                         // If successful, hide modal and show success message
                         $('#modal-edit-clinic').modal('hide');
                         $('#successMessage').text('Clinic updated successfully');
