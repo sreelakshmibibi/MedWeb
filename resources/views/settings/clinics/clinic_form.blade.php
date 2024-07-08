@@ -28,7 +28,7 @@
                                 <th>Address</th>
                                 <th>Is Medicine Provided?</th>
                                 <th>Status</th>
-                                <th width="100px">Action</th>
+                                <th width="80px">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -45,9 +45,7 @@
     <!-- /.row -->
 </section>
 <!-- /.content -->
-</div>
-</div>
-<!-- /.content-wrapper -->
+
 
 <!-- modal -->
 @include('settings.clinics.create')
@@ -55,9 +53,9 @@
 @include('settings.clinics.delete')
 
 <script type="text/javascript">
+    var table;
     jQuery(function($) {
-
-        var table = $('.data-table').DataTable({
+        table = $('.data-table').DataTable({
             processing: true,
             serverSide: true,
             ajax: "{{ route('settings.clinic') }}",
@@ -150,7 +148,8 @@
             });
         });
 
-        $(document).on('click', '.btn-danger', function() {
+        // $(document).on('click', '.btn-danger', function() {
+        $(document).on('click', '.btn-status', function() {
             var clinicId = $(this).data('id');
             var status = $(this).data('status');
             var statusChange = "ACTIVATE";
@@ -198,8 +197,6 @@
                 }
             });
         });
-
-
     });
 
     // Function to load states based on country ID
@@ -246,15 +243,16 @@
             });
         } else {
             $('#clinic_city').empty();
+            $('#edit_clinic_city').append('<option value="">Select City</option>');
         }
     }
 
     // Function to validate email format
-    function isValidEmail(email) {
-        // You can implement your own email validation logic here
-        var re = /\S+@\S+\.\S+/;
-        return re.test(email);
-    }
+    // function isValidEmail(email) {
+    //     // You can implement your own email validation logic here
+    //     var re = /\S+@\S+\.\S+/;
+    //     return re.test(email);
+    // }
 
     // Function to validate URL format
     function isValidUrl(url) {

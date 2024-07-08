@@ -47,11 +47,11 @@ class ClinicBranchController extends Controller
                         data-bs-target="#modal-edit-clinic" ><i class="fa fa-pencil"></i></button>
                       ';
                     if ($row->clinic_status == 'Y') {
-                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete-clinic" data-id="' . $row->id . '" data-status="' . $row->clinic_status . '"  title="Make inactive" >
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-status btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete-clinic" data-id="' . $row->id . '" data-status="' . $row->clinic_status . '"  title="Make inactive" >
                         <i class="fa fa-ban"></i></button>';
 
                     } else {
-                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete-clinic" data-id="' . $row->id . '" data-status="' . $row->clinic_status . '" title="Make active" >
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-status btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete-clinic" data-id="' . $row->id . '" data-status="' . $row->clinic_status . '" title="Make active" >
                         <i class="fa-solid fa-sliders"></i></button>';
                     }
                     $btn .= '</div>';
@@ -66,6 +66,7 @@ class ClinicBranchController extends Controller
         $clinicDetails = ClinicBasicDetail::first();
         $data = ClinicBranch::all();
         $total = count($data);
+
         return view('settings.clinics.index', compact('countries', 'states', 'cities', 'clinicDetails', 'data', 'total'));
     }
 
@@ -75,7 +76,7 @@ class ClinicBranchController extends Controller
     public function create(ClinicBasicDetailRequest $request)
     {
         try {
-            $clinic_name = $request->input('clinic_name');
+            $clinic_name = ucwords(strtolower($request->input('clinic_name')));
             $clinic_website = $request->input('clinic_website');
             $clinic_logo = null; // Initialize clinic_logo variable
 
@@ -111,10 +112,10 @@ class ClinicBranchController extends Controller
                 $message = "Clinic details added successfully";
             }
 
-            $clinicDetails = ClinicBasicDetail::first();
-            // Set session variable
-            session(['logoPath' => $clinicDetails->clinic_logo]);
-            session(['clinicName' => $clinicDetails->clinic_name]);
+            // $clinicDetails = ClinicBasicDetail::first();
+            // // Set session variable
+            // session(['logoPath' => $clinicDetails->clinic_logo]);
+            // session(['clinicName' => $clinicDetails->clinic_name]);
 
             // Redirect to clinic index page with success message
             return redirect()->route('settings.clinic', ['active_tab' => 'home7'])->with('success', $message);
@@ -133,9 +134,9 @@ class ClinicBranchController extends Controller
     {
 
         try {
-            $clinic_address = $request->input('clinic_address1');
+            $clinic_address = ucwords(strtolower($request->input('clinic_address1')));
             if ($request->input('clinic_address2')) {
-                $clinic_address .= "<br>" . $request->input('clinic_address2');
+                $clinic_address .= "<br>" . ucwords(strtolower($request->input('clinic_address2')));
             }
             $clinic = new ClinicBranch();
             $clinic->clinic_email = $request->input('clinic_email');
@@ -151,9 +152,11 @@ class ClinicBranchController extends Controller
             $clinic->clinic_type_id = 1;
             // Save the clinic
             $i = $clinic->save();
-
+            $data = ClinicBranch::all();
             if ($i) {
+                // return redirect()->route('settings.clinic', ['active_tab' => 'profile7'] + compact('data'))->with('success', 'Clinic created successfully');
                 return redirect()->route('settings.clinic', ['active_tab' => 'profile7'])->with('success', 'Clinic created successfully');
+
             }
 
         } catch (\Exception $e) {
@@ -187,6 +190,7 @@ class ClinicBranchController extends Controller
      */
     public function update(Request $request)
     {
+
         try {
             $clinic = ClinicBranch::findOrFail($request->edit_clinic_id);
 
@@ -195,7 +199,7 @@ class ClinicBranchController extends Controller
             $clinic->clinic_phone = $request->clinic_phone;
             $clinic->is_main_branch = $request->edit_branch_active;
             $clinic->is_medicine_provided = $request->edit_is_medicine_provided;
-            $clinic->clinic_address = $request->clinic_address1 . "<br>" . $request->clinic_address2;
+            $clinic->clinic_address = ucwords(strtolower($request->edit_clinic_address1)) . "<br>" . ucwords(strtolower($request->edit_clinic_address2));
             $clinic->country_id = $request->clinic_country;
             $clinic->state_id = $request->clinic_state;
             $clinic->city_id = $request->clinic_city;
