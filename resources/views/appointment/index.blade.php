@@ -213,36 +213,114 @@
                 var branchId = $('#clinic_branch_id').val();
                 var appDate = $('#appdate').val();
                 loadDoctors(branchId, appDate);
-            });
+                
+        });
             
 
-             // Function to load doctors based on branch ID
-             function loadDoctors(branchId, appDate) {
-                if (branchId && appDate) {
-                    
-                    $.ajax({
-                        url: '{{ route('get.doctors', '') }}' + '/' + branchId,
-                        type: "GET",
-                        data: {
-                            appdate: appDate
-                        },
-                        dataType: "json",
-                        success: function(data) {
-                           
-                            $('#doctor_id').empty();
-                            $('#doctor_id').append('<option value="">Select a doctor</option>');
-                            $.each(data, function(key, value) {
-                                var doctorName = value.user.name.replace(/<br>/g, ' ');
-                                $('#doctor_id').append('<option value="' + value.user_id + '">' +
-                                    doctorName + '</option>');
-                            });
-                        }
-                    });
-                } else {
-                    $('#doctor_id').empty();
-                }
+            // Function to load doctors based on branch ID
+        function loadDoctors(branchId, appDate) {
+            if (branchId && appDate) {
+                
+                $.ajax({
+                    url: '{{ route('get.doctors', '') }}' + '/' + branchId,
+                    type: "GET",
+                    data: {
+                        appdate: appDate
+                    },
+                    dataType: "json",
+                    success: function(data) {
+                        
+                        $('#doctor_id').empty();
+                        $('#doctor_id').append('<option value="">Select a doctor</option>');
+                        $.each(data, function(key, value) {
+                            var doctorName = value.user.name.replace(/<br>/g, ' ');
+                            $('#doctor_id').append('<option value="' + value.user_id + '">' +
+                                doctorName + '</option>');
+                        });
+                        
+                    }
+                });
+            } else {
+                $('#doctor_id').empty();
             }
-          
+        }
+
+        $('#clinic_branch_id, #appdate, #doctor_id').change(function() {
+                var branchId = $('#clinic_branch_id').val();
+                var appDate = $('#appdate').val();
+                var doctorId = $('#doctor_id').val();
+                showExistingAppointments(branchId, appDate, doctorId);
+                
+        });
+            
+        function showExistingAppointments(branchId, appDate, doctorId) {
+            if (branchId && appDate && doctorId) {
+                
+                $.ajax({
+                    url: '{{ route('get.exisitingAppointments', '') }}' + '/' + branchId,
+                    type: "GET",
+                    data: {
+                        appdate: appDate,
+                        doctorId:doctorId
+                    },
+                    dataType: "json",
+                    success: function(data) {
+                        if (data.length > 0) {
+                            // Clear existing content
+                            $('#existingAppointments').empty();
+                            
+                            // Create a table element
+                            var table = $('<table class="table table-striped">').addClass('appointment-table');
+                            
+                            // Create header row
+                            var headerRow = $('<tr>');
+                            headerRow.append($('<th>').text('Scheduled Appointments'));
+                            table.append(headerRow);
+                            
+                            // Calculate number of rows needed
+                            var numRows = Math.ceil(data.length / 3);
+                            
+                            // Loop to create rows and populate cells
+                            for (var i = 0; i < numRows; i++) {
+                                var row = $('<tr>');
+                                
+                                // Create 3 cells for each row
+                                for (var j = 0; j < 3; j++) {
+                                    var dataIndex = i * 3 + j;
+                                    if (dataIndex < data.length) {
+                                        var cell = $('<td>').text(data[dataIndex].app_time);
+                                        row.append(cell);
+                                    } else {
+                                        var cell = $('<td>'); // Create empty cell if no more data
+                                        row.append(cell);
+                                    }
+                                }
+                                
+                                table.append(row);
+                            }
+                            
+                            // Append table to existingAppointments div
+                            $('#existingAppointments').append(table);
+                            
+                            // Show the div
+                            $('#existingAppointments').show();
+                        } else {
+                            $('#existingAppointments').html('No existing appointments found.');
+                            $('#existingAppointments').show();
+                        }
+                    },
+
+                error: function(xhr, status, error) {
+                    console.error('Error fetching existing appointments:', error);
+                    $('#existingAppointments').html('Error fetching existing appointments. Please try again later.');
+                    $('#existingAppointments').show();
+                }
+                });
+            } else {
+                console.log('hi no exisiting');
+            }
+        }
+
 
         function reloadTableData() {
             table.ajax.reload();
