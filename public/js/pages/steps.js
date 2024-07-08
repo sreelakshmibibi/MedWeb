@@ -68,6 +68,17 @@ $("#staffform").steps({
                         valid = false;
                     }
                 });
+                // Find selects in the current step only
+                var selects = form
+                    .find("section")
+                    .eq(currentIndex)
+                    .find("select");
+                // Validate only selects in the current step
+                selects.each(function () {
+                    if (!validator.element(this)) {
+                        valid = false;
+                    }
+                });
             }
             // If form is not valid, handle error messages
             if (!valid) {
@@ -149,34 +160,35 @@ $("#staffform").steps({
                 if (xhr.responseJSON && xhr.responseJSON.errors) {
                     // Validation error occurred
                     console.log(xhr.responseJSON.errors); // Log the validation errors to console
-                    var errorMessage = '<ul>'; // Start an unordered list for error messages
+                    var errorMessage = "<ul>"; // Start an unordered list for error messages
 
                     // Loop through the errors and concatenate them into list items
-                    $.each(xhr.responseJSON.errors, function(key, value) {
-                        errorMessage += '<li>' + value[0] + '</li>'; // Wrap each error message in <li> tags
+                    $.each(xhr.responseJSON.errors, function (key, value) {
+                        errorMessage += "<li>" + value[0] + "</li>"; // Wrap each error message in <li> tags
                     });
-            
-                    errorMessage += '</ul>'; // Close the unordered list
-            
-                    $('#error-message').html(errorMessage);
-                    $('#error-message').show();
 
+                    errorMessage += "</ul>"; // Close the unordered list
+
+                    $("#error-message").html(errorMessage);
+                    $("#error-message").show();
                 } else if (xhr.responseJSON && xhr.responseJSON.error) {
                     // Other server-side error occurred
                     console.log(xhr.responseJSON.error); // Log the server error message to console
-        
+
                     // Display error message on the page
-                    $('#error-message').text(xhr.responseJSON.error);
-                    $('#error-message').show(); // Show the error message element
+                    $("#error-message").text(xhr.responseJSON.error);
+                    $("#error-message").show(); // Show the error message element
                 } else {
-                    console.error('Error occurred but no specific error message received.');
-                    $('#error-message').text('An error occurred.');
-                    $('#error-message').show(); // Show a generic error message
+                    console.error(
+                        "Error occurred but no specific error message received."
+                    );
+                    $("#error-message").text("An error occurred.");
+                    $("#error-message").show(); // Show a generic error message
                 }
                 // console.log(xhr.responseJSON);
                 // if (xhr.responseJSON && xhr.responseJSON.error) {
                 //     console.log(xhr.responseJSON.error); // Log the error message to console
-    
+
                 //     // Display error message on the page
                 //     $('#error-message').text(xhr.responseJSON.error);
                 //     $('#error-message').show(); // Show the error message element
@@ -191,6 +203,7 @@ $("#staffform").steps({
 }),
     $("#staffform").validate({
         ignore: "input[type=hidden]",
+        ignore: "select[name=title]",
         errorClass: "text-danger",
         successClass: "text-success",
         highlight: function (element, errorClass) {
@@ -200,7 +213,12 @@ $("#staffform").steps({
             $(element).removeClass(errorClass);
         },
         errorPlacement: function (error, element) {
-            error.insertAfter(element);
+            if ($(element).hasClass("select2")) {
+                error.insertAfter($(element).siblings());
+            } else {
+                error.insertAfter(element);
+            }
+            // error.insertAfter(element);
         },
         rules: {
             email: {
@@ -214,6 +232,12 @@ $("#staffform").steps({
             lastname: {
                 required: true,
                 maxlength: 255,
+            },
+            gender: {
+                required: true,
+            },
+            role: {
+                required: true,
             },
             date_of_birth: {
                 required: true,
@@ -272,6 +296,12 @@ $("#staffform").steps({
             //     required: true,
             //     minlength: 3,
             //     maxlength: 255,
+            // },
+            // license_number: {
+            //     required: true,
+            // },
+            // clinic_branch_id: {
+            //     required: true,
             // },
         },
     });

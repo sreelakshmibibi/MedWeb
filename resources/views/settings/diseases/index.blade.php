@@ -5,7 +5,7 @@
     <div class="content-wrapper">
         <div class="container-full">
             <div class="content-header">
-                <div id="successMessage" style="display:none;" class="alert alert-success">Department created successfully
+                <div id="successMessage" style="display:none;" class="alert alert-success">Disease saved successfully
                 </div>
                 @if (session('success'))
                     <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-success alerttop fadeOut"
@@ -98,7 +98,7 @@
                 var diseaseId = $(this).data('id');
                 $('#edit_disease_id').val(diseaseId); // Set department ID in the hidden input
                 $.ajax({
-                    url: '{{ url("disease") }}' + "/" + diseaseId + "/edit",
+                    url: '{{ url('disease') }}' + "/" + diseaseId + "/edit",
                     method: 'GET',
                     success: function(response) {
                         $('#edit_disease_id').val(response.id);

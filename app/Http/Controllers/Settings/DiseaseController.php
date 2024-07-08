@@ -12,7 +12,8 @@ class DiseaseController extends Controller
 {
     /**
      * Display a listing of the resource.
-     */public function index(Request $request)
+     */
+    public function index(Request $request)
     {
         if ($request->ajax()) {
 
@@ -20,16 +21,24 @@ class DiseaseController extends Controller
 
             return DataTables::of($diseases)
                 ->addIndexColumn()
+                ->addColumn('status', function ($row) {
+                    if ($row->status == 'Y') {
+                        $btn1 = '<span class="text-success" title="active"><i class="fa-solid fa-circle-check"></i></span>';
+                    } else {
+                        $btn1 = '<span class="text-danger" title="inactive"><i class="fa-solid fa-circle-xmark"></i></span>';
+                    }
+                    return $btn1;
+                })
                 ->addColumn('action', function ($row) {
 
-                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="'.$row->id.'"
+                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
                         data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
-                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="'.$row->id.'" title="delete">
+                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
                         <i class="fa fa-trash"></i></button>';
 
                     return $btn;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['status', 'action'])
                 ->make(true);
         }
 
@@ -60,7 +69,7 @@ class DiseaseController extends Controller
             $disease->name = $request->input('name');
             $disease->description = $request->input('description');
             $disease->status = $request->input('status');
-           
+
             // Save the department
             $i = $disease->save();
             if ($i) {
@@ -69,7 +78,7 @@ class DiseaseController extends Controller
         } catch (\Exception $e) {
             print_r($e->getMessage());
             exit;
-            return redirect()->back()->with('error', 'Failed to create disease: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Failed to create disease: ' . $e->getMessage());
         }
 
     }
@@ -88,7 +97,7 @@ class DiseaseController extends Controller
     public function edit(string $id)
     {
         $disease = Disease::find($id);
-        if (! $disease) {
+        if (!$disease) {
             abort(404);
         }
 

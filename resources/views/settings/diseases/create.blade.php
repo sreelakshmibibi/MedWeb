@@ -4,21 +4,23 @@
         <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fa fa-briefcase"></i> Disease Details</h5>
+                    <h5 class="modal-title"><i class="fa fa-square-virus"></i> Disease Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body">
                     <div class="container-fluid">
                         <div class="form-group">
-                            <label class="form-label" for="icd_code">ICD Code</label>
+                            <label class="form-label" for="icd_code">ICD Code <span class="text-danger">
+                                    *</span></label>
                             <input class="form-control" type="text" id="icd_code" name="icd_code"
                                 placeholder="Disease ICD Code">
                             <div id="codeError" class="invalid-feedback"></div>
                         </div>
                         <!-- Disease Name -->
                         <div class="form-group">
-                            <label class="form-label" for="name">Disease</label>
+                            <label class="form-label" for="name">Disease <span class="text-danger">
+                                    *</span></label>
                             <input class="form-control" type="text" id="name" name="name"
                                 placeholder="Disease Name">
                             <div id="diseaseError" class="invalid-feedback"></div>
@@ -26,8 +28,7 @@
 
                         <div class="form-group">
                             <label class="form-label" for="description">Description (if any)</label>
-                            <textarea class="form-control" id="description" name="description"
-                                placeholder="Description"></textarea>
+                            <textarea class="form-control" id="description" name="description" placeholder="Description"></textarea>
                             <div id="descriptionError" class="invalid-feedback"></div>
                         </div>
 

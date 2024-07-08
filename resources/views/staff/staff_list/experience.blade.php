@@ -2,21 +2,24 @@
 <div class="row">
     <div class="col-md-4">
         <div class="form-group">
-            <label class="form-label" for="qualification">Qualification</label>
+            <label class="form-label" for="qualification">Qualification <span class="text-danger">
+                    *</span></label>
             <input type="text" class="form-control" id="qualification" name="qualification" placeholder="qualification"
                 required>
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            <label class="form-label" for="years_of_experience">Experience</label>
-            <input type="text" class="form-control" id="years_of_experience" name="years_of_experience" placeholder="experience"
-                required>
+            <label class="form-label" for="years_of_experience">Experience <span class="text-danger">
+                    *</span></label>
+            <input type="text" class="form-control" id="years_of_experience" name="years_of_experience"
+                placeholder="experience" required>
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            <label class="form-label" for="department">Department</label>
+            <label class="form-label" for="department">Department <span class="text-danger">
+                    *</span></label>
             <select class="select2" id="department_id" name="department_id" required
                 data-placeholder="Select a Department" style="width: 100%;">
                 @foreach ($departments as $department)
@@ -33,14 +36,16 @@
 <div class="row">
     <div class="col-md-4">
         <div class="form-group">
-            <label class="form-label" for="designation">Designation</label>
+            <label class="form-label" for="designation">Designation <span class="text-danger">
+                    *</span></label>
             <input type="text" class="form-control" id="designation" name="designation" placeholder="Designation"
                 required>
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            <label class="form-label" for="date_of_joining">Date of Joining</label>
+            <label class="form-label" for="date_of_joining">Date of Joining <span class="text-danger">
+                    *</span></label>
             <input class="form-control" type="date" id="date_of_joining" name="date_of_joining" required>
 
         </div>
@@ -58,20 +63,24 @@
 <div class="row doctorFields" style="display: none;">
     <div class="col-md-4">
         <div class="form-group">
-            <label class="form-label" for="specialization">Specialization</label>
+            <label class="form-label" for="specialization">Specialization <span class="text-danger">
+                    *</span></label>
             <input type="text" class="form-control" id="specialization" name="specialization"
                 placeholder="Specialization">
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            <label class="form-label" for="subspecialty">Subspeciality</label>
-            <input type="text" class="form-control" id="subspecialty" name="subspecialty" placeholder="Subspeciality">
+            <label class="form-label" for="subspecialty">Subspeciality <span class="text-danger">
+                    *</span></label>
+            <input type="text" class="form-control" id="subspecialty" name="subspecialty"
+                placeholder="Subspeciality">
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            <label class="form-label" for="license_number">Licence</label>
+            <label class="form-label" for="license_number">Licence <span class="text-danger">
+                    *</span></label>
             <input type="text" class="form-control" id="license_number" name="license_number"
                 placeholder="Council No.">
         </div>
@@ -82,7 +91,8 @@
 <div class="row otherFields" style="display: none;">
     <div class="col-md-4">
         <div class="form-group">
-            <label class="form-label" for="specialization">Branch</label>
+            <label class="form-label" for="specialization">Branch <span class="text-danger">
+                    *</span></label>
             <select class="select2" id="clinic_branch_id" name="clinic_branch_id" data-placeholder="Select a Branch"
                 style="width: 100%;">
                 @foreach ($clinicBranches as $clinicBranch)

@@ -5,13 +5,13 @@
         <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fa fa-briefcase"></i> Edit Disease Details</h5>
+                    <h5 class="modal-title"><i class="fa fa-square-virus"></i> Edit Disease Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body">
                     <div class="container-fluid">
-                    <div class="form-group">
+                        <div class="form-group">
                             <label class="form-label" for="edit_icd_code">Disease</label>
                             <input class="form-control" type="text" id="edit_icd_code" name="edit_icd_code" required
                                 minlength="3" placeholder="ICD Code" autocomplete="off">
@@ -26,8 +26,7 @@
 
                         <div class="form-group">
                             <label class="form-label" for="edit_description">Description (if any)</label>
-                            <textarea class="form-control" id="edit_description" name="edit_description"
-                                placeholder="Description"></textarea>
+                            <textarea class="form-control" id="edit_description" name="edit_description" placeholder="Description"></textarea>
                             <div id="descriptionError" class="invalid-feedback"></div>
                         </div>
 
@@ -133,7 +132,7 @@
             $('#edit_description').next('.invalid-feedback').text('');
             $('#edit_icd_code').removeClass('is-invalid');
             $('#edit_icd_code').next('.invalid-feedback').text('');
-          
+
             $('#statusError').text('');
         });
 
@@ -144,7 +143,7 @@
 
             // Fetch disease details via AJAX
             $.ajax({
-                url: '{{ url("disease") }}' + "/" + diseaseId + "/edit",
+                url: '{{ url('disease') }}' + "/" + diseaseId + "/edit",
                 method: 'GET',
                 success: function(response) {
                     // Populate form fields
