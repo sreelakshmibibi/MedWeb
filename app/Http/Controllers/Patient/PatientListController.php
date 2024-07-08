@@ -12,18 +12,12 @@ use App\Models\Country;
 use App\Models\DoctorWorkingHour;
 use App\Models\PatientProfile;
 use App\Models\State;
+use App\Services\CommonService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\DataTables as DataTables;
-
-use App\Models\StaffProfile;
-use App\Models\Department;
-use App\Models\UserType;
-
-use App\Services\CommonService;
-use App\Services\DoctorAvaialbilityService;
 
 class PatientListController extends Controller
 {
@@ -75,32 +69,34 @@ class PatientListController extends Controller
                     return 'N/A';
                 })
                 ->addColumn('address', function ($row) {
-                    $address = $row->address1 . ', ' . $row->address2 . ', ' . $row->city->city . ', ' .
-                        $row->state->state . ', ' .
-                        $row->country->country . ', ' .
-                        'Pincode - ' . $row->pincode;
+                    $address = $row->address1.', '.$row->address2.', '.$row->city->city.', '.
+                        $row->state->state.', '.
+                        $row->country->country.', '.
+                        'Pincode - '.$row->pincode;
 
                     return $address;
                 })
                 ->addColumn('appointment', function ($row) {
                     if ($row->latestAppointment) {
-                        return $row->latestAppointment->app_date . ' ' . $row->latestAppointment->app_time;
+                        return $row->latestAppointment->app_date.' '.$row->latestAppointment->app_time;
                     }
 
                     return 'N/A';
                 })
                 ->addColumn('next_appointment', function ($row) {
                     if ($row->nextAppointment) {
-                        return $row->nextAppointment->app_date . ' ' . $row->nextAppointment->app_time;
+                        return $row->nextAppointment->app_date.' '.$row->nextAppointment->app_time;
                     }
 
                     return 'N/A';
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . route('staff.staff_list.view', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
-                    $btn .= '<a href="' . route('patient.patient_list.edit', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
-                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
-                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="Delete"><i class="fa-solid fa-trash"></i></button>';
+                    $btn = '<a href="'.route('staff.staff_list.view', $row->id).'" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
+                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="'.$row->id.'" title="change status"><i class="fa-solid fa-sliders"></i></button>';
+                    if (auth()->user()->hasRole('Admin')) {
+                        $btn .= '<a href="'.route('patient.patient_list.edit', $row->id).'" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="'.$row->id.'" title="Delete"><i class="fa-solid fa-trash"></i></button>';
+                    }
 
                     return $btn;
                 })
@@ -195,12 +191,12 @@ class PatientListController extends Controller
                 $dailyCount = 1;
             }
 
-            $uniquePatientId = $date . sprintf('%03d', $dailyCount);
+            $uniquePatientId = $date.sprintf('%03d', $dailyCount);
 
             // Store the patient data
             $patient = new PatientProfile();
             $patient->patient_id = $uniquePatientId; // Generate a unique patient_id
-            $patient->first_name = $request->input('title') . '<br> ' . $request->input('firstname');
+            $patient->first_name = $request->input('title').'<br> '.$request->input('firstname');
             $patient->last_name = $request->input('lastname');
             $patient->gender = $request->input('gender');
             $patient->date_of_birth = $request->input('date_of_birth');
@@ -283,11 +279,10 @@ class PatientListController extends Controller
             DB::rollback();
 
             // exit;
-            return response()->json(['error' => 'Failed to create patient: ' . $e->getMessage()], 422);
+            return response()->json(['error' => 'Failed to create patient: '.$e->getMessage()], 422);
         }
 
     }
-
 
     public function generateUniqueAppointmentId()
     {
@@ -301,7 +296,7 @@ class PatientListController extends Controller
         $newAppointmentNumber = $appointmentCount + 1;
 
         // Concatenate the year, month, and the incremented count to form the appointment ID
-        $appId = 'APP' . $yearMonth . str_pad($newAppointmentNumber, 4, '0', STR_PAD_LEFT);
+        $appId = 'APP'.$yearMonth.str_pad($newAppointmentNumber, 4, '0', STR_PAD_LEFT);
         //Log::info('$appId: '.$appId);
 
         return $appId;
@@ -320,48 +315,115 @@ class PatientListController extends Controller
      */
     public function edit(string $id)
     {
-        $patient = PatientProfile::find($id);
-        if (!$patient) {
-            abort(404);
-        }
-        $staffProfile = StaffProfile::with('user')->find($id);
-        $userDetails = $staffProfile->user;
-        $departments = Department::where('status', 'Y')->get();
-        $userTypes = UserType::where('status', 'Y')->get();
-        $commonService = new CommonService();
-        $name = $commonService->splitNames($userDetails->name);
+        $patientProfile = PatientProfile::with(['lastAppointment'])->find($id);
+        //$patient = PatientProfile::find($id);
+        abort_if(! $patientProfile, 404);
+        $appointment = $patientProfile->lastAppointment;
         $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
-        $availability = DoctorWorkingHour::where('user_id', $staffProfile->user_id)->get();
-        $availabilityCount = DoctorWorkingHour::where('user_id', $staffProfile->user_id)->groupBy('clinic_branch_id')->count();
-        $doctorAvailability = new DoctorAvaialbilityService();
-        $availableBranches = $doctorAvailability->availableBranchAndTimings($staffProfile->user_id);
         $countries = Country::all();
-        return view('patient.patient_list.edit', compact('name', 'countries', 'userTypes', 'departments', 'staffProfile', 'userDetails', 'availability', 'clinicBranches', 'availabilityCount', 'availability', 'availableBranches'));
+        $commonService = new CommonService();
+        $appointmentStatuses = AppointmentStatus::all();
+        $name = $commonService->splitNames($patientProfile->first_name);
+        $date = Carbon::parse($patientProfile->lastAppointment->app_date)->toDateString(); // 'Y-m-d'
+        $carbonDate = Carbon::parse($date);
+        $weekday = $carbonDate->format('l');
+        $workingDoctors = $this->getTodayWorkingDoctors($patientProfile->lastAppointment->app_branch, $weekday);
+        $appDate = $appointment->app_date;
+        $appTime = $appointment->app_time;
+        // Combine date and time into a single datetime string
+        $dateTimeString = "{$appDate} {$appTime}";
+        // Parse the combined datetime string as it is already in IST
+        $dateTime = Carbon::parse($dateTimeString)
+            ->format('Y-m-d\TH:i');
 
+        return view('patient.patient_list.edit', compact('name', 'patientProfile', 'countries', 'appointment', 'clinicBranches', 'appointmentStatuses', 'workingDoctors', 'dateTime'));
 
     }
 
     /**
      * Update the specified resource in storage.
      */
-    // public function update(Request $request)
-    // {
-    //     $patient = PatientProfile::findOrFail($request->edit_department_id);
+    public function update(PatientListRequest $request)
+    {
+        try {
+            DB::beginTransaction();
 
-    //     // Update department fields based on form data
-    //     $patient->patient = $request->patient;
-    //     $patient->status = $request->status;
+            // Update the patient data
+            $patient = PatientProfile::findOrFail($request->edit_patient_id);
+            $patient->fill([
+                'first_name' => $request->title.'<br> '.$request->firstname,
+                'last_name' => $request->input('lastname'),
+                'gender' => $request->input('gender'),
+                'date_of_birth' => $request->input('date_of_birth'),
+                'aadhaar_no' => $request->input('aadhaar_no'),
+                'email' => $request->input('email'),
+                'phone' => $request->input('phone'),
+                'alternate_phone' => $request->input('alter_phone'),
+                'blood_group' => $request->input('blood_group'),
+                'address1' => $request->input('address1'),
+                'address2' => $request->input('address2'),
+                'country_id' => $request->input('country_id'),
+                'state_id' => $request->input('state_id'),
+                'city_id' => $request->input('city_id'),
+                'pincode' => $request->input('pincode'),
+                'updated_by' => auth()->user()->id,
+            ]);
 
-    //     // Save the updated department
-    //     $patient->save();
+            if (! $patient->save()) {
+                //throw new \Exception('Failed to update patient');
+                return redirect()->back()->with('error', 'Failed to update patient');
+            }
 
-    //     return redirect()->back()->with('success', 'Patient updated successfully.');
-    // }
+            // Update the appointment data
+            $appointment = Appointment::findOrFail($request->edit_app_id);
+            $appDateTime = Carbon::parse($request->input('appdate'));
+            $appDate = $appDateTime->toDateString();
+            $appTime = $appDateTime->toTimeString();
+
+            // Check if an appointment with the same date, time, and doctor already exists
+            $existingAppointment = Appointment::where('doctor_id', $request->input('doctor2'))
+                ->where('app_date', $appDate)
+                ->where('app_time', $appTime)
+                ->where('id', '!=', $appointment->id) // Exclude current appointment
+                ->exists();
+
+            if ($existingAppointment) {
+                return response()->json(['error' => 'An appointment already exists for the given date, time, and doctor.'], 422);
+            }
+
+            $appointment->fill([
+                'app_date' => $appDate,
+                'app_time' => $appTime,
+                'doctor_id' => $request->input('doctor2'),
+                'app_branch' => $request->input('clinic_branch_id0'),
+                'app_type' => 1,
+                'height_cm' => $request->input('height'),
+                'weight_kg' => $request->input('weight'),
+                'blood_pressure' => $request->input('bp'),
+                'referred_doctor' => $request->input('rdoctor'),
+                'app_status' => $request->input('appstatus'),
+                'updated_by' => auth()->user()->id,
+            ]);
+
+            if (! $appointment->save()) {
+                //throw new \Exception('Failed to update appointment');
+                return redirect()->back()->with('error', 'Failed to update appointment');
+            }
+
+            DB::commit();
+
+            return redirect()->route('patient.patient_list')->with('success', 'Patient and appointment updated successfully');
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            return response()->json(['error' => 'Failed to update patient: '.$e->getMessage()], 422);
+        }
+    }
 
     public function changeStatus(string $id)
     {
         $patientProfile = PatientProfile::find($id);
-        abort_if(!$patientProfile, 404);
+        abort_if(! $patientProfile, 404);
         if ($patientProfile) {
             $active = 'N';
             $inActive = 'Y';

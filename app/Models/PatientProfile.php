@@ -53,6 +53,11 @@ class PatientProfile extends Model
             ->oldest('app_time');
     }
 
+    public function lastAppointment()
+    {
+        return $this->hasOne(Appointment::class, 'patient_id', 'patient_id')->latest();
+    }
+
     // Define the relationship with Country
     public function country()
     {
