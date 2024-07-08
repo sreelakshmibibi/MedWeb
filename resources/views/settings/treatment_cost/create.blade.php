@@ -4,7 +4,7 @@
         <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fa fa-briefcase"></i> Treatment Details</h5>
+                    <h5 class="modal-title"><i class="fa fa-kit-medical"></i> Treatment Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -12,7 +12,8 @@
                     <div class="container-fluid">
                         <!-- Treatment Name -->
                         <div class="form-group">
-                            <label class="form-label" for="treatment">Treatment name</label>
+                            <label class="form-label" for="treatment">Treatment Name <span class="text-danger">
+                                    *</span></label>
                             <input class="form-control" type="text" id="treat_name" name="treat_name"
                                 placeholder="Treatment Name">
                             <div id="treatmentError" class="invalid-feedback"></div>
@@ -20,7 +21,8 @@
 
                         <!-- Treatment Cost -->
                         <div class="form-group">
-                            <label class="form-label" for="cost">Cost</label>
+                            <label class="form-label" for="cost">Cost <span class="text-danger">
+                                    *</span></label>
                             <input class="form-control" type="text" id="treat_cost" name="treat_cost"
                                 placeholder="Treatment Cost">
                             <div id="treatmentCostError" class="invalid-feedback"></div>
@@ -112,8 +114,9 @@
                     $('#successMessage').text('Treatment cost created successfully');
                     $('#successMessage').fadeIn().delay(3000)
                         .fadeOut(); // Show for 3 seconds
-                    location.reload();
+                    // location.reload();
                     // Optionally, you can reload or update the table here
+                    table.ajax.reload();
                 },
                 error: function(xhr) {
                     // If error, update modal to show errors
