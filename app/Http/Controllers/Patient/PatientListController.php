@@ -13,6 +13,7 @@ use App\Models\DoctorWorkingHour;
 use App\Models\PatientProfile;
 use App\Models\State;
 use App\Services\CommonService;
+use App\Services\DoctorAvaialbilityService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -153,13 +154,17 @@ class PatientListController extends Controller
 
     public function fetchExistingAppointments($branchId, Request $request)
     {
-        $date = Carbon::parse($request->input('appdate'))->toDateString(); // 'Y-m-d'
-        $carbonDate = Carbon::parse($date);
+        $appDateTime = Carbon::parse($request->input('appdate'));
+        $appDate = $appDateTime->toDateString(); // Extract date
+        $appTime = $appDateTime->toTimeString(); // Extract time 
         $doctor_id = $request->input('doctor_id');
         $doctorAvailabilityService = new DoctorAvaialbilityService();
-        $existingAppointments = $doctorAvailabilityService->getExistingAppointments($branchId, $carbonDate, $doctor_id);
-
-        return response()->json($existingAppointments);
+        $existingAppointments = $doctorAvailabilityService->getExistingAppointments($branchId, $appDate, $doctor_id);
+        $checkAllocated = $doctorAvailabilityService->checkAllocatedAppointments($branchId, $appDate, $doctor_id, $appTime);
+        $response = ["existingAppointments" => $existingAppointments,
+                    "checkAllocated" => $checkAllocated
+                ];
+        return response()->json($response);
     
     }
 

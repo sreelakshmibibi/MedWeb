@@ -105,8 +105,26 @@ class DoctorAvaialbilityService
             $query->where('app_date', $appDate);
         }
         return $query->get('app_time');
-
+        
+    }
+    public function checkAllocatedAppointments($branchId, $appDate, $doctorId, $appTime)
+    {
+        $query = Appointment::where('status', 'Y')
+                        ->where('app_status', AppointmentStatus::SCHEDULED );
+        if ($branchId) {
+            $query->where('app_branch', $branchId);
+        }
+        if ($doctorId) {
+            $query->where('doctor_id', $doctorId);
+        }
+        if ($appDate) {
+            $query->where('app_date', $appDate);
+        }
+        if ($appTime) {
+            $query->where('app_date', $appTime);
+        }
+        return $query->get('app_time');
+        
     }
 
-    
 }

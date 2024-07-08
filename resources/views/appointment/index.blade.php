@@ -265,7 +265,14 @@
                     },
                     dataType: "json",
                     success: function(data) {
-                        if (data.length > 0) {
+                        if (data.checkAllocated.length > 0) {
+                            $('#existingAppointmentsError').show();
+                        }
+                        else {
+                            $('#existingAppointmentsError').hide();
+                        }
+                        if (data.existingAppointments.length > 0) {
+                            
                             // Clear existing content
                             $('#existingAppointments').empty();
                             
@@ -278,7 +285,7 @@
                             table.append(headerRow);
                             
                             // Calculate number of rows needed
-                            var numRows = Math.ceil(data.length / 3);
+                            var numRows = Math.ceil(data.existingAppointments.length / 3);
                             
                             // Loop to create rows and populate cells
                             for (var i = 0; i < numRows; i++) {
@@ -287,8 +294,8 @@
                                 // Create 3 cells for each row
                                 for (var j = 0; j < 3; j++) {
                                     var dataIndex = i * 3 + j;
-                                    if (dataIndex < data.length) {
-                                        var cell = $('<td>').text(data[dataIndex].app_time);
+                                    if (dataIndex < data.existingAppointments.length) {
+                                        var cell = $('<td>').text(data.existingAppointments[dataIndex].app_time);
                                         row.append(cell);
                                     } else {
                                         var cell = $('<td>'); // Create empty cell if no more data
@@ -304,9 +311,11 @@
                             
                             // Show the div
                             $('#existingAppointments').show();
+                            
                         } else {
                             $('#existingAppointments').html('No existing appointments found.');
                             $('#existingAppointments').show();
+
                         }
                     },
 
@@ -314,10 +323,12 @@
                     console.error('Error fetching existing appointments:', error);
                     $('#existingAppointments').html('Error fetching existing appointments. Please try again later.');
                     $('#existingAppointments').show();
+                   
                 }
                 });
             } else {
                 console.log('hi no exisiting');
+                
             }
         }
 
