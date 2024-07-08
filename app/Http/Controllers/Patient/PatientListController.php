@@ -151,6 +151,18 @@ class PatientListController extends Controller
         return response()->json($workingDoctors);
     }
 
+    public function fetchExistingAppointments($branchId, Request $request)
+    {
+        $date = Carbon::parse($request->input('appdate'))->toDateString(); // 'Y-m-d'
+        $carbonDate = Carbon::parse($date);
+        $doctor_id = $request->input('doctor_id');
+        $doctorAvailabilityService = new DoctorAvaialbilityService();
+        $existingAppointments = $doctorAvailabilityService->getExistingAppointments($branchId, $carbonDate, $doctor_id);
+
+        return response()->json($existingAppointments);
+    
+    }
+
     /**
      * Store a newly created resource in storage.
      */

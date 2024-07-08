@@ -11,6 +11,7 @@ use App\Models\Department;
 use App\Models\DoctorWorkingHour;
 use App\Models\Appointment;
 use App\Models\AppointmentStatus;
+use App\Models\AppointmentType;
 use App\Models\StaffProfile;
 use App\Models\State;
 use App\Models\User;
@@ -86,23 +87,23 @@ class AppointmentController extends Controller
 
                         //return $row->latestAppointment->app_status;
                         if ($row->patient->latestAppointment->app_status == 1) {
-                            $btn = "<span class='btn-sm badge badge-success-light'>Scheduled</span>";
+                            $btn = "<span class='btn-sm badge badge-success-light'>".AppointmentStatus::SCHEDULED."</span>";
                         } elseif ($row->patient->latestAppointment->app_status == 2) {
-                            $btn = '<span class="btn-sm badge badge-success-light">Waiting</span>';
+                            $btn = '<span class="btn-sm badge badge-success-light">'.AppointmentStatus::WAITING.'</span>';
                         } elseif ($row->patient->latestAppointment->app_status == 3) {
-                            $btn = '<span class="btn-sm badge badge-danger-light">Unavailable</span>';
+                            $btn = '<span class="btn-sm badge badge-danger-light">'.AppointmentStatus::UNAVAILABLE.'</span>';
                         } elseif ($row->patient->latestAppointment->app_status == 4) {
-                            $btn = '<span class="btn-sm badge badge-danger-light">Cancelled</span>';
+                            $btn = '<span class="btn-sm badge badge-danger-light">'.AppointmentStatus::CANCELLED.'</span>';
                         } elseif ($row->patient->latestAppointment->app_status == 5) {
-                            $btn = '<span class="btn-sm badge badge-success-light">Completed</span>';
+                            $btn = '<span class="btn-sm badge badge-success-light">'.AppointmentStatus::COMPLETED.'</span>';
                         } elseif ($row->patient->latestAppointment->app_status == 6) {
-                            $btn = '<span class="btn-sm badge badge-success-light">Billing</span>';
+                            $btn = '<span class="btn-sm badge badge-success-light">'.AppointmentStatus::BILLING.'</span>';
                         } elseif ($row->patient->latestAppointment->app_status == 7) {
-                            $btn = '<span class="btn-sm badge badge-success-light">Procedure</span>';
+                            $btn = '<span class="btn-sm badge badge-success-light">'.AppointmentStatus::PROCEDURE.'</span>';
                         } elseif ($row->patient->latestAppointment->app_status == 8) {
-                            $btn = '<span class="btn-sm badge badge-danger-light">Missed</span>';
+                            $btn = '<span class="btn-sm badge badge-danger-light">'.AppointmentStatus::MISSED.'</span>';
                         } elseif ($row->patient->latestAppointment->app_status == 9) {
-                            $btn = '<span class="btn-sm badge badge-success-light">Re-Scheduled</span>';
+                            $btn = '<span class="btn-sm badge badge-success-light">'.AppointmentStatus::RESCHEDULED.'</span>';
                         }
 
                         return $btn;
@@ -139,19 +140,69 @@ class AppointmentController extends Controller
      */
     public function store(Request $request)
     {
-
-        echo "hi";
-        exit;
         try {
             DB::beginTransaction();
-        
-        } catch (\Exception $e) {
-            // echo "<pre>";
-            // print_r($e->getMessage());
+            $date = Carbon::parse($request->input('appdate'))->toDateString(); // 'Y-m-d'
+            $appDate = Carbon::parse($date);
+           
+            $doctorId = $request->input('doctor_id');
+            $todayDate = now()->toDateString();
+            $maxToken = Appointment::where('doctor_id', $doctorId)
+                ->whereDate('app_date', $appDate)
+                ->max('token_no');
+            $tokenNo = $maxToken ? $maxToken + 1 : 1;
 
+            $appDateTime = Carbon::parse($request->input('appdate'));
+            $appDate = $appDateTime->toDateString(); // Extract date
+            $appTime = $appDateTime->toTimeString(); // Extract time
+
+            // Check if an appointment with the same date and time already exists for the given doctor
+            $existingAppointment = Appointment::where('doctor_id', $doctorId)
+                ->where('app_date', $appDate)
+                ->where('app_time', $appTime)
+                ->first();
+
+            if ($existingAppointment) {
+                DB::rollBack();
+
+                return response()->json(['error' => 'An appointment already exists for the given date, time, and doctor.'], 422);
+            }
+
+            $commonService = new CommonService();
+            // Store the appointment data
+            $appointment = new Appointment();
+            //$appointment->app_id = Appointment::max('app_id') + 1; // Generate a unique app_id
+            $appointment->app_id = $commonService->generateUniqueAppointmentId();
+            $appointment->patient_id = $request->input('patient_id');
+            $appointment->app_date = $appDate;
+            $appointment->app_time = $appTime;
+            $appointment->token_no = $tokenNo;
+            $appointment->doctor_id = $doctorId;
+            $appointment->app_branch = $request->input('clinic_branch_id');
+            $appointment->app_type = AppointmentType::NEW;
+            $appointment->height_cm = $request->input('height');
+            $appointment->weight_kg = $request->input('weight');
+            $appointment->blood_pressure = $request->input('bp');
+            $appointment->referred_doctor = $request->input('rdoctor');
+            $appointment->app_status = AppointmentStatus::SCHEDULED;
+            $appointment->created_by = auth()->user()->id;
+            $appointment->updated_by = auth()->user()->id;
+            if ($appointment->save()) {
+                DB::commit();
+                
+                return redirect()->back()->with('success', 'Appointment added successfully');
+            } else {
+                DB::rollBack();
+
+                return redirect()->back()->with('error', 'Failed to create appointment');
+            }
+
+        } catch (\Exception $e) {
+            echo "<pre>";
+            print_r($e->getMessage());
             DB::rollback();
-            // exit;
-            return redirect()->back()->with('error', 'Failed to create staff: ' . $e->getMessage());
+            exit;
+            return redirect()->back()->with('error', 'Failed to create appointment: ' . $e->getMessage());
         }
     }
 
