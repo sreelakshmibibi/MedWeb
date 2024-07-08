@@ -47,8 +47,9 @@
                                         {{-- <th>Disease</th> --}}
                                         <th>Phone number</th>
                                         <th>Branch</th>
-                                        <th>Date</th>
+                                        <!-- <th>Date</th> -->
                                         <th>Time</th>
+                                        <th>Type</th>
                                         <th>Status</th>
                                         <th width="150px">Action</th>
                                     </tr>
@@ -147,10 +148,10 @@
                         data: 'branch',
                         name: 'branch'
                     },
-                    {
-                        data: 'app_date',
-                        name: 'app_date'
-                    },
+                    // {
+                    //     data: 'app_date',
+                    //     name: 'app_date'
+                    // },
 
                     {
                         data: 'app_time',
@@ -158,10 +159,10 @@
                     },
                     
 
-                    // {
-                    //     data: 'phone',
-                    //     name: 'phone'
-                    // },
+                    {
+                        data: 'app_type',
+                        name: 'app_type'
+                    },
 
                     {
                         data: 'status',
@@ -179,11 +180,12 @@
             });
 
             $(document).on('click', '.btn-add', function() {
+                var app_parent_id = $(this).data('parent-id');
                 var patientId = $(this).data('patient-id');
                 var patientName = $(this).data('patient-name');
                 $('#patient_id').val(patientId); // Set app ID in the hidden input
                 $('#patient_name').val(patientName); // Set app ID in the hidden input
-                
+                 $('#app_parent_id').val(app_parent_id);
                 $('#modal-booking').modal('show');
                    
 
@@ -331,6 +333,46 @@
                 
             }
         }
+        $(document).on('click', '.btn-danger', function() {
+                var appId = $(this).data('id');
+                $('#delete_app_id').val(appId); // Set staff ID in the hidden input
+                $('#modal-cancel').modal('show');
+            });
+
+        $('#btn-confirm-cancel').click(function() {
+            var appId = $('#delete_app_id').val();
+            console.log(appId,'hi');
+            var reason = $('#app_status_change_reason').val();
+            
+            if (reason.length === 0) {
+                $('#app_status_change_reason').addClass('is-invalid');
+                $('#reasonError').text('Reason is required.');
+                return; // Stop further execution
+            }
+
+            var url = "{{ route('appointment.destroy', ':appId') }}";
+            url = url.replace(':appId', appId);
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "app_status_change_reason" : reason
+                },
+                success: function(response) {
+                    console.log(response);a
+                    table.draw(); // Refresh DataTable
+                    $('#successMessage').text('Appointment cancelled successfully');
+                    $('#successMessage').fadeIn().delay(3000).fadeOut(); // Show for 3 seconds
+                    $('#modal-cancel').modal('hide'); // Close modal after success
+                },
+                error: function(xhr) {
+                    $('#modal-cancel').modal('hide'); // Close modal in case of error
+                    console.log("Error!", xhr.responseJSON.message, "error");
+                }
+            });
+        });
 
 
         function reloadTableData() {

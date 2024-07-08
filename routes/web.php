@@ -104,4 +104,4 @@ Route::get('/appointment/add', [AppointmentController::class, 'create'])->name('
 Route::post('/appointment/store', [AppointmentController::class, 'store'])->name('appointment.store');
 Route::get('/appointment/{appointment}/edit', [AppointmentController::class, 'edit'])->name('appointment.edit');
 Route::post('/appointment/update', [AppointmentController::class, 'update'])->name('appointment.update');
-Route::delete('/appointment/{appointment}', [AppointmentController::class, 'destroy'])->name('appointment.destroy');
+Route::post('/appointment/{appointment}', [AppointmentController::class, 'destroy'])->name('appointment.destroy');

@@ -1,6 +1,5 @@
 <form id="form-delete" method="POST">
     @csrf
-    @method('DELETE')
     <!-- delete modal-->
     <div class="modal fade" id="modal-cancel" role="dialog">
         <div class="modal-dialog modal-dialog-centered">
@@ -11,12 +10,14 @@
                 </div>
                 <div class="modal-body">
                     <p>Are you sure you want to cancel the appointment?</p>
-                    <input type="hidden" id="delete_department_id" name="delete_department_id" value="">
+                    <input type="hidden" id="delete_app_id" name="delete_app_id" value="">
+                    <textarea  class="form-control" id="app_status_change_reason" name="app_status_change_reason" placeholder="Reason for cancellation" required></textarea>
+                    <div id="reasonError" class="invalid-feedback"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">No</button>
-                    <button type="button" class="btn btn-danger float-end" data-bs-dismiss="modal"
-                        id="btn-confirm-delete">Yes, Cancel</button>
+                    <button type="button" class="btn btn-danger float-end"
+                        id="btn-confirm-cancel">Yes, Cancel</button>
                 </div>
             </div>
             <!-- /.modal-content -->

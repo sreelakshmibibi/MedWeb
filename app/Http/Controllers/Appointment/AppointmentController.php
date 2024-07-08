@@ -29,6 +29,7 @@ use App\Services\DoctorAvaialbilityService;
 
 use App\Notifications\WelcomeVerifyNotification;
 use Carbon\Carbon;
+use Exception;
 
 class AppointmentController extends Controller
 {
@@ -61,6 +62,14 @@ class AppointmentController extends Controller
                 ->addColumn('doctor', function ($row) {
                     return str_replace("<br>", " ", $row->doctor->name);
                 })
+                ->addColumn('app_type', function ($row) {
+                    if ($row->app_type == AppointmentType::NEW) {
+                        return AppointmentType::NEW_WORDS;
+                    } else if ($row->app_type == AppointmentType::FOLLOWUP) {
+                        return AppointmentType::FOLLOWUP_WORDS;
+                    }
+                    
+                })
                 ->addColumn('branch', function ($row) {
                     if ($row->branch) {
                         $address = explode("<br>",$row->branch->clinic_address);
@@ -82,28 +91,28 @@ class AppointmentController extends Controller
                     return $row->patient->phone;
                 })
                 ->addColumn('status', function ($row) {
-                    if ($row->patient->latestAppointment) {
+                    if ($row->app_status) {
                         $btn = '';
 
                         //return $row->latestAppointment->app_status;
-                        if ($row->patient->latestAppointment->app_status == 1) {
-                            $btn = "<span class='btn-sm badge badge-success-light'>".AppointmentStatus::SCHEDULED."</span>";
-                        } elseif ($row->patient->latestAppointment->app_status == 2) {
-                            $btn = '<span class="btn-sm badge badge-success-light">'.AppointmentStatus::WAITING.'</span>';
-                        } elseif ($row->patient->latestAppointment->app_status == 3) {
-                            $btn = '<span class="btn-sm badge badge-danger-light">'.AppointmentStatus::UNAVAILABLE.'</span>';
-                        } elseif ($row->patient->latestAppointment->app_status == 4) {
-                            $btn = '<span class="btn-sm badge badge-danger-light">'.AppointmentStatus::CANCELLED.'</span>';
-                        } elseif ($row->patient->latestAppointment->app_status == 5) {
-                            $btn = '<span class="btn-sm badge badge-success-light">'.AppointmentStatus::COMPLETED.'</span>';
-                        } elseif ($row->patient->latestAppointment->app_status == 6) {
-                            $btn = '<span class="btn-sm badge badge-success-light">'.AppointmentStatus::BILLING.'</span>';
-                        } elseif ($row->patient->latestAppointment->app_status == 7) {
-                            $btn = '<span class="btn-sm badge badge-success-light">'.AppointmentStatus::PROCEDURE.'</span>';
-                        } elseif ($row->patient->latestAppointment->app_status == 8) {
-                            $btn = '<span class="btn-sm badge badge-danger-light">'.AppointmentStatus::MISSED.'</span>';
-                        } elseif ($row->patient->latestAppointment->app_status == 9) {
-                            $btn = '<span class="btn-sm badge badge-success-light">'.AppointmentStatus::RESCHEDULED.'</span>';
+                        if ($row->app_status == AppointmentStatus::SCHEDULED) {
+                            $btn = "<span class='btn-sm badge badge-success-light'>".AppointmentStatus::SCHEDULED_WORDS."</span>";
+                        } elseif ($row->app_status == AppointmentStatus::WAITING) {
+                            $btn = '<span class="btn-sm badge badge-success-light">'.AppointmentStatus::WAITING_WORDS.'</span>';
+                        } elseif ($row->app_status == AppointmentStatus::UNAVAILABLE) {
+                            $btn = '<span class="btn-sm badge badge-danger-light">'.AppointmentStatus::UNAVAILABLE_WORDS.'</span>';
+                        } elseif ($row->app_status == AppointmentStatus::CANCELLED) {
+                            $btn = '<span class="btn-sm badge badge-danger-light">'.AppointmentStatus::CANCELLED_WORDS.'</span>';
+                        } elseif ($row->app_status == AppointmentStatus::COMPLETED) {
+                            $btn = '<span class="btn-sm badge badge-success-light">'.AppointmentStatus::COMPLETED_WORDS.'</span>';
+                        } elseif ($row->app_status == AppointmentStatus::BILLING) {
+                            $btn = '<span class="btn-sm badge badge-success-light">'.AppointmentStatus::BILLING_WORDS.'</span>';
+                        } elseif ($row->app_status == AppointmentStatus::PROCEDURE) {
+                            $btn = '<span class="btn-sm badge badge-success-light">'.AppointmentStatus::PROCEDURE_WORDS.'</span>';
+                        } elseif ($row->app_status == AppointmentStatus::MISSED) {
+                            $btn = '<span class="btn-sm badge badge-danger-light">'.AppointmentStatus::MISSED_WORDS.'</span>';
+                        } elseif ($row->app_status == AppointmentStatus::RESCHEDULED) {
+                            $btn = '<span class="btn-sm badge badge-success-light">'.AppointmentStatus::RESCHEDULED_WORDS.'</span>';
                         }
 
                         return $btn;
@@ -112,13 +121,18 @@ class AppointmentController extends Controller
                     return 'N/A';
                 })
                 ->addColumn('action', function ($row) {
-
-                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1" title="new booking" data-bs-toggle="modal" data-id="' . $row->id . '" data-patient-id="' . $row->patient->patient_id . '" data-patient-name="' . str_replace("<br>", " ", $row->patient->first_name." ".$row->patient->last_name) . '"
-                        data-bs-target="#modal-booking" ><i class="fa fa-plus"></i></button>
-                        <button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-edit btn-xs me-1" title="reschedule" data-bs-toggle="modal" data-id="' . $row->id . '"
-                        data-bs-target="#modal-reschedule" ><i class="fa-solid fa-calendar-days"></i></button>
-                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-cancel" data-id="' . $row->id . '" title="cancel">
+                    $btn = '';
+                    if ($row->app_status != AppointmentStatus::CANCELLED) {
+                        $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1" title="follow up" data-bs-toggle="modal" data-id="' . $row->id . '" data-parent-id="' . $parent_id . '" data-patient-id="' . $row->patient->patient_id . '" data-patient-name="' . str_replace("<br>", " ", $row->patient->first_name." ".$row->patient->last_name) . '"
+                            data-bs-target="#modal-booking" ><i class="fa fa-plus"></i></button>';
+                        
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-edit btn-xs me-1" title="reschedule" data-bs-toggle="modal" data-id="' . $row->id . '"
+                        data-bs-target="#modal-reschedule" ><i class="fa-solid fa-calendar-days"></i></button>';
+                        
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-cancel" data-id="' . $row->id . '" title="cancel">
                         <i class="fa fa-times"></i></button>';
+                    }
 
                     return $btn;
                 })
@@ -146,7 +160,6 @@ class AppointmentController extends Controller
             $appDate = Carbon::parse($date);
            
             $doctorId = $request->input('doctor_id');
-            $todayDate = now()->toDateString();
             $maxToken = Appointment::where('doctor_id', $doctorId)
                 ->whereDate('app_date', $appDate)
                 ->max('token_no');
@@ -180,12 +193,13 @@ class AppointmentController extends Controller
             $appointment->token_no = $tokenNo;
             $appointment->doctor_id = $doctorId;
             $appointment->app_branch = $request->input('clinic_branch_id');
-            $appointment->app_type = AppointmentType::NEW;
+            $appointment->app_type = AppointmentType::FOLLOWUP;
             $appointment->height_cm = $request->input('height');
             $appointment->weight_kg = $request->input('weight');
             $appointment->blood_pressure = $request->input('bp');
             $appointment->referred_doctor = $request->input('rdoctor');
             $appointment->app_status = AppointmentStatus::SCHEDULED;
+            $appointment->app_parent_id = $request->input('app_parent_id');
             $appointment->created_by = auth()->user()->id;
             $appointment->updated_by = auth()->user()->id;
             if ($appointment->save()) {
@@ -236,12 +250,20 @@ class AppointmentController extends Controller
 
 
 
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
-        // $Appointment = Appointment::findOrFail($id);
-        // $Appointment->delete();
-
-        // return response()->json(['success', 'Staff deleted successfully.'], 201);
+        try {
+        $appointment = Appointment::findOrFail($id);
+        $appointment->app_status_change_reason = $request->input('app_status_change_reason');
+        $appointment->app_status = AppointmentStatus::CANCELLED;
+        $appointment->status = 'N';
+        $appointment->save();
+        return response()->json(['success', 'Appointment cancelled successfully.'], 200);
+        
+        } catch (Exception $e) {
+            
+        return response()->json(['error', 'Appointment not cancelled.'], 200);
+        }
     }
 
     public function view(string $id)

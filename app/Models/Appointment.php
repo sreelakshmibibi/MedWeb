@@ -34,6 +34,7 @@ class Appointment extends Model
         'consult_start_time',
         'consult_end_time',
         'status',
+        'app_status_change_reason',
         'created_by',
         'updated_by',
     ];

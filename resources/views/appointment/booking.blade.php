@@ -13,6 +13,8 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-md-6">
+                                <input class="form-control" type="hidden" id="app_parent_id" name="app_parent_id">
+                                    
                                 <div class="form-group">
                                     <label class="form-label" for="patient_id">Patient ID</label><span class="text-danger">
                                     *</span>
