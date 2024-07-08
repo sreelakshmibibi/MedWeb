@@ -31,6 +31,7 @@ return new class extends Migration
             $table->string('doctor_note', 500)->nullable();
             $table->string('doctor_check', 5)->default('N');
             $table->foreignId('app_status')->constrained('appointment_statuses');
+            $table->string('app_status_change_reason')->nullable();
             $table->unsignedBigInteger('app_parent_id')->nullable();
             $table->time('consult_start_time')->nullable();
             $table->time('consult_end_time')->nullable();
@@ -69,6 +70,7 @@ return new class extends Migration
             $table->dropForeign(['app_branch']);
             $table->dropForeign(['app_type']);
             $table->dropForeign(['app_status']);
+            $table->dropForeign(['app_type']);
             $table->dropForeign(['app_parent_id']);
             $table->dropForeign(['created_by']);
             $table->dropForeign(['updated_by']);

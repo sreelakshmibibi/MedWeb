@@ -20,6 +20,16 @@ class AppointmentStatus extends Model
     const PROCEDURE = 7;
     const MISSED = 8;
     const RESCHEDULED = 9;
+    const SCHEDULED_WORDS = "SCHEDULED";
+    const WAITING_WORDS = "WAITING";
+    const UNAVAILABLE_WORDS = "UNAVAILABLE";
+    const CANCELLED_WORDS = "CANCELLED";
+
+    const COMPLETED_WORDS = "COMPLETED_";
+    const BILLING_WORDS = "BILLING";
+    const PROCEDURE_WORDS = "PROCEDURE";
+    const MISSED_WORDS = "MISSED";
+    const RESCHEDULED_WORDS = "RESCHEDULED";
 
     protected $fillable = ['status', 'st_color', 'tx_color', 'stat', 'indrop'];
 
