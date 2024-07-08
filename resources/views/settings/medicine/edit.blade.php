@@ -13,7 +13,8 @@
                     <div class="container-fluid">
 
                         <div class="form-group">
-                            <label class="form-label" for="name">Medicine Name</label>
+                            <label class="form-label" for="name">Medicine Name <span class="text-danger">
+                                    *</span></label>
                             <input class="form-control" type="text" id="edit_med_name" name="med_name"
                                 placeholder="Medicine Name">
                             <div id="editMedNameError" class="invalid-feedback"></div>
@@ -21,7 +22,8 @@
 
                         <div class="row">
                             <div class="col-md-8">
-                                <label class="form-label" for="med_bar_code">Barcode</label>
+                                <label class="form-label" for="med_bar_code">Barcode <span class="text-danger">
+                                        *</span></label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="edit_med_bar_code"
                                         name="med_bar_code" placeholder="Enter text..." readonly>
@@ -32,7 +34,8 @@
 
 
                         <div class="form-group">
-                            <label class="form-label" for="med_company">Company Name</label>
+                            <label class="form-label" for="med_company">Company Name <span class="text-danger">
+                                    *</span></label>
                             <input class="form-control" type="text" id="edit_med_company" name="med_company"
                                 placeholder="Medicine Company Name">
                             <div id="editMedCompanyError" class="invalid-feedback"></div>
@@ -41,7 +44,8 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="med_price">Price</label>
+                                    <label class="form-label" for="med_price">Price <span class="text-danger">
+                                            *</span></label>
                                     <input class="form-control" type="text" id="edit_med_price" name="med_price"
                                         placeholder="Medicine Price">
                                     <div id="editMedPriceError" class="invalid-feedback"></div>
@@ -49,7 +53,8 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="expiry_date">Expiring Date</label>
+                                    <label class="form-label" for="expiry_date">Expiring Date <span class="text-danger">
+                                            *</span></label>
                                     <input class="form-control" type="date" id="edit_expiry_date" name="expiry_date">
                                     <div id="editMedExpDateError" class="invalid-feedback"></div>
                                 </div>
@@ -59,15 +64,20 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="edit_units_per_package">Units per Package</label>
+                                    <label class="form-label" for="edit_units_per_package">Units per Package <span
+                                            class="text-danger">
+                                            *</span></label>
                                     <input class="form-control" type="text" id="edit_units_per_package"
-                                        name="units_per_package" placeholder="Number of units per package." onblur="generateEditTotalQuantity()">
+                                        name="units_per_package" placeholder="Number of units per package."
+                                        onblur="generateEditTotalQuantity()">
                                     <div id="editMedUnitPerPackError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="edit_package_count">Package Count</label>
+                                    <label class="form-label" for="edit_package_count">Package Count <span
+                                            class="text-danger">
+                                            *</span></label>
                                     <input class="form-control" type="text" id="edit_package_count"
                                         name="package_count" placeholder="Total number of packages"
                                         onblur="generateEditTotalQuantity()">
@@ -88,7 +98,9 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="edit_package_type">Packaging Type</label>
+                                    <label class="form-label" for="edit_package_type">Packaging Type <span
+                                            class="text-danger">
+                                            *</span></label>
                                     <select class="form-control" id="edit_package_type" name="package_type">
                                         <option value="">Select packaging type</option>
                                         <option value="Strip">Strip</option>
@@ -293,9 +305,10 @@
                     $('#modal-edit').modal('hide');
                     $('#successMessage').text('Medicine updated successfully');
                     $('#successMessage').fadeIn().delay(3000)
-                .fadeOut(); // Show for 3 seconds
+                        .fadeOut(); // Show for 3 seconds
                     // table.draw(); // Refresh DataTable
-                    location.reload();
+                    // location.reload();
+                    table.ajax.reload();
                 },
                 error: function(xhr) {
                     // If error, update modal to show errors

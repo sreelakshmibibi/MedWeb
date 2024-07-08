@@ -13,7 +13,8 @@
                     <div class="container-fluid">
 
                         <div class="form-group">
-                            <label class="form-label" for="med_name">Medicine Name</label>
+                            <label class="form-label" for="med_name">Medicine Name <span class="text-danger">
+                                    *</span></label>
                             <input class="form-control" type="text" id="med_name" name="med_name"
                                 placeholder="Medicine Name">
                             <div id="medNameError" class="invalid-feedback"></div>
@@ -21,7 +22,8 @@
 
                         <div class="row">
                             <div class="col-md-8">
-                                <label class="form-label" for="med_bar_code">Barcode</label>
+                                <label class="form-label" for="med_bar_code">Barcode <span class="text-danger">
+                                        *</span></label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="med_bar_code" name="med_bar_code"
                                         placeholder="Enter text...">
@@ -37,7 +39,8 @@
 
 
                         <div class="form-group">
-                            <label class="form-label" for="med_company">Company Name</label>
+                            <label class="form-label" for="med_company">Company Name <span class="text-danger">
+                                    *</span></label>
                             <input class="form-control" type="text" id="med_company" name="med_company"
                                 placeholder="Medicine Company Name">
                             <div id="medCompanyError" class="invalid-feedback"></div>
@@ -46,7 +49,8 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="med_price">Price</label>
+                                    <label class="form-label" for="med_price">Price <span class="text-danger">
+                                            *</span></label>
                                     <input class="form-control" type="text" id="med_price" name="med_price"
                                         placeholder="Medicine Price">
                                     <div id="medPriceError" class="invalid-feedback"></div>
@@ -54,7 +58,8 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="expiry_date">Expiring Date</label>
+                                    <label class="form-label" for="expiry_date">Expiring Date <span class="text-danger">
+                                            *</span></label>
                                     <input class="form-control" type="date" id="expiry_date" name="expiry_date">
                                     <div id="medExpDateError" class="invalid-feedback"></div>
                                 </div>
@@ -64,17 +69,23 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="units_per_package">Units per Package</label>
+                                    <label class="form-label" for="units_per_package">Units per Package <span
+                                            class="text-danger">
+                                            *</span></label>
                                     <input class="form-control" type="text" id="units_per_package"
-                                        name="units_per_package" placeholder="Number of units per package." onblur="generateTotalQuantity()">
+                                        name="units_per_package" placeholder="Number of units per package."
+                                        onblur="generateTotalQuantity()">
                                     <div id="medUnitPerPackError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="package_count">Package Count</label>
-                                    <input class="form-control" type="text" id="package_count" name="package_count"
-                                        placeholder="Total number of packages" onblur="generateTotalQuantity()">
+                                    <label class="form-label" for="package_count">Package Count <span
+                                            class="text-danger">
+                                            *</span></label>
+                                    <input class="form-control" type="text" id="package_count"
+                                        name="package_count" placeholder="Total number of packages"
+                                        onblur="generateTotalQuantity()">
                                     <div id="medPackageCountError" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -92,7 +103,9 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="package_type">Packaging Type</label>
+                                    <label class="form-label" for="package_type">Packaging Type <span
+                                            class="text-danger">
+                                            *</span></label>
                                     <select class="form-control" id="package_type" name="package_type">
                                         <option value="" disabled selected>Select packaging type</option>
                                         <option value="Strip">Strip</option>
@@ -255,7 +268,8 @@
                 $('#total_quantity').removeClass('is-invalid');
                 $('#medQuantityError').text('');
             }
-            if (packageType.length === 0) {
+            if (packageType === "") {
+                // if (packageType.length === 0) {
                 $('#package_type').addClass('is-invalid');
                 $('#medPackageTypeError').text('The package type is required.');
                 return; // Prevent further execution
@@ -291,9 +305,10 @@
                     $('#modal-right').modal('hide');
                     $('#successMessage').text('Medicine created successfully');
                     $('#successMessage').fadeIn().delay(3000)
-                .fadeOut(); // Show for 3 seconds
-                    location.reload();
+                        .fadeOut(); // Show for 3 seconds
+                    // location.reload();
                     // Optionally, you can reload or update the table here
+                    table.ajax.reload();
                 },
                 error: function(xhr) {
                     // If error, update modal to show errors
@@ -384,21 +399,29 @@
     });
 
     function generateTotalQuantity() {
-        
+
         var medUnittPerPack = $('#units_per_package').val();
         var packageCount = $('#package_count').val();
-       
+
         if (medUnittPerPack.length === 0) {
-            alert('The units per package are required.');
+            $('#units_per_package').addClass('is-invalid');
+            $('#medUnitPerPackError').text('The units per package are required.');
+            // alert('The units per package are required.');
             return; // Prevent further execution
         } else if (!$.isNumeric(medUnittPerPack)) {
-            alert('The units per package must be an integer.');
+            $('#units_per_package').addClass('is-invalid');
+            $('#medUnitPerPackError').text('The units per package must be an integer.');
+            // alert('The units per package must be an integer.');
             return; // Prevent further execution
         } else if (packageCount.length === 0) {
-            alert('The package count is required.');
+            $('#package_count').addClass('is-invalid');
+            $('#medPackageCountError').text('The package count is required.');
+            // alert('The package count is required.');
             return; // Prevent further execution
         } else if (!$.isNumeric(packageCount)) {
-            alert('The package count must be an integer.');
+            $('#package_count').addClass('is-invalid');
+            $('#medPackageCountError').text('The package count must be an integer.');
+            // alert('The package count must be an integer.');
             return; // Prevent further execution
         } else {
             var total = medUnittPerPack * packageCount;

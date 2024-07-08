@@ -66,17 +66,13 @@
     @include('settings.medicine.delete')
     {{-- </div> --}}
 
-@endsection
-
-@section('scripts')
-
     <!-- JsBarcode library -->
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode/dist/JsBarcode.all.min.js"></script>
 
     <script type="text/javascript">
+        var table;
         jQuery(function($) {
-
-            var table = $('.data-table').DataTable({
+            table = $('.data-table').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('settings.medicine') }}",
@@ -129,9 +125,13 @@
                         data: 'package_type',
                         name: 'package_type'
                     },
+                    // {
+                    //     data: 'stock_status',
+                    //     name: 'stock_status'
+                    // },
                     {
-                        data: 'stock_status',
-                        name: 'stock_status'
+                        data: 'status',
+                        name: 'status'
                     },
                     {
                         data: 'action',
@@ -163,7 +163,7 @@
                         $('#edit_med_remarks').val(response.med_remarks);
                         $('#edit_in').prop('checked', response.stock_status === 'In Stock');
                         $('#edit_out').prop('checked', response.stock_status ===
-                        'Out of Stock');
+                            'Out of Stock');
                         $('#med_edit_yes').prop('checked', response.status === 'Y');
                         $('#med_edit_no').prop('checked', response.status === 'N');
 
