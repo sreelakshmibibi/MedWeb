@@ -40,6 +40,14 @@ class ClinicBranchController extends Controller
 
                     return $clinicAddress;
                 })
+                ->addColumn('status', function ($row) {
+                    if ($row->clinic_status == 'Y') {
+                        $btn1 = '<span class="text-success" title="active"><i class="fa-solid fa-circle-check"></i></span>';
+                    } else {
+                        $btn1 = '<span class="text-danger" title="inactive"><i class="fa-solid fa-circle-xmark"></i></span>';
+                    }
+                    return $btn1;
+                })
                 ->addColumn('action', function ($row) {
 
                     $btn = '<div class="d-flex justify-content-center">
@@ -58,7 +66,7 @@ class ClinicBranchController extends Controller
 
                     return $btn;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['status', 'action'])
                 ->make(true);
         }
 

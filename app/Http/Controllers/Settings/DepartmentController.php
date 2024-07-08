@@ -33,6 +33,14 @@ class DepartmentController extends Controller
 
             return DataTables::of($departments)
                 ->addIndexColumn()
+                ->addColumn('status', function ($row) {
+                    if ($row->status == 'Y') {
+                        $btn1 = '<span class="text-success" title="active"><i class="fa-solid fa-circle-check"></i></span>';
+                    } else {
+                        $btn1 = '<span class="text-danger" title="inactive"><i class="fa-solid fa-circle-xmark"></i></span>';
+                    }
+                    return $btn1;
+                })
                 ->addColumn('action', function ($row) {
 
                     $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
@@ -42,7 +50,7 @@ class DepartmentController extends Controller
 
                     return $btn;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['status', 'action'])
                 ->make(true);
         }
 

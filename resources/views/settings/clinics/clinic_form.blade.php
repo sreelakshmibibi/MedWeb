@@ -85,9 +85,14 @@
                     name: 'is_medicine_provided',
                     className: 'text-center'
                 },
+                // {
+                //     data: 'clinic_status',
+                //     name: 'clinic_status',
+                //     className: 'text-center'
+                // },
                 {
-                    data: 'clinic_status',
-                    name: 'clinic_status',
+                    data: 'status',
+                    name: 'status',
                     className: 'text-center'
                 },
                 {
