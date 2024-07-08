@@ -1,11 +1,12 @@
 <!--appointment-->
 <div class="row">
 
-    
+
 
     <div class="col-md-3">
         <div class="form-group">
-            <label class="form-label" for="clinic_branch_id0">Branch</label>
+            <label class="form-label" for="clinic_branch_id0">Branch <span class="text-danger">
+                    *</span></label>
             <select class="select2" id="clinic_branch_id0" name="clinic_branch_id0" required
                 data-placeholder="Select a Branch" style="width: 100%;">
                 @foreach ($clinicBranches as $clinicBranch)
@@ -24,34 +25,38 @@
 
     <div class="col-md-3">
         <div class="form-group">
-            <label class="form-label" for="appdate">Appointment Date & Time</label>
-            <input class="form-control" type="datetime-local" id="appdate" name="appdate" value="{{ now()->setTimezone('Asia/Kolkata')->format('Y-m-d\TH:i') }}" required>
+            <label class="form-label" for="appdate">Appointment Date & Time <span class="text-danger">
+                    *</span></label>
+            <input class="form-control" type="datetime-local" id="appdate" name="appdate"
+                value="{{ now()->setTimezone('Asia/Kolkata')->format('Y-m-d\TH:i') }}" required>
 
         </div>
     </div>
 
     <div class="col-md-3">
         <div class="form-group">
-            <label class="form-label" for="doctor2">Doctor</label>
+            <label class="form-label" for="doctor2">Doctor <span class="text-danger">
+                    *</span></label>
             <select class="select2" id="doctor2" name="doctor2" required data-placeholder="Select a Doctor"
                 style="width: 100%;">
                 <option value="">select a doctor</option>
                 @foreach ($workingDoctors as $doctor)
-                    <?php $doctorName = str_replace("<br>", " ", $doctor->user->name);?>
-                  <option value="{{ $doctor->user_id}}"> {{$doctorName}}</option>  
+                    <?php $doctorName = str_replace('<br>', ' ', $doctor->user->name); ?>
+                    <option value="{{ $doctor->user_id }}"> {{ $doctorName }}</option>
                 @endforeach
             </select>
         </div>
     </div>
 
-    
+
 
     <div class="col-md-3">
         <div class="form-group">
-            <label class="form-label" for="appstatus">Appointment Status</label>
+            <label class="form-label" for="appstatus">Appointment Status <span class="text-danger">
+                    *</span></label>
             <select class="form-select" id="appstatus" name="appstatus" required>
-                @foreach ($appointmentStatuses as $status )
-                <option value="{{ $status->id }}">{{ $status->status }}</option> 
+                @foreach ($appointmentStatuses as $status)
+                    <option value="{{ $status->id }}">{{ $status->status }}</option>
                 @endforeach
             </select>
         </div>
@@ -90,5 +95,3 @@
         </div>
     </div>
 </div>
-
-

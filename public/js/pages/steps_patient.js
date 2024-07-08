@@ -29,6 +29,17 @@ $("#patientform").steps({
                         valid = false;
                     }
                 });
+                // Find selects in the current step only
+                var selects = form
+                    .find("section")
+                    .eq(currentIndex)
+                    .find("select");
+                // Validate only selects in the current step
+                selects.each(function () {
+                    if (!validator.element(this)) {
+                        valid = false;
+                    }
+                });
             }
             // If form is not valid, handle error messages
             if (!valid) {
@@ -37,7 +48,7 @@ $("#patientform").steps({
             // Return true or false based on validation result
             // return valid;
         }
-        
+
         // Return true if moving backwards or all validation passed
         return currentIndex > newIndex || valid;
     },
@@ -67,7 +78,7 @@ $("#patientform").steps({
             storeRoute = $("#updateRoute").data("url");
         }
 
-        console.log("stepjs :"+formDataPatient);
+        console.log("stepjs :" + formDataPatient);
         $.ajax({
             url: storeRoute,
             type: "POST",
@@ -97,38 +108,38 @@ $("#patientform").steps({
                 if (xhr.responseJSON && xhr.responseJSON.errors) {
                     // Validation error occurred
                     console.log(xhr.responseJSON.errors); // Log the validation errors to console
-                    var errorMessage = '<ul>'; // Start an unordered list for error messages
+                    var errorMessage = "<ul>"; // Start an unordered list for error messages
 
                     // Loop through the errors and concatenate them into list items
-                    $.each(xhr.responseJSON.errors, function(key, value) {
-                        errorMessage += '<li>' + value[0] + '</li>'; // Wrap each error message in <li> tags
+                    $.each(xhr.responseJSON.errors, function (key, value) {
+                        errorMessage += "<li>" + value[0] + "</li>"; // Wrap each error message in <li> tags
                     });
-            
-                    errorMessage += '</ul>'; // Close the unordered list
-            
-                    $('#error-message').html(errorMessage);
-                    $('#error-message').show();
 
+                    errorMessage += "</ul>"; // Close the unordered list
+
+                    $("#error-message").html(errorMessage);
+                    $("#error-message").show();
                 } else if (xhr.responseJSON && xhr.responseJSON.error) {
                     // Other server-side error occurred
                     console.log(xhr.responseJSON.error); // Log the server error message to console
-        
+
                     // Display error message on the page
-                    $('#error-message').text(xhr.responseJSON.error);
-                    $('#error-message').show(); // Show the error message element
+                    $("#error-message").text(xhr.responseJSON.error);
+                    $("#error-message").show(); // Show the error message element
                 } else {
-                    console.error('Error occurred but no specific error message received.');
-                    $('#error-message').text('An error occurred.');
-                    $('#error-message').show(); // Show a generic error message
+                    console.error(
+                        "Error occurred but no specific error message received."
+                    );
+                    $("#error-message").text("An error occurred.");
+                    $("#error-message").show(); // Show a generic error message
                 }
-                
             },
         });
     },
 }),
     $("#patientform").validate({
-        
         ignore: "input[type=hidden]",
+        ignore: "select[name=title]",
         errorClass: "text-danger",
         successClass: "text-success",
         highlight: function (element, errorClass) {
@@ -138,7 +149,13 @@ $("#patientform").steps({
             $(element).removeClass(errorClass);
         },
         errorPlacement: function (error, element) {
-            error.insertAfter(element);
+            // alert($(element).attr("id"));
+            if ($(element).hasClass("select2")) {
+                error.insertAfter($(element).siblings());
+            } else {
+                error.insertAfter(element);
+            }
+            // error.insertAfter(element);
         },
         rules: {
             title: { required: true },
@@ -148,8 +165,13 @@ $("#patientform").steps({
             date_of_birth: { required: true, date: true },
             aadhaar_no: { minlength: 12, maxlength: 12, digits: true },
             email: { email: true },
-            phone: { required: true, digits: true, minlength: 10, maxlength: 15  },
-            alter_phone: { digits: true, minlength: 10, maxlength: 15  },
+            phone: {
+                required: true,
+                digits: true,
+                minlength: 10,
+                maxlength: 15,
+            },
+            alter_phone: { digits: true, minlength: 10, maxlength: 15 },
             regdate: { required: true, date: true },
             address1: { required: true, minlength: 3, maxlength: 255 },
             address2: { required: true, minlength: 3, maxlength: 255 },
@@ -157,14 +179,14 @@ $("#patientform").steps({
             state_id: { required: true },
             city_id: { required: true },
             pincode: { required: true, digits: true, maxlength: 10 },
-            blood_group: { minlength: 1 },  
+            blood_group: { minlength: 1 },
             clinic_branch_id0: { required: true },
             doctor2: { required: true },
             appdate: { required: true },
             appstatus: { required: true },
             height: { number: true },
             weight: { number: true },
-            bp: {minlength: 3},
-            rdoctor: {minlength: 3},
+            bp: { minlength: 3 },
+            rdoctor: { minlength: 3 },
         },
     });

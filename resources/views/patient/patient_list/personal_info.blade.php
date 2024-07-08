@@ -1,10 +1,11 @@
  <div class="row">
      <div class="col-md-3">
          <div class="form-group">
-             <label class="form-label" for="firstname">First Name</label>
+             <label class="form-label" for="firstname">First Name <span class="text-danger">
+                     *</span></label>
              <div class="input-group form-group">
 
-                 <select class="form-control select-title" id="title" name="title" required>
+                 <select class="form-control select-title" id="title" name="title" required style="width: 40%;">
                      <option value="" selected disabled>Select Title</option>
                      <option value="Mr.">Mr.</option>
                      <option value="Mrs.">Mrs.</option>
@@ -14,19 +15,21 @@
                      <option value="Mx.">Mx.</option>
                  </select>
                  <input type="text" class="form-control" id="firstname" name="firstname" placeholder="First Name"
-                     required style="width: 100px;">
+                     required style="width: 60%;">
              </div>
          </div>
      </div>
      <div class="col-md-3">
          <div class="form-group">
-             <label class="form-label" for="lastname">Last Name</label>
+             <label class="form-label" for="lastname">Last Name <span class="text-danger">
+                     *</span></label>
              <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Last Name" required>
          </div>
      </div>
      <div class="col-md-2">
          <div class="form-group">
-             <label class="form-label" for="gender">Gender</label>
+             <label class="form-label" for="gender">Gender <span class="text-danger">
+                     *</span></label>
              <select class="form-select" id="gender" name="gender" required>
                  <option value="">Select Gender</option>
                  <option value="M">Male</option>
@@ -56,7 +59,8 @@
 
      <div class="col-md-2">
          <div class="form-group">
-             <label class="form-label" for="date_of_birth">Date of Birth</label>
+             <label class="form-label" for="date_of_birth">Date of Birth <span class="text-danger">
+                     *</span></label>
              <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required>
          </div>
      </div>
@@ -79,7 +83,8 @@
      <div class="col-md-2">
          <div class="form-group">
              <label class="form-label" for="phone">Contact
-                 Number</label>
+                 Number <span class="text-danger">
+                     *</span></label>
              <input type="text" class="form-control" id="phone" name="phone" placeholder="Phone Number"
                  required>
          </div>
@@ -93,7 +98,8 @@
      </div>
      <div class="col-md-2">
          <div class="form-group">
-             <label class="form-label" for="regdate">Registration Date</label>
+             <label class="form-label" for="regdate">Registration Date <span class="text-danger">
+                     *</span></label>
              <input type="date" class="form-control" id="regdate" name="regdate" value="<?php echo date('Y-m-d'); ?>"
                  required>
          </div>
@@ -104,7 +110,8 @@
  <!--address-->
  <div class="row">
      <div class="form-group col-md-2">
-         <label class="form-label" for="address1">Communication Address</label>
+         <label class="form-label" for="address1">Communication Address <span class="text-danger">
+                 *</span></label>
          <input type="text" class="form-control" id="address1" name="address1" placeholder="Adress line 1"
              required>
      </div>
@@ -177,9 +184,9 @@
          <select class="select2" id="ccountry_id" name="ccountry_id" required data-placeholder="Select a Country"
              style="width: 100%;">
              @foreach ($countries as $country)
-                 <option value="{{ $country->id }}" <?php if ($country->id == 101) {
-                     echo 'selected';
-                 } ?>>
+                 <option value="{{ $country->id }}" <?php// if ($country->id == 101) {
+                                              //         echo 'selected';
+                                              //     } ?> ?> ?>>
                      {{ $country->country }}</option>
              @endforeach
          </select>

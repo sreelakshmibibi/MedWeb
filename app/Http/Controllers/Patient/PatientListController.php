@@ -45,23 +45,23 @@ class PatientListController extends Controller
 
                         //return $row->latestAppointment->app_status;
                         if ($row->latestAppointment->app_status == 1) {
-                            $btn = "<span class='btn-sm badge badge-success-light'>Scheduled</span>";
+                            $btn = "<span class='d-block badge badge-success-light'>Scheduled</span>";
                         } elseif ($row->latestAppointment->app_status == 2) {
-                            $btn = '<span class="btn-sm badge badge-success-light">Waiting</span>';
+                            $btn = '<span class="d-block badge badge-success-light">Waiting</span>';
                         } elseif ($row->latestAppointment->app_status == 3) {
-                            $btn = '<span class="btn-sm badge badge-danger-light">Unavailable</span>';
+                            $btn = '<span class="d-block badge badge-danger-light">Unavailable</span>';
                         } elseif ($row->latestAppointment->app_status == 4) {
-                            $btn = '<span class="btn-sm badge badge-danger-light">Cancelled</span>';
+                            $btn = '<span class="d-block badge badge-danger-light">Cancelled</span>';
                         } elseif ($row->latestAppointment->app_status == 5) {
-                            $btn = '<span class="btn-sm badge badge-success-light">Completed</span>';
+                            $btn = '<span class="d-block badge badge-success-light">Completed</span>';
                         } elseif ($row->latestAppointment->app_status == 6) {
-                            $btn = '<span class="btn-sm badge badge-success-light">Billing</span>';
+                            $btn = '<span class="d-block badge badge-success-light">Billing</span>';
                         } elseif ($row->latestAppointment->app_status == 7) {
-                            $btn = '<span class="btn-sm badge badge-success-light">Procedure</span>';
+                            $btn = '<span class="d-block badge badge-success-light">Procedure</span>';
                         } elseif ($row->latestAppointment->app_status == 8) {
-                            $btn = '<span class="btn-sm badge badge-danger-light">Missed</span>';
+                            $btn = '<span class="d-block badge badge-danger-light">Missed</span>';
                         } elseif ($row->latestAppointment->app_status == 9) {
-                            $btn = '<span class="btn-sm badge badge-success-light">Re-Scheduled</span>';
+                            $btn = '<span class="d-block badge badge-success-light">Re-Scheduled</span>';
                         }
 
                         return $btn;
@@ -70,33 +70,33 @@ class PatientListController extends Controller
                     return 'N/A';
                 })
                 ->addColumn('address', function ($row) {
-                    $address = $row->address1.', '.$row->address2.', '.$row->city->city.', '.
-                        $row->state->state.', '.
-                        $row->country->country.', '.
-                        'Pincode - '.$row->pincode;
+                    $address = $row->address1 . ', ' . $row->address2 . ', ' . $row->city->city . ', ' .
+                        $row->state->state . ', ' .
+                        $row->country->country . ', ' .
+                        'Pincode - ' . $row->pincode;
 
                     return $address;
                 })
                 ->addColumn('appointment', function ($row) {
                     if ($row->latestAppointment) {
-                        return $row->latestAppointment->app_date.' '.$row->latestAppointment->app_time;
+                        return $row->latestAppointment->app_date . ' ' . $row->latestAppointment->app_time;
                     }
 
                     return 'N/A';
                 })
                 ->addColumn('next_appointment', function ($row) {
                     if ($row->nextAppointment) {
-                        return $row->nextAppointment->app_date.' '.$row->nextAppointment->app_time;
+                        return $row->nextAppointment->app_date . ' ' . $row->nextAppointment->app_time;
                     }
 
                     return 'N/A';
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="'.route('staff.staff_list.view', $row->id).'" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
-                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="'.$row->id.'" title="change status"><i class="fa-solid fa-sliders"></i></button>';
+                    $btn = '<a href="' . route('staff.staff_list.view', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
+                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
                     if (auth()->user()->hasRole('Admin')) {
-                        $btn .= '<a href="'.route('patient.patient_list.edit', $row->id).'" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
-                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="'.$row->id.'" title="Delete"><i class="fa-solid fa-trash"></i></button>';
+                        $btn .= '<a href="' . route('patient.patient_list.edit', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="Delete"><i class="fa-solid fa-trash"></i></button>';
                     }
 
                     return $btn;
@@ -161,11 +161,12 @@ class PatientListController extends Controller
         $doctorAvailabilityService = new DoctorAvaialbilityService();
         $existingAppointments = $doctorAvailabilityService->getExistingAppointments($branchId, $appDate, $doctor_id);
         $checkAllocated = $doctorAvailabilityService->checkAllocatedAppointments($branchId, $appDate, $doctor_id, $appTime);
-        $response = ["existingAppointments" => $existingAppointments,
-                    "checkAllocated" => $checkAllocated
-                ];
+        $response = [
+            "existingAppointments" => $existingAppointments,
+            "checkAllocated" => $checkAllocated
+        ];
         return response()->json($response);
-    
+
     }
 
     /**
@@ -196,12 +197,12 @@ class PatientListController extends Controller
                 $dailyCount = 1;
             }
 
-            $uniquePatientId = $date.sprintf('%03d', $dailyCount);
+            $uniquePatientId = $date . sprintf('%03d', $dailyCount);
 
             // Store the patient data
             $patient = new PatientProfile();
             $patient->patient_id = $uniquePatientId; // Generate a unique patient_id
-            $patient->first_name = $request->input('title').'<br> '.$request->input('firstname');
+            $patient->first_name = $request->input('title') . '<br> ' . $request->input('firstname');
             $patient->last_name = $request->input('lastname');
             $patient->gender = $request->input('gender');
             $patient->date_of_birth = $request->input('date_of_birth');
@@ -284,7 +285,7 @@ class PatientListController extends Controller
             DB::rollback();
 
             // exit;
-            return response()->json(['error' => 'Failed to create patient: '.$e->getMessage()], 422);
+            return response()->json(['error' => 'Failed to create patient: ' . $e->getMessage()], 422);
         }
 
     }
@@ -301,7 +302,7 @@ class PatientListController extends Controller
         $newAppointmentNumber = $appointmentCount + 1;
 
         // Concatenate the year, month, and the incremented count to form the appointment ID
-        $appId = 'APP'.$yearMonth.str_pad($newAppointmentNumber, 4, '0', STR_PAD_LEFT);
+        $appId = 'APP' . $yearMonth . str_pad($newAppointmentNumber, 4, '0', STR_PAD_LEFT);
         //Log::info('$appId: '.$appId);
 
         return $appId;
@@ -322,7 +323,7 @@ class PatientListController extends Controller
     {
         $patientProfile = PatientProfile::with(['lastAppointment'])->find($id);
         //$patient = PatientProfile::find($id);
-        abort_if(! $patientProfile, 404);
+        abort_if(!$patientProfile, 404);
         $appointment = $patientProfile->lastAppointment;
         $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
         $countries = Country::all();
@@ -356,7 +357,7 @@ class PatientListController extends Controller
             // Update the patient data
             $patient = PatientProfile::findOrFail($request->edit_patient_id);
             $patient->fill([
-                'first_name' => $request->title.'<br> '.$request->firstname,
+                'first_name' => $request->title . '<br> ' . $request->firstname,
                 'last_name' => $request->input('lastname'),
                 'gender' => $request->input('gender'),
                 'date_of_birth' => $request->input('date_of_birth'),
@@ -374,7 +375,7 @@ class PatientListController extends Controller
                 'updated_by' => auth()->user()->id,
             ]);
 
-            if (! $patient->save()) {
+            if (!$patient->save()) {
                 //throw new \Exception('Failed to update patient');
                 return redirect()->back()->with('error', 'Failed to update patient');
             }
@@ -410,7 +411,7 @@ class PatientListController extends Controller
                 'updated_by' => auth()->user()->id,
             ]);
 
-            if (! $appointment->save()) {
+            if (!$appointment->save()) {
                 //throw new \Exception('Failed to update appointment');
                 return redirect()->back()->with('error', 'Failed to update appointment');
             }
@@ -421,14 +422,14 @@ class PatientListController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
 
-            return response()->json(['error' => 'Failed to update patient: '.$e->getMessage()], 422);
+            return response()->json(['error' => 'Failed to update patient: ' . $e->getMessage()], 422);
         }
     }
 
     public function changeStatus(string $id)
     {
         $patientProfile = PatientProfile::find($id);
-        abort_if(! $patientProfile, 404);
+        abort_if(!$patientProfile, 404);
         if ($patientProfile) {
             $active = 'N';
             $inActive = 'Y';
