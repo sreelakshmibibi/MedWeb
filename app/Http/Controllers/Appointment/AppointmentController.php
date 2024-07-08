@@ -160,6 +160,7 @@ class AppointmentController extends Controller
             $existingAppointment = Appointment::where('doctor_id', $doctorId)
                 ->where('app_date', $appDate)
                 ->where('app_time', $appTime)
+                ->where('app_branch', $request->input('clinic_branch_id'))
                 ->first();
 
             if ($existingAppointment) {
@@ -198,10 +199,10 @@ class AppointmentController extends Controller
             }
 
         } catch (\Exception $e) {
-            echo "<pre>";
-            print_r($e->getMessage());
+            // echo "<pre>";
+            // print_r($e->getMessage());
             DB::rollback();
-            exit;
+            // exit;
             return redirect()->back()->with('error', 'Failed to create appointment: ' . $e->getMessage());
         }
     }

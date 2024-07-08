@@ -55,12 +55,9 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="appdate">Booking Date & Time</label><span class="text-danger">
-                                    *</span>
-                                    <input class="form-control" type="datetime-local" id="appdate" name="appdate"
-                                        required>
-                                        <div id="appDateError" class="invalid-feedback"></div>
-
+                                    <label class="form-label" for="appdate">Booking Date & Time</label><span class="text-danger">*</span>
+                                    <input class="form-control" type="datetime-local" id="appdate" name="appdate" required>
+                                    <div id="appDateError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             
@@ -84,11 +81,15 @@
                             
                         </div>
                         <div class="row">
-                            <div class="col-md-6" style="display:none" id="existingAppointments">
-                               
+                            <div style="display:none" id="existingAppointmentsError">
+                                <span class="text-danger">Already exists appointment for the selected time!</span>
                             </div>
                         </div>
-
+                        <div class="row">
+                            <div style="display:none" id="existingAppointments">
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
 
@@ -140,11 +141,11 @@
             }
             if (appDate.length === 0) {
                 $('#appdate').addClass('is-invalid');
-                $('#appdateError').text('Appointment date is required.');
+                $('#appDateError').text('Appointment date is required.');
                 return; // Prevent further execution
             } else {
                 $('#appdate').removeClass('is-invalid');
-                $('#appdateError').text('');
+                $('#appDateError').text('');
             }
 
 
@@ -161,6 +162,7 @@
                 success: function(response) {
                     // If successful, hide modal and show success message
                     $('#existingAppointments').hide();
+                    $('#existingAppointmentsError').hide();
                     $('#modal-booking').modal('hide');
                     $('#successMessage').text('New Appointment added successfully');
                     $('#successMessage').fadeIn().delay(3000)
@@ -169,16 +171,24 @@
                     table.ajax.reload();
                 },
                 error: function(xhr) {
-                    // If error, update modal to show errors
+                    // Reset previous error messages
+                    $('#appDateError').text('');
+
+                    // Check if there are validation errors
                     var errors = xhr.responseJSON.errors;
+                    $('#appDateError').text('');
 
-                    if (errors.hasOwnProperty('department')) {
-                        $('#department').addClass('is-invalid');
-                        $('#departmentError').text(errors.department[0]);
-                    }
-
-                    if (errors.hasOwnProperty('status')) {
-                        $('#statusError').text(errors.status[0]);
+                    // Check if there are validation errors
+                    var errors = xhr.responseJSON.errors;
+                    if (errors && errors.hasOwnProperty('appdate')) {
+                        $('#appdate').addClass('is-invalid');
+                        $('#appDateError').text(errors.appdate[0]);
+                    } else {
+                        // Handle specific error from backend
+                        var errorMessage = xhr.responseJSON.error;
+                        if (errorMessage) {
+                            $('#existingAppointmentsError').show();
+                        }
                     }
                 }
             });
