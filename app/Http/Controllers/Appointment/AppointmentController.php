@@ -127,7 +127,7 @@ class AppointmentController extends Controller
                         $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1" title="follow up" data-bs-toggle="modal" data-id="' . $row->id . '" data-parent-id="' . $parent_id . '" data-patient-id="' . $row->patient->patient_id . '" data-patient-name="' . str_replace("<br>", " ", $row->patient->first_name." ".$row->patient->last_name) . '"
                             data-bs-target="#modal-booking" ><i class="fa fa-plus"></i></button>';
                         
-                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-edit btn-xs me-1" title="reschedule" data-bs-toggle="modal" data-id="' . $row->id . '"
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-reschedule btn-xs me-1" title="reschedule" data-bs-toggle="modal" data-id="' . $row->id . '" data-parent-id="' . $parent_id . '" data-patient-id="' . $row->patient->patient_id . '" data-patient-name="' . str_replace("<br>", " ", $row->patient->first_name." ".$row->patient->last_name) . '"
                         data-bs-target="#modal-reschedule" ><i class="fa-solid fa-calendar-days"></i></button>';
                         
                         $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-cancel" data-id="' . $row->id . '" title="cancel">
@@ -231,21 +231,24 @@ class AppointmentController extends Controller
     {
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])
                         ->find($id);
+                        
         abort_if(!$appointment, 404);
-        return $appointment;
+        if ($appointment) {
+            $address = explode("<br>",$appointment->branch->clinic_address);
+            $address = implode(", ", $address) ;
+            $clinicAddress = implode(", ", [
+                $address,
+                $appointment->branch->city->city,
+                $appointment->branch->state->state
+                // $row->branch->country->country,
+                // "Pincode - " . $row->branch->pincode
+            ]);
+            $appointment->clinic_branch_id = $clinicAddress;
+            $appointment->app_date = date('d-m-Y', strtotime( $appointment->app_date));
+            $appointment->app_time = date('H:m', strtotime( $appointment->app_time));            
 
-        // $userDetails = $Appointment->user;
-        // $departments = Department::where('status', 'Y')->get();
-        // $userTypes = UserType::where('status', 'Y')->get();
-        // $commonService = new CommonService();
-        // $name = $commonService->splitNames($userDetails->name);
-        // $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
-        // $availability = DoctorWorkingHour::where('user_id', $Appointment->user_id)->get();
-        // $availabilityCount = DoctorWorkingHour::where('user_id', $Appointment->user_id)->groupBy('clinic_branch_id')->count();
-        // $doctorAvailability = new DoctorAvaialbilityService();
-        // $availableBranches = $doctorAvailability->availableBranchAndTimings($Appointment->user_id);
-        // $countries = Country::all();
-        // return view('appointment.edit', compact('name', 'countries', 'userTypes', 'departments', 'Appointment', 'userDetails', 'availability', 'clinicBranches', 'availabilityCount', 'availability', 'availableBranches'));
+        }
+        return $appointment;
     }
 
 

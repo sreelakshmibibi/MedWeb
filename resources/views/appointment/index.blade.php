@@ -191,16 +191,29 @@
 
             });
 
-            $(document).on('click', '.btn-edit', function() {
+            $(document).on('click', '.btn-reschedule', function() {
                 var appId = $(this).data('id');
+                var patientId = $(this).data('patient-id');
+                var patientName = $(this).data('patient-name');
+                
                 $('#reschedule_app_id').val(appId); // Set app ID in the hidden input
+                // Set app ID in the hidden input
                 $.ajax({
                     url: '{{ url("appointment", "") }}' + "/" + appId + "/edit",
                     method: 'GET',
                     success: function(response) {
                         $('#reschedule_app_id').val(response.id);
-
+                        $('#edit_patient_id').val(response.patient_id); // Set app ID in the hidden input
+                        $('#edit_patient_name').val(patientName);
+                        var doctorName = response.doctor.name;
+                        var formattedDoctorName = doctorName.replace(/<br>/g, ' ');
+                        $('#edit_doctor_id').val(formattedDoctorName);
+                        
+                        $('#edit_clinic_branch_id').val(response.clinic_branch_id);
                         // $('#edit_staff').val(response.staff);
+                        var app_date =response.app_date;
+                        var app_time =response.app_time;
+                        $('#scheduled_appdate').val(app_date + ' ' +app_time);
                         $('#modal-reschedule').modal('show');
                     },
                     error: function(error) {
@@ -224,7 +237,7 @@
             if (branchId && appDate) {
                 
                 $.ajax({
-                    url: '{{ route('get.doctors', '') }}' + '/' + branchId,
+                    url: '{{ route("get.doctors", "") }}' + '/' + branchId,
                     type: "GET",
                     data: {
                         appdate: appDate
@@ -259,7 +272,7 @@
             if (branchId && appDate && doctorId) {
                 
                 $.ajax({
-                    url: '{{ route('get.exisitingAppointments', '') }}' + '/' + branchId,
+                    url: '{{ route("get.exisitingAppointments", "") }}' + '/' + branchId,
                     type: "GET",
                     data: {
                         appdate: appDate,

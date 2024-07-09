@@ -15,15 +15,15 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="patient_id">Patient ID</label>
-                                    <input class="form-control" type="text" id="edit_patient_id" name="patient_id"
-                                        placeholder="Patient ID" readonly>
+                                    <input class="form-control" type="text" id="edit_patient_id" name="edit_patient_id"
+                                           placeholder="Patient ID" readonly>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="patient_name">Patient Name</label>
                                     <input class="form-control" type="text" id="edit_patient_name"
-                                        name="patient_name" placeholder="Patient name" readonly>
+                                           name="edit_patient_name" placeholder="Patient name" readonly>
                                 </div>
                             </div>
                         </div>
@@ -32,54 +32,47 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="doctor">Doctor</label>
-                                    <select class="select2" id="doctor_id" name="doctor_id" required
-                                        data-placeholder="Select a Doctor" style="width: 100%;">
-                                        <option>select a doctor</option>
-                                    </select>
+                                    <input type="text" class="form-control" id="edit_doctor_id" name="edit_doctor_id" required
+                                             style="width: 100%;" readonly>
+                                        
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="clinic_branch_id">Branch</label>
-                                    <select class="select2" id="clinic_branch_id" name="clinic_branch_id" required
-                                        data-placeholder="Select a Branch" style="width: 100%;">
-                                        @foreach ($clinicBranches as $clinicBranch)
-                                            <?php
-                                            $clinicAddress = $clinicBranch->clinic_address;
-                                            $clinicAddress = explode('<br>', $clinicBranch->clinic_address);
-                                            $clinicAddress = implode(', ', $clinicAddress);
-                                            $branch = $clinicAddress . ', ' . $clinicBranch->city->city . ', ' . $clinicBranch->state->state;
-                                            ?>
-                                            <option value="{{ $clinicBranch->id }}">
-                                                {{ $branch }}</option>
-                                        @endforeach
-                                    </select>
+                                    <input type="text" class="form-control" id="edit_clinic_branch_id" name="edit_clinic_branch_id" required
+                                            style="width: 100%;" readonly>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="scheduled_appdate">Scheduled Date & Time</label>
+                                    <input class="form-control" type="text" id="scheduled_appdate" name="scheduled_appdate"
+                                           required readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="rescheduledAppdate">Reschedule Date & Time</label><span class="text-danger">*</span>
+                                    <input class="form-control" type="datetime-local" id="rescheduledAppdate" name="rescheduledAppdate"
+                                           required>
                                 </div>
                             </div>
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="appdate">Reschedule Date & Time</label>
-                                    <input class="form-control" type="datetime-local" id="appdate" name="appdate"
-                                        required>
-
-                                </div>
+                            <div class="form-group">
+                                <label class="form-label" for="appdate">Reason for Rescheduling</label><span class="text-danger">*</span>
+                                <textarea class="form-control" type="datetime-local" id="reschedule_status_change_reason" name="reschedule_status_change_reason"
+                                        required></textarea>
+                                <div id="rescheduleReasonError" class="invalid-feedback"></div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="appstatus">Appointment Status</label>
-                                    <select class="form-select" id="appstatus" name="appstatus" required>
-                                        <option value="">Select Status</option>
-                                        <option value="W">Waiting</option>
-                                        <option value="S">Success</option>
-                                    </select>
-                                </div>
-                            </div>
+                            
                         </div>
 
-                        
                     </div>
                 </div>
 
@@ -91,6 +84,7 @@
         </div>
     </div>
 </form>
+
 
 <script>
     $(function() {
@@ -105,31 +99,8 @@
         });
 
         // Pre-populate form fields when modal opens for editing
-        $('#modal-edit').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget); // Button that triggered the modal
-            var appId = button.data('id'); // Extract app ID from data-id attribute
 
-            // Fetch app details via AJAX
-            $.ajax({
-                url: '{{ url("app") }}' + "/" + appId + "/edit",
-                method: 'GET',
-                success: function(response) {
-                    // Populate form fields
-                    $('#reschedule_app_id').val(response.id);
-                    $('#reschedule_app').val(response.app);
-
-                    // Set radio button status
-                    if (response.status === 'Y') {
-                        $('#edit_yes').prop('checked', true);
-                    } else {
-                        $('#edit_no').prop('checked', true);
-                    }
-                },
-                error: function(error) {
-                    console.log(error);
-                }
-            });
-        });
+       
     });
 
     document.addEventListener('DOMContentLoaded', function() {
