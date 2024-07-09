@@ -351,15 +351,14 @@
                 
             }
         }
-        $(document).on('click', '.btn-danger', function() {
+        $(document).on('click', '#btn-cancel', function() {
                 var appId = $(this).data('id');
                 $('#delete_app_id').val(appId); // Set staff ID in the hidden input
                 $('#modal-cancel').modal('show');
-            });
+        });
 
         $('#btn-confirm-cancel').click(function() {
             var appId = $('#delete_app_id').val();
-            console.log(appId,'hi');
             var reason = $('#app_status_change_reason').val();
             
             if (reason.length === 0) {

@@ -10,9 +10,9 @@
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            <label class="form-label" for="experience">Experience <span class="text-danger">
+            <label class="form-label" for="years_of_experience">Experience <span class="text-danger">
                     *</span></label>
-            <input type="text" class="form-control" id="experience" name="experience" placeholder="experience"
+            <input type="text" class="form-control" id="years_of_experience" name="years_of_experience" placeholder="experience"
                 required value="{{ $staffProfile->years_of_experience }}">
         </div>
     </div>
