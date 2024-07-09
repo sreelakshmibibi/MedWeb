@@ -5,13 +5,14 @@
     <div class="content-wrapper">
         <div class="container-full">
             <div class="content-header">
-                
+
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Add Staff Member</h3>
                 </div>
                 <div id="error-message-container">
-                    <p id="error-message" class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fadeOut"
-                     style="display: none;"></p>
+                    <p id="error-message"
+                        class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fadeOut"
+                        style="display: none;"></p>
                 </div>
             </div>
 
@@ -239,9 +240,13 @@
                 if ($(this).val() && $(this).val().includes('3')) {
                     $('.doctorFields').show();
                     $('.otherFields').hide();
+                    $('.doctorFields input').attr('required', true);
+                    $('.otherFields select').attr('required', false);
                 } else {
                     $('.doctorFields').hide();
                     $('.otherFields').show();
+                    $('.doctorFields input').attr('required', false);
+                    $('.otherFields select').attr('required', true);
                 }
             });
 
@@ -249,7 +254,7 @@
             function loadStates(countryId, stateSelectElement) {
                 if (countryId) {
                     $.ajax({
-                        url: '{{ route("get.states", "") }}' + '/' + countryId,
+                        url: '{{ route('get.states', '') }}' + '/' + countryId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -275,7 +280,7 @@
             function loadCities(stateId, citySelectElement) {
                 if (stateId) {
                     $.ajax({
-                        url: '{{ route("get.cities", "") }}' + '/' + stateId,
+                        url: '{{ route('get.cities', '') }}' + '/' + stateId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {

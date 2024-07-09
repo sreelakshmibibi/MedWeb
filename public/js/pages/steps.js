@@ -214,7 +214,7 @@ $("#staffform").steps({
         },
         errorPlacement: function (error, element) {
             if ($(element).hasClass("select2")) {
-                error.insertAfter($(element).siblings());
+                error.insertAfter($(element).siblings(":last"));
             } else {
                 error.insertAfter(element);
             }
@@ -243,7 +243,6 @@ $("#staffform").steps({
                 required: true,
                 date: true,
             },
-
             phone: {
                 required: true,
             },
@@ -257,12 +256,10 @@ $("#staffform").steps({
                 minlength: 3,
                 maxlength: 255,
             },
-
             pincode: {
                 required: true,
                 maxlength: 10,
             },
-
             aadhaar_no: {
                 required: true,
                 minlength: 12,
@@ -287,21 +284,5 @@ $("#staffform").steps({
                 required: true,
                 date: true,
             },
-            // specialization: {
-            //     required: true,
-            //     minlength: 3,
-            //     maxlength: 255,
-            // },
-            // subspecialty: {
-            //     required: true,
-            //     minlength: 3,
-            //     maxlength: 255,
-            // },
-            // license_number: {
-            //     required: true,
-            // },
-            // clinic_branch_id: {
-            //     required: true,
-            // },
         },
     });
