@@ -112,7 +112,8 @@
                     $('#successMessage').text('Disease added successfully');
                     $('#successMessage').fadeIn().delay(3000)
                         .fadeOut(); // Show for 3 seconds
-                    location.reload();
+                    // location.reload();
+                    table.ajax.reload();
                     // Optionally, you can reload or update the table here
                 },
                 error: function(xhr) {

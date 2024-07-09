@@ -58,8 +58,9 @@
     @include('settings.diseases.delete')
 
     <script type="text/javascript">
+        var table
         jQuery(function($) {
-            var table = $('.data-table').DataTable({
+            table = $('.data-table').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('settings.disease') }}",

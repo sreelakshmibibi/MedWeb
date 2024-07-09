@@ -100,7 +100,8 @@
                     $('#successMessage').text('Disease updated successfully');
                     $('#successMessage').fadeIn().delay(3000)
                         .fadeOut(); // Show for 3 seconds
-                    location.reload(); // Refresh the page or update the table as needed
+                    // location.reload(); // Refresh the page or update the table as needed
+                    table.ajax.reload();
                 },
                 error: function(xhr) {
                     // If error, update modal to show errors
