@@ -14,7 +14,7 @@ class StaffService
         $existingAvailability = DoctorWorkingHour::where('user_id', $userId)->get();
         if (!empty($existingAvailability)) {
             DoctorWorkingHour::where('user_id', $userId)
-                            ->update(['status' => 'N']);
+                ->update(['status' => 'N']);
         }
         $weekDays = [
             WeekDay::MONDAY,

@@ -12,7 +12,8 @@
                     <div class="container-fluid">
                         <!-- Department Name -->
                         <div class="form-group">
-                            <label class="form-label" for="department">Department</label>
+                            <label class="form-label" for="department">Department Name <span class="text-danger">
+                                    *</span></label>
                             <input class="form-control" type="text" id="department" name="department"
                                 placeholder="Department Name">
                             <div id="departmentError" class="invalid-feedback"></div>
@@ -40,6 +41,9 @@
         </div>
     </div>
 </form>
+
+<!-- Include custom JavaScript file -->
+<script src="{{ asset('js/departments.js') }}"></script>
 
 <script>
     $(function() {
@@ -86,8 +90,8 @@
                     $('#successMessage').text('Department created successfully');
                     $('#successMessage').fadeIn().delay(3000)
                         .fadeOut(); // Show for 3 seconds
-                    location.reload();
-                    // Optionally, you can reload or update the table here
+                    // location.reload();
+                    table.ajax.reload();
                 },
                 error: function(xhr) {
                     // If error, update modal to show errors

@@ -15,7 +15,9 @@ use App\Models\StaffProfile;
 use App\Models\State;
 use App\Models\User;
 use App\Models\UserType;
+use App\Models\UserVerify;
 use App\Models\WeekDay;
+use App\Notifications\WelcomeVerifyNotification;
 use App\Services\StaffService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -47,32 +49,41 @@ class StaffListController extends Controller
                 ->addColumn('name', function ($row) {
                     return str_replace("<br>", " ", $row->user->name);
                 })
-                ->addColumn('email', function ($row) {
-                    return $row->user->email;
-                })
+                // ->addColumn('email', function ($row) {
+                //     return $row->user->email;
+                // })
                 ->addColumn('role', function ($row) {
                     $role = '';
                     if ($row->user->is_doctor) {
-                        $role .= '<span class="btn-sm badge badge-success-light">Doctor</span>';
+                        $role .= '<span class="d-block  badge badge-success-light mb-1">Doctor</span>';
                     }
                     if ($row->user->is_nurse) {
-                        $role .= '<span class="btn-sm badge badge-warning-light">Nurse</span>';
+                        $role .= '<span class="d-block  badge badge-warning-light mb-1">Nurse</span>';
                     }
                     if ($row->user->is_admin) {
-                        $role .= '<span class="btn-sm badge badge-primary-light">Admin</span>';
+                        $role .= '<span class="d-block  badge badge-primary-light mb-1">Admin</span>';
                     }
                     if ($row->user->is_reception) {
-                        $role .= '<span class="btn-sm badge badge-info-light">Others</span>';
+                        $role .= '<span class="d-block  badge badge-info-light mb-1">Others</span>';
                     }
                     return $role;
                 })
+                ->addColumn('status', function ($row) {
+                    if ($row->status == 'Y') {
+                        $btn1 = '<span class="text-success" title="active"><i class="fa-solid fa-circle-check"></i></span>';
+                    } else {
+                        $btn1 = '<span class="text-danger" title="inactive"><i class="fa-solid fa-circle-xmark"></i></span>';
+                    }
+                    return $btn1;
+                })
                 ->addColumn('action', function ($row) {
-                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></button>';
+                    $btn = '<a href="' . route('staff.staff_list.view', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
                     $btn .= '<a href="' . route('staff.staff_list.edit', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
                     $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
+                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete"><i class="fa-solid fa-trash"></i></button>';
                     return $btn;
                 })
-                ->rawColumns(['name', 'role', 'action'])
+                ->rawColumns(['name', 'role', 'status', 'action'])
                 ->make(true);
         }
 
@@ -103,7 +114,7 @@ class StaffListController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StaffProfileRequest $request)
     {
 
         try {
@@ -117,7 +128,7 @@ class StaffListController extends Controller
                 $user->password = Hash::make($password);
                 $staffProfile = new StaffProfile();
             }
-
+            $staffName = $request->title . "" . $request->firstname . " " . $request->lastname;
             $user->name = $request->title . "<br> " . $request->firstname . "<br>" . $request->lastname;
             $user->email = $request->email;
             $roles = [
@@ -208,14 +219,38 @@ class StaffListController extends Controller
 
                 if ($staffProfile->save()) {
                     if ($user->is_doctor) {
-                        $staffService = new StaffService();
+                        $staffService = new
+                            StaffService();
                         if ($staffService->saveDoctorAvailability($request, $user->id)) {
                             DB::commit();
+                            if (!isset($request->edit_user_id)) {
+                                $token = Str::random(64);
+                                UserVerify::create([
+                                    'user_id' => $user->id,
+                                    'token' => $token
+
+                                ]);
+                                $welcomeNotification = new WelcomeVerifyNotification($staffName, $request->email, $password, $token);
+                                $user->notify($welcomeNotification);
+
+                            }
+
                         } else {
                             DB::rollBack();
                         }
                     } else {
                         DB::commit();
+                        if (!isset($request->edit_user_id)) {
+                            $token = Str::random(64);
+                            UserVerify::create([
+                                'user_id' => $user->id,
+                                'token' => $token
+
+                            ]);
+                            $welcomeNotification = new WelcomeVerifyNotification($staffName, $request->email, $password, $token);
+                            $user->notify($welcomeNotification);
+
+                        }
                     }
                 } else {
                     DB::rollBack();
@@ -224,16 +259,28 @@ class StaffListController extends Controller
                 DB::rollBack();
             }
 
+            //example user
+            // $user = User::find('19');
+
+            // $token = $request->route()->parameter('token');
+
+            // $user->token = $token;
+
+            // // Send welcome notification
+            // $user->notify(new WelcomeVerifyNotification($user->name, $user->email, $user->password, $user->$token));
+
             return redirect()->route('staff.staff_list')->with('success', 'Staff created successfully');
         } catch (\Exception $e) {
-            echo "<pre>";
-            print_r($e->getMessage());
+            // echo "<pre>";
+            // print_r($e->getMessage());
 
             DB::rollback();
-            exit;
-            return redirect()->back()->with('error', 'Failed to create staff: ' . $e->getMessage());
+            // exit;
+            return response()->json(['error' => 'Failed to create staff: ' . $e->getMessage()], 422);
         }
     }
+
+
 
 
     /**
@@ -256,6 +303,51 @@ class StaffListController extends Controller
         $availableBranches = $doctorAvailability->availableBranchAndTimings($staffProfile->user_id);
         $countries = Country::all();
         return view('staff.staff_list.edit', compact('name', 'countries', 'userTypes', 'departments', 'staffProfile', 'userDetails', 'availability', 'clinicBranches', 'availabilityCount', 'availability', 'availableBranches'));
+    }
+
+    public function changeStatus(string $id)
+    {
+        $staffProfile = StaffProfile::with('user')->find($id);
+        abort_if(!$staffProfile, 404);
+        if ($staffProfile) {
+            $active = 'N';
+            $inActive = 'Y';
+            if ($staffProfile->status == $active) {
+                $staffProfile->status = $inActive;
+            } else {
+                $staffProfile->status = $active;
+            }
+            $staffProfile->save();
+            return redirect()->route('staff.staff_list')->with('success', 'Status updated successfully');
+        }
+
+    }
+
+    public function destroy($id)
+    {
+        $staffProfile = StaffProfile::findOrFail($id);
+        $staffProfile->delete();
+
+        return response()->json(['success', 'Staff deleted successfully.'], 201);
+    }
+
+    public function view(string $id)
+    {
+        $staffProfile = StaffProfile::with('user')->find($id);
+        abort_if(!$staffProfile, 404);
+
+        $userDetails = $staffProfile->user;
+        $departments = Department::where('status', 'Y')->get();
+        $userTypes = UserType::where('status', 'Y')->get();
+        $commonService = new CommonService();
+        $name = $commonService->splitNames($userDetails->name);
+        $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
+        $availability = DoctorWorkingHour::where('user_id', $staffProfile->user_id)->get();
+        $availabilityCount = DoctorWorkingHour::where('user_id', $staffProfile->user_id)->groupBy('clinic_branch_id')->count();
+        $doctorAvailability = new DoctorAvaialbilityService();
+        $availableBranches = $doctorAvailability->availableBranchAndTimings($staffProfile->user_id);
+        $countries = Country::all();
+        return view('staff.staff_list.view', compact('name', 'countries', 'userTypes', 'departments', 'staffProfile', 'userDetails', 'availability', 'clinicBranches', 'availabilityCount', 'availability', 'availableBranches'));
     }
 
 

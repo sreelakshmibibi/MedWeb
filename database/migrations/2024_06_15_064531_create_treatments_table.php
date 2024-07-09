@@ -15,7 +15,7 @@ return new class extends Migration
 
             $table->id(); // Primary key
             $table->unsignedBigInteger('patient_id'); // ID of the patient
-            $table->unsignedBigInteger('app_id'); // ID of the appointment
+            $table->foreignId('app_id')->constrained('appointments'); // ID of the appointment
             $table->foreignId('treat_id')->constrained('treatment_types');  // ID of the treatment
             $table->integer('qty')->nullable(); // quantity
             $table->string('nursing_remark', 650)->nullable(); // Nursing remarks
@@ -32,11 +32,7 @@ return new class extends Migration
                 ->on('patient_profiles')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->foreign('app_id')
-                ->references('app_id')
-                ->on('appointments')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+
             //index
             $table->index('patient_id');
             $table->index('app_id');
@@ -55,6 +51,8 @@ return new class extends Migration
             $table->dropForeign(['patient_id']);
             $table->dropForeign(['treat_id']);
             $table->dropForeign(['doneby']);
+            $table->dropForeign(['created_by']);
+            $table->dropForeign(['updated_by']);
         });
         Schema::dropIfExists('treatments');
     }

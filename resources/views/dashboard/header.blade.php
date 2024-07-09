@@ -1,6 +1,9 @@
 @php
     $logoPath = session('logoPath');
     $clinicName = session('clinicName');
+    $username = session('username');
+    $role = session('role');
+    $staffPhoto = session('staffPhoto');
 @endphp
 <header class="main-header">
     <div class="inside-header">
@@ -14,15 +17,16 @@
                         <img src="{{ asset('storage/' . $logoPath) }}" alt="Logo"
                             style="width: 50px; margin-right:10px;">
                     @else
-                        {{-- <img src="{{ asset('images/logo/logo-1.jpg') }}" alt="Default Logo"
-                            style="width: 50px;  margin-right:10px;"> --}}
-                        <img src="{{ asset('images/logo/logo-1.jpg') }}" alt="Logo"
-                            style="width: 50px; margin-right:10px;">
+                        {{-- <img src="{{ asset('images/serieux_logo.png') }}" alt="Logo"
+                            style="width: 50px; margin-right:10px; border-radius:50%;"> --}}
+                        <img src="{{ asset('images/logo-lt.png') }}" alt="Logo">
                     @endif
                     @if ($clinicName)
-                        <h3>$clinicName</h3>
+                        <h4>{{ $clinicName }}</h4>
                     @else
-                        <h3>MedWeb</h3>
+                        <h4 class="align-self-center medweb_text"
+                            style="margin-left:-5px; margin-bottom: 0; font-size: 1.75rem;">
+                            MedWeb</h4>
                         {{-- <span >MedWeb</span> --}}
                     @endif
                 </div>
@@ -62,11 +66,26 @@
                             data-bs-toggle="dropdown" title="User">
                             <div class="d-flex pt-1">
                                 <div class="text-end me-10">
-                                    <p class="pt-5 fs-14 mb-0 fw-700 text-primary">Johen Doe</p>
-                                    <small class="fs-10 mb-0 text-uppercase text-mute">Admin</small>
+                                    {{-- <p class="pt-5 fs-14 mb-0 fw-700 text-primary">Johen Doe</p> --}}
+                                    {{-- <small class="fs-10 mb-0 text-uppercase text-mute">Admin</small> --}}
+
+                                    @if ($username)
+                                        <p class="pt-5 fs-14 mb-0 fw-700 text-primary">{{ $username }}</p>
+                                        <small class="fs-10 mb-0 text-uppercase text-mute">{{ $role }}</small>
+                                    @else
+                                        <p class="pt-5 fs-14 mb-0 fw-700 text-primary">Johen Doe</p>
+                                        <small class="fs-10 mb-0 text-uppercase text-mute">Admin</small>
+                                    @endif
+
                                 </div>
-                                <img src="{{ asset('images/avatar/avatar-1.png') }}"
-                                    class="avatar rounded-10 bg-primary-light h-40 w-40" alt="" />
+                                @if ($staffPhoto)
+                                    <img src="{{ asset('storage/' . $staffPhoto) }}"
+                                        class="avatar rounded-10 bg-primary-light h-40 w-40" alt="" />
+                                @else
+                                    <img src="{{ asset('images/avatar/avatar-1.png') }}"
+                                        class="avatar rounded-10 bg-primary-light h-40 w-40" alt="" />
+                                @endif
+
                             </div>
                         </a>
                         <ul class="dropdown-menu animated flipInX">

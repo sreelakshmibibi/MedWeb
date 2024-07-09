@@ -42,13 +42,9 @@
                                         <th>Company</th>
                                         <th>Price</th>
                                         <th>Expiry Date</th>
-                                        <th>Units per Package</th>
-                                        <th>Package Count</th>
                                         <th>Total Quantity</th>
                                         <th>Packaging Type</th>
                                         <th>Stock Status</th>
-                                        <th>Remarks</th>
-                                        <th>Status</th>
                                         <th width="100px">Action</th>
                                     </tr>
                                 </thead>
@@ -70,12 +66,13 @@
     @include('settings.medicine.delete')
     {{-- </div> --}}
 
-    <!-- ./wrapper -->
-    {{-- <script type="module"> --}}
+    <!-- JsBarcode library -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode/dist/JsBarcode.all.min.js"></script>
+
     <script type="text/javascript">
+        var table;
         jQuery(function($) {
-            
-            var table = $('.data-table').DataTable({
+            table = $('.data-table').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('settings.medicine') }}",
@@ -89,37 +86,64 @@
                             return meta.row + 1; // Adding 1 to start counting from 1
                         }
                     },
-                    { data: 'med_bar_code', name: 'med_bar_code' },
-                    { data: 'med_name', name: 'med_name' },
-                    { data: 'med_company', name: 'med_company' },
-                    { data: 'med_price', name: 'med_price' },
                     {
-                    data: 'expiry_date',
-                    name: 'expiry_date',
-                    render: function(data, type, row) {
-                        if (data) {
-                            var date = new Date(data);
-                            var day = ("0" + date.getDate()).slice(-2);
-                            var month = ("0" + (date.getMonth() + 1)).slice(-2);
-                            var year = date.getFullYear();
-                            return day + '-' + month + '-' + year;
+                        data: 'med_bar_code',
+                        name: 'med_bar_code'
+                    },
+                    {
+                        data: 'med_name',
+                        name: 'med_name'
+                    },
+                    {
+                        data: 'med_company',
+                        name: 'med_company'
+                    },
+                    {
+                        data: 'med_price',
+                        name: 'med_price'
+                    },
+                    {
+                        data: 'expiry_date',
+                        name: 'expiry_date',
+                        render: function(data, type, row) {
+                            if (data) {
+                                var date = new Date(data);
+                                var day = ("0" + date.getDate()).slice(-2);
+                                var month = ("0" + (date.getMonth() + 1)).slice(-2);
+                                var year = date.getFullYear();
+                                return day + '-' + month + '-' + year;
+                            }
+                            return data;
                         }
-                        return data;
+                    },
+
+                    {
+                        data: 'total_quantity',
+                        name: 'total_quantity'
+                    },
+                    {
+                        data: 'package_type',
+                        name: 'package_type'
+                    },
+                    // {
+                    //     data: 'stock_status',
+                    //     name: 'stock_status'
+                    // },
+                    {
+                        data: 'status',
+                        name: 'status'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: true
                     }
-                },
-                    { data: 'units_per_package', name: 'units_per_package' },
-                    { data: 'package_count', name: 'package_count' },
-                    { data: 'total_quantity', name: 'total_quantity' },
-                    { data: 'package_type', name: 'package_type' },
-                    { data: 'stock_status', name: 'stock_status' },
-                    { data: 'med_remarks', name: 'med_remarks' },
-                    { data: 'status', name: 'status' },
-                    { data: 'action', name: 'action', orderable: false, searchable: true }
                 ]
             });
 
             $(document).on('click', '.btn-edit', function() {
-               
+
                 var medicineId = $(this).data('id');
                 $('#edit_medicine_id').val(medicineId); // Set medicine ID in the hidden input
                 $.ajax({
@@ -138,7 +162,8 @@
                         $('#edit_package_type').val(response.package_type);
                         $('#edit_med_remarks').val(response.med_remarks);
                         $('#edit_in').prop('checked', response.stock_status === 'In Stock');
-                        $('#edit_out').prop('checked', response.stock_status === 'Out of Stock');
+                        $('#edit_out').prop('checked', response.stock_status ===
+                            'Out of Stock');
                         $('#med_edit_yes').prop('checked', response.status === 'Y');
                         $('#med_edit_no').prop('checked', response.status === 'N');
 
@@ -155,7 +180,7 @@
                 $('#delete_medicine_id').val(medicineId); // Set medicine ID in the hidden input
                 $('#modal-delete').modal('show');
             });
-           
+
             $('#btn-confirm-delete').click(function() {
                 var medicineId = $('#delete_medicine_id').val();
                 var url = "{{ route('settings.medicine.destroy', ':medicine') }}";
@@ -178,18 +203,18 @@
                     }
                 });
             });
-            
+
         });
 
         // barcode
         function generateBarcode() {
-            
+
             // Get input value
             var barcode = '';
             var inputValue = '';
             inputValue = document.getElementById("med_bar_code").value.trim();
             barcode = 'barcodeCanvas';
-            
+
             // if ( ($('#med_bar_code').length > 0) && ($('#med_bar_code').val()!='') ) {
             //     inputValue = document.getElementById("med_bar_code").value.trim();
             //     barcode = 'barcodeCanvas';
@@ -209,7 +234,7 @@
             }
 
             // Generate barcode
-            JsBarcode("#"+barcode, inputValue, {
+            JsBarcode("#" + barcode, inputValue, {
                 format: "CODE128", // Barcode format (you can choose other formats like EAN-13, QR Code, etc.)
                 displayValue: true, // Display value below barcode
                 fontSize: 16,
@@ -218,7 +243,7 @@
                 height: 50
             });
 
-            JsBarcode("#"+barcode, inputValue, {
+            JsBarcode("#" + barcode, inputValue, {
                 format: "CODE128", // Barcode format (CODE128, EAN-13, etc.)
                 displayValue: true, // Show human-readable value below barcode
                 fontSize: 16, // Font size of the value text
@@ -231,7 +256,5 @@
                 lineColor: "#333" // Color of the barcode bars
             });
         }
-
-        
     </script>
 @endsection

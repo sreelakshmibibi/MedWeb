@@ -37,7 +37,7 @@ function handleAvailabilityStep(role) {
 }
 
 // var form = $("#staffform").show();
-var form = $(".validation-wizard").show();
+var form = $("#staffform").show();
 
 $("#staffform").steps({
     headerTag: "h6",
@@ -50,7 +50,7 @@ $("#staffform").steps({
     onStepChanging: function (event, currentIndex, newIndex) {
         // Validate form for current step
         var valid = false;
-        form = $(".validation-wizard");
+        form = $("#staffform");
         // Validate form for current step
         if (currentIndex < newIndex) {
             var validator = form.validate(); // Initialize validator
@@ -64,6 +64,17 @@ $("#staffform").steps({
                     .find("input");
                 // Validate only inputs in the current step
                 inputs.each(function () {
+                    if (!validator.element(this)) {
+                        valid = false;
+                    }
+                });
+                // Find selects in the current step only
+                var selects = form
+                    .find("section")
+                    .eq(currentIndex)
+                    .find("select");
+                // Validate only selects in the current step
+                selects.each(function () {
                     if (!validator.element(this)) {
                         valid = false;
                     }
@@ -131,10 +142,11 @@ $("#staffform").steps({
             },
             success: function (response) {
                 // var successMessage = response.success; // Adjust as per your actual response structure
-
+                var message = "Staff added successfully.";
                 // Redirect to stafflist route
                 var routeReturn = $("#storeRoute").data("stafflist-route");
                 if (routeReturn == null) {
+                    message = "Staff details updated successfully.";
                     routeReturn = $("#updateRoute").data("stafflist-route");
                 }
 
@@ -142,17 +154,56 @@ $("#staffform").steps({
                 window.location.href =
                     routeReturn +
                     "?success_message=" +
-                    encodeURIComponent("Staff added successfully.");
+                    encodeURIComponent(message);
             },
             error: function (xhr) {
-                console.log(xhr.responseJSON.message);
-                // console.log(response.error);
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    // Validation error occurred
+                    console.log(xhr.responseJSON.errors); // Log the validation errors to console
+                    var errorMessage = "<ul>"; // Start an unordered list for error messages
+
+                    // Loop through the errors and concatenate them into list items
+                    $.each(xhr.responseJSON.errors, function (key, value) {
+                        errorMessage += "<li>" + value[0] + "</li>"; // Wrap each error message in <li> tags
+                    });
+
+                    errorMessage += "</ul>"; // Close the unordered list
+
+                    $("#error-message").html(errorMessage);
+                    $("#error-message").show();
+                } else if (xhr.responseJSON && xhr.responseJSON.error) {
+                    // Other server-side error occurred
+                    console.log(xhr.responseJSON.error); // Log the server error message to console
+
+                    // Display error message on the page
+                    $("#error-message").text(xhr.responseJSON.error);
+                    $("#error-message").show(); // Show the error message element
+                } else {
+                    console.error(
+                        "Error occurred but no specific error message received."
+                    );
+                    $("#error-message").text("An error occurred.");
+                    $("#error-message").show(); // Show a generic error message
+                }
+                // console.log(xhr.responseJSON);
+                // if (xhr.responseJSON && xhr.responseJSON.error) {
+                //     console.log(xhr.responseJSON.error); // Log the error message to console
+
+                //     // Display error message on the page
+                //     $('#error-message').text(xhr.responseJSON.error);
+                //     $('#error-message').show(); // Show the error message element
+                // } else {
+                //     console.error('Error occurred but no error message received.');
+                //     $('#error-message').text('An error occurred.');
+                //     $('#error-message').show(); // Show a generic error message
+                // }
             },
         });
     },
 }),
-    $(".validation-wizard").validate({
+    $("#staffform").validate({
         ignore: "input[type=hidden]",
+        ignore: "select[name=title]",
         errorClass: "text-danger",
         successClass: "text-success",
         highlight: function (element, errorClass) {
@@ -162,7 +213,12 @@ $("#staffform").steps({
             $(element).removeClass(errorClass);
         },
         errorPlacement: function (error, element) {
-            error.insertAfter(element);
+            if ($(element).hasClass("select2")) {
+                error.insertAfter($(element).siblings(":last"));
+            } else {
+                error.insertAfter(element);
+            }
+            // error.insertAfter(element);
         },
         rules: {
             email: {
@@ -177,11 +233,16 @@ $("#staffform").steps({
                 required: true,
                 maxlength: 255,
             },
+            gender: {
+                required: true,
+            },
+            role: {
+                required: true,
+            },
             date_of_birth: {
                 required: true,
                 date: true,
             },
-
             phone: {
                 required: true,
             },
@@ -195,12 +256,10 @@ $("#staffform").steps({
                 minlength: 3,
                 maxlength: 255,
             },
-
             pincode: {
                 required: true,
                 maxlength: 10,
             },
-
             aadhaar_no: {
                 required: true,
                 minlength: 12,
@@ -225,15 +284,5 @@ $("#staffform").steps({
                 required: true,
                 date: true,
             },
-            // specialization: {
-            //     required: true,
-            //     minlength: 3,
-            //     maxlength: 255,
-            // },
-            // subspecialty: {
-            //     required: true,
-            //     minlength: 3,
-            //     maxlength: 255,
-            // },
         },
     });

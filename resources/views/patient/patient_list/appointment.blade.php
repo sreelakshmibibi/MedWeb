@@ -1,19 +1,12 @@
 <!--appointment-->
 <div class="row">
 
-    <div class="col-md-3">
-        <div class="form-group">
-            <label class="form-label" for="doctor">Doctor</label>
-            <select class="select2" id="department_id" name="department_id" required data-placeholder="Select a Department"
-                style="width: 100%;">
-                <option>select a doctor</option>
-            </select>
-        </div>
-    </div>
+
 
     <div class="col-md-3">
         <div class="form-group">
-            <label class="form-label" for="specialization">Branch</label>
+            <label class="form-label" for="clinic_branch_id0">Branch <span class="text-danger">
+                    *</span></label>
             <select class="select2" id="clinic_branch_id0" name="clinic_branch_id0" required
                 data-placeholder="Select a Branch" style="width: 100%;">
                 @foreach ($clinicBranches as $clinicBranch)
@@ -32,19 +25,39 @@
 
     <div class="col-md-3">
         <div class="form-group">
-            <label class="form-label" for="appdate">Appointment Date & Time</label>
-            <input class="form-control" type="datetime-local" id="appdate" name="appdate" required>
+            <label class="form-label" for="appdate">Appointment Date & Time <span class="text-danger">
+                    *</span></label>
+            <input class="form-control" type="datetime-local" id="appdate" name="appdate"
+                value="{{ now()->setTimezone('Asia/Kolkata')->format('Y-m-d\TH:i') }}" required>
 
         </div>
     </div>
 
     <div class="col-md-3">
         <div class="form-group">
-            <label class="form-label" for="appstatus">Appointment Status</label>
+            <label class="form-label" for="doctor2">Doctor <span class="text-danger">
+                    *</span></label>
+            <select class="select2" id="doctor2" name="doctor2" required data-placeholder="Select a Doctor"
+                style="width: 100%;">
+                <option value="">select a doctor</option>
+                @foreach ($workingDoctors as $doctor)
+                    <?php $doctorName = str_replace('<br>', ' ', $doctor->user->name); ?>
+                    <option value="{{ $doctor->user_id }}"> {{ $doctorName }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+
+
+
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label" for="appstatus">Appointment Status <span class="text-danger">
+                    *</span></label>
             <select class="form-select" id="appstatus" name="appstatus" required>
-                <option value="">Select Status</option>
-                <option value="W">Waiting</option>
-                <option value="S">Success</option>
+                @foreach ($appointmentStatuses as $status)
+                    <option value="{{ $status->id }}">{{ $status->status }}</option>
+                @endforeach
             </select>
         </div>
     </div>
@@ -53,56 +66,32 @@
 
 <!--basic-->
 <div class="row">
-    {{-- <div class="col-md-3">
-        <div class="form-group">
-            <label class="form-label" for="doctor">Blood Group</label>
-            <select class="select2" id="department_id" name="department_id" required
-                data-placeholder="Select a Department" style="width: 100%;">
-                <option>A+</option>
-                <option>B+</option>
-            </select>
-        </div>
-    </div> --}}
 
     <div class="col-md-3">
         <div class="form-group">
             <label class="form-label" for="bp">Blood Pressure</label>
-            <input type="text" class="form-control" id="bp" name="bp" placeholder="Enter Blood Pressure"
-                required>
+            <input type="text" class="form-control" id="bp" name="bp" placeholder="Enter Blood Pressure">
         </div>
     </div>
 
     <div class="col-md-3">
         <div class="form-group">
             <label class="form-label" for="height">Height</label>
-            <input type="text" class="form-control" id="height" name="height" placeholder="Enter Height"
-                required>
+            <input type="text" class="form-control" id="height" name="height" placeholder="Enter Height">
         </div>
     </div>
 
     <div class="col-md-3">
         <div class="form-group">
             <label class="form-label" for="weight">Weight</label>
-            <input type="text" class="form-control" id="weight" name="weight" placeholder="Enter Weight"
-                required>
+            <input type="text" class="form-control" id="weight" name="weight" placeholder="Enter Weight">
         </div>
     </div>
 
     <div class="col-md-3">
         <div class="form-group">
-            <label class="form-label" for="rdoctor">Referrer Doctor</label>
-            <input type="text" class="form-control" id="rdoctor" name="rdoctor" placeholder="Enter doctor name"
-                required>
+            <label class="form-label" for="rdoctor">Referrerd Doctor</label>
+            <input type="text" class="form-control" id="rdoctor" name="rdoctor" placeholder="Enter doctor name">
         </div>
     </div>
 </div>
-
-{{-- <div class="row">
-    <div class="col-md-3">
-        <div class="form-group">
-            <label class="form-label" for="rdoctor">Referrer Doctor</label>
-            <input type="text" class="form-control" id="rdoctor" name="rdoctor" placeholder="Enter doctor name"
-                required>
-        </div>
-    </div>
-</div> --}}

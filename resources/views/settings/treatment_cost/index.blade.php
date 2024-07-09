@@ -5,7 +5,8 @@
     <div class="content-wrapper">
         <div class="container-full">
             <div class="content-header">
-                <div id="successMessage" style="display:none;" class="alert alert-success">Treatment cost created successfully</div>
+                <div id="successMessage" style="display:none;" class="alert alert-success">Treatment cost created successfully
+                </div>
                 @if (session('success'))
                     <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-success alerttop fadeOut"
                         style="display: block;">
@@ -29,7 +30,8 @@
                 <div class="box">
                     <div class="box-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center">
+                            <table
+                                class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center">
                                 <thead class="bg-primary-light">
                                     <tr>
                                         <th>No</th>
@@ -59,42 +61,53 @@
     <!-- ./wrapper -->
     {{-- <script type="module"> --}}
     <script type="text/javascript">
+        var table;
         jQuery(function($) {
 
-            var table = $('.data-table').DataTable({
+            table = $('.data-table').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('settings.treatment_cost') }}",
-                columns: [
-                    { 
-                        data: 'DT_RowIndex', 
-                        name: 'DT_RowIndex', 
-                        orderable: false, 
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
                         searchable: false,
-                        render: function (data, type, row, meta) {
+                        render: function(data, type, row, meta) {
                             // Return the row index (starts from 0)
                             return meta.row + 1; // Adding 1 to start counting from 1
                         }
                     },
-                    { data: 'treat_name', name: 'treat_name' },
-                    { 
-                        data: 'treat_cost', 
+                    {
+                        data: 'treat_name',
+                        name: 'treat_name'
+                    },
+                    {
+                        data: 'treat_cost',
                         name: 'treat_cost',
-                        render: function (data, type, row) {
+                        render: function(data, type, row) {
                             return parseFloat(data).toFixed(2); // Format to 2 decimal points
                         }
                     },
-                    { data: 'status', name: 'status' },
-                    { data: 'action', name: 'action', orderable: false, searchable: true },
+                    {
+                        data: 'status',
+                        name: 'status'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: true
+                    },
                 ]
-                
+
             });
-            
+
             $(document).on('click', '.btn-edit', function() {
                 var treatmentId = $(this).data('id');
                 $('#edit_treatment_cost_id').val(treatmentId); // Set treatment ID in the hidden input
                 $.ajax({
-                    url: '{{ url("treatment_cost") }}' + "/" + treatmentId + "/edit",
+                    url: '{{ url('treatment_cost') }}' + "/" + treatmentId + "/edit",
                     method: 'GET',
                     success: function(response) {
                         $('#edit_treatment_cost_id').val(response.id);
@@ -125,11 +138,14 @@
                 $.ajax({
                     type: 'DELETE',
                     url: url,
-                    data: { "_token": "{{ csrf_token() }}" },
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    },
                     success: function(response) {
                         table.draw(); // Refresh DataTable
                         $('#successMessage').text('Department deleted successfully');
-                        $('#successMessage').fadeIn().delay(3000).fadeOut(); // Show for 3 seconds
+                        $('#successMessage').fadeIn().delay(3000)
+                    .fadeOut(); // Show for 3 seconds
                     },
                     error: function(xhr) {
                         $('#modal-delete').modal('hide');

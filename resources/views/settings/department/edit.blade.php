@@ -12,7 +12,8 @@
                 <div class="modal-body">
                     <div class="container-fluid">
                         <div class="form-group">
-                            <label class="form-label" for="edit_department">Department</label>
+                            <label class="form-label" for="edit_department">Department Name <span class="text-danger">
+                                    *</span></label>
                             <input class="form-control" type="text" id="edit_department" name="department" required
                                 minlength="3" placeholder="Department Name" autocomplete="off">
                             <div class="invalid-feedback"></div>
@@ -78,7 +79,8 @@
                     $('#successMessage').text('Department updated successfully');
                     $('#successMessage').fadeIn().delay(3000)
                         .fadeOut(); // Show for 3 seconds
-                    location.reload(); // Refresh the page or update the table as needed
+                    // location.reload(); // Refresh the page or update the table as needed
+                    table.ajax.reload();
                 },
                 error: function(xhr) {
                     // If error, update modal to show errors
@@ -112,7 +114,7 @@
 
             // Fetch department details via AJAX
             $.ajax({
-                url: '{{ url("department") }}' + "/" + departmentId + "/edit",
+                url: '{{ url('department') }}' + "/" + departmentId + "/edit",
                 method: 'GET',
                 success: function(response) {
                     // Populate form fields

@@ -5,20 +5,14 @@
     <div class="content-wrapper">
         <div class="container-full">
             <div class="content-header">
-                @if (session('success'))
-                    <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-success alerttop fadeOut"
-                        style="display: block;">
-                        <i class="ti-check"></i> {{ session('success') }} <a href="#" class="closed">×</a>
-                    </div>
-                @endif
-                @if (session('error'))
-                    <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fade fadeOut"
-                        style="display: block;">
-                        <i class="ti-check"></i> {{ session('error') }} <a href="#" class="closed">×</a>
-                    </div>
-                @endif
+
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Add Staff Member</h3>
+                </div>
+                <div id="error-message-container">
+                    <p id="error-message"
+                        class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fadeOut"
+                        style="display: none;"></p>
                 </div>
             </div>
 
@@ -59,7 +53,35 @@
         $(document).ready(function() {
             $("#staffform .actions ul li:last-child a").addClass("bg-success btn btn-success");
 
+            var input = document.getElementById('profile_photo');
+            var canvas = document.getElementById('logoCanvas');
+            var ctx = canvas.getContext('2d');
+
+            input.addEventListener('change', function(event) {
+                var file = event.target.files[0];
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    var img = new Image();
+                    img.onload = function() {
+                        // canvas.width = img.width;
+                        // canvas.height = img.height;
+                        // ctx.drawImage(img, 0, 0, img.width, img.height);
+                        canvas.width = img.height;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0, img.height, img.height);
+                    };
+                    img.src = e.target.result;
+                };
+
+                if (file) {
+                    reader.readAsDataURL(file);
+                }
+            });
+
             let count = 1;
+
+
 
             // Event listener for Add Row button click
             $(document).on('click', '#buttonAddRow', function() {
@@ -130,6 +152,11 @@
                 </tr>`;
 
                 $('#tablebody').append(newRow);
+                // Reinitialize Select2 on the newly added select element
+                $(`#clinic_branch_id${count}`).select2({
+                    width: '100%',
+                    placeholder: 'Select a Branch'
+                });
                 updateRowCount();
             });
 
@@ -213,9 +240,13 @@
                 if ($(this).val() && $(this).val().includes('3')) {
                     $('.doctorFields').show();
                     $('.otherFields').hide();
+                    $('.doctorFields input').attr('required', true);
+                    $('.otherFields select').attr('required', false);
                 } else {
                     $('.doctorFields').hide();
                     $('.otherFields').show();
+                    $('.doctorFields input').attr('required', false);
+                    $('.otherFields select').attr('required', true);
                 }
             });
 

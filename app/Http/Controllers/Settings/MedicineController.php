@@ -21,16 +21,29 @@ class MedicineController extends Controller
 
             return DataTables::of($medicines)
                 ->addIndexColumn()
+                ->addColumn('status', function ($row) {
+                    // if ($row->stock_status == "In Stock") {
+                    //     $btn1 = '<span class="badge badge-success-light d-inline-block w-100">in stock</span>';
+                    // } else {
+                    //     $btn1 = '<span class="badge badge-danger-light d-inline-block w-100">out of stock</span>';
+                    // }
+                    if ($row->stock_status == "In Stock") {
+                        $btn1 = '<span class="text-success" title="in stock"><i class="fa-solid fa-circle-check"></i></span>';
+                    } else {
+                        $btn1 = '<span class="text-danger" title="out of stock"><i class="fa-solid fa-circle-xmark"></i></span>';
+                    }
+                    return $btn1;
+                })
                 ->addColumn('action', function ($row) {
 
-                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="'.$row->id.'"
+                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
                         data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
-                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="'.$row->id.'" title="delete">
+                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
                         <i class="fa fa-trash"></i></button>';
 
                     return $btn;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['status', 'action'])
                 ->make(true);
         }
 
@@ -76,7 +89,7 @@ class MedicineController extends Controller
 
         } catch (\Exception $e) {
 
-            return redirect()->back()->with('error', 'Failed to create medicine entry: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Failed to create medicine entry: ' . $e->getMessage());
         }
     }
 
@@ -94,7 +107,7 @@ class MedicineController extends Controller
     public function edit(string $id)
     {
         $medicine = Medicine::find($id);
-        if (! $medicine) {
+        if (!$medicine) {
             abort(404);
         }
 

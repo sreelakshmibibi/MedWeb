@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\Appointment;
+use App\Models\AppointmentStatus;
 use App\Models\DoctorWorkingHour;
 use App\Models\MenuItem;
 use App\Models\WeekDay;
@@ -76,6 +78,53 @@ class DoctorAvaialbilityService
         return $availableBranches;
     }
 
+    public function getTodayWorkingDoctors($branchId, $weekday)
+    {
 
-    
+        $query = DoctorWorkingHour::where('week_day', $weekday)
+            ->where('status', 'Y');
+
+        if ($branchId) {
+            $query->where('clinic_branch_id', $branchId);
+        }
+
+        return $query->with('user')->get();
+    }
+
+    public function getExistingAppointments($branchId, $appDate, $doctorId)
+    {
+        $query = Appointment::where('status', 'Y')
+                        ->where('app_status', AppointmentStatus::SCHEDULED );
+        if ($branchId) {
+            $query->where('app_branch', $branchId);
+        }
+        if ($doctorId) {
+            $query->where('doctor_id', $doctorId);
+        }
+        if ($appDate) {
+            $query->where('app_date', $appDate);
+        }
+        return $query->get('app_time');
+        
+    }
+    public function checkAllocatedAppointments($branchId, $appDate, $doctorId, $appTime)
+    {
+        $query = Appointment::where('status', 'Y')
+                        ->where('app_status', AppointmentStatus::SCHEDULED );
+        if ($branchId) {
+            $query->where('app_branch', $branchId);
+        }
+        if ($doctorId) {
+            $query->where('doctor_id', $doctorId);
+        }
+        if ($appDate) {
+            $query->where('app_date', $appDate);
+        }
+        if ($appTime) {
+            $query->where('app_date', $appTime);
+        }
+        return $query->get('app_time');
+        
+    }
+
 }

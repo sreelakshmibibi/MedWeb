@@ -11,7 +11,7 @@
                 </div>
                 <div class="modal-body">
                     <p>Are you sure you want to delete the patient?</p>
-                    <input type="hidden" id="delete_department_id" name="delete_department_id" value="">
+                    <input type="hidden" id="delete_patient_id" name="delete_patient_id" value="">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>

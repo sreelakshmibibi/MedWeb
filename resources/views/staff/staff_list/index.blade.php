@@ -5,6 +5,8 @@
     <div class="content-wrapper">
         <div class="container-full">
             <div class="content-header">
+                <div id="successMessage" style="display:none;" class="alert alert-success">
+                </div>
                 @if (session('success'))
                     <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-success alerttop fadeOut"
                         style="display: block;">
@@ -12,7 +14,7 @@
                     </div>
                 @endif
                 @if (session('error'))
-                    <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fade fadeOut"
+                    <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fadeOut"
                         style="display: block;">
                         <i class="ti-check"></i> {{ session('error') }} <a href="#" class="closed">×</a>
                     </div>
@@ -46,9 +48,9 @@
                                         <th>Qualification</th>
                                         <!-- <th>Department</th> -->
                                         <th>Phone Number</th>
-                                        <th>Email</th>
+                                        <!-- <th>Email</th> -->
                                         <th>Status</th>
-                                        <th width="100px">Action</th>
+                                        <th width="150px">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -64,7 +66,6 @@
     </div>
     <!-- /.content-wrapper -->
 
-    {{-- @include('staff.staff_list.create') --}}
     @include('staff.staff_list.delete')
     @include('staff.staff_list.status')
 
@@ -121,10 +122,10 @@
                         data: 'phone',
                         name: 'phone'
                     },
-                    {
-                        data: 'email',
-                        name: 'email'
-                    },
+                    // {
+                    //     data: 'email',
+                    //     name: 'email'
+                    // },
 
                     // {
                     //     data: 'department',
@@ -168,6 +169,37 @@
                 });
 
             });
+            $(document).on('click', '.btn-warning', function() {
+                var staffId = $(this).data('id');
+                console.log(staffId);
+                $('#staff_id').val(staffId); // Set staff ID in the hidden input
+                $('#modal-status').modal('show');
+            });
+            $('#btn-confirm-status').click(function() {
+                var staffId = $('#staff_id').val();
+                var url = "{{ route('staff.staff_list.changeStatus', [':staffId']) }}";
+                url = url.replace(':staffId', staffId);
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        $('#successMessage').text('Staff status changed successfully');
+                        $('#successMessage').fadeIn().delay(3000)
+                            .fadeOut(); // Show for 3 seconds
+                        table.draw(); // Assuming 'table' is your DataTable instance
+                    },
+                    error: function(xhr) {
+                        // Handle error response, e.g., hide modal and show error message
+                        $('#modal-status').modal('hide');
+                        swal("Error!", xhr.responseJSON.message, "error");
+                    }
+                });
+            });
+
             $(document).on('click', '.btn-danger', function() {
                 var staffId = $(this).data('id');
                 $('#delete_staff_id').val(staffId); // Set staff ID in the hidden input
@@ -176,8 +208,8 @@
 
             $('#btn-confirm-delete').click(function() {
                 var staffId = $('#delete_staff_id').val();
-                var url = "";
-                url = url.replace(':staff', staffId);
+                var url = "{{ route('staff.staff_list.changeStatus', [':staffId']) }}";
+                url = url.replace(':staffId', staffId);
 
                 $.ajax({
                     type: 'DELETE',
@@ -186,6 +218,9 @@
                         "_token": "{{ csrf_token() }}"
                     },
                     success: function(response) {
+                        $('#successMessage').text('Staff deleted successfully');
+                        $('#successMessage').fadeIn().delay(3000)
+                            .fadeOut(); // Show for 3 seconds
                         table.draw();
 
                     },
@@ -195,10 +230,6 @@
                     }
                 });
             });
-
-
-
-
         });
     </script>
 @endsection

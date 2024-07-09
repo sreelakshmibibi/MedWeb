@@ -5,6 +5,8 @@
     <div class="content-wrapper">
         <div class="container-full">
             <div class="content-header">
+                <div id="successMessage" style="display:none;" class="alert alert-success">
+                </div>
                 @if (session('success'))
                     <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-success alerttop fadeOut"
                         style="display: block;">
@@ -12,7 +14,7 @@
                     </div>
                 @endif
                 @if (session('error'))
-                    <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fade fadeOut"
+                    <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fadeOut"
                         style="display: block;">
                         <i class="ti-check"></i> {{ session('error') }} <a href="#" class="closed">×</a>
                     </div>
@@ -43,6 +45,7 @@
                                         <th>Phone Number</th>
                                         <th>Last Appointment Date</th>
                                         <th>Upcoming (if any)</th>
+                                        <th>Appointment Status</th>
                                         <th>Status</th>
                                         <th width="100px">Action</th>
                                     </tr>
@@ -59,6 +62,8 @@
         </div>
     </div>
     <!-- /.content-wrapper -->
+    @include('patient.patient_list.delete')
+    @include('patient.patient_list.status')
 
     {{-- </div> --}}
 
@@ -71,8 +76,18 @@
                 serverSide: true,
                 ajax: "",
                 columns: [{
-                        data: 'id',
-                        name: 'id'
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row, meta) {
+                            // Return the row index (starts from 0)
+                            return meta.row + 1; // Adding 1 to start counting from 1
+                        }
+                    },
+                    {
+                        data: 'patient_id',
+                        name: 'patient_id'
                     },
                     {
                         data: 'first_name',
@@ -86,6 +101,7 @@
                         data: 'gender',
                         name: 'gender'
                     },
+
                     {
                         data: 'address',
                         name: 'address'
@@ -95,20 +111,22 @@
                         name: 'phone'
                     },
                     {
-                        data: 'lastappointmentdate',
-                        name: 'lastappointmentdate'
+                        data: 'appointment',
+                        name: 'appointment'
                     },
                     {
-                        data: 'upcomingappointmentdate',
-                        name: 'upcomingappointmentdate'
+                        data: 'next_appointment',
+                        name: 'next_appointment'
                     },
                     {
-                        data: 'pstatus',
-                        name: 'pstatus'
+                        data: 'appointment_status',
+                        name: 'appointment_status',
+                        orderable: false,
+                        searchable: true
                     },
                     {
-                        data: 'status',
-                        name: 'status',
+                        data: 'record_status',
+                        name: 'record_status',
                         orderable: false,
                         searchable: true
                     },
@@ -144,6 +162,7 @@
                 });
 
             });
+
             $(document).on('click', '.btn-danger', function() {
                 var patientId = $(this).data('id');
                 $('#delete_patient_id').val(patientId); // Set patient ID in the hidden input
@@ -151,8 +170,8 @@
             });
 
             $('#btn-confirm-delete').click(function() {
-                var departmentId = $('#delete_patient_id').val();
-                var url = "";
+                var patientId = $('#delete_patient_id').val();
+                var url = "{{ route('patient.patient_list.changeStatus', [':patientId']) }}";
                 url = url.replace(':patient', patientId);
 
                 $.ajax({
@@ -162,11 +181,45 @@
                         "_token": "{{ csrf_token() }}"
                     },
                     success: function(response) {
+                        $('#successMessage').text('Patient deleted successfully');
+                        $('#successMessage').fadeIn().delay(3000)
+                            .fadeOut(); // Show for 3 seconds
                         table.draw();
 
                     },
                     error: function(xhr) {
                         $('#modal-delete').modal('hide');
+                        swal("Error!", xhr.responseJSON.message, "error");
+                    }
+                });
+            });
+
+            $(document).on('click', '.btn-warning', function() {
+                var patientId = $(this).data('id');
+                console.log(patientId);
+                $('#patient_id').val(patientId); // Set staff ID in the hidden input
+                $('#modal-status').modal('show');
+            });
+            $('#btn-confirm-status').click(function() {
+                var patientId = $('#patient_id').val();
+                var url = "{{ route('patient.patient_list.changeStatus', [':patientId']) }}";
+                url = url.replace(':patientId', patientId);
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        $('#successMessage').text('Patient status changed successfully');
+                        $('#successMessage').fadeIn().delay(3000)
+                            .fadeOut(); // Show for 3 seconds
+                        table.draw(); // Assuming 'table' is your DataTable instance
+                    },
+                    error: function(xhr) {
+                        // Handle error response, e.g., hide modal and show error message
+                        $('#modal-status').modal('hide');
                         swal("Error!", xhr.responseJSON.message, "error");
                     }
                 });

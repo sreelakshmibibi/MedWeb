@@ -31,7 +31,7 @@
                                     <?php } ?>
                                 </div>
                                 <p><span class="text-muted"><i class="fa fa-location-dot"></i>
-                                    </span>&nbsp;{{ $item->clinic_address }}</p>
+                                    </span>&nbsp;{{ str_replace('<br>', ', ', $item->clinic_address) }}</p>
                                 <p><span class="text-muted"><i class="fa fa-phone"></i>
                                     </span>&nbsp;{{ $item->clinic_phone }}</p>
                             </div>

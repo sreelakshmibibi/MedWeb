@@ -19,15 +19,16 @@
             <div class="box-body">
                 <div class="table-responsive">
                     <!-- Main content -->
-                    <table class="table table-bordered table-hover table-striped mb-0 border-2 data-table" width="100%">
-                        <thead class="bg-primary-light">
+                    <table class="table table-bordered table-hover table-striped mb-0 border-2 data-table "
+                        width="100%">
+                        <thead class="bg-primary-light text-center">
                             <tr>
                                 <th>No</th>
                                 <th>Phone Number</th>
                                 <th>Address</th>
                                 <th>Is Medicine Provided?</th>
                                 <th>Status</th>
-                                <th width="100px">Action</th>
+                                <th width="80px">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -44,9 +45,7 @@
     <!-- /.row -->
 </section>
 <!-- /.content -->
-</div>
-</div>
-<!-- /.content-wrapper -->
+
 
 <!-- modal -->
 @include('settings.clinics.create')
@@ -54,15 +53,16 @@
 @include('settings.clinics.delete')
 
 <script type="text/javascript">
+    var table;
     jQuery(function($) {
-
-        var table = $('.data-table').DataTable({
+        table = $('.data-table').DataTable({
             processing: true,
             serverSide: true,
             ajax: "{{ route('settings.clinic') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex',
+                    className: 'text-center',
                     orderable: false,
                     searchable: false,
                     render: function(data, type, row, meta) {
@@ -72,34 +72,44 @@
                 },
                 {
                     data: 'clinic_phone',
-                    name: 'clinic_phone'
+                    name: 'clinic_phone',
+                    className: 'text-center'
                 },
                 {
                     data: 'clinic_address',
-                    name: 'clinic_address'
+                    name: 'clinic_address',
+                    className: 'text-left'
                 },
                 {
                     data: 'is_medicine_provided',
-                    name: 'is_medicine_provided'
+                    name: 'is_medicine_provided',
+                    className: 'text-center'
                 },
+                // {
+                //     data: 'clinic_status',
+                //     name: 'clinic_status',
+                //     className: 'text-center'
+                // },
                 {
-                    data: 'clinic_status',
-                    name: 'clinic_status'
+                    data: 'status',
+                    name: 'status',
+                    className: 'text-center'
                 },
                 {
                     data: 'action',
                     name: 'action',
+                    className: 'text-center',
                     orderable: false,
                     searchable: true
                 },
             ]
         });
-        
+
         $(document).on('click', '.btn-edit', function() {
             var clinicId = $(this).data('id');
             $('#edit_clinic_id').val(clinicId); // Set department ID in the hidden input
             $.ajax({
-                url: '{{ url("clinic") }}' + "/" + clinicId + "/edit",
+                url: '{{ url('clinic') }}' + "/" + clinicId + "/edit",
                 method: 'GET',
                 success: function(response) {
                     $('#edit_clinic_id').val(response.id);
@@ -109,8 +119,10 @@
                     $('#edit_clinic_website').val(response.clinic_website);
                     $('#edit_yes').prop('checked', response.is_main_branch === 'Y');
                     $('#edit_no').prop('checked', response.is_main_branch === 'N');
-                    $('#edit_medicine_yes').prop('checked', response.is_medicine_provided === 'Y');
-                    $('#edit_medicine_no').prop('checked', response.is_medicine_provided === 'N');
+                    $('#edit_medicine_yes').prop('checked', response
+                        .is_medicine_provided === 'Y');
+                    $('#edit_medicine_no').prop('checked', response.is_medicine_provided ===
+                        'N');
                     $('#edit_clinic_country').val(response.country_id);
                     let addressParts = response.clinic_address.split("<br>");
                     $('#edit_clinic_address1').val(addressParts[0]);
@@ -118,7 +130,7 @@
                     $('#edit_clinic_pincode').val(response.pincode);
                     // $('#edit_clinic_logo').val(response.clinic_logo);
                     if (response.clinic_logo) {
-                        var logoUrl = '{{ asset("storage/") }}/' + response.clinic_logo;
+                        var logoUrl = '{{ asset('storage/') }}/' + response.clinic_logo;
                         console.log(logoUrl);
                         $('#currentClinicLogoImg').attr('src', logoUrl);
                         $('#currentClinicLogoImg').show(); // Show the image element
@@ -141,7 +153,8 @@
             });
         });
 
-        $(document).on('click', '.btn-danger', function() {
+        // $(document).on('click', '.btn-danger', function() {
+        $(document).on('click', '.btn-status', function() {
             var clinicId = $(this).data('id');
             var status = $(this).data('status');
             var statusChange = "ACTIVATE";
@@ -189,15 +202,13 @@
                 }
             });
         });
-
-
     });
 
     // Function to load states based on country ID
     function loadStates(countryId) {
         if (countryId) {
             $.ajax({
-                url: '{{ route("get.states", "") }}' + '/' + countryId,
+                url: '{{ route('get.states', '') }}' + '/' + countryId,
                 type: "GET",
                 dataType: "json",
                 success: function(data) {
@@ -220,7 +231,7 @@
     function loadCitiesEdit(stateId, cityId) {
         if (stateId) {
             $.ajax({
-                url: '{{ route("get.cities", "") }}' + '/' + stateId,
+                url: '{{ route('get.cities', '') }}' + '/' + stateId,
                 type: "GET",
                 dataType: "json",
                 success: function(data) {
@@ -237,15 +248,16 @@
             });
         } else {
             $('#clinic_city').empty();
+            $('#edit_clinic_city').append('<option value="">Select City</option>');
         }
     }
 
     // Function to validate email format
-    function isValidEmail(email) {
-        // You can implement your own email validation logic here
-        var re = /\S+@\S+\.\S+/;
-        return re.test(email);
-    }
+    // function isValidEmail(email) {
+    //     // You can implement your own email validation logic here
+    //     var re = /\S+@\S+\.\S+/;
+    //     return re.test(email);
+    // }
 
     // Function to validate URL format
     function isValidUrl(url) {

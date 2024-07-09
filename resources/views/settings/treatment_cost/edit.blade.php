@@ -1,4 +1,5 @@
-<form id="editTreatmentCostForm" method="post" action="{{ route('settings.treatment_cost.update', ['treatment_cost' => ':id']) }}">
+<form id="editTreatmentCostForm" method="post"
+    action="{{ route('settings.treatment_cost.update', ['treatment_cost' => ':id']) }}">
     @csrf
     <input type="hidden" id="edit_treatment_cost_id" name="edit_treatment_cost_id" value="">
     <div class="modal fade modal-right slideInRight" id="modal-edit" tabindex="-1">
@@ -13,14 +14,16 @@
                     <div class="container-fluid">
 
                         <div class="form-group">
-                            <label class="form-label" for="treatment">Treatment name</label>
+                            <label class="form-label" for="treatment">Treatment Name <span class="text-danger">
+                                    *</span></label>
                             <input class="form-control" type="text" id="edit_treatment_name" name="treat_name"
                                 placeholder="Treatment Name" autocomplete="off">
                             <div id="editTreatmentError" class="invalid-feedback"></div>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="cost">Cost</label>
+                            <label class="form-label" for="cost">Cost <span class="text-danger">
+                                    *</span></label>
                             <input class="form-control" type="text" id="edit_treatment_cost" name="treat_cost"
                                 placeholder="Treatment Cost" autocomplete="off">
                             <div id="editTreatmentCostError" class="invalid-feedback"></div>
@@ -110,8 +113,9 @@
                     $('#successMessage').text('Treatment cost updated successfully');
                     $('#successMessage').fadeIn().delay(3000)
                         .fadeOut(); // Show for 3 seconds
-                    // table.draw(); // Refresh DataTable
-                    location.reload();
+                    table.draw(); // Refresh DataTable
+                    // location.reload();
+
                 },
                 error: function(xhr) {
                     // If error, update modal to show errors

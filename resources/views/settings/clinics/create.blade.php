@@ -19,7 +19,8 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="email">E-mail</label>
+                                    <label class="form-label" for="email">E-mail <span class="text-danger">
+                                            *</span></label>
                                     <input type="email" class="form-control" id="clinic_email" name="clinic_email"
                                         placeholder="E-mail">
                                     <div id="clinicEmailError" class="invalid-feedback"></div>
@@ -28,7 +29,8 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="phone">Contact
-                                        Number</label>
+                                        Number <span class="text-danger">
+                                            *</span></label>
                                     <input type="text" class="form-control" id="clinic_phone" name="clinic_phone"
                                         placeholder="Phone">
                                     <div id="clinicPhoneError" class="invalid-feedback"></div>
@@ -68,11 +70,11 @@
 
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6" for="branch">Is medicine provided?</label>
-                            <input name="is_medicine_provided" type="radio" class="form-control with-gap" id="medicine_yes"
-                                value="Y" checked>
+                            <input name="is_medicine_provided" type="radio" class="form-control with-gap"
+                                id="medicine_yes" value="Y" checked>
                             <label for="medicine_yes">Yes</label>
-                            <input name="is_medicine_provided" type="radio" class="form-control with-gap" id="medicine_no"
-                                value="N">
+                            <input name="is_medicine_provided" type="radio" class="form-control with-gap"
+                                id="medicine_no" value="N">
                             <label for="medicine_no">No</label>
                             <div id="clinicBranchError" class="invalid-feedback"></div>
                         </div>
@@ -81,7 +83,8 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="address">Address Line
-                                        1</label>
+                                        1 <span class="text-danger">
+                                            *</span></label>
                                     <input type="text" class="form-control" id="clinic_address1"
                                         name="clinic_address1" placeholder="adress line 1">
                                     <div id="clinicAddress1Error" class="invalid-feedback"></div>
@@ -101,7 +104,8 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="clinic_country">Country</label>
+                                    <label class="form-label" for="clinic_country">Country <span class="text-danger">
+                                            *</span></label>
                                     <select class="form-select" id="clinic_country" name="clinic_country">
                                         <option value="">Select Country</option>
                                         @foreach ($countries as $country)
@@ -117,7 +121,8 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="clinic_state">State</label>
+                                    <label class="form-label" for="clinic_state">State <span class="text-danger">
+                                            *</span></label>
                                     <select class="form-select" id="clinic_state" name="clinic_state">
 
                                     </select>
@@ -129,16 +134,18 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="clinic_city">City</label>
+                                    <label class="form-label" for="clinic_city">City <span class="text-danger">
+                                            *</span></label>
                                     <select class="form-select" id="clinic_city" name="clinic_city">
-
                                     </select>
                                     <div id="clinicCityError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="clinic_pincode">Pin Code</label>
+                                    <label class="form-label" for="clinic_pincode">Pin Code <span
+                                            class="text-danger">
+                                            *</span></label>
                                     <input class="form-control" type="text" id="clinic_pincode"
                                         name="clinic_pincode" placeholder="XXX XXX">
                                     <div id="clinicPincodeError" class="invalid-feedback"></div>
@@ -155,6 +162,8 @@
         </div>
     </div>
 </form>
+
+
 <script>
     $(function() {
         var initialCountryId = $('#clinic_country').val(); // Assuming India is selected initially
@@ -176,7 +185,7 @@
         function loadStates(countryId) {
             if (countryId) {
                 $.ajax({
-                    url: '{{ route("get.states", "") }}' + '/' + countryId,
+                    url: '{{ route('get.states', '') }}' + '/' + countryId,
                     type: "GET",
                     dataType: "json",
                     success: function(data) {
@@ -199,7 +208,7 @@
         function loadCities(stateId) {
             if (stateId) {
                 $.ajax({
-                    url: '{{ route("get.cities", "") }}' + '/' + stateId,
+                    url: '{{ route('get.cities', '') }}' + '/' + stateId,
                     type: "GET",
                     dataType: "json",
                     success: function(data) {
@@ -213,14 +222,18 @@
                 });
             } else {
                 $('#clinic_city').empty();
+                $('#clinic_city').append('<option value="">Select City</option>');
             }
         }
 
-        // Handle Save button click
+        // Function to handle form submission
         $('#saveClinicBtn').click(function(event) {
             // Reset previous error messages
             resetErrors();
-            event.preventDefault();
+            event.preventDefault(); // Prevent default form submission
+
+            // Validate form fields
+            var isValid = true;
 
             // Gather form data
             var formData = {
@@ -237,8 +250,7 @@
                 "_token": "{{ csrf_token() }}" // CSRF token for Laravel
             };
 
-            // Basic client-side validation
-            var isValid = true;
+            isValid = validate_form();
 
             // Perform AJAX submit if form is valid
             if (isValid) {
@@ -248,7 +260,7 @@
                 $.ajax({
                     type: 'POST',
                     url: url,
-                    data: formDataClinic, // Use formDataClinic directly
+                    data: formDataClinic,
                     dataType: 'json',
                     success: function(response) {
                         // If successful, hide modal and show success message
@@ -256,8 +268,11 @@
                         $('#successMessage').text('Clinic created successfully');
                         $('#successMessage').fadeIn().delay(3000)
                             .fadeOut(); // Show for 3 seconds
-                        location
-                            .reload(); // Optionally, you can reload or update the table here
+                        // location
+                        //     .reload(); // Optionally, you can reload or update the table here
+                        table.ajax.reload();
+                        reloadbranch();
+
                     },
                     error: function(xhr) {
                         // Reset previous errors
@@ -267,33 +282,36 @@
                         if (xhr.responseJSON && xhr.responseJSON.errors) {
                             var errors = xhr.responseJSON.errors;
 
-                            // Handle clinic_phone error
-                            if (errors.hasOwnProperty('clinic_phone')) {
-                                $('#clinic_phone').addClass('is-invalid');
-                                $('#clinicPhoneError').text(errors.clinic_phone[0]);
-                            }
-
                             // Handle clinic_email error
                             if (errors.hasOwnProperty('clinic_email')) {
                                 $('#clinic_email').addClass('is-invalid');
                                 $('#clinicEmailError').text(errors.clinic_email[0]);
                             }
 
+                            // Handle clinic_phone error
+                            if (errors.hasOwnProperty('clinic_phone')) {
+                                $('#clinic_phone').addClass('is-invalid');
+                                $('#clinicPhoneError').text(errors.clinic_phone[0]);
+                            }
+
                             // Handle clinic_address1 error
                             if (errors.hasOwnProperty('clinic_address1')) {
                                 $('#clinic_address1').addClass('is-invalid');
-                                $('#clinicAddress1Error').text(errors.clinic_address1[0]);
+                                $('#clinicAddress1Error').text(errors
+                                    .clinic_address1[0]);
                             }
 
                             // Handle clinic_address2 error
                             if (errors.hasOwnProperty('clinic_address2')) {
                                 $('#clinic_address2').addClass('is-invalid');
-                                $('#clinicAddress2Error').text(errors.clinic_address2[0]);
+                                $('#clinicAddress2Error').text(errors
+                                    .clinic_address2[0]);
                             }
 
                             // Handle clinic_country error
                             if (errors.hasOwnProperty('clinic_country')) {
-                                $('#clinicCountryError').text(errors.clinic_country[0]);
+                                $('#clinicCountryError').text(errors.clinic_country[
+                                    0]);
                             }
 
                             // Handle clinic_state error
@@ -309,56 +327,23 @@
                             // Handle clinic_pincode error
                             if (errors.hasOwnProperty('clinic_pincode')) {
                                 $('#clinic_pincode').addClass('is-invalid');
-                                $('#clinicPincodeError').text(errors.clinic_pincode[0]);
+                                $('#clinicPincodeError').text(errors.clinic_pincode[
+                                    0]);
                             }
 
                             // Scroll to the top of the modal to show the first error
                             $('#modal-right .modal-body').scrollTop(0);
                         }
                     }
-
                 });
             }
         });
-
-        // Function to reset form errors
-        function resetErrors() {
-            $('#clinicPhoneError').text('');
-            $('#clinicEmailError').text('');
-            $('#clinicBranchError').text('');
-            $('#clinicAddress1Error').text('');
-            $('#clinicAddress2Error').text('');
-            $('#clinicCountryError').text('');
-            $('#clinicStateError').text('');
-            $('#clinicCityError').text('');
-            $('#clinicPincodeError').text('');
-        }
-
-        // Function to validate email format
-        function isValidEmail(email) {
-            // You can implement your own email validation logic here
-            var re = /\S+@\S+\.\S+/;
-            return re.test(email);
-        }
-
-        // Function to validate URL format
-        function isValidUrl(url) {
-            // You can implement your own URL validation logic here
-            var re = /^(ftp|http|https):\/\/[^ "]+$/;
-            return re.test(url);
-        }
-
-        // Function to validate pin code format
-        function isValidPincode(pincode) {
-            // You can implement your own pin code validation logic here
-            var re = /^\d{6}$/;
-            return re.test(pincode);
-        }
 
         // Reset form and errors on modal close
         $('#modal-right').on('hidden.bs.modal', function() {
             $('#createClinicForm').trigger('reset');
             resetErrors();
         });
+
     });
 </script>
