@@ -36,7 +36,22 @@ class TreatmentCostRequest extends FormRequest
                 'numeric',
                 'min:0',
             ],
-            'status' => 'required|string|size:1', 
+            'discount_percentage' => [
+                'nullable',
+                'numeric',
+                'between:0,100',
+            ],
+            'discount_from' => [
+                'nullable',
+                'date',
+                'before_or_equal:discount_to',
+            ],
+            'discount_to' => [
+                'nullable',
+                'date',
+                'after_or_equal:discount_from',
+            ],
+            'status' => 'required|string|size:1',
         ];
     }
 
@@ -49,6 +64,12 @@ class TreatmentCostRequest extends FormRequest
             'treat_cost.required' => 'The treatment cost is required.',
             'treat_cost.numeric' => 'The treatment cost must be a number.',
             'treat_cost.min' => 'The treatment cost must be at least 0.',
+            'discount_percentage.numeric' => 'The discount percentage must be a number.',
+            'discount_percentage.between' => 'The discount percentage must be between 0 and 100.',
+            'discount_from.date' => 'The discount start date must be a valid date.',
+            'discount_from.before_or_equal' => 'The discount start date must be before or equal to the end date.',
+            'discount_to.date' => 'The discount end date must be a valid date.',
+            'discount_to.after_or_equal' => 'The discount end date must be after or equal to the start date.',
             'status.required' => 'The status is required.',
             'status.string' => 'The status must be a string.',
             'status.size' => 'The status must be a single character.',

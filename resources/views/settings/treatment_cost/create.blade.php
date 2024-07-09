@@ -28,6 +28,27 @@
                             <div id="treatmentCostError" class="invalid-feedback"></div>
                         </div>
 
+                        <!-- Discount Percentage -->
+                        <div class="form-group">
+                            <label class="form-label" for="discount">Discount (%)</label>
+                            <input class="form-control" type="text" id="discount" name="discount" placeholder="Discount Percentage">
+                            <div id="discountError" class="invalid-feedback"></div>
+                        </div>
+
+                        <!-- Discount Start Date -->
+                        <div class="form-group">
+                            <label class="form-label" for="discount_from">Discount Start Date</label>
+                            <input class="form-control" type="date" id="discount_from" name="discount_from">
+                            <div id="discountFromError" class="invalid-feedback"></div>
+                        </div>
+
+                        <!-- Discount End Date -->
+                        <div class="form-group">
+                            <label class="form-label" for="discount_to">Discount End Date</label>
+                            <input class="form-control" type="date" id="discount_to" name="discount_to">
+                            <div id="discountToError" class="invalid-feedback"></div>
+                        </div>
+
                         <!-- Status -->
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6">Active</label>
@@ -62,11 +83,17 @@
             $('#treatmentError').text('');
             $('#treatmentCostError').text('');
             $('#statusError').text('');
+            $('#discountError').text('');
+            $('#discountFromError').text('');
+            $('#discountToError').text('');
 
             // Validate form inputs
             var treatment = $('#treat_name').val();
             var treatmentCost = $('#treat_cost').val();
             var status = $('input[name="status"]:checked').val();
+            var discount = $('#discount').val();
+            var discountFrom = $('#discount_from').val();
+            var discountTo = $('#discount_to').val();
 
             // Basic client-side validation (you can add more as needed)
             if (treatment.length === 0) {
@@ -97,6 +124,29 @@
             } else {
                 $('#statusError').text('');
             }
+
+            if (discount.length > 0 && !$.isNumeric(discount)) {
+                $('#discount').addClass('is-invalid');
+                $('#discountError').text('The discount must be a number.');
+                return; // Prevent further execution
+            } else {
+                $('#discount').removeClass('is-invalid');
+                $('#discountError').text('');
+            }
+
+            if (discountFrom.length > 0 && discountTo.length > 0 && discountFrom > discountTo) {
+                $('#discount_from').addClass('is-invalid');
+                $('#discount_to').addClass('is-invalid');
+                $('#discountFromError').text('Discount start date cannot be after the end date.');
+                $('#discountToError').text('Discount end date cannot be before the start date.');
+                return; // Prevent further execution
+            } else {
+                $('#discount_from').removeClass('is-invalid');
+                $('#discount_to').removeClass('is-invalid');
+                $('#discountFromError').text('');
+                $('#discountToError').text('');
+            }
+
 
             // If validation passed, submit the form via AJAX
             var form = $('#createTreatmentCostForm');
@@ -132,6 +182,22 @@
                         $('#treatmentCostError').text(errors.treat_cost[0]);
                     }
 
+                    if (errors.hasOwnProperty('discount')) {
+                        $('#discount').addClass('is-invalid');
+                        $('#discountError').text(errors.discount[0]);
+                    }
+
+                    if (errors.hasOwnProperty('discount_from')) {
+                        $('#discount_from').addClass('is-invalid');
+                        $('#discountFromError').text(errors.discount_from[0]);
+                    }
+
+                    if (errors.hasOwnProperty('discount_to')) {
+                        $('#discount_to').addClass('is-invalid');
+                        $('#discountToError').text(errors.discount_to[0]);
+                    }
+
+
                     if (errors.hasOwnProperty('status')) {
                         $('#statusError').text(errors.status[0]);
                     }
@@ -144,8 +210,14 @@
             $('#createTreatmentCostForm').trigger('reset');
             $('#treat_cost').removeClass('is-invalid');
             $('#treat_name').removeClass('is-invalid');
+            $('#discount').removeClass('is-invalid');
+            $('#discount_from').removeClass('is-invalid');
+            $('#discount_to').removeClass('is-invalid');
             $('#treatmentError').text('');
             $('#treatmentCostError').text('');
+            $('#discountError').text('');
+            $('#discountFromError').text('');
+            $('#discountToError').text('');
             $('#statusError').text('');
         });
     });
