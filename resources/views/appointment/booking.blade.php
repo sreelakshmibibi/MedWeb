@@ -150,7 +150,6 @@
                 $('#appDateError').text('');
             }
 
-
             // If validation passed, submit the form via AJAX
             var form = $('#bookingForm');
             var url = form.attr('action');
@@ -182,7 +181,7 @@
 
                     // Check if there are validation errors
                     var errors = xhr.responseJSON.errors;
-                    if (errors && errors.hasOwnProperty('appdate')) {
+                    if (errors && errors.hasOwnProperty('app_time')) {
                         $('#appdate').addClass('is-invalid');
                         $('#appDateError').text(errors.appdate[0]);
                     } else {
@@ -198,16 +197,16 @@
 
         // Reset form and errors on modal close
         $('#modal-booking').on('hidden.bs.modal', function() {
-            $('#createDepartmentForm').trigger('reset');
-            $('#department').removeClass('is-invalid');
-            $('#departmentError').text('');
-            $('#statusError').text('');
+            $('#bookingForm').trigger('reset');
+            $('#doctor_id').removeClass('is-invalid');
+            $('#doctorError').text('');
+            $('#appDate').removeClass('is-invalid');
+            $('#appDateError').text('');
+            $('#clinic_branch_id').removeClass('is-invalid');
+            $('#clinicError').text('');
+            
         });
     });
-
-
-        // Pre-populate form fields when modal opens for editing
-       
 
     document.addEventListener('DOMContentLoaded', function() {
         var now = new Date();
