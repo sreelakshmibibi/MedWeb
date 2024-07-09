@@ -34,4 +34,30 @@ class AppointmentStatus extends Model
     protected $fillable = ['status', 'st_color', 'tx_color', 'stat', 'indrop'];
 
     protected $dates = ['deleted_at'];
+
+    public static function statusToWords($status)
+    {
+        switch ($status) {
+            case self::SCHEDULED:
+                return self::SCHEDULED_WORDS;
+            case self::WAITING:
+                return self::WAITING_WORDS;
+            case self::UNAVAILABLE:
+                return self::UNAVAILABLE_WORDS;
+            case self::CANCELLED:
+                return self::CANCELLED_WORDS;
+            case self::COMPLETED:
+                return self::COMPLETED_WORDS;
+            case self::BILLING:
+                return self::BILLING_WORDS;
+            case self::PROCEDURE:
+                return self::PROCEDURE_WORDS;
+            case self::MISSED:
+                return self::MISSED_WORDS;
+            case self::RESCHEDULED:
+                return self::RESCHEDULED_WORDS;
+            default:
+                return 'Unknown'; // Handle unknown statuses gracefully
+        }
+    }
 }

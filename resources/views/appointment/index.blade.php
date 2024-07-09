@@ -113,16 +113,7 @@
                     }
                 },
                 columns: [
-                    // {
-                    //     data: 'DT_RowIndex',
-                    //     name: 'DT_RowIndex',
-                    //     orderable: false,
-                    //     searchable: false,
-                    //     render: function(data, type, row, meta) {
-                    //         // Return the row index (starts from 0)
-                    //         return meta.row + 1; // Adding 1 to start counting from 1
-                    //     }
-                    // },
+                    
                     {
                         data: 'token_no',
                         name: 'token_no'
@@ -148,11 +139,7 @@
                         data: 'branch',
                         name: 'branch'
                     },
-                    // {
-                    //     data: 'app_date',
-                    //     name: 'app_date'
-                    // },
-
+                    
                     {
                         data: 'app_time',
                         name: 'app_time'
@@ -202,14 +189,17 @@
                     url: '{{ url("appointment", "") }}' + "/" + appId + "/edit",
                     method: 'GET',
                     success: function(response) {
-                        $('#reschedule_app_id').val(response.id);
+                        $('#edit_app_id').val(response.id); 
                         $('#edit_patient_id').val(response.patient_id); // Set app ID in the hidden input
                         $('#edit_patient_name').val(patientName);
                         var doctorName = response.doctor.name;
                         var formattedDoctorName = doctorName.replace(/<br>/g, ' ');
-                        $('#edit_doctor_id').val(formattedDoctorName);
+                        $('#edit_doctor').val(formattedDoctorName);
                         
-                        $('#edit_clinic_branch_id').val(response.clinic_branch_id);
+                        $('#edit_clinic_branch').val(response.clinic_branch);
+                        $('#edit_doctor_id').val(response.doctor_id);
+                        
+                        $('#edit_clinic_branch_id').val(response.app_branch);
                         // $('#edit_staff').val(response.staff);
                         var app_date =response.app_date;
                         var app_time =response.app_time;
@@ -264,11 +254,18 @@
                 var branchId = $('#clinic_branch_id').val();
                 var appDate = $('#appdate').val();
                 var doctorId = $('#doctor_id').val();
-                showExistingAppointments(branchId, appDate, doctorId);
+                showExistingAppointments(branchId, appDate, doctorId,'store');
+                
+        });
+        $('#rescheduledAppdate').change(function() {
+                var branchId = $('#edit_clinic_branch_id').val();
+                var appDate = $('#rescheduledAppdate').val();
+                var doctorId = $('#edit_doctor_id').val();
+                showExistingAppointments(branchId, appDate, doctorId,'edit');
                 
         });
             
-        function showExistingAppointments(branchId, appDate, doctorId) {
+        function showExistingAppointments(branchId, appDate, doctorId, methodType) {
             if (branchId && appDate && doctorId) {
                 
                 $.ajax({
@@ -289,8 +286,9 @@
                         if (data.existingAppointments.length > 0) {
                             
                             // Clear existing content
-                            $('#existingAppointments').empty();
                             
+                            $('#existingAppointments').empty();
+                            $('#rescheduleExistingAppointments').empty();
                             // Create a table element
                             var table = $('<table class="table table-striped">').addClass('appointment-table');
                             
@@ -320,12 +318,19 @@
                                 
                                 table.append(row);
                             }
-                            
-                            // Append table to existingAppointments div
-                            $('#existingAppointments').append(table);
-                            
-                            // Show the div
-                            $('#existingAppointments').show();
+                            if (methodType == 'store') {
+                                // Append table to existingAppointments div
+                                $('#existingAppointments').append(table);
+                                
+                                // Show the div
+                                $('#existingAppointments').show();
+                            } else if (methodType == 'edit') {
+                                // Append table to existingAppointments div
+                                $('#rescheduleExistingAppointments').append(table);
+                                
+                                // Show the div
+                                $('#rescheduleExistingAppointments').show();
+                            }
                             
                         } else {
                             $('#existingAppointments').html('No existing appointments found.');
@@ -374,11 +379,11 @@
                     "app_status_change_reason" : reason
                 },
                 success: function(response) {
-                    console.log(response);a
+                    $('#modal-cancel').modal('hide'); // Close modal after success
                     table.draw(); // Refresh DataTable
                     $('#successMessage').text('Appointment cancelled successfully');
                     $('#successMessage').fadeIn().delay(3000).fadeOut(); // Show for 3 seconds
-                    $('#modal-cancel').modal('hide'); // Close modal after success
+                   
                 },
                 error: function(xhr) {
                     $('#modal-cancel').modal('hide'); // Close modal in case of error

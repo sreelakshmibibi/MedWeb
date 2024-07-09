@@ -45,5 +45,24 @@ class CommonService
         return $appId;
     }
 
+    public function generateTokenNo($doctorId, $appDate)
+    {
+        $maxToken = Appointment::where('doctor_id', $doctorId)
+        ->whereDate('app_date', $appDate)
+        ->max('token_no');
+        $tokenNo = $maxToken ? $maxToken + 1 : 1;
+        return $tokenNo;
+    }
+
+    public function checkexisting($doctorId, $appDate, $appTime, $clinicBranchId)
+    {
+      return Appointment::where('doctor_id', $doctorId)
+                ->where('app_date', $appDate)
+                ->where('app_time', $appTime)
+                ->where('app_branch', $clinicBranchId)
+                ->exists();
+    }
+    
+
     // Other common methods can be added here
 }
