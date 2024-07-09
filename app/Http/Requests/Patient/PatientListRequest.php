@@ -145,6 +145,11 @@ class PatientListRequest extends FormRequest
                 'nullable',
                 'string',
             ],
+            'marital_status' => ['nullable', 'string', 'max:20'],
+            'smoking_status' => ['nullable', 'string', 'max:50'],
+            'alcoholic_status' => ['nullable', 'string', 'max:30'],
+            'diet' => ['nullable', 'string', 'max:20'],
+            'allergies' => ['nullable', 'string'],
         ];
     }
 
@@ -215,6 +220,16 @@ class PatientListRequest extends FormRequest
             'weight.numeric' => 'The weight must be a number.',
             'bp.regex' => 'The blood pressure must be in the format XX/YY or XXX/YYY.',
             'rdoctor.string' => 'The referred doctor must be a string.',
+            'marital_status.string' => 'The marital status must be a string.',
+            'marital_status.max' => 'The marital status may not be greater than 20 characters.',
+            'smoking_status.string' => 'The smoking status must be a string.',
+            'smoking_status.max' => 'The smoking status may not be greater than 50 characters.',
+            'alcoholic_status.string' => 'The alcoholic status must be a string.',
+            'alcoholic_status.max' => 'The alcoholic status may not be greater than 30 characters.',
+            'diet.string' => 'The diet must be a string.',
+            'diet.max' => 'The diet may not be greater than 20 characters.',
+            'allergies.string' => 'The allergies must be a string.',
+            'allergies.max' => 'The allergies may not be greater than 500 characters.',
         ];
     }
 }

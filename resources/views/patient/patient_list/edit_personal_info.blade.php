@@ -163,3 +163,61 @@
              value="{{ $patientProfile->pincode }}">
      </div>
  </div>
+
+ <div class="row">
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label" for="marital_status">Marital Status</label>
+            <select class="form-select" id="marital_status" name="marital_status">
+                <option value="">Select Marital Status</option>
+                <option value="Single" {{ $patientProfile->marital_status == 'Single' ? 'selected' : '' }}>Single</option>
+                <option value="Married" {{ $patientProfile->marital_status == 'Married' ? 'selected' : '' }}>Married</option>
+                <option value="Widowed" {{ $patientProfile->marital_status == 'Widowed' ? 'selected' : '' }}>Widowed</option>
+                <option value="Divorced" {{ $patientProfile->marital_status == 'Divorced' ? 'selected' : '' }}>Divorced</option>
+                <option value="Separated" {{ $patientProfile->marital_status == 'Separated' ? 'selected' : '' }}>Separated</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label" for="smoking_status">Smoking Status</label>
+            <select class="form-select" id="smoking_status" name="smoking_status">
+                <option value="">Select Smoking Status</option>
+                <option value="Non-smoker" {{ $patientProfile->smoking_status == 'Non-smoker' ? 'selected' : '' }}>Non-smoker</option>
+                <option value="Former smoker" {{ $patientProfile->smoking_status == 'Former smoker' ? 'selected' : '' }}>Former smoker</option>
+                <option value="Current smoker" {{ $patientProfile->smoking_status == 'Current smoker' ? 'selected' : '' }}>Current smoker</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label" for="alcoholic_status">Alcoholic Status</label>
+            <select class="form-select" id="alcoholic_status" name="alcoholic_status">
+                <option value="">Select Alcoholic Status</option>
+                <option value="Non-drinker" {{ $patientProfile->alcoholic_status == 'Non-drinker' ? 'selected' : '' }}>Non-drinker</option>
+                <option value="Former drinker" {{ $patientProfile->alcoholic_status == 'Former drinker' ? 'selected' : '' }}>Former drinker</option>
+                <option value="Current drinker" {{ $patientProfile->alcoholic_status == 'Current drinker' ? 'selected' : '' }}>Current drinker</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label" for="diet">Diet</label>
+            <select class="form-select" id="diet" name="diet">
+                <option value="">Select Diet</option>
+                <option value="Vegetarian" {{ $patientProfile->diet == 'Vegetarian' ? 'selected' : '' }}>Vegetarian</option>
+                <option value="Non-Vegetarian" {{ $patientProfile->diet == 'Non-Vegetarian' ? 'selected' : '' }}>Non-Vegetarian</option>
+                <option value="Vegan" {{ $patientProfile->diet == 'Vegan' ? 'selected' : '' }}>Vegan</option>
+                <option value="Other" {{ $patientProfile->diet == 'Other' ? 'selected' : '' }}>Other</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="form-label" for="allergies">Allergies</label>
+            <textarea class="form-control" id="allergies" name="allergies" placeholder="List any allergies">{{ $patientProfile->allergies }}</textarea>
+        </div>
+    </div>
+</div>

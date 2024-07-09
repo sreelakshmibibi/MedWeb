@@ -12,8 +12,33 @@ class PatientProfile extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['patient_id', 'first_name', 'last_name', 'aadhaar_no', 'date_of_birth', 'gender', 'blood_group', 'phone', 'alternate_phone', 'email', 'address1', 'address2', 'city_id', 'state_id', 'country_id', 'pincode', 'visit_count', 'status', 'created_by',
-        'updated_by'];
+    protected $fillable = [
+        'patient_id',
+        'first_name',
+        'last_name',
+        'aadhaar_no',
+        'date_of_birth',
+        'gender',
+        'blood_group',
+        'phone',
+        'alternate_phone',
+        'email',
+        'address1',
+        'address2',
+        'city_id',
+        'state_id',
+        'country_id',
+        'pincode',
+        'marital_status',
+        'smoking_status',
+        'alcoholic_status',
+        'diet',
+        'allergies',
+        'visit_count',
+        'status',
+        'created_by',
+        'updated_by',
+    ];
 
     protected $dates = ['deleted_at'];
 

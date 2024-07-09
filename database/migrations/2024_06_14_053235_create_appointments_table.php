@@ -70,7 +70,6 @@ return new class extends Migration
             $table->dropForeign(['app_branch']);
             $table->dropForeign(['app_type']);
             $table->dropForeign(['app_status']);
-            $table->dropForeign(['app_type']);
             $table->dropForeign(['app_parent_id']);
             $table->dropForeign(['created_by']);
             $table->dropForeign(['updated_by']);

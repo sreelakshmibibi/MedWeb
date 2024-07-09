@@ -11,13 +11,18 @@ class TreatmentType extends Model
 {
     use HasFactory;
     use SoftDeletes;
+
     protected $fillable = [
         'treat_name',
         'treat_cost',
+        'discount_percentage',
+        'discount_from',
+        'discount_to',
         'status',
         'created_by',
-        'updated_by'
+        'updated_by',
     ];
+
     protected $dates = ['deleted_at'];
 
     protected static function booted()

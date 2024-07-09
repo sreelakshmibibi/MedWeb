@@ -150,49 +150,64 @@
          <input class="form-control" type="text" id="pincode" name="pincode" required placeholder="pin code">
      </div>
  </div>
+ <div class="row">
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label" for="marital_status">Marital Status</label>
+            <select class="form-select" id="marital_status" name="marital_status">
+                <option value="">Select Marital Status</option>
+                <option value="Single">Single</option>
+                <option value="Married">Married</option>
+                <option value="Widowed">Widowed</option>
+                <option value="Divorced">Divorced</option>
+                <option value="Separated">Separated</option>
+            </select>
+        </div>
+    </div>
 
- {{-- <div class="row">
-     <div class="form-group mb-0">
-         <label class="form-label" for="caddress1">Communication Address:&nbsp;</label>&nbsp;
-         <input type="checkbox" id="add_checkbox" class="filled-in chk-col-success" />
-         <label for="add_checkbox">Same as Residential Address</label>
-     </div>
-     <div class="form-group col-md-2">
-         <input type="text" class="form-control " id="caddress1" name="caddress1" placeholder="Adress line 1"
-             required>
-     </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label" for="smoking_status">Smoking Status</label>
+            <select class="form-select" id="smoking_status" name="smoking_status">
+                <option value="">Select Smoking Status</option>
+                <option value="Non-smoker">Non-smoker</option>
+                <option value="Former smoker">Former smoker</option>
+                <option value="Current smoker">Current smoker</option>
+            </select>
+        </div>
+    </div>
 
-     <div class="form-group col-md-2 ">
-         <input type="text" class="form-control" id="caddress2" name="caddress2" placeholder="Adress line 2"
-             required>
-     </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label" for="alcoholic_status">Alcoholic Status</label>
+            <select class="form-select" id="alcoholic_status" name="alcoholic_status">
+                <option value="">Select Alcoholic Status</option>
+                <option value="Non-drinker">Non-drinker</option>
+                <option value="Former drinker">Former drinker</option>
+                <option value="Current drinker">Current drinker</option>
+            </select>
+        </div>
+    </div>
 
-     <div class="form-group col-md-2 ">
-         <select class="select2" required id="ccity_id" name="ccity_id" data-placeholder="Select a City"
-             style="width: 100%;">
-         </select>
-     </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label" for="diet">Diet</label>
+            <select class="form-select" id="diet" name="diet">
+                <option value="">Select Diet</option>
+                <option value="Vegetarian">Vegetarian</option>
+                <option value="Non-Vegetarian">Non-Vegetarian</option>
+                <option value="Vegan">Vegan</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+    </div>
+</div>
 
-     <div class="form-group col-md-2 ">
-         <select class="select2" id="cstate_id" name="cstate_id" required data-placeholder="Select a State"
-             style="width: 100%;">
-
-         </select>
-     </div>
-
-     <div class="form-group col-md-2 ">
-         <select class="select2" id="ccountry_id" name="ccountry_id" required data-placeholder="Select a Country"
-             style="width: 100%;">
-             @foreach ($countries as $country)
-                 <option value="{{ $country->id }}" <?php// if ($country->id == 101) {
-                                              //         echo 'selected';
-                                              //     } ?> ?> ?>>
-                     {{ $country->country }}</option>
-             @endforeach
-         </select>
-     </div>
-
-     <div class="form-group col-md-2 ">
-         <input class="form-control" type="text" id="cpincode" name="cpincode" required placeholder="pin code">
-     </div>
- </div> --}}
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="form-label" for="allergies">Allergies</label>
+            <textarea class="form-control" id="allergies" name="allergies" placeholder="List any allergies"></textarea>
+        </div>
+    </div>
+</div>

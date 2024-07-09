@@ -38,14 +38,12 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Patient ID</th>
-                                        <th>First Name</th>
-                                        <th>Last Name</th>
+                                        <th>Name</th>
                                         <th>Gender</th>
-                                        <th>Address</th>
                                         <th>Phone Number</th>
                                         <th>Last Appointment Date</th>
                                         <th>Upcoming (if any)</th>
-                                        <th>Appointment Status</th>
+                                        <th>New Appointment</th>
                                         <th>Status</th>
                                         <th width="100px">Action</th>
                                     </tr>
@@ -64,6 +62,7 @@
     <!-- /.content-wrapper -->
     @include('patient.patient_list.delete')
     @include('patient.patient_list.status')
+    @include('appointment.booking')
 
     {{-- </div> --}}
 
@@ -90,21 +89,12 @@
                         name: 'patient_id'
                     },
                     {
-                        data: 'first_name',
-                        name: 'first_name'
-                    },
-                    {
-                        data: 'last_name',
-                        name: 'last_name'
+                        data: 'name',
+                        name: 'name'
                     },
                     {
                         data: 'gender',
                         name: 'gender'
-                    },
-
-                    {
-                        data: 'address',
-                        name: 'address'
                     },
                     {
                         data: 'phone',
@@ -119,10 +109,8 @@
                         name: 'next_appointment'
                     },
                     {
-                        data: 'appointment_status',
-                        name: 'appointment_status',
-                        orderable: false,
-                        searchable: true
+                        data: 'new_appointment',
+                        name: 'new_appointment'
                     },
                     {
                         data: 'record_status',
@@ -163,6 +151,18 @@
 
             });
 
+            $(document).on('click', '.btn-add', function() {
+                var app_parent_id = $(this).data('parent-id');
+                var patientId = $(this).data('patient-id');
+                var patientName = $(this).data('patient-name');
+                $('#patient_id').val(patientId); // Set app ID in the hidden input
+                $('#patient_name').val(patientName); // Set app ID in the hidden input
+                $('#app_parent_id').val(app_parent_id);
+                $('#modal-booking').modal('show');
+                   
+
+            });
+
             $(document).on('click', '.btn-danger', function() {
                 var patientId = $(this).data('id');
                 $('#delete_patient_id').val(patientId); // Set patient ID in the hidden input
@@ -197,11 +197,11 @@
             $(document).on('click', '.btn-warning', function() {
                 var patientId = $(this).data('id');
                 console.log(patientId);
-                $('#patient_id').val(patientId); // Set staff ID in the hidden input
+                $('#delete_patient_id').val(patientId); // Set staff ID in the hidden input
                 $('#modal-status').modal('show');
             });
             $('#btn-confirm-status').click(function() {
-                var patientId = $('#patient_id').val();
+                var patientId = $('#delete_patient_id').val();
                 var url = "{{ route('patient.patient_list.changeStatus', [':patientId']) }}";
                 url = url.replace(':patientId', patientId);
 
