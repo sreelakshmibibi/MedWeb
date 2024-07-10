@@ -46,46 +46,46 @@
                         </select>
                     </td>
                     <td>
-                        <input type="time" class="form-control timeInput" id="sunday_from1" title="from"
+                        <input type="time" class="form-control timeInput fromTime" id="sunday_from1" title="from"
                             name="sunday_from1" style="width:115px;">
-                        <input type="time" class="form-control" id="sunday_to1" title="to" name="sunday_to1"
+                        <input type="time" class="form-control timeInput toTime" id="sunday_to1" title="to" name="sunday_to1"
                             style="width:115px;">
                     </td>
                     <td>
-                        <input type="time" class="form-control" id="monday_from1" name="monday_from1" title="from"
+                        <input type="time" class="form-control timeInput fromTime" id="monday_from1" name="monday_from1" title="from"
                             style="width:115px;">
-                        <input type="time" class="form-control" id="monday_to1" name="monday_to1" title="to"
+                        <input type="time" class="form-control timeInput toTime" id="monday_to1" name="monday_to1" title="to"
                             style="width:115px;">
                     </td>
                     <td>
-                        <input type="time" class="form-control" id="tuesday_from1" name="tuesday_from1"
+                        <input type="time" class="form-control timeInput fromTime" id="tuesday_from1" name="tuesday_from1"
                             title="from" style="width:115px;">
-                        <input type="time" class="form-control" id="tuesday_to1" name="tuesday_to1" title="to"
+                        <input type="time" class="form-control timeInput toTime" id="tuesday_to1" name="tuesday_to1" title="to"
                             style="width:115px;">
 
                     </td>
                     <td>
-                        <input type="time" class="form-control" id="wednesday_from1" name="wednesday_from1"
+                        <input type="time" class="form-control timeInput fromTime" id="wednesday_from1" name="wednesday_from1"
                             title="from" style="width:115px;">
-                        <input type="time" class="form-control" id="wednesday_to1" name="wednesday_to1"
+                        <input type="time" class="form-control timeInput toTime" id="wednesday_to1" name="wednesday_to1"
                             title="to" style="width:115px;">
                     </td>
                     <td>
-                        <input type="time" class="form-control" id="thursday_from1" name="thursday_from1"
+                        <input type="time" class="form-control timeInput fromTime" id="thursday_from1" name="thursday_from1"
                             title="from" style="width:115px;">
-                        <input type="time" class="form-control" id="thursday_to1" name="thursday_to1" title="to"
+                        <input type="time" class="form-control timeInput toTime" id="thursday_to1" name="thursday_to1" title="to"
                             style="width:115px;">
                     </td>
                     <td>
-                        <input type="time" class="form-control" id="friday_from1" name="friday_from1" title="from"
+                        <input type="time" class="form-control timeInput fromTime" id="friday_from1" name="friday_from1" title="from"
                             style="width:115px;">
-                        <input type="time" class="form-control" id="friday_to1" name="friday_to1" title="to"
+                        <input type="time" class="form-control timeInput toTime" id="friday_to1" name="friday_to1" title="to"
                             style="width:115px;">
                     </td>
                     <td>
-                        <input type="time" class="form-control" id="saturday_from1" name="saturday_from1"
+                        <input type="time" class="form-control timeInput fromTime" id="saturday_from1" name="saturday_from1"
                             title="from" style="width:115px;">
-                        <input type="time" class="form-control" id="saturday_to1" name="saturday_to1"
+                        <input type="time" class="form-control timeInput toTime" id="saturday_to1" name="saturday_to1"
                             title="to" style="width:115px;">
                     </td>
                     <td>

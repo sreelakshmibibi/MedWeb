@@ -262,9 +262,6 @@ class AppointmentController extends Controller
 
         } catch (\Exception $e) {
             print_r($e->getMessage());
-            
-            DB::rollback();
-            exit;
             return redirect()->back()->with('error', 'Failed to reschedule appointment: ' . $e->getMessage());
         }
         
