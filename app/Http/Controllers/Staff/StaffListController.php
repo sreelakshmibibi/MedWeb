@@ -258,7 +258,7 @@ class StaffListController extends Controller
                 }
             } else {
                 DB::rollBack();
-                return response()->json(['error' => 'Failed to create doctor.' ], 422);
+                return response()->json(['error' => 'Failed to create staff.' ], 422);
             }
 
             //example user
