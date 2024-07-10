@@ -85,6 +85,13 @@
     <script src="{{ asset('assets/vendor_components/date-paginator/bootstrap-datepaginator.min.js') }}"></script>
     <script src="{{ asset('js/pages/date-paginator.js') }}"></script>
 
+    <script src="{{ asset('js/pages/doctor-details.js') }}"></script>
+
+    <script src="{{ asset('assets/vendor_components/apexcharts-bundle/dist/apexcharts.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/OwlCarousel2/dist/owl.carousel.js') }}"></script>
+
+    <script src="{{ asset('js/pages/dashboard2.js') }}"></script>
+
     <!-- Include scripts section -->
     @yield('scripts')
 </body>
