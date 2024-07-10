@@ -219,8 +219,7 @@ class StaffListController extends Controller
 
                 if ($staffProfile->save()) {
                     if ($user->is_doctor) {
-                        $staffService = new
-                            StaffService();
+                        $staffService = new StaffService();
                         if ($staffService->saveDoctorAvailability($request, $user->id)) {
                             DB::commit();
                             if (!isset($request->edit_user_id)) {
@@ -237,6 +236,7 @@ class StaffListController extends Controller
 
                         } else {
                             DB::rollBack();
+                            return response()->json(['error' => 'Failed to create doctor: Availbilty of time slots required' ], 422);
                         }
                     } else {
                         DB::commit();
@@ -254,9 +254,11 @@ class StaffListController extends Controller
                     }
                 } else {
                     DB::rollBack();
+                    return response()->json(['error' => 'Failed to create staff: Error in experience' ], 422);
                 }
             } else {
                 DB::rollBack();
+                return response()->json(['error' => 'Failed to create doctor.' ], 422);
             }
 
             //example user
