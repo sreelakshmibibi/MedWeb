@@ -62,7 +62,7 @@
     <!-- /.content-wrapper -->
     @include('patient.patient_list.delete')
     @include('patient.patient_list.status')
-    @include('appointment.booking')
+    @include('patient.patient_list.booking')
 
     {{-- </div> --}}
 

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Patient;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Appointment\AppointmentRequest;
+use App\Http\Requests\Patient\PatientEditRequest;
 use App\Http\Requests\Patient\PatientListRequest;
 use App\Models\Appointment;
 use App\Models\AppointmentStatus;
+use App\Models\AppointmentType;
 use App\Models\City;
 use App\Models\ClinicBranch;
 use App\Models\Country;
@@ -244,24 +247,19 @@ class PatientListController extends Controller
             $patient->updated_by = auth()->user()->id;
             if ($patient->save()) {
 
-                // Get the maximum token number for the chosen doctor and today's date
-                $doctorId = $request->input('doctor2');
-                $todayDate = now()->toDateString();
-                $maxToken = Appointment::where('doctor_id', $doctorId)
-                    ->whereDate('created_at', $todayDate)
-                    ->max('token_no');
-                $tokenNo = $maxToken ? $maxToken + 1 : 1;
-
+                // Parse and format the appointment date and time
                 $appDateTime = Carbon::parse($request->input('appdate'));
-                $appDate = $appDateTime->toDateString(); // Extract date
-                $appTime = $appDateTime->toTimeString(); // Extract time
+                $appDate = $appDateTime->toDateString(); // 'Y-m-d'
+                $appTime = $appDateTime->toTimeString(); // 'H:i:s'
 
-                // Check if an appointment with the same date and time already exists for the given doctor
-                $existingAppointment = Appointment::where('doctor_id', $doctorId)
-                    ->where('app_date', $appDate)
-                    ->where('app_time', $appTime)
-                    ->first();
+                // Generate unique token number for the appointment
+                $doctorId = $request->input('doctor_id');
+                $commonService = new CommonService();
 
+                $tokenNo = $commonService->generateTokenNo($doctorId, $appDate);
+                $clinicBranchId = $request->input('clinic_branch_id');
+                // Check if an appointment with the same date, time, and doctor exists
+                $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId);
                 if ($existingAppointment) {
                     DB::rollBack();
 
@@ -270,15 +268,15 @@ class PatientListController extends Controller
 
                 // Store the appointment data
                 $appointment = new Appointment();
-                //$appointment->app_id = Appointment::max('app_id') + 1; // Generate a unique app_id
-                $appointment->app_id = $this->generateUniqueAppointmentId();
+                $appointment->app_id = $commonService->generateUniqueAppointmentId();
+                //$appointment->app_id = $this->generateUniqueAppointmentId();
                 $appointment->patient_id = $patient->patient_id;
                 $appointment->app_date = $appDate;
                 $appointment->app_time = $appTime;
                 $appointment->token_no = $tokenNo;
                 $appointment->doctor_id = $request->input('doctor2');
                 $appointment->app_branch = $request->input('clinic_branch_id0');
-                $appointment->app_type = 1;
+                $appointment->app_type = AppointmentType::NEW;
                 $appointment->height_cm = $request->input('height');
                 $appointment->weight_kg = $request->input('weight');
                 $appointment->blood_pressure = $request->input('bp');
@@ -311,24 +309,6 @@ class PatientListController extends Controller
             return response()->json(['error' => 'Failed to create patient: '.$e->getMessage()], 422);
         }
 
-    }
-
-    public function generateUniqueAppointmentId()
-    {
-        // Get the current year and month in the format 'Ym'
-        $yearMonth = Carbon::now()->format('Ym');
-        // Count the number of appointments created in the current month
-        $appointmentCount = Appointment::whereYear('app_date', Carbon::now()->year)
-            ->whereMonth('app_date', Carbon::now()->month)
-            ->count();
-        // Increment the count by 1
-        $newAppointmentNumber = $appointmentCount + 1;
-
-        // Concatenate the year, month, and the incremented count to form the appointment ID
-        $appId = 'APP'.$yearMonth.str_pad($newAppointmentNumber, 4, '0', STR_PAD_LEFT);
-        //Log::info('$appId: '.$appId);
-
-        return $appId;
     }
 
     /**
@@ -369,10 +349,7 @@ class PatientListController extends Controller
 
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(PatientListRequest $request)
+    public function update(PatientEditRequest $request)
     {
         try {
             DB::beginTransaction();
@@ -395,7 +372,7 @@ class PatientListController extends Controller
                 'state_id' => $request->input('state_id'),
                 'city_id' => $request->input('city_id'),
                 'pincode' => $request->input('pincode'),
-                'marital_status' => $request->input('marital_status'), // Add new fields
+                'marital_status' => $request->input('marital_status'),
                 'smoking_status' => $request->input('smoking_status'),
                 'alcoholic_status' => $request->input('alcoholic_status'),
                 'diet' => $request->input('diet'),
@@ -408,45 +385,9 @@ class PatientListController extends Controller
                 return redirect()->back()->with('error', 'Failed to update patient');
             }
 
-            // Update the appointment data
-            $appointment = Appointment::findOrFail($request->edit_app_id);
-            $appDateTime = Carbon::parse($request->input('appdate'));
-            $appDate = $appDateTime->toDateString();
-            $appTime = $appDateTime->toTimeString();
-
-            // Check if an appointment with the same date, time, and doctor already exists
-            $existingAppointment = Appointment::where('doctor_id', $request->input('doctor2'))
-                ->where('app_date', $appDate)
-                ->where('app_time', $appTime)
-                ->where('id', '!=', $appointment->id) // Exclude current appointment
-                ->exists();
-
-            if ($existingAppointment) {
-                return response()->json(['error' => 'An appointment already exists for the given date, time, and doctor.'], 422);
-            }
-
-            $appointment->fill([
-                'app_date' => $appDate,
-                'app_time' => $appTime,
-                'doctor_id' => $request->input('doctor2'),
-                'app_branch' => $request->input('clinic_branch_id0'),
-                'app_type' => 1,
-                'height_cm' => $request->input('height'),
-                'weight_kg' => $request->input('weight'),
-                'blood_pressure' => $request->input('bp'),
-                'referred_doctor' => $request->input('rdoctor'),
-                'app_status' => $request->input('appstatus'),
-                'updated_by' => auth()->user()->id,
-            ]);
-
-            if (! $appointment->save()) {
-                //throw new \Exception('Failed to update appointment');
-                return redirect()->back()->with('error', 'Failed to update appointment');
-            }
-
             DB::commit();
 
-            return redirect()->route('patient.patient_list')->with('success', 'Patient and appointment updated successfully');
+            return redirect()->route('patient.patient_list')->with('success', 'Patient updated successfully');
         } catch (\Exception $e) {
             DB::rollback();
 
@@ -469,6 +410,69 @@ class PatientListController extends Controller
             $patientProfile->save();
 
             return redirect()->route('patient.patient_list')->with('success', 'Status updated successfully');
+        }
+
+    }
+
+    public function appointmentBooking(AppointmentRequest $request)
+    {
+
+        try {
+            DB::beginTransaction();
+
+            // Parse and format the appointment date and time
+            $appDateTime = Carbon::parse($request->input('appdate'));
+            $appDate = $appDateTime->toDateString(); // 'Y-m-d'
+            $appTime = $appDateTime->toTimeString(); // 'H:i:s'
+
+            // Generate unique token number for the appointment
+            $doctorId = $request->input('doctor_id');
+            $commonService = new CommonService();
+
+            $tokenNo = $commonService->generateTokenNo($doctorId, $appDate);
+            $clinicBranchId = $request->input('clinic_branch_id');
+            // Check if an appointment with the same date, time, and doctor exists
+            $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId);
+            //Log::info('$existingappointment: '.$existingAppointment);
+            if ($existingAppointment) {
+
+                DB::rollBack();
+
+                return response()->json(['error' => 'An appointment already exists for the given date, time, and doctor.'], 422);
+            }
+
+            // Store the appointment data
+            $appointment = new Appointment();
+            $appointment->app_id = $commonService->generateUniqueAppointmentId();
+            $appointment->patient_id = $request->input('patient_id');
+            $appointment->app_date = $appDate;
+            $appointment->app_time = $appTime;
+            $appointment->token_no = $tokenNo;
+            $appointment->doctor_id = $doctorId;
+            $appointment->app_branch = $clinicBranchId;
+            $appointment->app_type = AppointmentType::NEW;
+            $appointment->height_cm = $request->input('height');
+            $appointment->weight_kg = $request->input('weight');
+            $appointment->blood_pressure = $request->input('bp');
+            $appointment->referred_doctor = $request->input('rdoctor');
+            $appointment->app_status = AppointmentStatus::SCHEDULED;
+            $appointment->app_parent_id = $request->input('app_parent_id');
+            $appointment->created_by = auth()->user()->id;
+            $appointment->updated_by = auth()->user()->id;
+
+            if ($appointment->save()) {
+                DB::commit();
+
+                return redirect()->route('patient.patient_list')->with('success', 'Appointment added successfully');
+            } else {
+                DB::rollBack();
+
+                return redirect()->back()->with('error', 'Failed to create appointment');
+            }
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            return response()->json(['error' => 'Failed to create appointment: '.$e->getMessage()], 422);
         }
 
     }

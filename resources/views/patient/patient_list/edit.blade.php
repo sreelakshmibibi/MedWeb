@@ -28,10 +28,10 @@
                             </section>
 
                             <!--Education-->
-                            <h6 class="tabHeading">Appointment</h6>
+                            {{-- <h6 class="tabHeading">Appointment</h6>
                             <section class="tabSection">
                                 @include('patient.patient_list.edit_appointment')
-                            </section>
+                            </section> --}}
 
 
                             <div id="updateRoute" data-url="{{ route('patient.patient_list.update') }}"
