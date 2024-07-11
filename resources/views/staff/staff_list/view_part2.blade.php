@@ -39,6 +39,7 @@
         var table = $('.data-table').DataTable({
             processing: true,
             serverSide: true,
+            lengthMenu: [5, 10, 25, 50],
             ajax: {
                 url: "",
                 type: 'GET',

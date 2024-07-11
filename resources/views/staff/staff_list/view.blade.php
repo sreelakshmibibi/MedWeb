@@ -87,7 +87,7 @@
                 $.each(daysOfWeek, function(index, day) {
                     var dayName = day.charAt(0).toUpperCase() + day.slice(1); // Capitalize first letter
                     var timingsHtml = `
-                        <div class="media align-items-center justify">
+                        <div class="media align-items-center justify" style="padding: 0.5rem;">
                             <div class="media-body d-flex justify-content-between">
                                 <h6 class="text-muted">${dayName}</h6>
                                 <div class="fw-600 min-w-120 text-center">

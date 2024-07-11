@@ -108,7 +108,8 @@ $(function () {
     });
 
     $(".inner-user-div5").slimScroll({
-        height: "160px",
+        // height: "160px",
+        height: "146px",
     });
 
     var datepaginator = (function () {
