@@ -502,7 +502,7 @@
         <button class="btn btn-success btn-file w-p100 mb-4" type="button" id="uploadButton"><i
                 class="fa-solid fa-upload"></i>
             Upload Documents
-            <input id="fileInput" type="file" name="documents[]" multiple style="display: none;">
+            <input id="fileInput" type="file" name="documents[]" multiple>
         </button>
     </div>
 </div>

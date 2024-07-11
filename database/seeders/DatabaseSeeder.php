@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             DosageSeeder::class,
             ClinicTypeSeeder::class,
             WeekDaySeeder::class,
+            TeethSeeder::class,
             // Other seeders...
         ]);
         $adminUser = User::factory()->create([
