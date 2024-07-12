@@ -248,13 +248,26 @@
             });
 
             // Handle change event for role dropdown
+            // $('select[name="role[]"]').change(function() {
+            //     if ($(this).val() && $(this).val().includes('3')) {
+            //         $('.doctorFields').show();
+            //         $('.otherFields').hide();
+            //     } else {
+            //         $('.doctorFields').hide();
+            //         $('.otherFields').show();
+            //     }
+            // });
             $('select[name="role[]"]').change(function() {
                 if ($(this).val() && $(this).val().includes('3')) {
                     $('.doctorFields').show();
                     $('.otherFields').hide();
+                    $('.doctorFields input').attr('required', true);
+                    $('.otherFields select').attr('required', false);
                 } else {
                     $('.doctorFields').hide();
                     $('.otherFields').show();
+                    $('.doctorFields input').attr('required', false);
+                    $('.otherFields select').attr('required', true);
                 }
             });
 
