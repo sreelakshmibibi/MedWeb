@@ -28,6 +28,16 @@
                                 @include('appointment.personal_info')
                             </section>
 
+                            <h6 class="tabHeading">Chart images</h6>
+                            <section class="tabSection">
+                                @include('appointment.dchart_images')
+                            </section>
+
+                            {{-- <h6 class="tabHeading">Chart</h6>
+                            <section class="tabSection">
+                                @include('appointment.dchart')
+                            </section> --}}
+
 
                             <div id="updateRoute" data-url="{{ route('patient.patient_list.update') }}"
                                 data-patientlist-route="{{ route('patient.patient_list') }}"></div>
@@ -43,6 +53,7 @@
         </div>
     </div>
 
+    @include('appointment.teeth')
 
     <script>
         $(document).ready(function() {

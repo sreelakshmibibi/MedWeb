@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Appointment;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Appointment\AppointmentRequest;
 use App\Models\City;
+use App\Models\Teeth;
 use App\Models\ClinicBranch;
 use App\Models\Country;
 use App\Models\Department;
@@ -328,8 +329,10 @@ class AppointmentController extends Controller
         $dateTime = Carbon::parse($dateTimeString)
             ->format('Y-m-d\TH:i');
 
+        $tooth = Teeth::all();
+
         // return view('appointment.treatment');
-        return view('appointment.treatment', compact('name', 'patientProfile', 'countries', 'appointment', 'clinicBranches', 'appointmentStatuses', 'workingDoctors', 'dateTime'));
+        return view('appointment.treatment', compact('name', 'patientProfile', 'countries', 'appointment', 'clinicBranches', 'appointmentStatuses', 'workingDoctors', 'dateTime', 'tooth'));
     }
 
     public function getTodayWorkingDoctors($branchId, $weekday)
