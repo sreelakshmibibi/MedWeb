@@ -105,3 +105,4 @@ Route::post('/appointment/store', [AppointmentController::class, 'store'])->name
 Route::get('/appointment/{appointment}/edit', [AppointmentController::class, 'edit'])->name('appointment.edit');
 Route::post('/appointment/update', [AppointmentController::class, 'update'])->name('appointment.update');
 Route::post('/appointment/{appointment}', [AppointmentController::class, 'destroy'])->name('appointment.destroy');
+Route::get('/appointment/{appointment}/treatment', [AppointmentController::class, 'treatment'])->name('appointment.treatment');
