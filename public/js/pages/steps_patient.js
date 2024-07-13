@@ -192,6 +192,7 @@ $("#patientform").steps({
             smoking_status: { required: false },
             alcoholic_status: { required: false },
             diet: { required: false },
-            allergies: { maxlength: 500 }
+            allergies: { maxlength: 500 },
+            "medical_conditions[]": { required: false, maxlength: 500 }
         },
     });

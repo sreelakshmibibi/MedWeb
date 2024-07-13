@@ -69,8 +69,8 @@
     <!-- ./wrapper -->
     <script type="text/javascript">
         jQuery(function($) {
-
-            var table = $('.data-table').DataTable({
+            var table;
+            table = $('.data-table').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: "",

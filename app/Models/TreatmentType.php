@@ -38,4 +38,9 @@ class TreatmentType extends Model
             $clinic->updated_by = Auth::id(); // Set updated_by to current user's ID
         });
     }
+
+    public function comboOffers()
+    {
+        return $this->belongsToMany(TreatmentComboOffer::class, 'combo_offer_treatment', 'treatment_id', 'combo_offer_id');
+    }
 }

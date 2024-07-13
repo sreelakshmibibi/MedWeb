@@ -78,6 +78,19 @@ class PatientProfile extends Model
             ->oldest('app_time');
     }
 
+    public function nextDoctorBranchAppointment($doctorId, $branchId)
+    {
+        return $this->hasOne(Appointment::class, 'patient_id', 'patient_id')
+            ->where('app_date', '>', now())
+            ->where('doctor_id', $doctorId)
+            ->where('branch_id', $branchId)
+            ->where('status', 'Y')
+            ->where('app_status', AppointmentStatus::SCHEDULED)
+            ->orderBy('app_date')
+            ->orderBy('app_time')
+            ->first(); // Retrieve the first matching appointment
+    }
+
     public function lastAppointment()
     {
         return $this->hasOne(Appointment::class, 'patient_id', 'patient_id')->latest();
@@ -99,5 +112,10 @@ class PatientProfile extends Model
     public function city()
     {
         return $this->belongsTo(City::class, 'city_id', 'id');
+    }
+
+    public function history()
+    {
+        return $this->hasMany(History::class, 'patient_id', 'patient_id');
     }
 }

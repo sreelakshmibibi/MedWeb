@@ -35,10 +35,10 @@
 
 
                             <div id="updateRoute" data-url="{{ route('patient.patient_list.update') }}"
-                             data-patientlist-route="{{ route('patient.patient_list') }}"></div>
-                            <input type="hidden" name="edit_app_id" id="edit_app_id" value="{{ $appointment->id  }}">
+                                data-patientlist-route="{{ route('patient.patient_list') }}"></div>
+                            <input type="hidden" name="edit_app_id" id="edit_app_id" value="{{ $appointment->id }}">
                             <input type="hidden" name="edit_patient_id" id="edit_patient_id"
-                                value="{{ $patientProfile->id  }}">
+                                value="{{ $patientProfile->id }}">
                         </form>
                     </div>
 
@@ -77,7 +77,7 @@
             function loadStates(countryId, stateSelectElement, initialSelected) {
                 if (countryId) {
                     $.ajax({
-                        url: '{{ route("get.states", "") }}' + '/' + countryId,
+                        url: '{{ route('get.states', '') }}' + '/' + countryId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -90,7 +90,7 @@
                                     selected = "selected";
 
                                 }
-                                
+
                                 stateSelectElement.append('<option value="' + key + '" ' +
                                     selected + '>' +
                                     value + '</option>');
@@ -111,7 +111,7 @@
             function loadCities(stateId, citySelectElement, initialSelected) {
                 if (stateId) {
                     $.ajax({
-                        url: '{{ route("get.cities", "") }}' + '/' + stateId,
+                        url: '{{ route('get.cities', '') }}' + '/' + stateId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -183,5 +183,35 @@
             });
 
         });
+        // document.getElementById('add_medical_condition').addEventListener('click', function() {
+        //     var container = document.getElementById('medical_conditions_container');
+        //     var newCondition = document.createElement('div');
+        //     newCondition.className = 'input-group mb-2';
+        //     newCondition.innerHTML =
+        //         '<input type="text" class="form-control" name="medical_conditions[]" placeholder="Medical Condition">' +
+        //         '<button type="button" class="btn btn-danger remove-condition">Remove</button>';
+        //     container.appendChild(newCondition);
+        // });
+
+        // document.addEventListener('click', function(e) {
+        //     if (e.target.classList.contains('remove-condition')) {
+        //         e.target.parentElement.remove();
+        //     }
+        // });
+        function addMedicalCondition() {
+            const wrapper = document.getElementById('medical-conditions-wrapper');
+            const div = document.createElement('div');
+            div.className = 'input-group mb-3';
+            div.innerHTML = `
+                <input type="text" class="form-control" name="medical_conditions[]" placeholder="Medical Condition">
+                <button class="btn btn-danger" type="button" onclick="removeMedicalCondition(this)">-</button>
+            `;
+            wrapper.appendChild(div);
+        }
+
+        function removeMedicalCondition(button) {
+            const div = button.parentElement;
+            div.remove();
+        }
     </script>
 @endsection

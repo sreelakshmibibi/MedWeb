@@ -13,6 +13,7 @@ use App\Models\City;
 use App\Models\ClinicBranch;
 use App\Models\Country;
 use App\Models\DoctorWorkingHour;
+use App\Models\History;
 use App\Models\PatientProfile;
 use App\Models\State;
 use App\Services\CommonService;
@@ -86,7 +87,7 @@ class PatientListController extends Controller
                     return 'N/A';
                 })
                 ->addColumn('new_appointment', function ($row) {
-                    $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
+                    $parent_id = '';
                     $buttons = [
                         "<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1' title='follow up' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->first_name.' '.$row->last_name)."' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>",
                     ];
@@ -178,12 +179,27 @@ class PatientListController extends Controller
         $appDate = $appDateTime->toDateString(); // Extract date
         $appTime = $appDateTime->toTimeString(); // Extract time
         $doctor_id = $request->input('doctor_id');
+        //$patient_id = $request->input('patient_id');
         $doctorAvailabilityService = new DoctorAvaialbilityService();
         $existingAppointments = $doctorAvailabilityService->getExistingAppointments($branchId, $appDate, $doctor_id);
         $checkAllocated = $doctorAvailabilityService->checkAllocatedAppointments($branchId, $appDate, $doctor_id, $appTime);
+        //$patient = PatientProfile::where('patient_id', $patient_id)->first();
+        //$nextAppointment = $patient ? $patient->nextDoctorBranchAppointment($doctor_id, $branchId) : null;
+
+        // Log the next appointment details
+        // if ($nextAppointment) {
+        //     \Log::info('Next appointment found for patient '.$patient_id, [
+        //         'appointment_id' => $nextAppointment->id,
+        //         'app_date' => $nextAppointment->app_date,
+        //         'app_time' => $nextAppointment->app_time,
+        //     ]);
+        // } else {
+        //     \Log::info('No upcoming appointment found for patient '.$patient_id.'patient'.$patient);
+        // }
         $response = [
             'existingAppointments' => $existingAppointments,
             'checkAllocated' => $checkAllocated,
+            // 'nextAppointment' => $nextAppointment,
         ];
 
         return response()->json($response);
@@ -244,7 +260,7 @@ class PatientListController extends Controller
             $patient->diet = $request->input('diet');
             $patient->allergies = $request->input('allergies');
             $patient->created_by = auth()->user()->id;
-            $patient->updated_by = auth()->user()->id;
+            // $patient->updated_by = auth()->user()->id;
             if ($patient->save()) {
 
                 // Parse and format the appointment date and time
@@ -283,11 +299,28 @@ class PatientListController extends Controller
                 $appointment->referred_doctor = $request->input('rdoctor');
                 $appointment->app_status = $request->input('appstatus');
                 $appointment->created_by = auth()->user()->id;
-                $appointment->updated_by = auth()->user()->id;
+                // $appointment->updated_by = auth()->user()->id;
                 if ($appointment->save()) {
+                    // Save patient medical condition history if provided
+                    $medicalConditions = $request->input('medical_conditions');
+                    foreach ($medicalConditions as $condition) {
+
+                        if ($condition != '') {
+                            $history = new History();
+                            $history->patient_id = $patient->patient_id;
+                            $history->app_id = $appointment->id;
+                            $history->history = $condition;
+                            $history->doctor_id = $request->input('doctor2');
+                            $history->created_by = auth()->user()->id;
+                            $history->save();
+                        }
+
+                    }
+
                     DB::commit();
 
                     return redirect()->route('patient.patient_list')->with('success', 'Patient and appointment added successfully');
+
                 } else {
                     DB::rollBack();
 
@@ -324,8 +357,8 @@ class PatientListController extends Controller
      */
     public function edit(string $id)
     {
-        $patientProfile = PatientProfile::with(['lastAppointment'])->find($id);
-        //$patient = PatientProfile::find($id);
+        //$patientProfile = PatientProfile::with(['lastAppointment'])->find($id);
+        $patientProfile = PatientProfile::with(['lastAppointment', 'history'])->find($id);
         abort_if(! $patientProfile, 404);
         $appointment = $patientProfile->lastAppointment;
         $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
@@ -344,9 +377,19 @@ class PatientListController extends Controller
         // Parse the combined datetime string as it is already in IST
         $dateTime = Carbon::parse($dateTimeString)
             ->format('Y-m-d\TH:i');
+        $medicalConditions = $patientProfile->history->pluck('history')->toArray();
 
-        return view('patient.patient_list.edit', compact('name', 'patientProfile', 'countries', 'appointment', 'clinicBranches', 'appointmentStatuses', 'workingDoctors', 'dateTime'));
-
+        return view('patient.patient_list.edit', compact(
+            'name',
+            'patientProfile',
+            'countries',
+            'appointment',
+            'clinicBranches',
+            'appointmentStatuses',
+            'workingDoctors',
+            'dateTime',
+            'medicalConditions'
+        ));
     }
 
     public function update(PatientEditRequest $request)
@@ -383,6 +426,28 @@ class PatientListController extends Controller
             if (! $patient->save()) {
                 //throw new \Exception('Failed to update patient');
                 return redirect()->back()->with('error', 'Failed to update patient');
+            }
+
+            // Update medical conditions in the history table
+            $medicalConditions = $request->input('medical_conditions', []);
+            // Clear existing medical history for the patient
+            $patient->history()->delete();
+            $patient = PatientProfile::with('latestAppointment')->find($request->edit_patient_id);
+            $patientId = $patient->latestAppointment->patient_id;
+            $appId = $patient->latestAppointment->id;
+            $doctorId = $patient->latestAppointment->doctor_id;
+            // Add new medical conditions to the history table
+            foreach ($medicalConditions as $condition) {
+                if (! empty($condition)) {
+                    $history = new History();
+                    $history->patient_id = $patientId;
+                    $history->app_id = $appId; // Assuming you have this in your request
+                    $history->history = $condition;
+                    $history->doctor_id = $doctorId; // Assuming the logged-in user is the doctor
+                    $history->created_by = auth()->user()->id;
+                    $history->updated_by = auth()->user()->id;
+                    $history->save();
+                }
             }
 
             DB::commit();

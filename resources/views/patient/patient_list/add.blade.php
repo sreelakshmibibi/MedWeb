@@ -9,8 +9,9 @@
                     <h3 class="page-title">Add Patient</h3>
                 </div>
                 <div id="error-message-container">
-                    <p id="error-message" class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fadeOut"
-                     style="display: none;"></p>
+                    <p id="error-message"
+                        class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fadeOut"
+                        style="display: none;"></p>
                 </div>
                 {{-- @if (session('success'))
                     <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-success alerttop fadeOut"
@@ -45,7 +46,8 @@
                             </section>
 
 
-                            <div id="storeRoute" data-url="{{ route('patient.patient_list.store') }}" data-patientlist-route="{{ route('patient.patient_list') }}"></div>
+                            <div id="storeRoute" data-url="{{ route('patient.patient_list.store') }}"
+                                data-patientlist-route="{{ route('patient.patient_list') }}"></div>
                         </form>
                     </div>
 
@@ -141,7 +143,7 @@
 
             // Handle change event for branch dropdown
             // $('#clinic_branch_id0').change(function() {
-                
+
             //     var branchId = $(this).val();
             //     var appDate = $('#appdate').val();
             //     loadDoctors(branchId, appDate);
@@ -152,12 +154,12 @@
                 var appDate = $('#appdate').val();
                 loadDoctors(branchId, appDate);
             });
-            
 
-             // Function to load doctors based on branch ID
-             function loadDoctors(branchId, appDate) {
+
+            // Function to load doctors based on branch ID
+            function loadDoctors(branchId, appDate) {
                 if (branchId && appDate) {
-                    
+
                     $.ajax({
                         url: '{{ route('get.doctors', '') }}' + '/' + branchId,
                         type: "GET",
@@ -166,7 +168,7 @@
                         },
                         dataType: "json",
                         success: function(data) {
-                           
+
                             $('#doctor2').empty();
                             $('#doctor2').append('<option value="">Select a doctor</option>');
                             $.each(data, function(key, value) {
@@ -180,7 +182,7 @@
                     $('#doctor2').empty();
                 }
             }
-          
+
             // Form submit validation
             // $('form.tab-wizard').submit(function(event) {
             //     var isValid = true;
@@ -211,7 +213,23 @@
                 // Update the button text with the selected salutation
                 $(".input-group .dropdown-toggle").text(salutation);
             });
-            
+
         });
+
+        function addMedicalCondition() {
+            const wrapper = document.getElementById('medical-conditions-wrapper');
+            const div = document.createElement('div');
+            div.className = 'input-group mb-3';
+            div.innerHTML = `
+                <input type="text" class="form-control" name="medical_conditions[]" placeholder="Medical Condition">
+                <button class="btn btn-danger" type="button" onclick="removeMedicalCondition(this)">-</button>
+            `;
+            wrapper.appendChild(div);
+        }
+
+        function removeMedicalCondition(button) {
+            const div = button.parentElement;
+            div.remove();
+        }
     </script>
 @endsection
