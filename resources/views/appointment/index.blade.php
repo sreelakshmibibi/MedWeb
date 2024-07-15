@@ -254,6 +254,7 @@
                 var branchId = $('#clinic_branch_id').val();
                 var appDate = $('#appdate').val();
                 var doctorId = $('#doctor_id').val();
+                $('#existingAppointmentsError').hide();
                 showExistingAppointments(branchId, appDate, doctorId,'store');
                 
         });
@@ -261,6 +262,7 @@
                 var branchId = $('#edit_clinic_branch_id').val();
                 var appDate = $('#rescheduledAppdate').val();
                 var doctorId = $('#edit_doctor_id').val();
+                $('#existingAppointmentsError').hide();
                 showExistingAppointments(branchId, appDate, doctorId,'edit');
                 
         });
@@ -277,6 +279,7 @@
                     },
                     dataType: "json",
                     success: function(data) {
+                        $('#existingAppointmentsError').hide();
                         if (data.checkAllocated.length > 0) {
                             $('#existingAppointmentsError').show();
                         }
