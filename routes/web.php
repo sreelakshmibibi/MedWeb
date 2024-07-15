@@ -6,6 +6,7 @@ use App\Http\Controllers\HelperController;
 use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
 use App\Http\Controllers\Settings\ClinicBranchController;
+use App\Http\Controllers\Settings\ComboOfferController;
 use App\Http\Controllers\Settings\DepartmentController;
 use App\Http\Controllers\Settings\DiseaseController;
 use App\Http\Controllers\Settings\MedicineController;
@@ -106,3 +107,9 @@ Route::get('/appointment/{appointment}/edit', [AppointmentController::class, 'ed
 Route::post('/appointment/update', [AppointmentController::class, 'update'])->name('appointment.update');
 Route::post('/appointment/{appointment}', [AppointmentController::class, 'destroy'])->name('appointment.destroy');
 Route::get('/appointment/{appointment}/treatment', [AppointmentController::class, 'treatment'])->name('appointment.treatment');
+
+Route::get('/combo_offer', [ComboOfferController::class, 'index'])->name('settings.combo_offer');
+Route::post('/combo_offer/store', [ComboOfferController::class, 'store'])->name('settings.combo_offer.store');
+Route::get('/combo_offer/{offer}/edit', [ComboOfferController::class, 'edit'])->name('settings.combo_offer.edit');
+Route::post('/combo_offer/{offer}/update', [ComboOfferController::class, 'update'])->name('settings.combo_offer.update');
+Route::delete('/combo_offer/{offer}', [ComboOfferController::class, 'destroy'])->name('settings.combo_offer.destroy');

@@ -131,6 +131,7 @@ class MenuItemsSeeder extends Seeder
             ['name' => 'Medicines', 'url' => '/medicine', 'route_name' => 'settings.medicine', 'icon' => 'icon-Commit', 'order_no' => 3],
             ['name' => 'Treatment Cost', 'url' => '/treatment_cost', 'route_name' => 'settings.treatment_cost', 'icon' => 'icon-Commit', 'order_no' => 4],
             ['name' => 'Disease', 'url' => '/diseases', 'route_name' => 'settings.disease', 'icon' => 'icon-Commit', 'order_no' => 5],
+            ['name' => 'Combo Offers', 'url' => '/combo_offer', 'route_name' => 'settings.combo_offer', 'icon' => 'icon-Commit', 'order_no' => 6],
         ]);
 
         $staffSubmenus = $staffs->children()->createMany([
@@ -145,7 +146,7 @@ class MenuItemsSeeder extends Seeder
 
         // $appointmentSubmenus = $patients->children()->createMany([
         //     ['name' => 'Appointment List', 'url' => '/appointment', 'route_name' => 'appointment', 'icon' => 'icon-Commit', 'order_no' => 1],
-            
+
         // ]);
 
         // Attach roles to menu items

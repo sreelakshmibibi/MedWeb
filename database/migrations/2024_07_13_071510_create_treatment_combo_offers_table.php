@@ -18,6 +18,7 @@ return new class extends Migration
 
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
+            $table->string('status', 5)->default('Y');
 
             $table->timestamps();
             $table->softDeletes();

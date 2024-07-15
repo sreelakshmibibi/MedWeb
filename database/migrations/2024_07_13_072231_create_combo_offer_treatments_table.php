@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreign('treatment_id')->references('id')->on('treatment_types')->onDelete('cascade');
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
