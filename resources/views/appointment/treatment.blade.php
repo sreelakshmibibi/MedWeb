@@ -33,6 +33,12 @@
                                 @include('appointment.dchart_images')
                             </section>
 
+                            <h6 class="tabHeading">Examination</h6>
+                            <section class="tabSection">
+                                @include('appointment.examination')
+                            </section>
+
+
                             {{-- <h6 class="tabHeading">Chart</h6>
                             <section class="tabSection">
                                 @include('appointment.dchart')
@@ -59,6 +65,50 @@
         $(document).ready(function() {
 
             $("#patientform .actions ul li:last-child a").addClass("bg-success btn btn-success");
+
+            // Handle change event for dparts
+            $('.dparts').click(function() {
+                var partName = this.id;
+                var partId = '#' + partName;
+                var title = $(this).attr('title');
+                var divId = '#' + title;
+
+                if ($(partId).hasClass('red')) {
+                    $(partId).css({
+                        'background-color': 'white',
+                    });
+                    $(partId).removeClass('red');
+                    $(divId).hide();
+                } else {
+                    $(partId).css({
+                        'background-color': 'red',
+                    });
+                    $(partId).addClass('red');
+                    $(divId).show();
+                }
+                $(partId).toggleClass('selected');
+            });
+
+            $('#tooth_selected').change(function() {
+                var selectedValue = $(this).val();
+
+                // Hide all tooth divs
+                $('.exam_toothdiv').hide();
+                $('#incisors_canines').hide();
+                $('#premolars_molars').hide();
+
+                if (selectedValue === 'tooth_in') {
+                    $('.exam_toothdiv').show();
+                    $('#incisors_canines').show();
+
+                } else if (selectedValue === 'tooth_mol') {
+                    $('.exam_toothdiv').show();
+                    $('#premolars_molars').show();
+
+                }
+
+
+            });
 
             // Initializations
             var initialSelectedStateId = '{{ $patientProfile->state_id }}';
