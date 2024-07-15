@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class Teeth extends Model
 {
     use HasFactory;
-    use SoftDeletes;
+    // use SoftDeletes;
     protected $fillable = ['teeth_name', 'position', 'direction', 'teeth_image', 'is_pediatric', 'position_no', 'created_by', 'updated_by'];
     // protected static function booted()
     // {

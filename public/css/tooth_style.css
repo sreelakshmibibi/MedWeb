@@ -1,0 +1,126 @@
+.tooth_body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* height: 100vh; */
+    /* height: 50vh; */
+    margin: 0;
+    /* background-color: #f0f0f0; */
+    background-color: #fff;
+}
+
+.dental-chart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px; /* Adjust the gap between rows */
+    gap: 0;
+    object-fit: contain;
+    /* transform: scale(0.9); */
+}
+
+.row {
+    display: flex;
+    gap: 5px; /* Adjust the gap between teeth */
+    gap: 0;
+}
+
+.tooth {
+    width: 50px; /* Adjust width and height as needed */
+    /* height: 50px; */
+    background-color: white;
+    background-color: transparent;
+    border: 1px solid white;
+    background-color: #fff;
+}
+
+.tooth {
+    /* width: 100px; /* Adjust the width of the div */
+    /* height: 100px; /* Adjust the height of the div */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    flex-direction: column;
+}
+.tooth img {
+    max-width: 100%;
+    height: auto;
+}
+
+.tooth {
+    /*  width: 100px; /* Adjust the width of the div */
+    /*   height: 100px; /* Adjust the height of the div */
+    overflow: hidden;
+}
+.tooth img {
+    display: block;
+    width: auto;
+    height: 100%;
+    object-fit: contain;
+}
+
+.select-chart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    object-fit: contain;
+}
+.select-div {
+    /* width: 100px; */
+    height: 100px;
+
+    justify-content: center;
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+}
+
+.teeth_image:hover {
+    cursor: pointer;
+    /* border: 1px solid red; */
+}
+
+.rowbordered {
+    border: 1px solid green;
+}
+
+.molar {
+    background-color: #e8e8e8; /* Color for normal adult teeth */
+    background-color: white;
+    background-color: transparent;
+    background-color: #fff;
+}
+
+.inccan {
+    background-color: #b3d7ff;
+    background-color: transparent;
+    background-color: #fff;
+}
+
+.normal {
+    background-color: #f7e9e9;
+    background-color: transparent;
+    background-color: #fff;
+}
+
+.pediatric {
+    background-color: #b3d7ff; /* Color for pediatric teeth */
+    background-color: transparent;
+    background-color: #fff;
+}
+
+.t_img {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    /* width: 150px;
+    width: 50px; */
+    height: 80px;
+}
+
+.t_img:hover {
+    box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+}
