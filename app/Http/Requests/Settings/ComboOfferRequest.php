@@ -26,6 +26,8 @@ class ComboOfferRequest extends FormRequest
             'treatments' => 'required|array|min:1', // Must be an array and contain at least one treatment
             'treatments.*' => 'exists:treatment_types,id', // Each treatment must exist in the treatment_types table
             'status' => 'required|in:Y,N', // Must be either 'Y' or 'N'
+            'offer_from' => 'required|date|before_or_equal:offer_to', // Must be a valid date and before or equal to offer_to
+            'offer_to' => 'required|date|after_or_equal:offer_from', // Must be a valid date and after or equal to offer_from
         ];
     }
 
@@ -41,6 +43,12 @@ class ComboOfferRequest extends FormRequest
             'treatments.*.exists' => 'Selected treatment is invalid.',
             'status.required' => 'Status is required.',
             'status.in' => 'Status must be either "Y" or "N".',
+            'offer_from.required' => 'Offer start date is required.',
+            'offer_from.date' => 'Offer start date must be a valid date.',
+            'offer_from.before_or_equal' => 'Offer start date must be before or equal to the end date.',
+            'offer_to.required' => 'Offer end date is required.',
+            'offer_to.date' => 'Offer end date must be a valid date.',
+            'offer_to.after_or_equal' => 'Offer end date must be after or equal to the start date.',
         ];
     }
 }

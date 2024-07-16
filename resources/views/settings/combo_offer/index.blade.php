@@ -38,7 +38,9 @@
                                         <th>Treatments</th>
                                         <th>Total Treatment Amount</th>
                                         <th>Offer Amount</th>
-                                        <th>Staus </th>
+                                        <th>Offer From</th>
+                                        <th>Offer To</th>
+                                        <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -96,6 +98,14 @@
                         // }
                     },
                     {
+                        data: 'offer_from',
+                        name: 'offer_from'
+                    },
+                    {
+                        data: 'offer_to',
+                        name: 'offer_to'
+                    },
+                    {
                         data: 'status',
                         name: 'status'
                     },
@@ -117,6 +127,8 @@
                     success: function(response) {
                         $('#edit_combo_offer_id').val(response.id);
                         $('#edit_offer_amount').val(response.offer_amount);
+                        $('#edit_offer_from').val(response.offer_from);
+                        $('#edit_offer_to').val(response.offer_to);
                         $('input[name="status"][value="' + response.status + '"]').prop(
                             'checked', true);
 

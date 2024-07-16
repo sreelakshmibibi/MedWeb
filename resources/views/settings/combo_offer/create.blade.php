@@ -52,6 +52,21 @@
                             <div id="offerAmountError" class="invalid-feedback"></div>
                         </div>
 
+                        <div class="form-group mt-2">
+                            <label for="offer_from" class="form-label">Offer From <span
+                                    class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="offer_from" name="offer_from"
+                                placeholder="Offer From Date" autocomplete="off">
+                            <div id="offerFromError" class="invalid-feedback"></div>
+                        </div>
+
+                        <div class="form-group mt-2">
+                            <label for="offer_to" class="form-label">Offer To <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="offer_to" name="offer_to"
+                                placeholder="Offer To Date" autocomplete="off">
+                            <div id="offerToError" class="invalid-feedback"></div>
+                        </div>
+
                         <!-- Status -->
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6">Active</label>
@@ -80,79 +95,18 @@
 <script>
     $(function() {
         // Handle Save button click
-        // $('#saveComboOfferBtn').click(function() {
-        //     // Reset previous error messages
-        //     $('#treatmentsError').text('');
-        //     $('#offerAmountError').text('');
-
-        //     // Validate form inputs
-        //     var treatments = $('#treatments').val();
-        //     var offerAmount = $('#offer_amount').val();
-
-        //     // Basic client-side validation
-        //     if (!treatments || treatments.length === 0) {
-        //         $('#treatments').addClass('is-invalid');
-        //         $('#treatmentsError').text('At least one treatment must be selected.');
-        //         return; // Prevent further execution
-        //     } else {
-        //         $('#treatments').removeClass('is-invalid');
-        //         $('#treatmentsError').text('');
-        //     }
-
-        //     if (offerAmount.length === 0) {
-        //         $('#offer_amount').addClass('is-invalid');
-        //         $('#offerAmountError').text('Offer amount is required.');
-        //         return; // Prevent further execution
-        //     } else if (!$.isNumeric(offerAmount)) {
-        //         $('#offer_amount').addClass('is-invalid');
-        //         $('#offerAmountError').text('The offer amount must be a number.');
-        //         return; // Prevent further execution
-        //     } else {
-        //         $('#offer_amount').removeClass('is-invalid');
-        //         $('#offerAmountError').text('');
-        //     }
-
-        //     // If validation passed, submit the form via AJAX
-        //     var form = $('#createComboOfferForm');
-        //     var url = form.attr('action');
-        //     var formData = form.serialize();
-
-        //     $.ajax({
-        //         type: 'POST',
-        //         url: url,
-        //         data: formData,
-        //         dataType: 'json',
-        //         success: function(response) {
-        //             // If successful, hide modal and show success message
-        //             $('#modal-right').modal('hide');
-        //             $('#successMessage').text('Combo offer created successfully').fadeIn()
-        //                 .delay(3000).fadeOut();
-        //             table.ajax.reload(); // Reload the DataTable
-        //         },
-        //         error: function(xhr) {
-        //             // If error, update modal to show errors
-        //             var errors = xhr.responseJSON.errors;
-
-        //             if (errors.hasOwnProperty('treatments')) {
-        //                 $('#treatments').addClass('is-invalid');
-        //                 $('#treatmentsError').text(errors.treatments[0]);
-        //             }
-
-        //             if (errors.hasOwnProperty('offer_amount')) {
-        //                 $('#offer_amount').addClass('is-invalid');
-        //                 $('#offerAmountError').text(errors.offer_amount[0]);
-        //             }
-        //         }
-        //     });
-        // });
         $('#saveComboOfferBtn').click(function() {
             // Reset previous error messages
             $('#treatmentsError').text('');
             $('#offerAmountError').text('');
+            $('#offerFromError').text('');
+            $('#offerToError').text('');
 
             // Validate form inputs
             var treatments = $('#treatments').val();
             var offerAmount = parseFloat($('#offer_amount').val());
+            var offerFrom = $('#offer_from').val();
+            var offerTo = $('#offer_to').val();
             var totalTreatmentCost = 0;
 
             // Calculate total treatment cost
@@ -187,6 +141,24 @@
                 $('#offerAmountError').text('');
             }
 
+            if (!offerFrom) {
+                $('#offer_from').addClass('is-invalid');
+                $('#offerFromError').text('Offer from date is required.');
+                return; // Prevent further execution
+            } else {
+                $('#offer_from').removeClass('is-invalid');
+                $('#offerFromError').text('');
+            }
+
+            if (!offerTo) {
+                $('#offer_to').addClass('is-invalid');
+                $('#offerToError').text('Offer to date is required.');
+                return; // Prevent further execution
+            } else {
+                $('#offer_to').removeClass('is-invalid');
+                $('#offerToError').text('');
+            }
+
             // If validation passed, submit the form via AJAX
             var form = $('#createComboOfferForm');
             var url = form.attr('action');
@@ -216,6 +188,15 @@
                     if (errors.hasOwnProperty('offer_amount')) {
                         $('#offer_amount').addClass('is-invalid');
                         $('#offerAmountError').text(errors.offer_amount[0]);
+                    }
+                    if (errors.hasOwnProperty('offer_from')) {
+                        $('#offer_from').addClass('is-invalid');
+                        $('#offerFromError').text(errors.offer_from[0]);
+                    }
+
+                    if (errors.hasOwnProperty('offer_to')) {
+                        $('#offer_to').addClass('is-invalid');
+                        $('#offerToError').text(errors.offer_to[0]);
                     }
                 }
             });
@@ -253,8 +234,13 @@
             $('#createComboOfferForm').trigger('reset');
             $('#treatments').removeClass('is-invalid');
             $('#offer_amount').removeClass('is-invalid');
+            $('#offer_from').removeClass('is-invalid');
+            $('#offer_to').removeClass('is-invalid');
+
             $('#treatmentsError').text('');
             $('#offerAmountError').text('');
+            $('#offerFromError').text('');
+            $('#offerToError').text('');
             $('#treatmentDetailsTable tbody').empty();
             $('#totalCost').text('0.00'); // Reset total cost
             $('#treatDiv').hide();

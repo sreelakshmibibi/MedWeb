@@ -74,6 +74,8 @@ class ComboOfferController extends Controller
             // Create a new combo offer instance
             $comboOffer = new TreatmentComboOffer();
             $comboOffer->offer_amount = $request->input('offer_amount');
+            $comboOffer->offer_from = $request->input('offer_from');
+            $comboOffer->offer_to = $request->input('offer_to');
             $comboOffer->status = $request->input('status');
             $comboOffer->created_by = auth()->user()->id;
             $comboOffer->updated_by = auth()->user()->id;
@@ -114,6 +116,8 @@ class ComboOfferController extends Controller
         $response = [
             'id' => $comboOffer->id,
             'offer_amount' => $comboOffer->offer_amount,
+            'offer_from' => $comboOffer->offer_from,
+            'offer_to' => $comboOffer->offer_to,
             'status' => $comboOffer->status,
             'comboOffer_treatments' => $comboOffer->treatments->pluck('id')->toArray(),
             'treatments' => $treatments,
@@ -132,6 +136,8 @@ class ComboOfferController extends Controller
 
             // Update combo offer fields based on form data
             $comboOffer->offer_amount = $request->offer_amount;
+            $comboOffer->offer_from = $request->offer_from;
+            $comboOffer->offer_to = $request->offer_to;
             $comboOffer->status = $request->status;
             $comboOffer->updated_by = auth()->user()->id;
             $comboOffer->save();

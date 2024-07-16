@@ -15,7 +15,8 @@ return new class extends Migration
 
             $table->id();
             $table->decimal('offer_amount', 10, 3); // Offer amount
-
+            $table->date('offer_from')->nullable(); //  Offer start date
+            $table->date('offer_to')->nullable(); //  Offer end date
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
             $table->string('status', 5)->default('Y');

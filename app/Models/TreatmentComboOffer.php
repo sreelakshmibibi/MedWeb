@@ -13,6 +13,8 @@ class TreatmentComboOffer extends Model
 
     protected $fillable = [
         'offer_amount',
+        'offer_from',
+        'offer_to',
         'created_by',
         'updated_by',
         'status',
