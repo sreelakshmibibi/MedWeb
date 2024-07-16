@@ -14,6 +14,8 @@ use App\Services\DoctorAvaialbilityService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
+use Yajra\DataTables\DataTables;
+
 class TreatmentController extends Controller
 {
     /**
@@ -60,6 +62,39 @@ class TreatmentController extends Controller
             ->format('Y-m-d\TH:i');
 
         $tooth = Teeth::all();
+
+        if ($request->ajax()) {
+
+            return DataTables::of($appointment)
+                ->addIndexColumn()
+                ->addColumn('doctor', function ($row) {
+                    return str_replace("<br>", " ", $row->doctor->name);
+                })
+                ->addColumn('branch', function ($row) {
+                    if (!$row->branch) {
+                        return '';
+                    }
+                    $address = implode(", ", explode("<br>", $row->branch->clinic_address));
+                    return implode(", ", [$address, $row->branch->city->city, $row->branch->state->state]);
+                })
+                ->addColumn('status', function ($row) {
+                    $statusMap = [
+                        AppointmentStatus::SCHEDULED => 'badge-success-light',
+                        AppointmentStatus::WAITING => 'badge-success-light',
+                        AppointmentStatus::UNAVAILABLE => 'badge-danger-light',
+                        AppointmentStatus::CANCELLED => 'badge-danger-light',
+                        AppointmentStatus::COMPLETED => 'badge-success-light',
+                        AppointmentStatus::BILLING => 'badge-success-light',
+                        AppointmentStatus::PROCEDURE => 'badge-success-light',
+                        AppointmentStatus::MISSED => 'badge-danger-light',
+                        AppointmentStatus::RESCHEDULED => 'badge-success-light',
+                    ];
+                    $btnClass = isset($statusMap[$row->app_status]) ? $statusMap[$row->app_status] : '';
+                    return "<span class='btn-sm badge {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . "</span>";
+                })
+                ->rawColumns(['status'])
+                ->make(true);
+        }
 
         // return view('appointment.treatment');
         return view('appointment.treatment', compact('name', 'patientProfile', 'countries', 'appointment', 'clinicBranches', 'appointmentStatuses', 'workingDoctors', 'dateTime', 'tooth'));

@@ -7,6 +7,8 @@
             <div class="content-header">
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Treatment</h3>
+                    <a type="button" class="waves-effect waves-light btn btn-primary" href="{{ route('appointment') }}">
+                        <i class="fa-solid fa-angles-left"></i> Back</a>
                 </div>
                 <div id="error-message-container">
                     <p id="error-message"
@@ -28,7 +30,12 @@
                                 @include('appointment.personal_info')
                             </section>
 
-                            <h6 class="tabHeading">Chart images</h6>
+                            <h6 class="tabHeading">Appointment History</h6>
+                            <section class="tabSection">
+                                @include('appointment.history')
+                            </section>
+
+                            <h6 class="tabHeading">Dental Chart</h6>
                             <section class="tabSection">
                                 @include('appointment.dchart_images')
                             </section>
@@ -52,11 +59,6 @@
                             <section class="tabSection">
                                 @include('appointment.charge')
                             </section>
-
-
-
-
-
 
                             {{-- <h6 class="tabHeading">Chart</h6>
                             <section class="tabSection">
