@@ -187,12 +187,14 @@ $additionalNormalTeethImages = [
 
             </div>
             <div class="row position-absolute" style="left:2rem; top:0;">
+                {{-- <div class="row position-absolute" style="left:2rem; top:-1.5rem;"> --}}
                 <div class="select-div">
                     <input type="checkbox" id="checkbox_all" class="filled-in chk-col-success">
                     <label for="checkbox_all">Select All</label>
                 </div>
             </div>
             <div class="select-chart position-absolute" style="right:2rem; top:1.5rem;">
+                {{-- <div class="select-chart position-absolute" style="left:2rem; top:1.5rem;"> --}}
                 <div class="row">
                     <div class="select-div">
                         <input type="checkbox" id="checkbox_row1" class="filled-in chk-col-primary">
@@ -248,9 +250,12 @@ $additionalNormalTeethImages = [
                     'border-radius': '5px',
                 });
 
-                $(this).toggleClass('selected');
-
-
+                // $(this).toggleClass('selected');
+                $('#tooth_no').val(teethName);
+                //if teeth is molar or pre-molar
+                // $('#premolars_molars').show();
+                //else
+                // $('#incisors_canines').show();
                 $('#modal-teeth').modal('show');
 
             });
@@ -259,85 +264,115 @@ $additionalNormalTeethImages = [
 
         // Check initial state of checkbox
         if ($('#checkbox_all').is(':checked')) {
-            $('#trow1').addClass('rowbordered');
-            $('#trow2').addClass('rowbordered');
-            $('#trow3').addClass('rowbordered');
-            $('#trow4').addClass('rowbordered');
+            $('.exam_toothdiv').hide();
+            $('#modal-teeth').modal('show');
+            // $('#trow1').addClass('rowbordered');
+            // $('#trow2').addClass('rowbordered');
+            // $('#trow3').addClass('rowbordered');
+            // $('#trow4').addClass('rowbordered');
         } else {
-            $('#trow1').removeClass('rowbordered');
-            $('#trow2').removeClass('rowbordered');
-            $('#trow3').removeClass('rowbordered');
-            $('#trow4').removeClass('rowbordered');
+            $('.exam_toothdiv').show();
+            // $('#trow1').removeClass('rowbordered');
+            // $('#trow2').removeClass('rowbordered');
+            // $('#trow3').removeClass('rowbordered');
+            // $('#trow4').removeClass('rowbordered');
         }
 
         $('#checkbox_all').change(function() {
             if ($(this).is(':checked')) {
-                $('#trow1').addClass('rowbordered');
-                $('#trow2').addClass('rowbordered');
-                $('#trow3').addClass('rowbordered');
-                $('#trow4').addClass('rowbordered');
+                $('.exam_toothdiv').hide();
+                $('#modal-teeth').modal('show');
+                // $('#trow1').addClass('rowbordered');
+                // $('#trow2').addClass('rowbordered');
+                // $('#trow3').addClass('rowbordered');
+                // $('#trow4').addClass('rowbordered');
             } else {
-                $('#trow1').removeClass('rowbordered');
-                $('#trow2').removeClass('rowbordered');
-                $('#trow3').removeClass('rowbordered');
-                $('#trow4').removeClass('rowbordered');
+                $('.exam_toothdiv').show();
+                // $('#trow1').removeClass('rowbordered');
+                // $('#trow2').removeClass('rowbordered');
+                // $('#trow3').removeClass('rowbordered');
+                // $('#trow4').removeClass('rowbordered');
             }
         });
 
 
         if ($('#checkbox_row1').is(':checked')) {
+            $('.exam_toothdiv').hide();
+            $('#modal-teeth').modal('show');
             $('#trow1').addClass('rowbordered');
         } else {
+            $('.exam_toothdiv').show();
             $('#trow1').removeClass('rowbordered');
         }
 
 
         $('#checkbox_row1').change(function() {
             if ($(this).is(':checked')) {
+                $('.exam_toothdiv').hide();
+                $('#modal-teeth').modal('show');
                 $('#trow1').addClass('rowbordered');
             } else {
+                $('.exam_toothdiv').show();
                 $('#trow1').removeClass('rowbordered');
             }
         });
 
         if ($('#checkbox_row2').is(':checked')) {
+            $('.exam_toothdiv').hide();
+            $('#modal-teeth').modal('show');
             $('#trow2').addClass('rowbordered');
         } else {
+            $('.exam_toothdiv').show();
             $('#trow2').removeClass('rowbordered');
         }
 
         $('#checkbox_row2').change(function() {
             if ($(this).is(':checked')) {
+                $('.exam_toothdiv').hide();
+                $('#modal-teeth').modal('show');
                 $('#trow2').addClass('rowbordered');
             } else {
+                $('.exam_toothdiv').show();
                 $('#trow2').removeClass('rowbordered');
             }
         });
 
         if ($('#checkbox_row3').is(':checked')) {
+            $('.exam_toothdiv').hide();
+            $('#modal-teeth').modal('show');
             $('#trow3').addClass('rowbordered');
         } else {
+            $('.exam_toothdiv').show();
             $('#trow3').removeClass('rowbordered');
         }
 
         $('#checkbox_row3').change(function() {
             if ($(this).is(':checked')) {
+                $('.exam_toothdiv').hide();
+                $('#modal-teeth').modal('show');
                 $('#trow3').addClass('rowbordered');
             } else {
+                $('.exam_toothdiv').show();
                 $('#trow3').removeClass('rowbordered');
             }
         });
 
         if ($('#checkbox_row4').is(':checked')) {
+            $('.exam_toothdiv').hide();
+            $('#modal-teeth').modal('show');
             $('#trow4').addClass('rowbordered');
         } else {
+            $('.exam_toothdiv').show();
             $('#trow4').removeClass('rowbordered');
         }
 
         $('#checkbox_row4').change(function() {
             if ($(this).is(':checked')) {
+                $('.exam_toothdiv').hide();
+                $('#modal-teeth').modal('show');
                 $('#trow4').addClass('rowbordered');
             } else {
+                $('.exam_toothdiv').show();
                 $('#trow4').removeClass('rowbordered');
             }
         });

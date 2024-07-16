@@ -12,7 +12,7 @@
                 <div class="modal-body">
                     <div class="container-fluid">
 
-                        <div class="row">
+                        <div class="row exam_toothdiv" style="display: none;">
                             <div class="col-md-3 ">
                                 <div class="dparts-wrapper" id="incisors_canines">
                                     <div class="dparts part-left" title="Mesial" id="part-left"></div>
@@ -119,13 +119,14 @@
                             <div class="col-md-12 ">
                                 <div class="form-group">
                                     <label class="form-label" for="remarks">Remarks</label>
-                                    <input type="text" class="form-control" id="remarks" name="remarks"
-                                        placeholder="remarks">
+                                    <textarea class="form-control" id="remarks" name="remarks">remarks if any</textarea>
+                                    {{-- <input type="text" class="form-control" id="remarks" name="remarks"
+                                        placeholder="remarks"> --}}
                                 </div>
                             </div>
                         </div>
                         <hr />
-                        <div class=" row">
+                        <div class=" row exam_toothdiv" style="display: none;">
                             <div class="col-md-3 " id="Buccal" style="display: none;">
                                 <div class="form-group">
                                     <label class="form-label" for="buccal_condn">Buccal <span class="text-danger">
@@ -226,29 +227,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="d-none row table-responsive">
-                            <table id="toothScoreTable"
-                                class="table table-sm table-bordered table-hover table-striped mb-0 text-center b-1">
 
-                                {{-- <tr class="bg-primary-light"> --}}
-                                <tr>
-                                    <th scope="row">Lingual</th>
-                                    <td>
-                                        <select class="form-select" id="lingual_condn" name="lingual_condn">
-                                            <option value="">Select Condition</option>
-                                            <option value="7">7- Decayed</option>
-                                            <option value="8">8- Filled</option>
-                                            <option value="9">9- Have Fissure Sealant (HFS)</option>
-                                            <option value="10">10- Need Fissure Sealant (NFS)</option>
-
-                                        </select>
-                                    </td>
-                                </tr>
-
-
-
-                            </table>
-                        </div>
 
                     </div>
                 </div>
