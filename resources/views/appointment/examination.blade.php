@@ -173,14 +173,13 @@
                     <div class="form-group">
                         <label class="form-label" for="complaint">Chief Complaint</label>
                         <input type="text" class="form-control" id="complaint" name="complaint"
-                            placeholder="tooth no">
+                            placeholder="Chief Complaint">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label class="form-label" for="hpi">HPI</label>
-                        <input type="text" class="form-control" id="hpi" name="hpi"
-                            placeholder="tooth no">
+                        <input type="text" class="form-control" id="hpi" name="hpi" placeholder="HPI">
                     </div>
                 </div>
             </div>
@@ -189,14 +188,14 @@
                     <div class="form-group">
                         <label class="form-label" for="dexam">Dental Examination</label>
                         <input type="text" class="form-control" id="dexam" name="dexam"
-                            placeholder="tooth no">
+                            placeholder="Dental Examination">
                     </div>
                 </div>
                 <div class="col-md-6 ">
                     <div class="form-group">
                         <label class="form-label" for="diagnosis">Diagnosis</label>
                         <input type="text" class="form-control" id="diagnosis" name="diagnosis"
-                            placeholder="tooth no">
+                            placeholder="diagnosis">
                     </div>
                 </div>
             </div>
@@ -216,6 +215,15 @@
                             data-placeholder="Select a Treatment" style="width: 100%;">
 
                         </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 ">
+                    <div class="form-group">
+                        <label class="form-label" for="remarks">Remarks</label>
+                        <input type="text" class="form-control" id="remarks" name="remarks"
+                            placeholder="remarks">
                     </div>
                 </div>
             </div>
