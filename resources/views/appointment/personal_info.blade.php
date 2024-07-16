@@ -1,15 +1,10 @@
-<div class="row ">
-    <div class="d-none col-xl-12 col-12">
-        <div class="flexbox mb-15 bb-1 pb-1">
-            <div>
-                <p><span class="text-mute">Patient Name:</span> <strong>Jonsahn</strong></p>
-            </div>
-            <div>
-                <p><span class="text-mute">Patient Id:</span> <strong>1254896</strong></p>
-            </div>
-        </div>
-    </div>
+<?php
 
+use App\Services\CommonService;
+$commonService = new CommonService();
+
+?>
+<div class="row ">
     <div class="col-xl-8 col-12">
         <div class="box flex-grow-1 mb-3 no-border">
             <div class="box-header border-0 pb-0">
@@ -26,7 +21,7 @@
                                             <h6 class="text-primary">Patient Name:</h6>
                                         </div>
                                         <div>
-                                            <h6>JaganNathan</h6>
+                                            <h6><?= str_replace("<br>", " ", $appointment->patient->first_name . " " . $appointment->patient->last_name) ?></h6>
                                         </div>
                                     </li>
                                     <li class="d-flex justify-start align-items-center">
@@ -34,7 +29,7 @@
                                             <h6 class="text-primary">Patient ID:</h6>
                                         </div>
                                         <div>
-                                            <h6>123456</h6>
+                                            <h6><?= $appointment->patient->patient_id ?></h6>
                                         </div>
                                     </li>
                                     <li class="d-flex justify-start align-items-center">
@@ -42,16 +37,26 @@
                                             <h6 class="text-primary">Gender:</h6>
                                         </div>
                                         <div>
-                                            <h6>Male</h6>
+                                            <h6><?= $appointment->patient->gender?></h6>
                                         </div>
                                     </li>
 
                                     <li class="d-flex justify-start align-items-center">
                                         <div class="min-w-120 text-muted">
-                                            <h6 class="text-primary">Age:</h6>
+                                            <h6 class="text-primary">D.O.B:</h6>
                                         </div>
                                         <div>
-                                            <h6>12</h5>
+                                            <h6><?= $appointment->patient->date_of_birth ?></h5>
+                                        </div>
+                                    </li>
+
+                                    <li class="d-flex justify-start align-items-center">
+                                        <div class="min-w-120 text-muted">
+                                            <h6 class="text-primary">Age: </h6>
+                                        </div>
+                                        <div>
+                                            <h6><?php $age =  $commonService->calculateAge($appointment->patient->date_of_birth);
+                                            echo $age;?></h6>
                                         </div>
                                     </li>
 
@@ -60,7 +65,7 @@
                                             <h6 class="text-primary">Blood Group:</h6>
                                         </div>
                                         <div>
-                                            <h6>A+</h5>
+                                            <h6><?= $appointment->patient->blood_group ?></h6>
                                         </div>
                                     </li>
 
@@ -69,7 +74,7 @@
                                             <h6 class="text-primary">Aadhaar No.:</h6>
                                         </div>
                                         <div>
-                                            <h6>123456789123</h5>
+                                            <h6><?= $appointment->patient->aadhaar_no ?></h6>
                                         </div>
                                     </li>
 
@@ -78,7 +83,7 @@
                                             <h6 class="text-primary">Marital Status:</h5>
                                         </div>
                                         <div>
-                                            <h6>Married</h6>
+                                            <h6><?= $appointment->patient->marital_status ?></h6>
                                         </div>
                                     </li>
 
@@ -87,7 +92,11 @@
                                             <h6 class="text-primary">Address:</h6>
                                         </div>
                                         <div>
-                                            <h6>Add1, Add2</h6>
+                                            <h6><?= $appointment->patient->address1 ."," . $appointment->patient->address2 
+                                             . " , " . $appointment->patient->city->city
+                                             . " , " . $appointment->patient->state->state
+                                             . " , " . $appointment->patient->country->country
+                                             . "-" . $appointment->patient->pincode ?></h6>
                                         </div>
                                     </li>
 
@@ -96,7 +105,7 @@
                                             <h6 class="text-primary">Contact Number:</h6>
                                         </div>
                                         <div>
-                                            <h6>9874563210</h6>
+                                            <h6><?= $appointment->patient->phone ?></h6>
                                         </div>
                                     </li>
                                 </div>
@@ -106,7 +115,7 @@
                                             <h6 class="text-warning">Allergies:</h6>
                                         </div>
                                         <div>
-                                            <h6>Medicines, Drugs, etc.</h6>
+                                            <h6><?= $appointment->patient->allergies ?></h6>
                                         </div>
                                     </li>
                                     <li class="d-flex justify-start align-items-center">
@@ -114,7 +123,9 @@
                                             <h6 class="text-warning">Disease History:</h6>
                                         </div>
                                         <div>
-                                            <h6>Sleep Disorders, Diabetes</h6>
+                                            <h6><?php foreach( $appointment->patient->history as $history ) {
+                                                echo $history->history. "<br>";
+                                            } ?></h6>
                                         </div>
                                     </li>
                                 </div>
@@ -135,7 +146,7 @@
                     <div class="col-12">
                         <div class="row bb-1 ">
                             <h4 class="text-center mb-0">Current Vitals</h4>
-                            <p class="text-center mb-0 text-warning"><small>Recorded on 25/05/2018</small></p>
+                            <p class="text-center mb-0 text-warning"><small>Recorded on <?= $appointment->updated_at?></small></p>
                         </div>
                         <div class="row bb-1 pb-10 pt-5">
 
@@ -144,7 +155,7 @@
                                         src="{{ asset('images/weight.png') }}" alt=""></div>
                                 <div>
                                     <p class="mb-0"><small>Weight</small></p>
-                                    <h5 class="mb-0"><strong>230 ibs</strong></h5>
+                                    <h5 class="mb-0"><strong><?= $appointment->weight_kg?> kg</strong></h5>
                                 </div>
                             </div>
 
@@ -153,7 +164,7 @@
                                         src="{{ asset('images/human.png') }}" alt=""></div>
                                 <div class="mt-10 pt-1">
                                     <p class="mb-0"><small>Height</small></p>
-                                    <h5 class=" mb-0"><strong>6’1</strong></h5>
+                                    <h5 class=" mb-0"><strong><?= $appointment->height_cm ?> cm</strong></h5>
                                 </div>
                             </div>
                             <div class="col-4 d-flex align-content-center flex-wrap">
@@ -161,13 +172,20 @@
                                         src="{{ asset('images/bmi.png') }}" alt=""></div>
                                 <div>
                                     <p class="mb-0"><small>BMI</small></p>
-                                    <h5 class="mb-0"><strong>30.34</strong></h5>
+                                    <h5 class="mb-0"><strong><?php 
+                                    $bmi = ($appointment->weight_kg / pow($appointment->height_cm / 100, 2));
+                                    // Round BMI to 2 decimal places
+                                    $bmi = round($bmi, 2);
+                                    echo $bmi; ?></strong></h5>
                                 </div>
                             </div>
                         </div>
                         <div class="row pt-5 bb-1 pb-10">
                             <div class="col-12 text-center">
                                 <span class="text-danger">Blood Pressure</span>
+                                <?php 
+                                $parts = explode('/', $appointment->blood_pressure);
+                                ?>
                             </div>
                             <div class="col-6 be-1">
                                 <div class="progress progress-xs mb-0 mt-5 w-40">
@@ -176,7 +194,7 @@
                                         style="width: 100%">
                                     </div>
                                 </div>
-                                <h2 class="float-start mt-0 mr-10 me-10"><strong>150</strong></h2>
+                                <h2 class="float-start mt-0 mr-10 me-10"><strong><?= $parts[0] ?></strong></h2>
                                 <div>
                                     <p class="mb-0"><small>Systolic</small></p>
                                     <p class="mb-0 mt-0"><small class="vertical-align-super">mmHg</small></p>
@@ -189,7 +207,7 @@
                                         style="width: 100%">
                                     </div>
                                 </div>
-                                <h2 class="float-start mt-0 me-10"><strong>90</strong></h2>
+                                <h2 class="float-start mt-0 me-10"><strong><?= $parts[1] ?></strong></h2>
                                 <div class="mt-0">
                                     <p class="mb-0"><small>Diastolic</small></p>
                                     <p class="mb-0 mt-0"><small class="vertical-align-super">mmHg</small></p>
@@ -204,7 +222,7 @@
                                         <div class="media media-single p-2 px-0">
                                             <div class="w-10"><i class="fas fa-smoking"></i></div>
                                             <div class="media-body">
-                                                <h6>Daily smoker</h6>
+                                                <h6><?= $appointment->patient->smoking_status ?></h6>
                                                 <small class="text-fader text-muted">Smoking status</small>
                                             </div>
                                         </div>
@@ -214,7 +232,7 @@
                                         <div class="media media-single  p-2 px-0">
                                             <div class="w-10"><i class="fas fa-wine-glass"></i></div>
                                             <div class="media-body">
-                                                <h6>Drunkard</h6>
+                                                <h6><?= $appointment->patient->alcoholic_status ?></h6>
                                                 <small class="text-fader text-muted">Drinking status</small>
                                             </div>
                                         </div>
@@ -224,7 +242,7 @@
                                 <div class="media media-single bt-1 pt-10  p-2 px-0">
                                     <div class="w-10"><i class="fas fa-utensils"></i></div>
                                     <div class="media-body">
-                                        <h6>Non-vegetarian</h6>
+                                        <h6><?= $appointment->patient->diet ?></h6>
                                         <small class="text-fader text-muted">Dieting status</small>
                                     </div>
                                 </div>

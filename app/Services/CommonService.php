@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Appointment;
 use App\Models\MenuItem;
 use Carbon\Carbon;
+use DateTime;
 
 class CommonService
 {
@@ -62,6 +63,44 @@ class CommonService
                 ->where('app_branch', $clinicBranchId)
                 ->exists();
     }
+
+    function calculateAge($dob) {
+        // Calculate the difference between the DOB and current date
+        $dob = new DateTime($dob);
+        $now = new DateTime();
+        $diff = $now->diff($dob);
+    
+        // Extract years, months, and days from the difference
+        $years = $diff->y;
+        $months = $diff->m;
+        $days = $diff->d;
+    
+        // Format the age string
+        $ageString = '';
+        if ($years > 0) {
+            $ageString .= $years . ' year';
+            if ($years > 1) {
+                $ageString .= 's';
+            }
+            $ageString .= ' ';
+        }
+        if ($months > 0) {
+            $ageString .= $months . ' month';
+            if ($months > 1) {
+                $ageString .= 's';
+            }
+            $ageString .= ' ';
+        }
+        if ($days > 0) {
+            $ageString .= $days . ' day';
+            if ($days > 1) {
+                $ageString .= 's';
+            }
+        }
+    
+        return $ageString;
+    }
+    
     
 
     // Other common methods can be added here
