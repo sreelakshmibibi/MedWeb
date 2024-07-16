@@ -1,5 +1,5 @@
 <div class="d-flex align-items-center justify-content-between">
-    <h5 class="box-title text-info mb-0 mt-2 "><i class="fa fa-clock me-15"></i>
+    <h5 class="box-title text-info mb-0 mt-2 "><i class="fa fa-medkit me-15"></i>
         Treatment Chart
     </h5>
 
@@ -99,4 +99,144 @@
         </tbody>
 
     </table>
+</div>
+
+<div class="d-flex align-items-center justify-content-between">
+    <h5 class="box-title text-info mb-0 mt-2 "><i class="fa fa-clock me-15"></i>
+        Follow up
+    </h5>
+    <input type="checkbox" id="follow_checkbox" name="follow_checkbox" class="filled-in chk-col-success" />
+    <label for="follow_checkbox"></label>
+</div>
+<hr class="my-15 ">
+
+<div class="row mb-4" id="followupdiv" style="display: none;">
+    <div class="table-responsive">
+        <table id="myTable" class="table table-bordered table-hover table-striped mb-0 text-center">
+
+            <thead>
+                <tr class="bg-primary-light">
+                    <th>No</th>
+                    <th>Treatment</th>
+                    <th>Consulting Doctor</th>
+                    <th>Branch</th>
+                    <th>Appointment Date & Time</th>
+                    <th>Appointment Type</th>
+                    <th>Remarks</th>
+                    <th><button type="button" class="waves-effect waves-light btn btn-sm btn-primary">
+                            <i class="fa fa-add"></i>
+                            Add</button></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>
+                        <select class="select2" id="treatment_id1" name="treatment_id1" required
+                            data-placeholder="Select a Treatment" style="width: 100%;">
+
+                        </select>
+                    </td>
+                    <td>
+                        <select class="select2" id="doctor_id1" name="doctor_id1" required
+                            data-placeholder="Select a Doctor" style="width: 100%;">
+
+                        </select>
+                    </td>
+                    <td>
+                        <select class="select2" id="clinic_branch_id0" name="clinic_branch_id0" required
+                            data-placeholder="Select a Branch" style="width: 100%;">
+
+                        </select>
+                    </td>
+                    <td>
+                        <input class="form-control" type="datetime-local" id="appdate" name="appdate"
+                            value="{{ now()->setTimezone('Asia/Kolkata')->format('Y-m-d\TH:i') }}" required>
+                    </td>
+                    <td>
+                        <select class="form-select" id="appstatus" name="appstatus" required>
+
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" id="remarks1" name="remarks1" placeholder="remarks">
+                    </td>
+                    <td>
+                        <button type="button" id="btnDelete" title="delete row"
+                            class="waves-effect waves-light btn btn-danger btn-sm"> <i class="fa fa-trash"></i></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="d-flex align-items-center justify-content-between">
+    <h5 class="box-title text-info mb-0 mt-2 "><i class="fa-solid fa-prescription me-15"></i>
+        Prescription
+    </h5>
+    <input type="checkbox" id="presc_checkbox" name="presc_checkbox" class="filled-in chk-col-success" />
+    <label for="presc_checkbox"></label>
+</div>
+<hr class="my-15 ">
+
+<div class="row" id="prescdiv" style="display: none;">
+    <div class="table-responsive">
+        <table id="myTable" class="table table-bordered table-hover table-striped mb-0 text-center">
+
+            <thead>
+                <tr class="bg-primary-light">
+                    <th>No</th>
+                    <th>Medicine</th>
+                    <th>Dosage</th>
+                    <th style="width:200px;">Duration</th>
+                    <th>Remarks</th>
+                    <th><button type="button" class="waves-effect waves-light btn btn-sm btn-primary">
+                            <i class="fa fa-add"></i>
+                            Add</button></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>
+                        <select class="select2" id="medicine_id1" name="medicine_id1" required
+                            data-placeholder="Select a Medicine" style="width: 100%;">
+
+                        </select>
+                    </td>
+                    <td>
+                        <select class="select2" id="dosage1" name="dosage1" required
+                            data-placeholder="Select a Dosage" style="width: 100%;">
+                            <option value="1">1-0-0</option>
+                            <option value="2">0-1-0</option>
+                            <option value="3">0-0-1</option>
+                            <option value="4">1-1-1</option>
+                            <option value="5">1-0-1</option>
+                            <option value="6">1-1-0</option>
+                            <option value="7">0-1-1</option>
+                        </select>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="duration1" name="duration1"
+                                aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <span class="input-group-text" id="basic-addon2">days</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" id="remarks1" name="remarks1"
+                            placeholder="remarks">
+                    </td>
+                    <td>
+                        <button type="button" id="btnDelete" title="delete row"
+                            class="waves-effect waves-light btn btn-danger btn-sm"> <i
+                                class="fa fa-trash"></i></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>

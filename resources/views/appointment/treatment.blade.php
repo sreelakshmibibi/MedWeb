@@ -43,6 +43,11 @@
                                 @include('appointment.dtable')
                             </section>
 
+                            <h6 class="tabHeading">Prescription</h6>
+                            <section class="tabSection">
+                                @include('appointment.prescription')
+                            </section>
+
 
 
 
@@ -131,6 +136,102 @@
                     'border-radius': '5px',
                 });
             })
+
+            $('#newToothTreatmentBtn').click(function() {
+                var teethName = $('#tooth_no').val();
+                var divId = '#div' + teethName;
+                $(divId).css({
+                    'border': 'none',
+                    'border-radius': '5px',
+                    // 'background-color': 'rgba(0, 0, 255, 0.1)',
+                });
+                // $(divId).addClass('overlay');
+            });
+
+
+            $("#follow_checkbox").change(function() {
+                if ($(this).is(':checked')) {
+                    // $('#followupdiv').hide();
+                    $('#followupdiv').show();
+                } else {
+                    // $('#followupdiv').show();
+                    $('#followupdiv').hide();
+                }
+            });
+
+            $("#presc_checkbox").change(function() {
+                if ($(this).is(':checked')) {
+                    $('#prescdiv').show();
+                } else {
+                    $('#prescdiv').hide();
+                }
+            });
+
+            let count = 1;
+            // Event listener for Add Row button click
+            $(document).on('click', '#medicineAddRow', function() {
+                count++;
+                let newRow = `<tr>
+        <td>${count}</td>
+        <td>
+            <select class="select2" id="medicine_id${count}" name="medicine_id${count}" required
+                            data-placeholder="Select a Medicine" style="width: 100%;">
+
+                        </select>
+        </td>
+        <td>
+                <select class="select2" id="dosage${count}" name="dosage${count}" required
+                            data-placeholder="Select a Dosage" style="width: 100%;">
+                            <option value="1">1-0-0</option>
+                            <option value="2">0-1-0</option>
+                            <option value="3">0-0-1</option>
+                            <option value="4">1-1-1</option>
+                            <option value="5">1-0-1</option>
+                            <option value="6">1-1-0</option>
+                            <option value="7">0-1-1</option>
+                        </select>
+        </td>
+        <td>
+            <div class="input-group">
+                            <input type="number" class="form-control" id="duration${count}" name="duration${count}" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <span class="input-group-text" id="basic-addon2">days</span>
+                            </div>
+                        </div>
+        </td>
+        <td>
+             <input type="text" class="form-control" id="remarks${count}" name="remarks${count}" placeholder="remarks">
+        </td>
+        <td>
+            <button type="button" class="btnDelete waves-effect waves-light btn btn-danger btn-sm"
+                title="delete row"> <i class="fa fa-trash"></i></button>
+        </td>
+    </tr>`;
+
+                $('#presctablebody').append(newRow);
+                // Reinitialize Select2 on the newly added select element
+                $(`#medicine_id${count}`).select2({
+                    width: '100%',
+                    placeholder: 'Select a Medicine'
+                });
+                $(`#dosage${count}`).select2({
+                    width: '100%',
+                    placeholder: 'Select a Dosage'
+                });
+                updateRowCount();
+            });
+
+            // Event listener for Delete button click
+            $(document).on('click', '.btnDelete', function() {
+                $(this).closest('tr').remove();
+                updateRowCount();
+            });
+
+            // Function to update row count input field value
+            function updateRowCount() {
+                $('#row_count').val(count);
+            }
+
 
             // Initializations
             var initialSelectedStateId = '{{ $patientProfile->state_id }}';
