@@ -99,7 +99,7 @@ class AppointmentController extends Controller
                     }
                     $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
                     $buttons = [
-                        "<a href='" . route('appointment.treatment', $row->id) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-add btn-xs me-1' title='treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name) . "' ><i class='fa-solid fa-stethoscope'></i></a>",
+                        "<a href='" . route('treatment', $row->id) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-add btn-xs me-1' title='treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name) . "' ><i class='fa-solid fa-stethoscope'></i></a>",
                         "<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1' title='follow up' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name) . "' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>",
                         "<button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-reschedule btn-xs me-1' title='reschedule' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name) . "' data-bs-target='#modal-reschedule'><i class='fa-solid fa-calendar-days'></i></button>",
                         "<button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-xs' id='btn-cancel' data-bs-toggle='modal' data-bs-target='#modal-cancel' data-id='{$row->id}' title='cancel'><i class='fa fa-times'></i></button>",
@@ -288,64 +288,6 @@ class AppointmentController extends Controller
 
             return response()->json(['error', 'Appointment not cancelled.'], 200);
         }
-    }
-
-    public function treatment($id, Request $request)
-    {
-        $appointment = Appointment::with(['patient', 'doctor', 'branch'])->find($id);
-        abort_if(!$appointment, 404);
-        // Format clinic address
-        $clinicAddress = implode(", ", [
-            str_replace("<br>", ", ", $appointment->branch->clinic_address),
-            $appointment->branch->city->city,
-            $appointment->branch->state->state
-        ]);
-
-        // Update appointment object with formatted clinic address
-        $appointment->clinic_branch = $clinicAddress;
-
-        // Format date and time
-        $appointment->app_date = date('d-m-Y', strtotime($appointment->app_date));
-        $appointment->app_time = date('H:i', strtotime($appointment->app_time));
-
-        $patientProfile = PatientProfile::with(['lastAppointment'])->find($appointment->patient->id);
-        //$patient = PatientProfile::find($id);
-        abort_if(!$patientProfile, 404);
-        $appointment = $patientProfile->lastAppointment;
-        $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
-        $countries = Country::all();
-        $commonService = new CommonService();
-        $appointmentStatuses = AppointmentStatus::all();
-        $name = $commonService->splitNames($patientProfile->first_name);
-        $date = Carbon::parse($patientProfile->lastAppointment->app_date)->toDateString(); // 'Y-m-d'
-        $carbonDate = Carbon::parse($date);
-        $weekday = $carbonDate->format('l');
-        $workingDoctors = $this->getTodayWorkingDoctors($patientProfile->lastAppointment->app_branch, $weekday);
-        $appDate = $appointment->app_date;
-        $appTime = $appointment->app_time;
-        // Combine date and time into a single datetime string
-        $dateTimeString = "{$appDate} {$appTime}";
-        // Parse the combined datetime string as it is already in IST
-        $dateTime = Carbon::parse($dateTimeString)
-            ->format('Y-m-d\TH:i');
-
-        $tooth = Teeth::all();
-
-        // return view('appointment.treatment');
-        return view('appointment.treatment', compact('name', 'patientProfile', 'countries', 'appointment', 'clinicBranches', 'appointmentStatuses', 'workingDoctors', 'dateTime', 'tooth'));
-    }
-
-    public function getTodayWorkingDoctors($branchId, $weekday)
-    {
-
-        $query = DoctorWorkingHour::where('week_day', $weekday)
-            ->where('status', 'Y');
-
-        if ($branchId) {
-            $query->where('clinic_branch_id', $branchId);
-        }
-
-        return $query->with('user')->get();
     }
 
 }
