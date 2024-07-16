@@ -16,10 +16,31 @@
                                     class="text-danger">*</span></label>
                             <select class="form-control" id="treatments" name="treatments[]" multiple>
                                 @foreach ($treatments as $treatment)
-                                    <option value="{{ $treatment->id }}">{{ $treatment->treat_name }}</option>
+                                    <option value="{{ $treatment->id }}" data-cost="{{ $treatment->treat_cost }}">
+                                        {{ $treatment->treat_name }}</option>
                                 @endforeach
                             </select>
                             <div id="treatmentsError" class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group mt-3" id="treatDiv" style="display: none;">
+                            <h5>Treatment Details</h5>
+                            <table class="table table-bordered" id="treatmentDetailsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Treatment Name</th>
+                                        <th>Treatment Cost</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dynamically added rows will go here -->
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Total</th>
+                                        <th id="totalCost">0.00</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
                         </div>
 
                         <!-- Offer Amount -->
@@ -41,6 +62,9 @@
                             <label class="form-check-label" for="no">No</label>
                             <div id="statusError" class="invalid-feedback"></div>
                         </div>
+
+
+
                     </div>
                 </div>
 
@@ -56,6 +80,71 @@
 <script>
     $(function() {
         // Handle Save button click
+        // $('#saveComboOfferBtn').click(function() {
+        //     // Reset previous error messages
+        //     $('#treatmentsError').text('');
+        //     $('#offerAmountError').text('');
+
+        //     // Validate form inputs
+        //     var treatments = $('#treatments').val();
+        //     var offerAmount = $('#offer_amount').val();
+
+        //     // Basic client-side validation
+        //     if (!treatments || treatments.length === 0) {
+        //         $('#treatments').addClass('is-invalid');
+        //         $('#treatmentsError').text('At least one treatment must be selected.');
+        //         return; // Prevent further execution
+        //     } else {
+        //         $('#treatments').removeClass('is-invalid');
+        //         $('#treatmentsError').text('');
+        //     }
+
+        //     if (offerAmount.length === 0) {
+        //         $('#offer_amount').addClass('is-invalid');
+        //         $('#offerAmountError').text('Offer amount is required.');
+        //         return; // Prevent further execution
+        //     } else if (!$.isNumeric(offerAmount)) {
+        //         $('#offer_amount').addClass('is-invalid');
+        //         $('#offerAmountError').text('The offer amount must be a number.');
+        //         return; // Prevent further execution
+        //     } else {
+        //         $('#offer_amount').removeClass('is-invalid');
+        //         $('#offerAmountError').text('');
+        //     }
+
+        //     // If validation passed, submit the form via AJAX
+        //     var form = $('#createComboOfferForm');
+        //     var url = form.attr('action');
+        //     var formData = form.serialize();
+
+        //     $.ajax({
+        //         type: 'POST',
+        //         url: url,
+        //         data: formData,
+        //         dataType: 'json',
+        //         success: function(response) {
+        //             // If successful, hide modal and show success message
+        //             $('#modal-right').modal('hide');
+        //             $('#successMessage').text('Combo offer created successfully').fadeIn()
+        //                 .delay(3000).fadeOut();
+        //             table.ajax.reload(); // Reload the DataTable
+        //         },
+        //         error: function(xhr) {
+        //             // If error, update modal to show errors
+        //             var errors = xhr.responseJSON.errors;
+
+        //             if (errors.hasOwnProperty('treatments')) {
+        //                 $('#treatments').addClass('is-invalid');
+        //                 $('#treatmentsError').text(errors.treatments[0]);
+        //             }
+
+        //             if (errors.hasOwnProperty('offer_amount')) {
+        //                 $('#offer_amount').addClass('is-invalid');
+        //                 $('#offerAmountError').text(errors.offer_amount[0]);
+        //             }
+        //         }
+        //     });
+        // });
         $('#saveComboOfferBtn').click(function() {
             // Reset previous error messages
             $('#treatmentsError').text('');
@@ -63,7 +152,13 @@
 
             // Validate form inputs
             var treatments = $('#treatments').val();
-            var offerAmount = $('#offer_amount').val();
+            var offerAmount = parseFloat($('#offer_amount').val());
+            var totalTreatmentCost = 0;
+
+            // Calculate total treatment cost
+            $('#treatments option:selected').each(function() {
+                totalTreatmentCost += parseFloat($(this).data('cost'));
+            });
 
             // Basic client-side validation
             if (!treatments || treatments.length === 0) {
@@ -75,13 +170,17 @@
                 $('#treatmentsError').text('');
             }
 
-            if (offerAmount.length === 0) {
+            if (isNaN(offerAmount) || offerAmount.length === 0) {
                 $('#offer_amount').addClass('is-invalid');
                 $('#offerAmountError').text('Offer amount is required.');
                 return; // Prevent further execution
             } else if (!$.isNumeric(offerAmount)) {
                 $('#offer_amount').addClass('is-invalid');
                 $('#offerAmountError').text('The offer amount must be a number.');
+                return; // Prevent further execution
+            } else if (offerAmount > totalTreatmentCost) {
+                $('#offer_amount').addClass('is-invalid');
+                $('#offerAmountError').text('The offer amount cannot exceed the total treatment cost.');
                 return; // Prevent further execution
             } else {
                 $('#offer_amount').removeClass('is-invalid');
@@ -122,6 +221,33 @@
             });
         });
 
+        // Update treatment table when treatments are selected
+        $('#treatments').change(function() {
+            var selectedTreatments = $(this).find('option:selected');
+            var treatmentDetailsTable = $('#treatmentDetailsTable tbody');
+            var totalCost = 0;
+            treatmentDetailsTable.empty();
+            if (selectedTreatments.length > 0) {
+                $('#treatDiv').show();
+            } else {
+                alert('out');
+                $('#treatDiv').hide();
+            }
+
+            selectedTreatments.each(function() {
+                var treatmentName = $(this).text();
+                var treatmentCost = parseFloat($(this).data('cost'));
+                totalCost += treatmentCost;
+                treatmentDetailsTable.append(
+                    '<tr><td>' + treatmentName + '</td><td>' + treatmentCost
+                    .toFixed(2) + '</td></tr>'
+                );
+            });
+
+            // Update total cost
+            $('#totalCost').text(totalCost.toFixed(2));
+        });
+
         // Reset form and errors on modal close
         $('#modal-right').on('hidden.bs.modal', function() {
             $('#createComboOfferForm').trigger('reset');
@@ -129,6 +255,9 @@
             $('#offer_amount').removeClass('is-invalid');
             $('#treatmentsError').text('');
             $('#offerAmountError').text('');
+            $('#treatmentDetailsTable tbody').empty();
+            $('#totalCost').text('0.00'); // Reset total cost
+            $('#treatDiv').hide();
         });
     });
 </script>
