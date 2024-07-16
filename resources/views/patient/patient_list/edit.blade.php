@@ -7,6 +7,8 @@
             <div class="content-header">
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Edit Patient</h3>
+                    <a type="button" class="waves-effect waves-light btn btn-primary"
+                        href="{{ route('patient.patient_list') }}"> <i class="fa-solid fa-angles-left"></i> Back</a>
                 </div>
                 <div id="error-message-container">
                     <p id="error-message"
