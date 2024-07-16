@@ -83,16 +83,17 @@
                     {
                         data: 'total_treatment_amount',
                         name: 'total_treatment_amount',
-                        render: function(data, type, row) {
-                            return parseFloat(data).toFixed(2);
-                        }
+                        // render: function(data, type, row) {
+                        //     return parseFloat(data).toFixed(2);
+                        // }
                     },
+
                     {
                         data: 'offer_amount',
                         name: 'offer_amount',
-                        render: function(data, type, row) {
-                            return parseFloat(data).toFixed(2);
-                        }
+                        // render: function(data, type, row) {
+                        //     return parseFloat(data).toFixed(2);
+                        // }
                     },
                     {
                         data: 'status',
@@ -126,6 +127,8 @@
                         response.treatments.forEach(function(treatment) {
                             var option = $('<option></option>')
                                 .attr('value', treatment.id)
+                                .attr('data-cost', treatment
+                                    .treat_cost)
                                 .text(treatment.treat_name);
 
                             // Pre-select treatments

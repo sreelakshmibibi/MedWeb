@@ -28,7 +28,7 @@ class ComboOfferController extends Controller
                     return $offer->treatments->sum('treat_cost');
                 })
                 ->addColumn('offer_amount', function ($offer) {
-                    return number_format($offer->offer_amount, 2);
+                    return number_format((float) $offer->offer_amount, 2, '.', ',');
                 })
                 ->addColumn('status', function ($row) {
                     if ($row->status == 'Y') {
