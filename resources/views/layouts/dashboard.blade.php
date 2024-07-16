@@ -77,6 +77,7 @@
     <script src="{{ asset('assets/vendor_components/jquery-validation-1.17.0/dist/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('js/pages/steps.js') }}"></script>
     <script src="{{ asset('js/pages/steps_patient.js') }}"></script>
+    <script src="{{ asset('js/pages/steps_treatment.js') }}"></script>
 
     <script src="{{ asset('assets/vendor_components/bootstrap-select/dist/js/bootstrap-select.js') }}"></script>
     <script src="{{ asset('assets/vendor_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.js') }}"></script>

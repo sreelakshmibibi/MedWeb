@@ -18,15 +18,15 @@
             <section class="content">
                 <div class="box">
                     <div class="box-body wizard-content">
-                        <form method="post" class="validation-wizard wizard-circle" id="patientform"
+                        <form method="post" class="validation-wizard wizard-circle" id="treatmentform"
                             action="{{ route('patient.patient_list.store') }}" enctype="multipart/form-data">
                             @csrf
 
                             <!-- Step 1 -->
-                            <h6 class="tabHeading">Personal Info</h6>
+                            {{-- <h6 class="tabHeading">Personal Info</h6>
                             <section class="tabSection">
                                 @include('appointment.personal_info')
-                            </section>
+                            </section> --}}
 
                             <h6 class="tabHeading">Chart images</h6>
                             <section class="tabSection">
@@ -71,7 +71,7 @@
     <script>
         $(document).ready(function() {
 
-            $("#patientform .actions ul li:last-child a").addClass("bg-success btn btn-success");
+            $("#treatmentform .actions ul li:last-child a").addClass("bg-success btn btn-success");
 
             // Handle change event for dparts
             $('.dparts').click(function() {
@@ -96,24 +96,24 @@
                 $(partId).toggleClass('selected');
             });
 
-            $('#tooth_selected').change(function() {
-                var selectedValue = $(this).val();
+            // $('#tooth_selected').change(function() {
+            //     var selectedValue = $(this).val();
 
-                // Hide all tooth divs
-                $('.exam_toothdiv').hide();
-                $('#incisors_canines').hide();
-                $('#premolars_molars').hide();
+            //     // Hide all tooth divs
+            //     $('.exam_toothdiv').hide();
+            //     $('#incisors_canines').hide();
+            //     $('#premolars_molars').hide();
 
-                if (selectedValue === 'tooth_in') {
-                    $('.exam_toothdiv').show();
-                    $('#incisors_canines').show();
+            //     if (selectedValue === 'tooth_in') {
+            //         $('.exam_toothdiv').show();
+            //         $('#incisors_canines').show();
 
-                } else if (selectedValue === 'tooth_mol') {
-                    $('.exam_toothdiv').show();
-                    $('#premolars_molars').show();
+            //     } else if (selectedValue === 'tooth_mol') {
+            //         $('.exam_toothdiv').show();
+            //         $('#premolars_molars').show();
 
-                }
-            });
+            //     }
+            // });
 
             $('#table_info_btn').click(function() {
                 if ($('#table_infodiv').css('display') == 'block') {

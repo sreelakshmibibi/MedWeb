@@ -4,7 +4,7 @@
             <div class="form-group">
                 <label class="form-label" for="tooth_selected">Tooth Selected <span class="text-danger">
                         *</span></label>
-                <select class="form-select" id="tooth_selected" name="tooth_selected" required>
+                <select class="form-select" id="tooth_selected" name="tooth_selected">
                     <option value="all">All tooth</option>
                     <option value="1">Row-1</option>
                     <option value="2">Row-2</option>
@@ -16,7 +16,7 @@
             </div>
         </div>
     </div>
-    <div class="col b-1 exam_toothdiv" style="display: none">
+    {{-- <div class="col b-1 exam_toothdiv" style="display: none">
         <div class="box-body">
             <div class="row">
                 <div class="col ">
@@ -48,7 +48,7 @@
                         <div class="form-group">
                             <label class="form-label" for="tooth_score">Tooth Score <span class="text-danger">
                                     *</span></label>
-                            <select class="form-select" id="tooth_score" name="tooth_score" required>
+                            <select class="form-select" id="tooth_score" name="tooth_score">
                                 <option value="">Select Score</option>
                                 <option value="0">0- Sound</option>
                                 <option value="1">1- Decayed- D(d)</option>
@@ -68,7 +68,7 @@
                     <div class="form-group">
                         <label class="form-label" for="buccal_condn">Buccal <span class="text-danger">
                                 *</span></label>
-                        <select class="form-select" id="buccal_condn" name="buccal_condn" required>
+                        <select class="form-select" id="buccal_condn" name="buccal_condn">
                             <option value="">Select Condition</option>
                             <option value="7">7- Decayed</option>
                             <option value="8">8- Filled</option>
@@ -82,7 +82,7 @@
                     <div class="form-group">
                         <label class="form-label" for="palatal_condn">Palatal <span class="text-danger">
                                 *</span></label>
-                        <select class="form-select" id="palatal_condn" name="palatal_condn" required>
+                        <select class="form-select" id="palatal_condn" name="palatal_condn">
                             <option value="">Select Condition</option>
                             <option value="7">7- Decayed</option>
                             <option value="8">8- Filled</option>
@@ -96,7 +96,7 @@
                     <div class="form-group">
                         <label class="form-label" for="mesial_condn">Mesial <span class="text-danger">
                                 *</span></label>
-                        <select class="form-select" id="mesial_condn" name="mesial_condn" required>
+                        <select class="form-select" id="mesial_condn" name="mesial_condn">
                             <option value="">Select Condition</option>
                             <option value="7">7- Decayed</option>
                             <option value="8">8- Filled</option>
@@ -110,7 +110,7 @@
                     <div class="form-group">
                         <label class="form-label" for="distal_condn">Distal <span class="text-danger">
                                 *</span></label>
-                        <select class="form-select" id="distal_condn" name="distal_condn" required>
+                        <select class="form-select" id="distal_condn" name="distal_condn">
                             <option value="">Select Condition</option>
                             <option value="7">7- Decayed</option>
                             <option value="8">8- Filled</option>
@@ -125,7 +125,7 @@
                     <div class="form-group">
                         <label class="form-label" for="occulusal_condn">Occulusal <span class="text-danger">
                                 *</span></label>
-                        <select class="form-select" id="occulusal_condn" name="occulusal_condn" required>
+                        <select class="form-select" id="occulusal_condn" name="occulusal_condn">
                             <option value="">Select Condition</option>
                             <option value="7">7- Decayed</option>
                             <option value="8">8- Filled</option>
@@ -139,7 +139,7 @@
                     <div class="form-group">
                         <label class="form-label" for="lingual_condn">Lingual <span class="text-danger">
                                 *</span></label>
-                        <select class="form-select" id="lingual_condn" name="lingual_condn" required>
+                        <select class="form-select" id="lingual_condn" name="lingual_condn">
                             <option value="">Select Condition</option>
                             <option value="7">7- Decayed</option>
                             <option value="8">8- Filled</option>
@@ -153,7 +153,7 @@
                     <div class="form-group">
                         <label class="form-label" for="labial_condn">Labial <span class="text-danger">
                                 *</span></label>
-                        <select class="form-select" id="labial_condn" name="labial_condn" required>
+                        <select class="form-select" id="labial_condn" name="labial_condn">
                             <option value="">Select Condition</option>
                             <option value="7">7- Decayed</option>
                             <option value="8">8- Filled</option>
@@ -165,8 +165,8 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col">
+    </div> --}}
+    {{-- <div class="col">
         <div class="box-body">
             <div class="row">
                 <div class="col-md-6 ">
@@ -216,7 +216,7 @@
                     <div class="form-group">
                         <label class="form-label" for="treatment">Treatment <span class="text-danger">
                                 *</span></label>
-                        <select class="select2" id="treatment" name="treatment" required
+                        <select class="select2" id="treatment" name="treatment"
                             data-placeholder="Select a Treatment" style="width: 100%;">
 
                         </select>
@@ -234,5 +234,5 @@
             </div>
 
         </div>
-    </div>
+    </div> --}}
 </div>
