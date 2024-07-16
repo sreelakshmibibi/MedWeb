@@ -26,14 +26,14 @@
                 <tr>
                     <td>1</td>
                     <td>
-                        <select class="select2" id="medicine_id1" name="medicine_id1" required
+                        <select class="select2" id="medicine_id1" name="medicine_id1"
                             data-placeholder="Select a Medicine" style="width: 100%;">
 
                         </select>
                     </td>
                     <td>
-                        <select class="select2" id="dosage1" name="dosage1" required
-                            data-placeholder="Select a Dosage" style="width: 100%;">
+                        <select class="select2" id="dosage1" name="dosage1" data-placeholder="Select a Dosage"
+                            style="width: 100%;">
                             <option value="1">1-0-0</option>
                             <option value="2">0-1-0</option>
                             <option value="3">0-0-1</option>

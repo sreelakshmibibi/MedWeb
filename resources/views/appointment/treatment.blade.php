@@ -48,6 +48,13 @@
                                 @include('appointment.prescription')
                             </section>
 
+                            <h6 class="tabHeading">Charge</h6>
+                            <section class="tabSection">
+                                @include('appointment.charge')
+                            </section>
+
+
+
 
 
 
@@ -172,15 +179,14 @@
             $(document).on('click', '#medicineAddRow', function() {
                 count++;
                 let newRow = `<tr>
-        <td>${count}</td>
-        <td>
-            <select class="select2" id="medicine_id${count}" name="medicine_id${count}" required
+                    <td>${count}</td>
+                    <td>
+                        <select class="select2" id="medicine_id${count}" name="medicine_id${count}" required
                             data-placeholder="Select a Medicine" style="width: 100%;">
-
                         </select>
-        </td>
-        <td>
-                <select class="select2" id="dosage${count}" name="dosage${count}" required
+                    </td>
+                    <td>
+                        <select class="select2" id="dosage${count}" name="dosage${count}" required
                             data-placeholder="Select a Dosage" style="width: 100%;">
                             <option value="1">1-0-0</option>
                             <option value="2">0-1-0</option>
@@ -190,23 +196,23 @@
                             <option value="6">1-1-0</option>
                             <option value="7">0-1-1</option>
                         </select>
-        </td>
-        <td>
-            <div class="input-group">
+                    </td>
+                    <td>
+                        <div class="input-group">
                             <input type="number" class="form-control" id="duration${count}" name="duration${count}" aria-describedby="basic-addon2">
                             <div class="input-group-append">
                                 <span class="input-group-text" id="basic-addon2">days</span>
                             </div>
                         </div>
-        </td>
-        <td>
-             <input type="text" class="form-control" id="remarks${count}" name="remarks${count}" placeholder="remarks">
-        </td>
-        <td>
-            <button type="button" class="btnDelete waves-effect waves-light btn btn-danger btn-sm"
-                title="delete row"> <i class="fa fa-trash"></i></button>
-        </td>
-    </tr>`;
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" id="remarks${count}" name="remarks${count}" placeholder="remarks">
+                    </td>
+                    <td>
+                        <button type="button" class="btnDelete waves-effect waves-light btn btn-danger btn-sm"
+                                title="delete row"> <i class="fa fa-trash"></i></button>
+                    </td>
+                </tr>`;
 
                 $('#presctablebody').append(newRow);
                 // Reinitialize Select2 on the newly added select element
@@ -230,6 +236,56 @@
             // Function to update row count input field value
             function updateRowCount() {
                 $('#row_count').val(count);
+            }
+
+            let chargecount = 1;
+            // Event listener for Add Row button click
+            $(document).on('click', '#chargeAddRow', function() {
+                chargecount++;
+                let newRow = `<tr>
+                    <td>${chargecount}</td>
+                    <td>
+                        <select class="select2" id="treatment_id${chargecount}" name="treatment_id${chargecount}"
+                            data-placeholder="Select a Treatment" style="width: 100%;">
+                        </select>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="quantity${chargecount}" name="quantity${chargecount}"
+                                aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <span class="input-group-text" id="basic-addon2">Tooth</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        1000
+                    </td>
+                    <td>
+                        <button type="button" id="btnchargeDelete" title="delete row"
+                            class="waves-effect waves-light btn btn-danger btn-sm btnchargeDelete"> <i class="fa fa-trash"></i></button>
+                    </td>
+                </tr>`;
+
+                $('#chargetablebody').append(newRow);
+                // Reinitialize Select2 on the newly added select element
+                $(`#treatment_id${chargecount}`).select2({
+                    width: '100%',
+                    placeholder: 'Select a Treatment'
+                });
+
+                updateRowchargeCount();
+            });
+
+            // Event listener for Delete button click
+            $(document).on('click', '.btnchargeDelete', function() {
+                $(this).closest('tr').remove();
+                updateRowchargeCount();
+            });
+
+            // Function to update row chargecount input field value
+            function updateRowchargeCount() {
+                $('#row_chargecount').val(chargecount);
             }
 
 

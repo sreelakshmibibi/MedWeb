@@ -132,29 +132,29 @@
                 <tr>
                     <td>1</td>
                     <td>
-                        <select class="select2" id="treatment_id1" name="treatment_id1" required
+                        <select class="select2" id="treatment_id1" name="treatment_id1"
                             data-placeholder="Select a Treatment" style="width: 100%;">
 
                         </select>
                     </td>
                     <td>
-                        <select class="select2" id="doctor_id1" name="doctor_id1" required
-                            data-placeholder="Select a Doctor" style="width: 100%;">
+                        <select class="select2" id="doctor_id1" name="doctor_id1" data-placeholder="Select a Doctor"
+                            style="width: 100%;">
 
                         </select>
                     </td>
                     <td>
-                        <select class="select2" id="clinic_branch_id0" name="clinic_branch_id0" required
+                        <select class="select2" id="clinic_branch_id1" name="clinic_branch_id1"
                             data-placeholder="Select a Branch" style="width: 100%;">
 
                         </select>
                     </td>
                     <td>
                         <input class="form-control" type="datetime-local" id="appdate" name="appdate"
-                            value="{{ now()->setTimezone('Asia/Kolkata')->format('Y-m-d\TH:i') }}" required>
+                            value="{{ now()->setTimezone('Asia/Kolkata')->format('Y-m-d\TH:i') }}">
                     </td>
                     <td>
-                        <select class="form-select" id="appstatus" name="appstatus" required>
+                        <select class="form-select" id="apptype" name="apptype">
 
                         </select>
                     </td>
@@ -200,14 +200,14 @@
                 <tr>
                     <td>1</td>
                     <td>
-                        <select class="select2" id="medicine_id1" name="medicine_id1" required
+                        <select class="select2" id="medicine_id1" name="medicine_id1"
                             data-placeholder="Select a Medicine" style="width: 100%;">
 
                         </select>
                     </td>
                     <td>
-                        <select class="select2" id="dosage1" name="dosage1" required
-                            data-placeholder="Select a Dosage" style="width: 100%;">
+                        <select class="select2" id="dosage1" name="dosage1" data-placeholder="Select a Dosage"
+                            style="width: 100%;">
                             <option value="1">1-0-0</option>
                             <option value="2">0-1-0</option>
                             <option value="3">0-0-1</option>
