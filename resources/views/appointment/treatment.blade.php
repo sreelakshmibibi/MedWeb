@@ -38,6 +38,13 @@
                                 @include('appointment.examination')
                             </section>
 
+                            <h6 class="tabHeading">Dental Table</h6>
+                            <section class="tabSection">
+                                @include('appointment.dtable')
+                            </section>
+
+
+
 
                             {{-- <h6 class="tabHeading">Chart</h6>
                             <section class="tabSection">
@@ -106,8 +113,14 @@
                     $('#premolars_molars').show();
 
                 }
+            });
 
-
+            $('#table_info_btn').click(function() {
+                if ($('#table_infodiv').css('display') == 'block') {
+                    $('#table_infodiv').hide();
+                } else {
+                    $('#table_infodiv').show();
+                }
             });
 
             // Initializations
