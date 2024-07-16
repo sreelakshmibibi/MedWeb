@@ -48,7 +48,7 @@
                 </tr>
             </tbody>
             <tbody>
-                <tr>
+                <tr class="bt-3 border-primary">
                     <th colspan="3">Total Rate</th>
                     <td colspan="2">1000</td>
                 </tr>
