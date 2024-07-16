@@ -66,9 +66,9 @@
             <div class="row pt-4">
                 <div class="col-md-6 " id="Buccal" style="display: none">
                     <div class="form-group">
-                        <label class="form-label" for="tooth_score">Buccal <span class="text-danger">
+                        <label class="form-label" for="buccal_condn">Buccal <span class="text-danger">
                                 *</span></label>
-                        <select class="form-select" id="tooth_score" name="tooth_score" required>
+                        <select class="form-select" id="buccal_condn" name="buccal_condn" required>
                             <option value="">Select Condition</option>
                             <option value="7">7- Decayed</option>
                             <option value="8">8- Filled</option>
@@ -80,9 +80,9 @@
                 </div>
                 <div class="col-md-6 " id="Palatal" style="display: none">
                     <div class="form-group">
-                        <label class="form-label" for="tooth_score">Palatal <span class="text-danger">
+                        <label class="form-label" for="palatal_condn">Palatal <span class="text-danger">
                                 *</span></label>
-                        <select class="form-select" id="tooth_score" name="tooth_score" required>
+                        <select class="form-select" id="palatal_condn" name="palatal_condn" required>
                             <option value="">Select Condition</option>
                             <option value="7">7- Decayed</option>
                             <option value="8">8- Filled</option>
@@ -94,9 +94,9 @@
                 </div>
                 <div class="col-md-6 " id="Mesial" style="display: none">
                     <div class="form-group">
-                        <label class="form-label" for="tooth_score">Mesial <span class="text-danger">
+                        <label class="form-label" for="mesial_condn">Mesial <span class="text-danger">
                                 *</span></label>
-                        <select class="form-select" id="tooth_score" name="tooth_score" required>
+                        <select class="form-select" id="mesial_condn" name="mesial_condn" required>
                             <option value="">Select Condition</option>
                             <option value="7">7- Decayed</option>
                             <option value="8">8- Filled</option>
@@ -108,9 +108,9 @@
                 </div>
                 <div class="col-md-6 " id="Distal" style="display: none">
                     <div class="form-group">
-                        <label class="form-label" for="tooth_score">Distal <span class="text-danger">
+                        <label class="form-label" for="distal_condn">Distal <span class="text-danger">
                                 *</span></label>
-                        <select class="form-select" id="tooth_score" name="tooth_score" required>
+                        <select class="form-select" id="distal_condn" name="distal_condn" required>
                             <option value="">Select Condition</option>
                             <option value="7">7- Decayed</option>
                             <option value="8">8- Filled</option>
@@ -123,9 +123,9 @@
 
                 <div class="col-md-6 " id="Occulusal" style="display: none">
                     <div class="form-group">
-                        <label class="form-label" for="tooth_score">Occulusal <span class="text-danger">
+                        <label class="form-label" for="occulusal_condn">Occulusal <span class="text-danger">
                                 *</span></label>
-                        <select class="form-select" id="tooth_score" name="tooth_score" required>
+                        <select class="form-select" id="occulusal_condn" name="occulusal_condn" required>
                             <option value="">Select Condition</option>
                             <option value="7">7- Decayed</option>
                             <option value="8">8- Filled</option>
@@ -137,9 +137,9 @@
                 </div>
                 <div class="col-md-6 ">
                     <div class="form-group">
-                        <label class="form-label" for="tooth_score">Lingual <span class="text-danger">
+                        <label class="form-label" for="lingual_condn">Lingual <span class="text-danger">
                                 *</span></label>
-                        <select class="form-select" id="tooth_score" name="tooth_score" required>
+                        <select class="form-select" id="lingual_condn" name="lingual_condn" required>
                             <option value="">Select Condition</option>
                             <option value="7">7- Decayed</option>
                             <option value="8">8- Filled</option>
@@ -151,9 +151,9 @@
                 </div>
                 <div class="col-md-6 ">
                     <div class="form-group">
-                        <label class="form-label" for="tooth_score">Labial <span class="text-danger">
+                        <label class="form-label" for="labial_condn">Labial <span class="text-danger">
                                 *</span></label>
-                        <select class="form-select" id="tooth_score" name="tooth_score" required>
+                        <select class="form-select" id="labial_condn" name="labial_condn" required>
                             <option value="">Select Condition</option>
                             <option value="7">7- Decayed</option>
                             <option value="8">8- Filled</option>
@@ -171,15 +171,15 @@
             <div class="row">
                 <div class="col-md-6 ">
                     <div class="form-group">
-                        <label class="form-label" for="tooth_no">Chief Complaint</label>
-                        <input type="text" class="form-control" id="tooth_no" name="tooth_no"
+                        <label class="form-label" for="complaint">Chief Complaint</label>
+                        <input type="text" class="form-control" id="complaint" name="complaint"
                             placeholder="tooth no">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label class="form-label" for="tooth_no">HPI</label>
-                        <input type="text" class="form-control" id="tooth_no" name="tooth_no"
+                        <label class="form-label" for="hpi">HPI</label>
+                        <input type="text" class="form-control" id="hpi" name="hpi"
                             placeholder="tooth no">
                     </div>
                 </div>
@@ -187,15 +187,15 @@
             <div class="row">
                 <div class="col-md-6 ">
                     <div class="form-group">
-                        <label class="form-label" for="tooth_no">Dental Examination</label>
-                        <input type="text" class="form-control" id="tooth_no" name="tooth_no"
+                        <label class="form-label" for="dexam">Dental Examination</label>
+                        <input type="text" class="form-control" id="dexam" name="dexam"
                             placeholder="tooth no">
                     </div>
                 </div>
                 <div class="col-md-6 ">
                     <div class="form-group">
-                        <label class="form-label" for="tooth_no">Diagnosis</label>
-                        <input type="text" class="form-control" id="tooth_no" name="tooth_no"
+                        <label class="form-label" for="diagnosis">Diagnosis</label>
+                        <input type="text" class="form-control" id="diagnosis" name="diagnosis"
                             placeholder="tooth no">
                     </div>
                 </div>
@@ -204,16 +204,18 @@
             <div class="row">
                 <div class="col-md-6 ">
                     <div class="form-group">
-                        <label class="form-label" for="tooth_no">X-Ray</label>
-                        <input type="text" class="form-control" id="tooth_no" name="tooth_no"
-                            placeholder="tooth no">
+                        <label class="form-label" for="xray">X-Ray</label>
+                        <input type="file" class="form-control" id="xray" type="file" name="xray[]"
+                            multiple>
                     </div>
                 </div>
                 <div class="col-md-6 ">
                     <div class="form-group">
-                        <label class="form-label" for="tooth_no">Treatment</label>
-                        <input type="text" class="form-control" id="tooth_no" name="tooth_no"
-                            placeholder="tooth no">
+                        <label class="form-label" for="treatment">Treatment</label>
+                        <select class="select2" id="treatment" name="treatment" required
+                            data-placeholder="Select a Treatment" style="width: 100%;">
+
+                        </select>
                     </div>
                 </div>
             </div>
