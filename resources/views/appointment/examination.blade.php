@@ -171,7 +171,8 @@
             <div class="row">
                 <div class="col-md-6 ">
                     <div class="form-group">
-                        <label class="form-label" for="complaint">Chief Complaint</label>
+                        <label class="form-label" for="complaint">Chief Complaint <span class="text-danger">
+                                *</span></label>
                         <input type="text" class="form-control" id="complaint" name="complaint"
                             placeholder="Chief Complaint">
                     </div>
@@ -186,14 +187,16 @@
             <div class="row">
                 <div class="col-md-6 ">
                     <div class="form-group">
-                        <label class="form-label" for="dexam">Dental Examination</label>
+                        <label class="form-label" for="dexam">Dental Examination <span class="text-danger">
+                                *</span></label>
                         <input type="text" class="form-control" id="dexam" name="dexam"
                             placeholder="Dental Examination">
                     </div>
                 </div>
                 <div class="col-md-6 ">
                     <div class="form-group">
-                        <label class="form-label" for="diagnosis">Diagnosis</label>
+                        <label class="form-label" for="diagnosis">Diagnosis <span class="text-danger">
+                                *</span></label>
                         <input type="text" class="form-control" id="diagnosis" name="diagnosis"
                             placeholder="diagnosis">
                     </div>
@@ -203,14 +206,16 @@
             <div class="row">
                 <div class="col-md-6 ">
                     <div class="form-group">
-                        <label class="form-label" for="xray">X-Ray</label>
+                        <label class="form-label" for="xray">X-Ray <span class="text-danger">
+                                *</span></label>
                         <input type="file" class="form-control" id="xray" type="file" name="xray[]"
                             multiple>
                     </div>
                 </div>
                 <div class="col-md-6 ">
                     <div class="form-group">
-                        <label class="form-label" for="treatment">Treatment</label>
+                        <label class="form-label" for="treatment">Treatment <span class="text-danger">
+                                *</span></label>
                         <select class="select2" id="treatment" name="treatment" required
                             data-placeholder="Select a Treatment" style="width: 100%;">
 
