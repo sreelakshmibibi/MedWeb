@@ -100,5 +100,3 @@
 
     </table>
 </div>
-
-@include('appointment.tooth_info')
