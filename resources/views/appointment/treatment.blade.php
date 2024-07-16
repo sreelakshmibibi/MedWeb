@@ -23,20 +23,20 @@
                             @csrf
 
                             <!-- Step 1 -->
-                            {{-- <h6 class="tabHeading">Personal Info</h6>
+                            <h6 class="tabHeading">Personal Info</h6>
                             <section class="tabSection">
                                 @include('appointment.personal_info')
-                            </section> --}}
+                            </section>
 
                             <h6 class="tabHeading">Chart images</h6>
                             <section class="tabSection">
                                 @include('appointment.dchart_images')
                             </section>
 
-                            <h6 class="tabHeading">Examination</h6>
+                            {{-- <h6 class="tabHeading">Examination</h6>
                             <section class="tabSection">
                                 @include('appointment.examination')
-                            </section>
+                            </section> --}}
 
                             <h6 class="tabHeading">Dental Table</h6>
                             <section class="tabSection">
