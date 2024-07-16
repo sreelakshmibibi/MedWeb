@@ -245,13 +245,13 @@ $additionalNormalTeethImages = [
                 var divId = '#div' + teethName;
                 $(divId).css({
                     'border': '2px solid blue',
-                    'border-radius': '5px'
+                    'border-radius': '5px',
                 });
 
                 $(this).toggleClass('selected');
 
 
-                // $('#modal-teeth').modal('show');
+                $('#modal-teeth').modal('show');
 
             });
 

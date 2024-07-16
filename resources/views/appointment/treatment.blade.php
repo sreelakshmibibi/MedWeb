@@ -23,10 +23,10 @@
                             @csrf
 
                             <!-- Step 1 -->
-                            <h6 class="tabHeading">Personal Info</h6>
+                            {{-- <h6 class="tabHeading">Personal Info</h6>
                             <section class="tabSection">
                                 @include('appointment.personal_info')
-                            </section>
+                            </section> --}}
 
                             <h6 class="tabHeading">Chart images</h6>
                             <section class="tabSection">
@@ -96,24 +96,24 @@
                 $(partId).toggleClass('selected');
             });
 
-            $('#tooth_selected').change(function() {
-                var selectedValue = $(this).val();
+            // $('#tooth_selected').change(function() {
+            //     var selectedValue = $(this).val();
 
-                // Hide all tooth divs
-                $('.exam_toothdiv').hide();
-                $('#incisors_canines').hide();
-                $('#premolars_molars').hide();
+            //     // Hide all tooth divs
+            //     $('.exam_toothdiv').hide();
+            //     $('#incisors_canines').hide();
+            //     $('#premolars_molars').hide();
 
-                if (selectedValue === 'tooth_in') {
-                    $('.exam_toothdiv').show();
-                    $('#incisors_canines').show();
+            //     if (selectedValue === 'tooth_in') {
+            //         $('.exam_toothdiv').show();
+            //         $('#incisors_canines').show();
 
-                } else if (selectedValue === 'tooth_mol') {
-                    $('.exam_toothdiv').show();
-                    $('#premolars_molars').show();
+            //     } else if (selectedValue === 'tooth_mol') {
+            //         $('.exam_toothdiv').show();
+            //         $('#premolars_molars').show();
 
-                }
-            });
+            //     }
+            // });
 
             $('#table_info_btn').click(function() {
                 if ($('#table_infodiv').css('display') == 'block') {
