@@ -233,8 +233,9 @@
                 </div>
 
                 <div class="modal-footer modal-footer-uniform">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success float-end" id="newAppointmentBtn">Save</button>
+                    <button type="button" class="btn btn-danger" id="closeToothBtn"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success float-end" id="newToothTreatmentBtn">Save</button>
                 </div>
             </div>
         </div>

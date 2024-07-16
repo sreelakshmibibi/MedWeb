@@ -123,6 +123,15 @@
                 }
             });
 
+            $('#closeToothBtn').click(function() {
+                var teethName = $('#tooth_no').val();
+                var divId = '#div' + teethName;
+                $(divId).css({
+                    'border': 'none',
+                    'border-radius': '5px',
+                });
+            })
+
             // Initializations
             var initialSelectedStateId = '{{ $patientProfile->state_id }}';
             var initialSelectedCityId = '{{ $patientProfile->city_id }}';
