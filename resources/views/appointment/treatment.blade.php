@@ -18,7 +18,7 @@
             <section class="content">
                 <div class="box">
                     <div class="box-body wizard-content">
-                        <form method="post" class="validation-wizard wizard-circle" id="patientform"
+                        <form method="post" class="validation-wizard wizard-circle" id="treatmentform"
                             action="{{ route('patient.patient_list.store') }}" enctype="multipart/form-data">
                             @csrf
 
@@ -71,7 +71,7 @@
     <script>
         $(document).ready(function() {
 
-            $("#patientform .actions ul li:last-child a").addClass("bg-success btn btn-success");
+            $("#treatmentform .actions ul li:last-child a").addClass("bg-success btn btn-success");
 
             // Handle change event for dparts
             $('.dparts').click(function() {
