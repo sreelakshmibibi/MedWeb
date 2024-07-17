@@ -14,7 +14,7 @@
 
                         <div class="row exam_toothdiv" style="display: none;">
                             <div class="col-md-3 ">
-                                <div class="dparts-wrapper" id="incisors_canines">
+                                <div class="dparts-wrapper" id="incisors_canines" style="display: none;">
                                     <div class="dparts part-left" title="Mesial" id="part-left"></div>
                                     <div class="dparts part-top" title="Buccal" id="part-top"></div>
                                     <div class="dparts part-right" title="Distal" id="part-right"></div>
@@ -51,6 +51,8 @@
                                         <option value="4">4- For Extraction- X(x)</option>
                                         <option value="5">5- Impacted</option>
                                         <option value="6">6- Unerupted</option>
+                                        <option value="6">7- Misplaced</option>
+                                        <option value="6">8- Morphological Difference</option>
                                     </select>
                                 </div>
                             </div>

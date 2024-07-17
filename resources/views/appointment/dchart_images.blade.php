@@ -4,12 +4,12 @@ $upper_ped_teethImages = [
     [
         ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/top/t55.png', 'teeth_name' => '55'],
         ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/top/t54.png', 'teeth_name' => '54'],
-        ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/top/t53.png', 'teeth_name' => '53'],
-        ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/top/t52.png', 'teeth_name' => '52'],
-        ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/top/t51.png', 'teeth_name' => '51'],
-        ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/top/t61.png', 'teeth_name' => '61'],
-        ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/top/t62.png', 'teeth_name' => '62'],
-        ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/top/t63.png', 'teeth_name' => '63'],
+        ['class' => 'pediatric inccan', 'image' => 'images/teeths/pediatric/top/t53.png', 'teeth_name' => '53'],
+        ['class' => 'pediatric inccan', 'image' => 'images/teeths/pediatric/top/t52.png', 'teeth_name' => '52'],
+        ['class' => 'pediatric inccan', 'image' => 'images/teeths/pediatric/top/t51.png', 'teeth_name' => '51'],
+        ['class' => 'pediatric inccan', 'image' => 'images/teeths/pediatric/top/t61.png', 'teeth_name' => '61'],
+        ['class' => 'pediatric inccan', 'image' => 'images/teeths/pediatric/top/t62.png', 'teeth_name' => '62'],
+        ['class' => 'pediatric inccan', 'image' => 'images/teeths/pediatric/top/t63.png', 'teeth_name' => '63'],
         ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/top/t64.png', 'teeth_name' => '64'],
         ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/top/t65.png', 'teeth_name' => '65'],
     ],
@@ -22,12 +22,12 @@ $upper_teethImages = [
         ['class' => 'normal molar', 'image' => 'images/teeths/top/t16.png', 'teeth_name' => '16'],
         ['class' => 'normal molar', 'image' => 'images/teeths/top/t15.png', 'teeth_name' => '15'],
         ['class' => 'normal molar', 'image' => 'images/teeths/top/t14.png', 'teeth_name' => '14'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/top/t13.png', 'teeth_name' => '13'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/top/t12.png', 'teeth_name' => '12'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/top/t11.png', 'teeth_name' => '11'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/top/t21.png', 'teeth_name' => '21'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/top/t22.png', 'teeth_name' => '22'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/top/t23.png', 'teeth_name' => '23'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/top/t13.png', 'teeth_name' => '13'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/top/t12.png', 'teeth_name' => '12'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/top/t11.png', 'teeth_name' => '11'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/top/t21.png', 'teeth_name' => '21'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/top/t22.png', 'teeth_name' => '22'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/top/t23.png', 'teeth_name' => '23'],
         ['class' => 'normal molar', 'image' => 'images/teeths/top/t24.png', 'teeth_name' => '24'],
         ['class' => 'normal molar', 'image' => 'images/teeths/top/t25.png', 'teeth_name' => '25'],
         ['class' => 'normal molar', 'image' => 'images/teeths/top/t26.png', 'teeth_name' => '26'],
@@ -40,12 +40,12 @@ $lower_ped_teethImages = [
     [
         ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/bottom/b85.png', 'teeth_name' => '85'],
         ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/bottom/b84.png', 'teeth_name' => '84'],
-        ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/bottom/b83.png', 'teeth_name' => '83'],
-        ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/bottom/b82.png', 'teeth_name' => '82'],
-        ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/bottom/b81.png', 'teeth_name' => '81'],
-        ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/bottom/b71.png', 'teeth_name' => '71'],
-        ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/bottom/b72.png', 'teeth_name' => '72'],
-        ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/bottom/b73.png', 'teeth_name' => '73'],
+        ['class' => 'pediatric inccan', 'image' => 'images/teeths/pediatric/bottom/b83.png', 'teeth_name' => '83'],
+        ['class' => 'pediatric inccan', 'image' => 'images/teeths/pediatric/bottom/b82.png', 'teeth_name' => '82'],
+        ['class' => 'pediatric inccan', 'image' => 'images/teeths/pediatric/bottom/b81.png', 'teeth_name' => '81'],
+        ['class' => 'pediatric inccan', 'image' => 'images/teeths/pediatric/bottom/b71.png', 'teeth_name' => '71'],
+        ['class' => 'pediatric inccan', 'image' => 'images/teeths/pediatric/bottom/b72.png', 'teeth_name' => '72'],
+        ['class' => 'pediatric inccan', 'image' => 'images/teeths/pediatric/bottom/b73.png', 'teeth_name' => '73'],
         ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/bottom/b74.png', 'teeth_name' => '74'],
         ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/bottom/b75.png', 'teeth_name' => '75'],
     ],
@@ -58,12 +58,12 @@ $lower_teethImages = [
         ['class' => 'normal molar', 'image' => 'images/teeths/bottom/b46.png', 'teeth_name' => '46'],
         ['class' => 'normal molar', 'image' => 'images/teeths/bottom/b45.png', 'teeth_name' => '45'],
         ['class' => 'normal molar', 'image' => 'images/teeths/bottom/b44.png', 'teeth_name' => '44'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/bottom/b43.png', 'teeth_name' => '43'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/bottom/b42.png', 'teeth_name' => '42'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/bottom/b41.png', 'teeth_name' => '41'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/bottom/b31.png', 'teeth_name' => '31'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/bottom/b32.png', 'teeth_name' => '32'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/bottom/b33.png', 'teeth_name' => '33'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/bottom/b43.png', 'teeth_name' => '43'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/bottom/b42.png', 'teeth_name' => '42'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/bottom/b41.png', 'teeth_name' => '41'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/bottom/b31.png', 'teeth_name' => '31'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/bottom/b32.png', 'teeth_name' => '32'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/bottom/b33.png', 'teeth_name' => '33'],
         ['class' => 'normal molar', 'image' => 'images/teeths/bottom/b34.png', 'teeth_name' => '34'],
         ['class' => 'normal molar', 'image' => 'images/teeths/bottom/b35.png', 'teeth_name' => '35'],
         ['class' => 'normal molar', 'image' => 'images/teeths/bottom/b36.png', 'teeth_name' => '36'],
@@ -72,7 +72,7 @@ $lower_teethImages = [
     ],
 ];
 
-$additionalTeethImages = [['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'], ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'], ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'], ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'], ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'], ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'], ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'], ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'], ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'], ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png']];
+$additionalTeethImages = [['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'], ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/top/t_fl.png'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/top/t_fl.png'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/top/t_fl.png'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/top/t_fl.png'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/top/t_fl.png'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/top/t_fl.png'], ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'], ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png']];
 
 $additionalNormalTeethImages = [
     ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'],
@@ -80,12 +80,12 @@ $additionalNormalTeethImages = [
     ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'],
     ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'],
     ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'],
-    ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'],
-    ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'],
-    ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'],
-    ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'],
-    ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'],
-    ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'],
+    ['class' => 'pediatric inccan', 'image' => 'images/teeths/top/t_fl.png'],
+    ['class' => 'pediatric inccan', 'image' => 'images/teeths/top/t_fl.png'],
+    ['class' => 'pediatric inccan', 'image' => 'images/teeths/top/t_fl.png'],
+    ['class' => 'pediatric inccan', 'image' => 'images/teeths/top/t_fl.png'],
+    ['class' => 'pediatric inccan', 'image' => 'images/teeths/top/t_fl.png'],
+    ['class' => 'pediatric inccan', 'image' => 'images/teeths/top/t_fl.png'],
     ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'],
     ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'],
     ['class' => 'pediatric molar', 'image' => 'images/teeths/top/t_fl.png'],
@@ -252,10 +252,14 @@ $additionalNormalTeethImages = [
 
                 // $(this).toggleClass('selected');
                 $('#tooth_no').val(teethName);
-                //if teeth is molar or pre-molar
-                // $('#premolars_molars').show();
-                //else
-                // $('#incisors_canines').show();
+                if ($(divId).hasClass('molar')) {
+                    $('#premolars_molars').show();
+                    $('#incisors_canines').hide();
+                } else if ($(divId).hasClass('inccan')) {
+                    $('#incisors_canines').show();
+                    $('#premolars_molars').hide();
+                }
+
                 $('#modal-teeth').modal('show');
 
             });
