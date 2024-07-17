@@ -28,6 +28,8 @@ class DatabaseSeeder extends Seeder
             ClinicTypeSeeder::class,
             WeekDaySeeder::class,
             TeethSeeder::class,
+            SurfaceConditionSeeder::class,
+            ToothScoreSeeder::class,
             // Other seeders...
         ]);
         $adminUser = User::factory()->create([
