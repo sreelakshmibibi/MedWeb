@@ -228,6 +228,17 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="col-md-3 ">
+                                <div class="form-group">
+                                    <label class="form-label" for="treatment_status">Treatment Status <span class="text-danger">
+                                            *</span></label>
+                                    <select class="form-select" id="treatment_status" name="treatment_status">
+                                        <option value="">Select Status</option>
+                                        <option value="1">Completed</option>
+                                        <option value="2">Follow Up</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
 
 
