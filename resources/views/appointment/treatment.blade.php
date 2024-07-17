@@ -137,7 +137,7 @@
                 }
             });
 
-            $('#closeToothBtn').click(function() {
+            $('.closeToothBtn').click(function() {
                 var teethName = $('#tooth_no').val();
                 var divId = '#div' + teethName;
                 $(divId).css({

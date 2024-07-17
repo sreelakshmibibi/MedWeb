@@ -6,7 +6,8 @@
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fa-solid fa-tooth"></i> Tooth Examination
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close closeToothBtn" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body">
@@ -235,7 +236,7 @@
                 </div>
 
                 <div class="modal-footer modal-footer-uniform">
-                    <button type="button" class="btn btn-danger" id="closeToothBtn"
+                    <button type="button" class="btn btn-danger closeToothBtn" id="closeToothBtn"
                         data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-success float-end" id="newToothTreatmentBtn">Save</button>
                 </div>
