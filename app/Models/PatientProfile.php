@@ -61,6 +61,11 @@ class PatientProfile extends Model
         return $this->hasMany(Appointment::class, 'patient_id', 'patient_id');
     }
 
+    public function toothExamination()
+    {
+        return $this->hasMany(ToothExamination::class, 'patient_id', 'patient_id');
+    }
+
     public function latestAppointment()
     {
         return $this->hasOne(Appointment::class, 'patient_id', 'patient_id')
