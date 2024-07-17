@@ -150,6 +150,8 @@ class PatientListRequest extends FormRequest
             'alcoholic_status' => ['nullable', 'string', 'max:30'],
             'diet' => ['nullable', 'string', 'max:20'],
             'allergies' => ['nullable', 'string'],
+            'pregnant' => ['nullable', 'string'],
+            'temperature' => ['nullable', 'numeric', 'min:90', 'max:110'],
         ];
     }
 
@@ -230,6 +232,10 @@ class PatientListRequest extends FormRequest
             'diet.max' => 'The diet may not be greater than 20 characters.',
             'allergies.string' => 'The allergies must be a string.',
             'allergies.max' => 'The allergies may not be greater than 500 characters.',
+            'pregnant.string' => 'The pregnant field must be a string.',
+            'temperature.numeric' => 'The temperature must be a number.',
+            'temperature.min' => 'The temperature must be at least 90 degrees.',
+            'temperature.max' => 'The temperature may not be greater than 110 degrees.',
         ];
     }
 }

@@ -43,7 +43,7 @@
                                         <th>Phone Number</th>
                                         <th>Last Appointment Date</th>
                                         <th>Upcoming (if any)</th>
-                                        <th>New Appointment</th>
+                                        {{-- <th>New Appointment</th> --}}
                                         <th>Status</th>
                                         <th width="100px">Action</th>
                                     </tr>
@@ -108,10 +108,10 @@
                         data: 'next_appointment',
                         name: 'next_appointment'
                     },
-                    {
-                        data: 'new_appointment',
-                        name: 'new_appointment'
-                    },
+                    // {
+                    //     data: 'new_appointment',
+                    //     name: 'new_appointment'
+                    // },
                     {
                         data: 'record_status',
                         name: 'record_status',
@@ -151,16 +151,78 @@
 
             });
 
+            // $(document).on('click', '.btn-add', function() {
+            //     var app_parent_id = $(this).data('parent-id');
+            //     var patientId = $(this).data('patient-id');
+            //     var patientName = $(this).data('patient-name');
+            //     $('#patient_id').val(patientId); // Set app ID in the hidden input
+            //     $('#patient_name').val(patientName); // Set app ID in the hidden input
+            //     $('#app_parent_id').val(app_parent_id);
+            //     //$('#modal-booking').modal('show');
+            //     $.ajax({
+            //         url: '{{ url('patient', '') }}' + "/" + patientId + "/appointment",
+            //         method: 'GET',
+            //         success: function(response) {
+            //             $('#weight').val(response.weight);
+
+            //             $('#modal-booking').modal('show');
+            //         },
+            //         error: function(error) {
+            //             console.log(error)
+            //         }
+            //     });
+
+
+            // });
             $(document).on('click', '.btn-add', function() {
                 var app_parent_id = $(this).data('parent-id');
                 var patientId = $(this).data('patient-id');
                 var patientName = $(this).data('patient-name');
-                $('#patient_id').val(patientId); // Set app ID in the hidden input
-                $('#patient_name').val(patientName); // Set app ID in the hidden input
-                $('#app_parent_id').val(app_parent_id);
-                $('#modal-booking').modal('show');
-                   
 
+                // Set patient ID and patient name in the form fields
+                $('#patient_id').val(patientId);
+                $('#patient_name').val(patientName);
+                $('#app_parent_id').val(app_parent_id);
+                // Replace with dynamic patient ID
+
+                var url = "{{ route('patient.patient_list.appointment', [':patientId']) }}";
+                url = url.replace(':patientId', patientId);
+                // Fetch patient appointment details using AJAX
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    success: function(response) {
+                        // Populate the form fields with the fetched data
+                        $('#height').val(response.height_cm);
+                        $('#weight').val(response.weight_kg);
+                        $('#bp').val(response.blood_pressure);
+                        //$('#temperature').val(response.temperature);
+                        $('#smoking_status').val(response.smoking_status);
+                        $('#alcoholic_status').val(response.alcoholic_status);
+                        $('#diet').val(response.diet);
+                        $('#allergies').val(response.allergies);
+                        $('#pregnant').val(response.pregnant);
+                        $('#rdoctor').val(response.referred_doctor);
+                        if (response.history && response.history.length > 0) {
+                            $('#medical-conditions-wrapper').empty();
+                            response.history.forEach(function(condition, index) {
+                                var medicalConditionInput = `
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" name="medical_conditions[]" value="${condition.history}" placeholder="Medical Condition">
+                                        <button class="btn ${index === 0 ? 'btn-success' : 'btn-danger'}" type="button" onclick="${index === 0 ? 'addPatientMedicalCondition()' : 'removePatientMedicalCondition(this)'}">${index === 0 ? '+' : '-'}</button>
+                                    </div>`;
+                                $('#medical-conditions-wrapper').append(
+                                    medicalConditionInput);
+                            });
+                        }
+
+                        // Show the modal after setting the values
+                        $('#modal-booking').modal('show');
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
             });
 
             $(document).on('click', '.btn-danger', function() {

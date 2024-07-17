@@ -165,7 +165,7 @@
  </div>
 
  <div class="row">
-     <div class="col-md-3">
+     <div class="col-md-2">
          <div class="form-group">
              <label class="form-label" for="marital_status">Marital Status</label>
              <select class="form-select" id="marital_status" name="marital_status">
@@ -183,7 +183,7 @@
              </select>
          </div>
      </div>
-     <div class="col-md-3">
+     {{-- <div class="col-md-2">
          <div class="form-group">
              <label class="form-label" for="smoking_status">Smoking Status</label>
              <select class="form-select" id="smoking_status" name="smoking_status">
@@ -198,7 +198,7 @@
              </select>
          </div>
      </div>
-     <div class="col-md-3">
+     <div class="col-md-2">
          <div class="form-group">
              <label class="form-label" for="alcoholic_status">Alcoholic Status</label>
              <select class="form-select" id="alcoholic_status" name="alcoholic_status">
@@ -214,7 +214,7 @@
              </select>
          </div>
      </div>
-     <div class="col-md-3">
+     <div class="col-md-2">
          <div class="form-group">
              <label class="form-label" for="diet">Diet</label>
              <select class="form-select" id="diet" name="diet">
@@ -228,18 +228,28 @@
              </select>
          </div>
      </div>
+     <div class="col-md-2" id="pregnant_container" style="display: none;">
+         <div class="form-group">
+             <label class="form-label" for="pregnant">Are you pregnant?</label>
+             <select class="form-select" id="pregnant" name="pregnant">
+                 <option value="">Select an option</option>
+                 <option value="Y" {{ $patientProfile->pregnant == 'Y' ? 'selected' : '' }}>Yes</option>
+                 <option value="N" {{ $patientProfile->pregnant == 'N' ? 'selected' : '' }}>No</option>
+             </select>
+         </div>
+     </div> --}}
  </div>
- <div class="row">
+ {{-- <div class="row">
      <div class="col-md-12">
          <div class="form-group">
              <label class="form-label" for="allergies">Allergies</label>
              <textarea class="form-control" id="allergies" name="allergies" placeholder="List any allergies">{{ $patientProfile->allergies }}</textarea>
          </div>
      </div>
- </div>
+ </div> --}}
 
 
- <div class="row">
+ {{-- <div class="row">
      <div class="col-md-12">
          <div class="form-group">
              <label class="form-label" for="medical_conditions">Medical Conditions</label>
@@ -268,4 +278,4 @@
              </div>
          </div>
      </div>
- </div>
+ </div> --}}

@@ -108,10 +108,11 @@ class PatientEditRequest extends FormRequest
                 'in:A+,A-,B+,B-,AB+,AB-,O+,O-',
             ],
             'marital_status' => ['nullable', 'string', 'max:20'],
-            'smoking_status' => ['nullable', 'string', 'max:50'],
-            'alcoholic_status' => ['nullable', 'string', 'max:30'],
-            'diet' => ['nullable', 'string', 'max:20'],
-            'allergies' => ['nullable', 'string', 'max:500'],
+            // 'smoking_status' => ['nullable', 'string', 'max:50'],
+            // 'alcoholic_status' => ['nullable', 'string', 'max:30'],
+            // 'diet' => ['nullable', 'string', 'max:20'],
+            // 'allergies' => ['nullable', 'string', 'max:500'],
+            // 'pregnant' => ['nullable', 'string'],
         ];
     }
 
@@ -167,14 +168,15 @@ class PatientEditRequest extends FormRequest
             'blood_group.in' => 'The blood group must be one of the following types: A+, A-, B+, B-, AB+, AB-, O+, O-',
             'marital_status.string' => 'The marital status must be a string.',
             'marital_status.max' => 'The marital status may not be greater than 20 characters.',
-            'smoking_status.string' => 'The smoking status must be a string.',
-            'smoking_status.max' => 'The smoking status may not be greater than 50 characters.',
-            'alcoholic_status.string' => 'The alcoholic status must be a string.',
-            'alcoholic_status.max' => 'The alcoholic status may not be greater than 30 characters.',
-            'diet.string' => 'The diet must be a string.',
-            'diet.max' => 'The diet may not be greater than 20 characters.',
-            'allergies.string' => 'The allergies must be a string.',
-            'allergies.max' => 'The allergies may not be greater than 500 characters.',
+            // 'smoking_status.string' => 'The smoking status must be a string.',
+            // 'smoking_status.max' => 'The smoking status may not be greater than 50 characters.',
+            // 'alcoholic_status.string' => 'The alcoholic status must be a string.',
+            // 'alcoholic_status.max' => 'The alcoholic status may not be greater than 30 characters.',
+            // 'diet.string' => 'The diet must be a string.',
+            // 'diet.max' => 'The diet may not be greater than 20 characters.',
+            // 'allergies.string' => 'The allergies must be a string.',
+            // 'allergies.max' => 'The allergies may not be greater than 500 characters.',
+            // 'pregnant.string' => 'The pregnant field must be a string.',
         ];
     }
 }

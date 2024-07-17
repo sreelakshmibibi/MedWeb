@@ -233,5 +233,21 @@
             const div = button.parentElement;
             div.remove();
         }
+        document.addEventListener('DOMContentLoaded', function() {
+            const genderSelect = document.getElementById('gender');
+            const pregnantContainer = document.getElementById('pregnant_container');
+
+            genderSelect.addEventListener('change', function() {
+                if (genderSelect.value === 'F') {
+                    pregnantContainer.style.display = 'block';
+                } else {
+                    pregnantContainer.style.display = 'none';
+                    document.getElementById('pregnant').value = '';
+                }
+            });
+
+            // Trigger change event to set initial state
+            genderSelect.dispatchEvent(new Event('change'));
+        });
     </script>
 @endsection

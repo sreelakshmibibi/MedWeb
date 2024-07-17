@@ -30,10 +30,6 @@ return new class extends Migration
             $table->foreignId('country_id')->constrained('countries');
             $table->integer('pincode')->nullable();
             $table->string('marital_status', 20)->nullable();
-            $table->string('smoking_status', 50)->nullable();
-            $table->string('alcoholic_status', 30)->nullable();
-            $table->string('diet', 20)->nullable();
-            $table->text('allergies')->nullable();
             $table->integer('visit_count')->default(0);
             $table->string('status', 1)->default('Y');
             $table->foreignId('created_by')->constrained('users');

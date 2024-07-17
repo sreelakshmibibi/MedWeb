@@ -30,10 +30,6 @@ class PatientProfile extends Model
         'country_id',
         'pincode',
         'marital_status',
-        'smoking_status',
-        'alcoholic_status',
-        'diet',
-        'allergies',
         'visit_count',
         'status',
         'created_by',
@@ -98,7 +94,10 @@ class PatientProfile extends Model
 
     public function lastAppointment()
     {
-        return $this->hasOne(Appointment::class, 'patient_id', 'patient_id')->latest();
+        return $this->hasOne(Appointment::class, 'patient_id', 'patient_id')
+            ->where('app_parent_id', null)
+            ->where('app_type', 2)
+            ->latest();
     }
 
     // Define the relationship with Country
@@ -119,8 +118,19 @@ class PatientProfile extends Model
         return $this->belongsTo(City::class, 'city_id', 'id');
     }
 
+    // public function history()
+    // {
+    //     return $this->hasMany(History::class, 'patient_id', 'patient_id');
+    // }
+
     public function history()
     {
-        return $this->hasMany(History::class, 'patient_id', 'patient_id');
+
+        $lastAppointmentId = optional($this->lastAppointment)->id; // Use optional to avoid null reference
+
+        return $this->hasMany(History::class, 'patient_id', 'patient_id')
+            ->when($lastAppointmentId, function ($query) use ($lastAppointmentId) {
+                $query->where('app_id', $lastAppointmentId);
+            });
     }
 }

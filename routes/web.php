@@ -81,6 +81,7 @@ Route::post('/patient_list/update', [PatientListController::class, 'update'])->n
 Route::delete('/patient_list/{patientId}', [PatientListController::class, 'destroy'])->name('patient.patient_list.destroy');
 Route::post('/patient_list/{patientId}', [PatientListController::class, 'changeStatus'])->name('patient.patient_list.changeStatus');
 Route::post('/patient_list/appointment/store', [PatientListController::class, 'appointmentBooking'])->name('patient.patient_list.booking');
+Route::get('/patient_list/{patientId}/appointment', [PatientListController::class, 'appointmentDetails'])->name('patient.patient_list.appointment');
 
 Route::get('/today', [TodayController::class, 'index'])->name('patient.today');
 Route::post('/today/store', [TodayController::class, 'store'])->name('patient.today.store');
@@ -107,7 +108,6 @@ Route::post('/appointment/store', [AppointmentController::class, 'store'])->name
 Route::get('/appointment/{appointment}/edit', [AppointmentController::class, 'edit'])->name('appointment.edit');
 Route::post('/appointment/update', [AppointmentController::class, 'update'])->name('appointment.update');
 Route::post('/appointment/{appointment}', [AppointmentController::class, 'destroy'])->name('appointment.destroy');
-
 
 Route::get('/combo_offer', [ComboOfferController::class, 'index'])->name('settings.combo_offer');
 Route::post('/combo_offer/store', [ComboOfferController::class, 'store'])->name('settings.combo_offer.store');

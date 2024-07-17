@@ -193,6 +193,8 @@ $("#patientform").steps({
             alcoholic_status: { required: false },
             diet: { required: false },
             allergies: { maxlength: 500 },
-            "medical_conditions[]": { required: false, maxlength: 500 }
+            "medical_conditions[]": { required: false, maxlength: 500 },
+            pregnant: { required: false }, // Add this line for pregnant field
+            temperature: { required: false, number: true, min: 90, max: 110 }
         },
     });

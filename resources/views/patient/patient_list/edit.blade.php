@@ -141,39 +141,39 @@
             }
 
             // Handle change event for branch dropdown and appdate
-            $('#clinic_branch_id0, #appdate').change(function() {
-                var branchId = $('#clinic_branch_id0').val();
-                var appDate = $('#appdate').val();
-                loadDoctors(branchId, appDate);
-            });
+            // $('#clinic_branch_id0, #appdate').change(function() {
+            //     var branchId = $('#clinic_branch_id0').val();
+            //     var appDate = $('#appdate').val();
+            //     loadDoctors(branchId, appDate);
+            // });
 
 
             // Function to load doctors based on branch ID
-            function loadDoctors(branchId, appDate) {
-                if (branchId && appDate) {
+            // function loadDoctors(branchId, appDate) {
+            //     if (branchId && appDate) {
 
-                    $.ajax({
-                        url: '{{ route('get.doctors', '') }}' + '/' + branchId,
-                        type: "GET",
-                        data: {
-                            appdate: appDate
-                        },
-                        dataType: "json",
-                        success: function(data) {
+            //         $.ajax({
+            //             url: '{{ route('get.doctors', '') }}' + '/' + branchId,
+            //             type: "GET",
+            //             data: {
+            //                 appdate: appDate
+            //             },
+            //             dataType: "json",
+            //             success: function(data) {
 
-                            $('#doctor2').empty();
-                            $('#doctor2').append('<option value="">Select a doctor</option>');
-                            $.each(data, function(key, value) {
-                                var doctorName = value.user.name.replace(/<br>/g, ' ');
-                                $('#doctor2').append('<option value="' + value.user_id + '">' +
-                                    doctorName + '</option>');
-                            });
-                        }
-                    });
-                } else {
-                    $('#doctor2').empty();
-                }
-            }
+            //                 $('#doctor2').empty();
+            //                 $('#doctor2').append('<option value="">Select a doctor</option>');
+            //                 $.each(data, function(key, value) {
+            //                     var doctorName = value.user.name.replace(/<br>/g, ' ');
+            //                     $('#doctor2').append('<option value="' + value.user_id + '">' +
+            //                         doctorName + '</option>');
+            //                 });
+            //             }
+            //         });
+            //     } else {
+            //         $('#doctor2').empty();
+            //     }
+            // }
 
             // Event listener for dropdown item click
             $(".dropdown-menu .dropdown-item").click(function() {
@@ -185,35 +185,37 @@
             });
 
         });
-        // document.getElementById('add_medical_condition').addEventListener('click', function() {
-        //     var container = document.getElementById('medical_conditions_container');
-        //     var newCondition = document.createElement('div');
-        //     newCondition.className = 'input-group mb-2';
-        //     newCondition.innerHTML =
-        //         '<input type="text" class="form-control" name="medical_conditions[]" placeholder="Medical Condition">' +
-        //         '<button type="button" class="btn btn-danger remove-condition">Remove</button>';
-        //     container.appendChild(newCondition);
-        // });
 
-        // document.addEventListener('click', function(e) {
-        //     if (e.target.classList.contains('remove-condition')) {
-        //         e.target.parentElement.remove();
-        //     }
-        // });
-        function addMedicalCondition() {
-            const wrapper = document.getElementById('medical-conditions-wrapper');
-            const div = document.createElement('div');
-            div.className = 'input-group mb-3';
-            div.innerHTML = `
-                <input type="text" class="form-control" name="medical_conditions[]" placeholder="Medical Condition">
-                <button class="btn btn-danger" type="button" onclick="removeMedicalCondition(this)">-</button>
-            `;
-            wrapper.appendChild(div);
-        }
+        // function addMedicalCondition() {
+        //     const wrapper = document.getElementById('medical-conditions-wrapper');
+        //     const div = document.createElement('div');
+        //     div.className = 'input-group mb-3';
+        //     div.innerHTML = `
+    //         <input type="text" class="form-control" name="medical_conditions[]" placeholder="Medical Condition">
+    //         <button class="btn btn-danger" type="button" onclick="removeMedicalCondition(this)">-</button>
+    //     `;
+        //     wrapper.appendChild(div);
+        // }
 
-        function removeMedicalCondition(button) {
-            const div = button.parentElement;
-            div.remove();
-        }
+        // function removeMedicalCondition(button) {
+        //     const div = button.parentElement;
+        //     div.remove();
+        // }
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     const genderSelect = document.getElementById('gender');
+        //     const pregnantContainer = document.getElementById('pregnant_container');
+
+        //     genderSelect.addEventListener('change', function() {
+        //         if (genderSelect.value === 'F') {
+        //             pregnantContainer.style.display = 'block';
+        //         } else {
+        //             pregnantContainer.style.display = 'none';
+        //             document.getElementById('pregnant').value = '';
+        //         }
+        //     });
+
+        //     // Trigger change event to set initial state
+        //     genderSelect.dispatchEvent(new Event('change'));
+        // });
     </script>
 @endsection

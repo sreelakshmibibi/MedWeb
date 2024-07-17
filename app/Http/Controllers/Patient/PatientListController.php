@@ -86,16 +86,18 @@ class PatientListController extends Controller
 
                     return 'N/A';
                 })
-                ->addColumn('new_appointment', function ($row) {
-                    $parent_id = '';
-                    $buttons = [
-                        "<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1' title='follow up' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->first_name.' '.$row->last_name)."' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>",
-                    ];
+                // ->addColumn('new_appointment', function ($row) {
+                //     $parent_id = '';
+                //     $buttons = [
+                //         "<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1' title='follow up' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->first_name.' '.$row->last_name)."' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>",
+                //     ];
 
-                    return implode('', $buttons);
-                })
+                //     return implode('', $buttons);
+                // })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="'.route('staff.staff_list.view', $row->id).'" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
+                    $parent_id = '';
+                    $btn = "<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1' title='New Booking' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->first_name.' '.$row->last_name)."' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>";
+                    $btn .= '<a href="'.route('staff.staff_list.view', $row->id).'" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
                     $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="'.$row->id.'" title="change status"><i class="fa-solid fa-sliders"></i></button>';
                     if (auth()->user()->hasRole('Admin')) {
                         $btn .= '<a href="'.route('patient.patient_list.edit', $row->id).'" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
@@ -104,7 +106,8 @@ class PatientListController extends Controller
 
                     return $btn;
                 })
-                ->rawColumns(['appointment_status', 'new_appointment', 'record_status', 'action'])
+                //->rawColumns(['appointment_status', 'new_appointment', 'record_status', 'action'])
+                ->rawColumns(['appointment_status', 'record_status', 'action'])
                 ->make(true);
         }
 
@@ -178,24 +181,14 @@ class PatientListController extends Controller
         $appDateTime = Carbon::parse($request->input('appdate'));
         $appDate = $appDateTime->toDateString(); // Extract date
         $appTime = $appDateTime->toTimeString(); // Extract time
-        $doctor_id = $request->input('doctor_id');
-        //$patient_id = $request->input('patient_id');
+        $doctor_id = $request->input('doctorId');
+        //$patient_id = $request->input('patientId');
         $doctorAvailabilityService = new DoctorAvaialbilityService();
         $existingAppointments = $doctorAvailabilityService->getExistingAppointments($branchId, $appDate, $doctor_id);
         $checkAllocated = $doctorAvailabilityService->checkAllocatedAppointments($branchId, $appDate, $doctor_id, $appTime);
         //$patient = PatientProfile::where('patient_id', $patient_id)->first();
         //$nextAppointment = $patient ? $patient->nextDoctorBranchAppointment($doctor_id, $branchId) : null;
-
-        // Log the next appointment details
-        // if ($nextAppointment) {
-        //     \Log::info('Next appointment found for patient '.$patient_id, [
-        //         'appointment_id' => $nextAppointment->id,
-        //         'app_date' => $nextAppointment->app_date,
-        //         'app_time' => $nextAppointment->app_time,
-        //     ]);
-        // } else {
-        //     \Log::info('No upcoming appointment found for patient '.$patient_id.'patient'.$patient);
-        // }
+        Log::info('$existingAppointments: '.$existingAppointments);
         $response = [
             'existingAppointments' => $existingAppointments,
             'checkAllocated' => $checkAllocated,
@@ -255,10 +248,6 @@ class PatientListController extends Controller
             $patient->city_id = $request->input('city_id');
             $patient->pincode = $request->input('pincode');
             $patient->marital_status = $request->input('marital_status');
-            $patient->smoking_status = $request->input('smoking_status');
-            $patient->alcoholic_status = $request->input('alcoholic_status');
-            $patient->diet = $request->input('diet');
-            $patient->allergies = $request->input('allergies');
             $patient->created_by = auth()->user()->id;
             // $patient->updated_by = auth()->user()->id;
             if ($patient->save()) {
@@ -293,9 +282,15 @@ class PatientListController extends Controller
                 $appointment->doctor_id = $request->input('doctor2');
                 $appointment->app_branch = $request->input('clinic_branch_id0');
                 $appointment->app_type = AppointmentType::NEW;
+                $appointment->temperature = $request->input('temperature');
                 $appointment->height_cm = $request->input('height');
                 $appointment->weight_kg = $request->input('weight');
                 $appointment->blood_pressure = $request->input('bp');
+                $appointment->smoking_status = $request->input('smoking_status');
+                $appointment->alcoholic_status = $request->input('alcoholic_status');
+                $appointment->diet = $request->input('diet');
+                $appointment->allergies = $request->input('allergies');
+                $appointment->pregnant = $request->input('pregnant');
                 $appointment->referred_doctor = $request->input('rdoctor');
                 $appointment->app_status = $request->input('appstatus');
                 $appointment->created_by = auth()->user()->id;
@@ -416,10 +411,11 @@ class PatientListController extends Controller
                 'city_id' => $request->input('city_id'),
                 'pincode' => $request->input('pincode'),
                 'marital_status' => $request->input('marital_status'),
-                'smoking_status' => $request->input('smoking_status'),
-                'alcoholic_status' => $request->input('alcoholic_status'),
-                'diet' => $request->input('diet'),
-                'allergies' => $request->input('allergies'),
+                // 'smoking_status' => $request->input('smoking_status'),
+                // 'alcoholic_status' => $request->input('alcoholic_status'),
+                // 'diet' => $request->input('diet'),
+                // 'allergies' => $request->input('allergies'),
+                // 'pregnant' => $request->input('pregnant'),
                 'updated_by' => auth()->user()->id,
             ]);
 
@@ -429,26 +425,26 @@ class PatientListController extends Controller
             }
 
             // Update medical conditions in the history table
-            $medicalConditions = $request->input('medical_conditions', []);
-            // Clear existing medical history for the patient
-            $patient->history()->delete();
-            $patient = PatientProfile::with('latestAppointment')->find($request->edit_patient_id);
-            $patientId = $patient->latestAppointment->patient_id;
-            $appId = $patient->latestAppointment->id;
-            $doctorId = $patient->latestAppointment->doctor_id;
-            // Add new medical conditions to the history table
-            foreach ($medicalConditions as $condition) {
-                if (! empty($condition)) {
-                    $history = new History();
-                    $history->patient_id = $patientId;
-                    $history->app_id = $appId; // Assuming you have this in your request
-                    $history->history = $condition;
-                    $history->doctor_id = $doctorId; // Assuming the logged-in user is the doctor
-                    $history->created_by = auth()->user()->id;
-                    $history->updated_by = auth()->user()->id;
-                    $history->save();
-                }
-            }
+            // $medicalConditions = $request->input('medical_conditions', []);
+            // // Clear existing medical history for the patient
+            // $patient->history()->delete();
+            // $patient = PatientProfile::with('latestAppointment')->find($request->edit_patient_id);
+            // $patientId = $patient->latestAppointment->patient_id;
+            // $appId = $patient->latestAppointment->id;
+            // $doctorId = $patient->latestAppointment->doctor_id;
+            // // Add new medical conditions to the history table
+            // foreach ($medicalConditions as $condition) {
+            //     if (! empty($condition)) {
+            //         $history = new History();
+            //         $history->patient_id = $patientId;
+            //         $history->app_id = $appId; // Assuming you have this in your request
+            //         $history->history = $condition;
+            //         $history->doctor_id = $doctorId; // Assuming the logged-in user is the doctor
+            //         $history->created_by = auth()->user()->id;
+            //         $history->updated_by = auth()->user()->id;
+            //         $history->save();
+            //     }
+            // }
 
             DB::commit();
 
@@ -477,6 +473,50 @@ class PatientListController extends Controller
             return redirect()->route('patient.patient_list')->with('success', 'Status updated successfully');
         }
 
+    }
+
+    public function appointmentDetails($id)
+    {
+        // Find the patient profile by ID with the last appointment and history
+        // $patientProfile = PatientProfile::where('patient_id', $id)->with(['lastAppointment', 'history'])->first();
+        // abort_if(! $patientProfile, 404);
+
+        // Prepare data to return
+        $patientProfile = PatientProfile::where('patient_id', $id)
+            ->with('lastAppointment')
+            ->first();
+
+        abort_if(! $patientProfile, 404);
+
+        // Get the last appointment ID
+        $lastAppointmentId = $patientProfile->lastAppointment ? $patientProfile->lastAppointment->id : null;
+
+        // Now fetch the history with the last appointment ID
+        $history = $patientProfile->history()
+            ->when($lastAppointmentId, function ($query) use ($lastAppointmentId) {
+                $query->where('app_id', $lastAppointmentId);
+            })
+            ->get();
+        $lastAppointment = $patientProfile->lastAppointment;
+        $response = [
+            'id' => $patientProfile->id,
+            'patient_name' => $patientProfile->name,
+            'height_cm' => optional($lastAppointment)->height_cm,
+            'weight_kg' => optional($lastAppointment)->weight_kg,
+            'blood_pressure' => optional($lastAppointment)->blood_pressure,
+            'temperature' => optional($lastAppointment)->temperature,
+            'smoking_status' => optional($lastAppointment)->smoking_status,
+            'alcoholic_status' => optional($lastAppointment)->alcoholic_status,
+            'diet' => optional($lastAppointment)->diet,
+            'allergies' => optional($lastAppointment)->allergies,
+            'pregnant' => optional($lastAppointment)->pregnant,
+            'referred_doctor' => optional($lastAppointment)->referred_doctor,
+            'doctor_id' => optional($lastAppointment)->doctor_id,
+            'last_appointment_date' => optional($lastAppointment)->app_date,
+            'history' => $history,
+        ];
+
+        return response()->json($response);
     }
 
     public function appointmentBooking(AppointmentRequest $request)
@@ -519,13 +559,33 @@ class PatientListController extends Controller
             $appointment->height_cm = $request->input('height');
             $appointment->weight_kg = $request->input('weight');
             $appointment->blood_pressure = $request->input('bp');
+            $appointment->temperature = $request->input('temperature');
             $appointment->referred_doctor = $request->input('rdoctor');
+            $appointment->smoking_status = $request->input('smoking_status');
+            $appointment->alcoholic_status = $request->input('alcoholic_status');
+            $appointment->diet = $request->input('diet');
+            $appointment->allergies = $request->input('allergies');
+            $appointment->pregnant = $request->input('pregnant');
             $appointment->app_status = AppointmentStatus::SCHEDULED;
             $appointment->app_parent_id = $request->input('app_parent_id');
             $appointment->created_by = auth()->user()->id;
             $appointment->updated_by = auth()->user()->id;
 
             if ($appointment->save()) {
+                $medicalConditions = $request->input('medical_conditions', []);
+                //Add medical conditions to the history table
+                foreach ($medicalConditions as $condition) {
+                    if (! empty($condition)) {
+                        $history = new History();
+                        $history->patient_id = $request->input('patient_id');
+                        $history->app_id = $appointment->id; // Assuming you have this in your request
+                        $history->history = $condition;
+                        $history->doctor_id = $doctorId; // Assuming the logged-in user is the doctor
+                        $history->created_by = auth()->user()->id;
+                        $history->updated_by = auth()->user()->id;
+                        $history->save();
+                    }
+                }
                 DB::commit();
 
                 return redirect()->route('patient.patient_list')->with('success', 'Appointment added successfully');
