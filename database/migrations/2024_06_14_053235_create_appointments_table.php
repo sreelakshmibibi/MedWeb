@@ -30,7 +30,7 @@ return new class extends Migration
             $table->string('alcoholic_status', 30)->nullable();
             $table->string('diet', 20)->nullable();
             $table->text('allergies')->nullable();
-            $table->string('pregnant', 1)->default('N');
+            $table->string('pregnant', 1)->nullable()->default('N');
             $table->string('referred_doctor', 100)->nullable();
             $table->string('appointment_note', 300)->nullable();
             $table->string('nursing_note', 500)->nullable();
