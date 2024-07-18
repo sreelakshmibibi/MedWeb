@@ -29,12 +29,12 @@
                             <section class="tabSection">
                                 @include('appointment.personal_info')
                             </section>
-
-                            <h6 class="tabHeading">Appointment History</h6>
-                            <section class="tabSection">
-                                @include('appointment.history')
-                            </section>
-
+                            <?php if ($latestAppointment != 0) { ?>
+                                <h6 class="tabHeading">Appointment History</h6>
+                                <section class="tabSection">
+                                    @include('appointment.history')
+                                </section>
+                             <?php } ?>
                             <h6 class="tabHeading">Dental Chart</h6>
                             <section class="tabSection">
                                 @include('appointment.dchart_images')
@@ -291,125 +291,7 @@
             }
 
 
-            // Initializations
-            var initialSelectedStateId = '{{ $patientProfile->state_id }}';
-            var initialSelectedCityId = '{{ $patientProfile->city_id }}';
-
-            var initialCountryId = $('#country_id').val(); // Assuming India is selected initially
-            loadStates(initialCountryId, $('#state_id'), initialSelectedStateId);
-
-            // Handle change event for country dropdown
-            $('#country_id').change(function() {
-                var countryId = $(this).val();
-                loadStates(countryId, $('#state_id'), null);
-            });
-
-            // Handle change event for state dropdown
-            $('#state_id').change(function() {
-                var stateId = $(this).val();
-                loadCities(stateId, $('#city_id'), initialSelectedCityId);
-            });
-
-            // Function to load states based on country ID
-            function loadStates(countryId, stateSelectElement, initialSelected) {
-                if (countryId) {
-                    $.ajax({
-                        url: '{{ route('get.states', '') }}' + '/' + countryId,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(data) {
-                            stateSelectElement.empty();
-                            stateSelectElement.append('<option value="">Select State</option>');
-                            $.each(data, function(key, value) {
-                                var selected = null;
-                                if (key == initialSelected) {
-
-                                    selected = "selected";
-
-                                }
-
-                                stateSelectElement.append('<option value="' + key + '" ' +
-                                    selected + '>' +
-                                    value + '</option>');
-                            });
-                            // Trigger change event to load initial cities
-                            stateSelectElement.trigger('change');
-                        },
-                        error: function(jqXHR, textStatus, errorThrown) {
-                            console.error('Error loading states:', textStatus, errorThrown);
-                        }
-                    });
-                } else {
-                    stateSelectElement.empty();
-                }
-            }
-
-            // Function to load cities based on state ID
-            function loadCities(stateId, citySelectElement, initialSelected) {
-                if (stateId) {
-                    $.ajax({
-                        url: '{{ route('get.cities', '') }}' + '/' + stateId,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(data) {
-                            citySelectElement.empty();
-                            citySelectElement.append('<option value="">Select City</option>');
-                            $.each(data, function(key, value) {
-                                var selected = null;
-                                if (key == initialSelected) {
-
-                                    selected = "selected";
-
-                                }
-                                citySelectElement.append('<option value="' + key + '" ' +
-                                    selected + '>' +
-                                    value + '</option>');
-                            });
-                        },
-                        error: function(jqXHR, textStatus, errorThrown) {
-                            console.error('Error loading cities:', textStatus, errorThrown);
-                        }
-                    });
-                } else {
-                    citySelectElement.empty();
-                }
-            }
-
-            // Handle change event for branch dropdown and appdate
-            $('#clinic_branch_id0, #appdate').change(function() {
-                var branchId = $('#clinic_branch_id0').val();
-                var appDate = $('#appdate').val();
-                loadDoctors(branchId, appDate);
-            });
-
-
-            // Function to load doctors based on branch ID
-            function loadDoctors(branchId, appDate) {
-                if (branchId && appDate) {
-
-                    $.ajax({
-                        url: '{{ route('get.doctors', '') }}' + '/' + branchId,
-                        type: "GET",
-                        data: {
-                            appdate: appDate
-                        },
-                        dataType: "json",
-                        success: function(data) {
-
-                            $('#doctor2').empty();
-                            $('#doctor2').append('<option value="">Select a doctor</option>');
-                            $.each(data, function(key, value) {
-                                var doctorName = value.user.name.replace(/<br>/g, ' ');
-                                $('#doctor2').append('<option value="' + value.user_id + '">' +
-                                    doctorName + '</option>');
-                            });
-                        }
-                    });
-                } else {
-                    $('#doctor2').empty();
-                }
-            }
-
+           
             // Event listener for dropdown item click
             $(".dropdown-menu .dropdown-item").click(function() {
                 // Get the selected salutation text
