@@ -45,15 +45,10 @@
                                             *</span></label>
                                     <select class="form-select" id="tooth_score" name="tooth_score">
                                         <option value="">Select Score</option>
-                                        <option value="0">0- Sound</option>
-                                        <option value="1">1- Decayed- D(d)</option>
-                                        <option value="2">2- Missing- M</option>
-                                        <option value="3">3- Filled- F</option>
-                                        <option value="4">4- For Extraction- X(x)</option>
-                                        <option value="5">5- Impacted</option>
-                                        <option value="6">6- Unerupted</option>
-                                        <option value="6">7- Misplaced</option>
-                                        <option value="6">8- Morphological Difference</option>
+                                        @foreach ($toothScores as $toothScore)
+                                            <option value="<?= $toothScore->id ?>"> <?= $toothScore->score ?></option>
+                                        @endforeach
+
                                     </select>
                                 </div>
                             </div>
@@ -135,11 +130,10 @@
                                     <label class="form-label" for="buccal_condn">Buccal <span class="text-danger">
                                             *</span></label>
                                     <select class="form-select" id="buccal_condn" name="buccal_condn">
-                                        <option value="">Condition</option>
-                                        <option value="7">7- Decayed</option>
-                                        <option value="8">8- Filled</option>
-                                        <option value="9">9- Have Fissure Sealant (HFS)</option>
-                                        <option value="10">10- Need Fissure Sealant (NFS)</option>
+                                        <option value=""> Select</option>
+                                        @foreach ($surfaceConditions as $surfaceCondition)
+                                            <option value="<?= $surfaceCondition->id ?>"> <?= $surfaceCondition->condition ?></option>
+                                        @endforeach
 
                                     </select>
                                 </div>
@@ -149,11 +143,10 @@
                                     <label class="form-label" for="palatal_condn">Palatal <span class="text-danger">
                                             *</span></label>
                                     <select class="form-select" id="palatal_condn" name="palatal_condn">
-                                        <option value="">Condition</option>
-                                        <option value="7">7- Decayed</option>
-                                        <option value="8">8- Filled</option>
-                                        <option value="9">9- Have Fissure Sealant (HFS)</option>
-                                        <option value="10">10- Need Fissure Sealant (NFS)</option>
+                                        <option value=""> Select</option>
+                                        @foreach ($surfaceConditions as $surfaceCondition)
+                                            <option value="<?= $surfaceCondition->id ?>"> <?= $surfaceCondition->condition ?></option>
+                                        @endforeach
 
                                     </select>
                                 </div>
@@ -163,12 +156,10 @@
                                     <label class="form-label" for="mesial_condn">Mesial <span class="text-danger">
                                             *</span></label>
                                     <select class="form-select" id="mesial_condn" name="mesial_condn">
-                                        <option value="">Condition</option>
-                                        <option value="7">7- Decayed</option>
-                                        <option value="8">8- Filled</option>
-                                        <option value="9">9- Have Fissure Sealant (HFS)</option>
-                                        <option value="10">10- Need Fissure Sealant (NFS)</option>
-
+                                    <option value=""> Select</option>
+                                        @foreach ($surfaceConditions as $surfaceCondition)
+                                            <option value="<?= $surfaceCondition->id ?>"> <?= $surfaceCondition->condition ?></option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -177,12 +168,10 @@
                                     <label class="form-label" for="distal_condn">Distal <span class="text-danger">
                                             *</span></label>
                                     <select class="form-select" id="distal_condn" name="distal_condn">
-                                        <option value="">Condition</option>
-                                        <option value="7">7- Decayed</option>
-                                        <option value="8">8- Filled</option>
-                                        <option value="9">9- Have Fissure Sealant (HFS)</option>
-                                        <option value="10">10- Need Fissure Sealant (NFS)</option>
-
+                                    <option value=""> Select</option>
+                                        @foreach ($surfaceConditions as $surfaceCondition)
+                                            <option value="<?= $surfaceCondition->id ?>"> <?= $surfaceCondition->condition ?></option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -192,12 +181,10 @@
                                             class="text-danger">
                                             *</span></label>
                                     <select class="form-select" id="occulusal_condn" name="occulusal_condn">
-                                        <option value="">Condition</option>
-                                        <option value="7">7- Decayed</option>
-                                        <option value="8">8- Filled</option>
-                                        <option value="9">9- Have Fissure Sealant (HFS)</option>
-                                        <option value="10">10- Need Fissure Sealant (NFS)</option>
-
+                                    <option value=""> Select</option>
+                                        @foreach ($surfaceConditions as $surfaceCondition)
+                                            <option value="<?= $surfaceCondition->id ?>"> <?= $surfaceCondition->condition ?></option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -206,11 +193,10 @@
                                     <label class="form-label" for="lingual_condn">Lingual <span class="text-danger">
                                             *</span></label>
                                     <select class="form-select" id="lingual_condn" name="lingual_condn">
-                                        <option value="">Condition</option>
-                                        <option value="7">7- Decayed</option>
-                                        <option value="8">8- Filled</option>
-                                        <option value="9">9- Have Fissure Sealant (HFS)</option>
-                                        <option value="10">10- Need Fissure Sealant (NFS)</option>
+                                    <option value=""> Select</option>
+                                        @foreach ($surfaceConditions as $surfaceCondition)
+                                            <option value="<?= $surfaceCondition->id ?>"> <?= $surfaceCondition->condition ?></option>
+                                        @endforeach
 
                                     </select>
                                 </div>
@@ -220,11 +206,10 @@
                                     <label class="form-label" for="labial_condn">Labial <span class="text-danger">
                                             *</span></label>
                                     <select class="form-select" id="labial_condn" name="labial_condn">
-                                        <option value="">Condition</option>
-                                        <option value="7">7- Decayed</option>
-                                        <option value="8">8- Filled</option>
-                                        <option value="9">9- Have Fissure Sealant (HFS)</option>
-                                        <option value="10">10- Need Fissure Sealant (NFS)</option>
+                                    <option value=""> Select</option>
+                                        @foreach ($surfaceConditions as $surfaceCondition)
+                                            <option value="<?= $surfaceCondition->id ?>"> <?= $surfaceCondition->condition ?></option>
+                                        @endforeach
 
                                     </select>
                                 </div>
@@ -235,8 +220,9 @@
                                             *</span></label>
                                     <select class="form-select" id="treatment_status" name="treatment_status">
                                         <option value="">Select Status</option>
-                                        <option value="1">Completed</option>
-                                        <option value="2">Follow Up</option>
+                                        @foreach ($treatmentStatus as $status)
+                                        <option value="<?= $status->id?>"><?= $status->status ?></option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>

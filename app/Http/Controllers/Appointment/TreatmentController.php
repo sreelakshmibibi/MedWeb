@@ -8,7 +8,11 @@ use App\Models\AppointmentStatus;
 use App\Models\ClinicBranch;
 use App\Models\Country;
 use App\Models\PatientProfile;
+use App\Models\SurfaceCondition;
 use App\Models\Teeth;
+use App\Models\ToothScore;
+use App\Models\TreatmentStatus;
+use App\Services\AppointmentService;
 use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
 use Carbon\Carbon;
@@ -26,43 +30,18 @@ class TreatmentController extends Controller
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])->find($id);
         abort_if(!$appointment, 404);
         // Format clinic address
-        $clinicAddress = implode(", ", [
-            str_replace("<br>", ", ", $appointment->branch->clinic_address),
-            $appointment->branch->city->city,
-            $appointment->branch->state->state
-        ]);
-
-        // Update appointment object with formatted clinic address
-        $appointment->clinic_branch = $clinicAddress;
-
-        // Format date and time
-        $appointment->app_date = date('d-m-Y', strtotime($appointment->app_date));
-        $appointment->app_time = date('H:i', strtotime($appointment->app_time));
-
+       
         $patientProfile = PatientProfile::with(['lastAppointment'])->find($appointment->patient->id);
+        $appointmentService = new AppointmentService();
+        $latestAppointment = $appointmentService->getLatestAppointment($id,$appointment->app_date, $appointment->patient->id);
         //$patient = PatientProfile::find($id);
         abort_if(!$patientProfile, 404);
         $appointment = $patientProfile->lastAppointment;
-        $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
-        $countries = Country::all();
-        $commonService = new CommonService();
-        $doctorAvailabilityService = new DoctorAvaialbilityService();
-        $appointmentStatuses = AppointmentStatus::all();
-        $name = $commonService->splitNames($patientProfile->first_name);
-        $date = Carbon::parse($patientProfile->lastAppointment->app_date)->toDateString(); // 'Y-m-d'
-        $carbonDate = Carbon::parse($date);
-        $weekday = $carbonDate->format('l');
-        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($patientProfile->lastAppointment->app_branch, $weekday);
-        $appDate = $appointment->app_date;
-        $appTime = $appointment->app_time;
-        // Combine date and time into a single datetime string
-        $dateTimeString = "{$appDate} {$appTime}";
-        // Parse the combined datetime string as it is already in IST
-        $dateTime = Carbon::parse($dateTimeString)
-            ->format('Y-m-d\TH:i');
-
+        
         $tooth = Teeth::all();
-
+        $toothScores = ToothScore::all();
+        $surfaceConditions = SurfaceCondition::all();
+        $treatmentStatus = TreatmentStatus::all();
         if ($request->ajax()) {
 
             return DataTables::of($appointment)
@@ -97,7 +76,7 @@ class TreatmentController extends Controller
         }
 
         // return view('appointment.treatment');
-        return view('appointment.treatment', compact('name', 'patientProfile', 'countries', 'appointment', 'clinicBranches', 'appointmentStatuses', 'workingDoctors', 'dateTime', 'tooth'));
+        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus'));
     }
 
     /**
