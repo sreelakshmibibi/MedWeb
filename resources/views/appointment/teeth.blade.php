@@ -32,38 +32,63 @@
                                     <div class="dparts dpart-center" title="Occulusal" id="dpart-center"></div>
                                 </div>
                             </div>
-                            {{--  <div class="col pe-0"> --}}
-                            <div class="col-md-3 ps-2">
-                                <div class="form-group">
-                                    <label class="form-label" for="tooth_no">Tooth No</label>
-                                    <input type="text" class="form-control" id="tooth_no" name="tooth_no"
-                                        placeholder="tooth no">
+                            <div class="col-md-9">
+                                <div class="row">
+                                    <div class="col-md-4 ps-2">
+                                        <div class="form-group">
+                                            <label class="form-label" for="tooth_no">Tooth No</label>
+                                            <input type="text" class="form-control" id="tooth_no" name="tooth_no"
+                                                placeholder="tooth no">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-8 ">
+                                        <div class="form-group">
+                                            <label class="form-label" for="tooth_score">Tooth Score <span
+                                                    class="text-danger">
+                                                    *</span></label>
+                                            <select class="form-select" id="tooth_score" name="tooth_score">
+                                                <option value="">Select Score</option>
+                                                @foreach ($toothScores as $toothScore)
+                                                    <option value="<?= $toothScore->id ?>"> <?= $toothScore->score ?>
+                                                    </option>
+                                                @endforeach
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 ">
+                                        <div class="form-group">
+                                            <label class="form-label" for="complaint">Chief Complaint <span
+                                                    class="text-danger">
+                                                    *</span></label>
+                                            <input type="text" class="form-control" id="complaint" name="complaint"
+                                                placeholder="Chief Complaint">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-
-                            <div class="col-md-6 ">
-                                <div class="form-group">
-                                    <label class="form-label" for="tooth_score">Tooth Score <span class="text-danger">
-                                            *</span></label>
-                                    <select class="form-select" id="tooth_score" name="tooth_score">
-                                        <option value="">Select Score</option>
-                                        @foreach ($toothScores as $toothScore)
-                                            <option value="<?= $toothScore->id ?>"> <?= $toothScore->score ?></option>
-                                        @endforeach
-
-                                    </select>
-                                </div>
-                            </div>
-                            {{-- </div> --}}
                         </div>
 
-                        <div class="row mt-2">
-                            <div class="col-md-6 ">
+                        <div class="row">
+                            {{-- <div class="col-md-6 ">
                                 <div class="form-group">
                                     <label class="form-label" for="complaint">Chief Complaint <span class="text-danger">
                                             *</span></label>
                                     <input type="text" class="form-control" id="complaint" name="complaint"
                                         placeholder="Chief Complaint">
+                                </div>
+                            </div> --}}
+                            <div class="col-md-6 ">
+                                <div class="form-group">
+                                    <label class="form-label" for="disease">Disease <span class="text-danger">
+                                            *</span></label>
+                                    <select class="form-select" id="disease" name="disease">
+                                        <option value="">Select disease</option>
+                                        @foreach ($diseases as $disease)
+                                            <option value="<?= $disease->id ?>"><?= $disease->name ?></option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -96,17 +121,25 @@
                         </div>
 
                         <div class="row">
-                            
-                            <div class="col-md-6 ">
+
+                            {{-- <div class="col-md-6 ">
                                 <div class="form-group">
                                     <label class="form-label" for="disease">Disease <span class="text-danger">
                                             *</span></label>
                                     <select class="form-select" id="disease" name="disease">
                                         <option value="">Select disease</option>
                                         @foreach ($diseases as $disease)
-                                            <option value="<?=$disease->id?>"><?=$disease->name ?></option>
+                                            <option value="</option>
                                         @endforeach
                                     </select>
+                                </div>
+                            </div> --}}
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="xray">X-Ray <span class="text-danger">
+                                            *</span></label>
+                                    <input type="file" class="form-control" id="xray" type="file"
+                                        name="xray[]" multiple>
                                 </div>
                             </div>
                             <div class="col-md-6 ">
@@ -116,19 +149,20 @@
                                     <select class="form-select" id="treatment" name="treatment">
                                         <option value="">Select a Treatment</option>
                                         @foreach ($treatments as $treatment)
-                                            <option value="<?=$treatment->id?>"><?=$treatment->treat_name ?></option>
+                                            <option value="<?= $treatment->id ?>"><?= $treatment->treat_name ?>
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
-                            <label class="form-label" for="xray">X-Ray <span class="text-danger">
-                            <input type="file" class="form-control" id="xray" type="file"
-                            name="xray[]" multiple>
-                            </div>
-                            <div class="col-md-6 ">
+                            {{-- <div class="col-md-6">
+                                <label class="form-label" for="xray">X-Ray <span class="text-danger">
+                                        <input type="file" class="form-control" id="xray" type="file"
+                                            name="xray[]" multiple>
+                            </div> --}}
+                            <div class="col-md-12 ">
                                 <div class="form-group">
                                     <label class="form-label" for="remarks">Remarks</label>
                                     <textarea class="form-control" id="remarks" name="remarks">remarks if any</textarea>
@@ -146,7 +180,8 @@
                                     <select class="form-select" id="buccal_condn" name="buccal_condn">
                                         <option value=""> Select</option>
                                         @foreach ($surfaceConditions as $surfaceCondition)
-                                            <option value="<?= $surfaceCondition->id ?>"> <?= $surfaceCondition->condition ?></option>
+                                            <option value="<?= $surfaceCondition->id ?>">
+                                                <?= $surfaceCondition->condition ?></option>
                                         @endforeach
 
                                     </select>
@@ -159,7 +194,8 @@
                                     <select class="form-select" id="palatal_condn" name="palatal_condn">
                                         <option value=""> Select</option>
                                         @foreach ($surfaceConditions as $surfaceCondition)
-                                            <option value="<?= $surfaceCondition->id ?>"> <?= $surfaceCondition->condition ?></option>
+                                            <option value="<?= $surfaceCondition->id ?>">
+                                                <?= $surfaceCondition->condition ?></option>
                                         @endforeach
 
                                     </select>
@@ -170,9 +206,10 @@
                                     <label class="form-label" for="mesial_condn">Mesial <span class="text-danger">
                                             *</span></label>
                                     <select class="form-select" id="mesial_condn" name="mesial_condn">
-                                    <option value=""> Select</option>
+                                        <option value=""> Select</option>
                                         @foreach ($surfaceConditions as $surfaceCondition)
-                                            <option value="<?= $surfaceCondition->id ?>"> <?= $surfaceCondition->condition ?></option>
+                                            <option value="<?= $surfaceCondition->id ?>">
+                                                <?= $surfaceCondition->condition ?></option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -182,9 +219,10 @@
                                     <label class="form-label" for="distal_condn">Distal <span class="text-danger">
                                             *</span></label>
                                     <select class="form-select" id="distal_condn" name="distal_condn">
-                                    <option value=""> Select</option>
+                                        <option value=""> Select</option>
                                         @foreach ($surfaceConditions as $surfaceCondition)
-                                            <option value="<?= $surfaceCondition->id ?>"> <?= $surfaceCondition->condition ?></option>
+                                            <option value="<?= $surfaceCondition->id ?>">
+                                                <?= $surfaceCondition->condition ?></option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -195,9 +233,10 @@
                                             class="text-danger">
                                             *</span></label>
                                     <select class="form-select" id="occulusal_condn" name="occulusal_condn">
-                                    <option value=""> Select</option>
+                                        <option value=""> Select</option>
                                         @foreach ($surfaceConditions as $surfaceCondition)
-                                            <option value="<?= $surfaceCondition->id ?>"> <?= $surfaceCondition->condition ?></option>
+                                            <option value="<?= $surfaceCondition->id ?>">
+                                                <?= $surfaceCondition->condition ?></option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -207,9 +246,10 @@
                                     <label class="form-label" for="lingual_condn">Lingual <span class="text-danger">
                                             *</span></label>
                                     <select class="form-select" id="lingual_condn" name="lingual_condn">
-                                    <option value=""> Select</option>
+                                        <option value=""> Select</option>
                                         @foreach ($surfaceConditions as $surfaceCondition)
-                                            <option value="<?= $surfaceCondition->id ?>"> <?= $surfaceCondition->condition ?></option>
+                                            <option value="<?= $surfaceCondition->id ?>">
+                                                <?= $surfaceCondition->condition ?></option>
                                         @endforeach
 
                                     </select>
@@ -220,9 +260,10 @@
                                     <label class="form-label" for="labial_condn">Labial <span class="text-danger">
                                             *</span></label>
                                     <select class="form-select" id="labial_condn" name="labial_condn">
-                                    <option value=""> Select</option>
+                                        <option value=""> Select</option>
                                         @foreach ($surfaceConditions as $surfaceCondition)
-                                            <option value="<?= $surfaceCondition->id ?>"> <?= $surfaceCondition->condition ?></option>
+                                            <option value="<?= $surfaceCondition->id ?>">
+                                                <?= $surfaceCondition->condition ?></option>
                                         @endforeach
 
                                     </select>
@@ -230,12 +271,13 @@
                             </div>
                             <div class="col-md-3 ">
                                 <div class="form-group">
-                                    <label class="form-label" for="treatment_status">Treatment Status <span class="text-danger">
+                                    <label class="form-label" for="treatment_status">Treatment Status <span
+                                            class="text-danger">
                                             *</span></label>
                                     <select class="form-select" id="treatment_status" name="treatment_status">
                                         <option value="">Select Status</option>
                                         @foreach ($treatmentStatus as $status)
-                                        <option value="<?= $status->id?>"><?= $status->status ?></option>
+                                            <option value="<?= $status->id ?>"><?= $status->status ?></option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -264,15 +306,15 @@
             $('#clinicError').text('');
             $('#doctorError').text('');
             $('#appDateError').text('');
-            
+
             // Validate form inputs
             var clinicId = $('#clinic_branch_id').val();
             var doctorId = $('#doctor_id').val();
             var appDate = $('#appdate').val();
             var patientId = $('#patientId').val();
             var patientName = $('#patient_name').val();
-            
-            
+
+
             // Basic client-side validation (you can add more as needed)
             if (clinicId.length === 0) {
                 $('#clinic_branch_id').addClass('is-invalid');
@@ -354,7 +396,7 @@
             $('#appDateError').text('');
             $('#clinic_branch_id').removeClass('is-invalid');
             $('#clinicError').text('');
-            
+
         });
     });
 
@@ -370,4 +412,3 @@
         document.getElementById('appdate').value = datetime;
     });
 </script>
-
