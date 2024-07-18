@@ -30,11 +30,11 @@
                                 @include('appointment.personal_info')
                             </section>
                             <?php if ($latestAppointment != 0) { ?>
-                                <h6 class="tabHeading">Appointment History</h6>
-                                <section class="tabSection">
-                                    @include('appointment.history')
-                                </section>
-                             <?php } ?>
+                            <h6 class="tabHeading">Appointment History</h6>
+                            <section class="tabSection">
+                                @include('appointment.history')
+                            </section>
+                            <?php } ?>
                             <h6 class="tabHeading">Dental Chart</h6>
                             <section class="tabSection">
                                 @include('appointment.dchart_images')
@@ -291,7 +291,7 @@
             }
 
 
-           
+
             // Event listener for dropdown item click
             $(".dropdown-menu .dropdown-item").click(function() {
                 // Get the selected salutation text

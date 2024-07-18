@@ -10,8 +10,9 @@ class ToothExamination extends Model
 {
     use HasFactory;
     use SoftDeletes;
+
     protected $fillable = [
-        'patient_id', 'app_id', 'tooth_id', 'tooth_score_id', 'chief_complaint', 'hpi', 'dental_examination', 'disease_id','diagnosis', 'treatment_id', 'x-ray', 'lingual_condn', 'labial_condn', 'occulusal_condn', 'distal_condn', 'mesial_condn', 'palatal_condn', 'buccal_condn', 'treatment_status', 'created_by', 'updated_by', 'status'
+        'patient_id', 'app_id', 'tooth_id', 'tooth_score_id', 'chief_complaint', 'hpi', 'dental_examination', 'disease_id', 'diagnosis', 'treatment_id', 'x-ray', 'lingual_condn', 'labial_condn', 'occulusal_condn', 'distal_condn', 'mesial_condn', 'palatal_condn', 'buccal_condn', 'treatment_status', 'created_by', 'updated_by', 'status',
     ];
 
     public function patient()
@@ -21,8 +22,11 @@ class ToothExamination extends Model
 
     public function appointment()
     {
-        return $this->belongsTo(Appointment::class, 'app_id', 'app_id');
+        return $this->belongsTo(Appointment::class, 'app_id', 'id');
     }
-    
-}
 
+    public function teeth()
+    {
+        return $this->belongsTo(Teeth::class, 'tooth_id', 'id');
+    }
+}

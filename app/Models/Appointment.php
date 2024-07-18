@@ -65,9 +65,11 @@ class Appointment extends Model
     {
         return $this->belongsTo(PatientProfile::class, 'patient_id', 'patient_id');
     }
+
     public function toothExamination()
     {
-        return $this->hasMany(ToothExamination::class, 'app_id', 'app_id');
+        //return $this->hasMany(ToothExamination::class, 'app_id', 'app_id');
+        return $this->hasMany(ToothExamination::class, 'app_id', 'id')->with('teeth');
     }
 
     public function doctor()

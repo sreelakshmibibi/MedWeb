@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class Teeth extends Model
 {
     use HasFactory;
+
     // use SoftDeletes;
     protected $fillable = ['teeth_name', 'position', 'direction', 'teeth_image', 'is_pediatric', 'position_no', 'created_by', 'updated_by'];
     // protected static function booted()
@@ -25,4 +26,9 @@ class Teeth extends Model
     //         $teeth->updated_by = Auth::id(); // Set updated_by to current user's ID
     //     });
     // }
+
+    public function toothExaminations()
+    {
+        return $this->hasMany(ToothExamination::class, 'tooth_id', 'id');
+    }
 }

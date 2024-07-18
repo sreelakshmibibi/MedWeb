@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Appointment;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\AppointmentStatus;
-use App\Models\ClinicBranch;
-use App\Models\Country;
 use App\Models\Disease;
 use App\Models\PatientProfile;
 use App\Models\SurfaceCondition;
@@ -15,11 +13,9 @@ use App\Models\ToothScore;
 use App\Models\TreatmentStatus;
 use App\Models\TreatmentType;
 use App\Services\AppointmentService;
-use App\Services\CommonService;
-use App\Services\DoctorAvaialbilityService;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\DataTables;
 
@@ -31,16 +27,19 @@ class TreatmentController extends Controller
     public function index($id, Request $request)
     {
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])->find($id);
-        abort_if(!$appointment, 404);
+        abort_if(! $appointment, 404);
         // Format clinic address
-       
-        $patientProfile = PatientProfile::with(['lastAppointment'])->find($appointment->patient->id);
+
+        //$patientProfile = PatientProfile::with(['lastAppointment'])->find($appointment->patient->id);
+        $patientProfile = PatientProfile::with(['lastAppointment.doctor', 'lastAppointment.branch'])->find($appointment->patient->id);
         $appointmentService = new AppointmentService();
-        $latestAppointment = $appointmentService->getLatestAppointment($id,$appointment->app_date, $appointment->patient->id);
+        $latestAppointment = $appointmentService->getLatestAppointment($id, $appointment->app_date, $appointment->patient->patient_id);
+        $previousAppointments = $appointmentService->getPreviousAppointments($id, $appointment->app_date, $appointment->patient->patient_id);
+
         //$patient = PatientProfile::find($id);
-        abort_if(!$patientProfile, 404);
+        abort_if(! $patientProfile, 404);
         $appointment = $patientProfile->lastAppointment;
-        
+
         $tooth = Teeth::all();
         $toothScores = ToothScore::all();
         $surfaceConditions = SurfaceCondition::all();
@@ -49,19 +48,56 @@ class TreatmentController extends Controller
         $diseases = Disease::where('status', 'Y')->get();
         Session::put('appId', $id);
         Session::put('patientId', $appointment->patient->id);
-        if ($request->ajax()) {
+        // Log::info('$appointment: '.$previousAppointments);
+        // if ($request->ajax()) {
 
-            return DataTables::of($appointment)
+        //     return DataTables::of($appointment)
+        //         ->addIndexColumn()
+        //         ->addColumn('doctor', function ($row) {
+        //             return str_replace('<br>', ' ', $row->doctor->name);
+        //         })
+        //         ->addColumn('branch', function ($row) {
+        //             if (! $row->branch) {
+        //                 return '';
+        //             }
+        //             $address = implode(', ', explode('<br>', $row->branch->clinic_address));
+
+        //             return implode(', ', [$address, $row->branch->city->city, $row->branch->state->state]);
+        //         })
+        //         ->addColumn('status', function ($row) {
+        //             $statusMap = [
+        //                 AppointmentStatus::SCHEDULED => 'badge-success-light',
+        //                 AppointmentStatus::WAITING => 'badge-success-light',
+        //                 AppointmentStatus::UNAVAILABLE => 'badge-danger-light',
+        //                 AppointmentStatus::CANCELLED => 'badge-danger-light',
+        //                 AppointmentStatus::COMPLETED => 'badge-success-light',
+        //                 AppointmentStatus::BILLING => 'badge-success-light',
+        //                 AppointmentStatus::PROCEDURE => 'badge-success-light',
+        //                 AppointmentStatus::MISSED => 'badge-danger-light',
+        //                 AppointmentStatus::RESCHEDULED => 'badge-success-light',
+        //             ];
+        //             $btnClass = isset($statusMap[$row->app_status]) ? $statusMap[$row->app_status] : '';
+
+        //             return "<span class='btn-sm badge {$btnClass}'>".AppointmentStatus::statusToWords($row->app_status).'</span>';
+        //         })
+        //         ->rawColumns(['status'])
+        //         ->make(true);
+        // }
+
+        // return view('appointment.treatment');
+        if ($request->ajax()) {
+            return DataTables::of($previousAppointments)
                 ->addIndexColumn()
                 ->addColumn('doctor', function ($row) {
-                    return str_replace("<br>", " ", $row->doctor->name);
+                    return str_replace('<br>', ' ', $row->doctor->name);
                 })
                 ->addColumn('branch', function ($row) {
-                    if (!$row->branch) {
+                    if (! $row->branch) {
                         return '';
                     }
-                    $address = implode(", ", explode("<br>", $row->branch->clinic_address));
-                    return implode(", ", [$address, $row->branch->city->city, $row->branch->state->state]);
+                    $address = implode(', ', explode('<br>', $row->branch->clinic_address));
+
+                    return implode(', ', [$address, $row->branch->city->city, $row->branch->state->state]);
                 })
                 ->addColumn('status', function ($row) {
                     $statusMap = [
@@ -76,14 +112,44 @@ class TreatmentController extends Controller
                         AppointmentStatus::RESCHEDULED => 'badge-success-light',
                     ];
                     $btnClass = isset($statusMap[$row->app_status]) ? $statusMap[$row->app_status] : '';
-                    return "<span class='btn-sm badge {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . "</span>";
+
+                    return "<span class='btn-sm badge {$btnClass}'>".AppointmentStatus::statusToWords($row->app_status).'</span>';
                 })
-                ->rawColumns(['status'])
+                ->addColumn('treat_date', function ($row) {
+                    return $row->app_date;
+                })
+
+                ->addColumn('teeth', function ($row) {
+                    if ($row->toothExamination->isEmpty()) {
+                        return '';
+                    }
+
+                    $teethData = $row->toothExamination->map(function ($examination) {
+                        if ($examination->teeth) {
+                            $teethName = $examination->teeth->teeth_name;
+                            $teethImage = $examination->teeth->teeth_image;
+
+                            return '<div>'.$teethName.'<br><img src="'.asset($teethImage).'" alt="'.$teethName.'" width="50" height="50"></div>';
+                        }
+
+                        return '';
+                    })->implode('<br>');
+
+                    return $teethData;
+                })
+                ->addColumn('problem', function ($row) {
+                    return $row->toothExamination ? $row->toothExamination->pluck('chief_complaint')->implode(', ') : '';
+                })
+                ->addColumn('treatment', function ($row) {
+                    return $row->toothExamination ? $row->toothExamination->pluck('treatment')->implode(', ') : '';
+                })
+
+                ->rawColumns(['status', 'teeth'])
                 ->make(true);
         }
 
-        // return view('appointment.treatment');
-        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases'));
+        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases', 'previousAppointments'));
+
     }
 
     /**
@@ -99,14 +165,14 @@ class TreatmentController extends Controller
      */
     public function store(Request $request)
     {
-        echo "<pre>";
+        echo '<pre>';
         print_r($request->all());
-        echo "</pre>";
+        echo '</pre>';
         exit;
         try {
 
         } catch (Exception $ex) {
-            
+
         }
     }
 

@@ -97,6 +97,7 @@ class PatientProfile extends Model
         return $this->hasOne(Appointment::class, 'patient_id', 'patient_id')
             ->where('app_parent_id', null)
             ->where('app_type', 2)
+            ->with(['doctor', 'branch'])
             ->latest();
     }
 

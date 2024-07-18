@@ -11,7 +11,7 @@
                 <th>Consulted Doctor</th>
                 <th>Branch</th>
                 <th>Status</th>
-                <th>Remarks</th>
+                {{-- <th>Remarks</th> --}}
                 {{-- <th width="150px">Action</th> --}}
             </tr>
         </thead>
@@ -30,17 +30,16 @@
             // ajax: "",
 
             ajax: {
+                //url: "{{ route('treatment', ['appointment' => $appointment->id]) }}",
                 url: "",
                 type: 'GET',
-                // data: {
-                //     selectedDate: selectedDate
-                // }
-                // data: function(d) {
-                //     d.selectedDate = selectedDate; // Add selectedDate as a query parameter
-                // }
             },
-            columns: [
-
+            columns: [{
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                    orderable: false,
+                    searchable: false
+                },
                 {
                     data: 'treat_date',
                     name: 'treat_date'
@@ -70,17 +69,7 @@
                     name: 'status',
                     orderable: false,
                     searchable: true
-                },
-                {
-                    data: 'nursing_remark',
-                    name: 'nursing_remark'
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false,
-                    searchable: true
-                },
+                }
             ]
         });
 

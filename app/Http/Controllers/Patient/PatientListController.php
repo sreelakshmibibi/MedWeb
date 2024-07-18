@@ -188,7 +188,7 @@ class PatientListController extends Controller
         $checkAllocated = $doctorAvailabilityService->checkAllocatedAppointments($branchId, $appDate, $doctor_id, $appTime);
         //$patient = PatientProfile::where('patient_id', $patient_id)->first();
         //$nextAppointment = $patient ? $patient->nextDoctorBranchAppointment($doctor_id, $branchId) : null;
-        Log::info('$existingAppointments: '.$existingAppointments);
+        // Log::info('$existingAppointments: '.$existingAppointments);
         $response = [
             'existingAppointments' => $existingAppointments,
             'checkAllocated' => $checkAllocated,
