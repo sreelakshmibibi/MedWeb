@@ -18,6 +18,7 @@ use App\Services\AppointmentService;
 use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\DataTables;
@@ -102,6 +103,11 @@ class TreatmentController extends Controller
         print_r($request->all());
         echo "</pre>";
         exit;
+        try {
+
+        } catch (Exception $ex) {
+            
+        }
     }
 
     /**
