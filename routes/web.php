@@ -116,3 +116,4 @@ Route::post('/combo_offer/{offer}/update', [ComboOfferController::class, 'update
 Route::delete('/combo_offer/{offer}', [ComboOfferController::class, 'destroy'])->name('settings.combo_offer.destroy');
 
 Route::get('/appointment/{appointment}/treatment', [TreatmentController::class, 'index'])->name('treatment');
+Route::post('/treatment/store', [TreatmentController::class, 'store'])->name('treatment.store');

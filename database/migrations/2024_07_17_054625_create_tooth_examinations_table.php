@@ -21,7 +21,8 @@ return new class extends Migration
             $table->string('hpi');
             $table->string('dental_examination');
             $table->string('diagnosis');
-            $table->string('treatment');
+            $table->foreignId('disease_id')->constrained('diseases');
+            $table->foreignId('treatment_id')->constrained('treatment_types');
             $table->string('x-ray')->nullable();
             $table->foreignId('lingual_condn')->constrained('surface_conditions')->nullable();
             $table->foreignId('labial_condn')->constrained('surface_conditions')->nullable();

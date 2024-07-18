@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Session;
+
 $upper_ped_teethImages = [
     [
         ['class' => 'pediatric molar', 'image' => 'images/teeths/pediatric/top/t55.png', 'teeth_name' => '55'],
@@ -243,6 +245,8 @@ $additionalNormalTeethImages = [
 
             img.addEventListener('click', function() {
                 var teethName = this.id;
+                var appId = '<?=Session::get('appId')?>';
+                var patientId = '<?=Session::get('patientId')?>';
                 // console.log('Hover in T' + teethName);
                 var divId = '#div' + teethName;
                 $(divId).css({
@@ -252,6 +256,8 @@ $additionalNormalTeethImages = [
 
                 // $(this).toggleClass('selected');
                 $('#tooth_no').val(teethName);
+                $('#app_id').val(appId);
+                $('#patient_id').val(patientId);
                 if ($(divId).hasClass('molar')) {
                     $('#premolars_molars').show();
                     $('#incisors_canines').hide();

@@ -7,17 +7,19 @@ use App\Models\Appointment;
 use App\Models\AppointmentStatus;
 use App\Models\ClinicBranch;
 use App\Models\Country;
+use App\Models\Disease;
 use App\Models\PatientProfile;
 use App\Models\SurfaceCondition;
 use App\Models\Teeth;
 use App\Models\ToothScore;
 use App\Models\TreatmentStatus;
+use App\Models\TreatmentType;
 use App\Services\AppointmentService;
 use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\DataTables;
 
 class TreatmentController extends Controller
@@ -42,6 +44,10 @@ class TreatmentController extends Controller
         $toothScores = ToothScore::all();
         $surfaceConditions = SurfaceCondition::all();
         $treatmentStatus = TreatmentStatus::all();
+        $treatments = TreatmentType::where('status', 'Y')->get();
+        $diseases = Disease::where('status', 'Y')->get();
+        Session::put('appId', $id);
+        Session::put('patientId', $appointment->patient->id);
         if ($request->ajax()) {
 
             return DataTables::of($appointment)
@@ -76,7 +82,7 @@ class TreatmentController extends Controller
         }
 
         // return view('appointment.treatment');
-        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus'));
+        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases'));
     }
 
     /**
@@ -92,7 +98,10 @@ class TreatmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        echo "<pre>";
+        print_r($request->all());
+        echo "</pre>";
+        exit;
     }
 
     /**

@@ -1,5 +1,7 @@
-<form id="form-teeth" method="POST">
+<form id="form-teeth" method="POST" action="{{ route('treatment.store') }}">
     @csrf
+    <input type="hidden" id="app_id" name="app_id" value="">
+    <input type="hidden" id="patient_id" name="patient_id" value="">
     <div class="modal fade modal-right slideInRight" id="modal-teeth" tabindex="-1">
         <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
@@ -94,12 +96,17 @@
                         </div>
 
                         <div class="row">
+                            
                             <div class="col-md-6 ">
                                 <div class="form-group">
-                                    <label class="form-label" for="xray">X-Ray <span class="text-danger">
+                                    <label class="form-label" for="disease">Disease <span class="text-danger">
                                             *</span></label>
-                                    <input type="file" class="form-control" id="xray" type="file"
-                                        name="xray[]" multiple>
+                                    <select class="form-select" id="disease" name="disease">
+                                        <option value="">Select disease</option>
+                                        @foreach ($diseases as $disease)
+                                            <option value="<?=$disease->id?>"><?=$disease->name ?></option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-6 ">
@@ -108,13 +115,20 @@
                                             *</span></label>
                                     <select class="form-select" id="treatment" name="treatment">
                                         <option value="">Select a Treatment</option>
-
+                                        @foreach ($treatments as $treatment)
+                                            <option value="<?=$treatment->id?>"><?=$treatment->treat_name ?></option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12 ">
+                            <div class="col-md-6">
+                            <label class="form-label" for="xray">X-Ray <span class="text-danger">
+                            <input type="file" class="form-control" id="xray" type="file"
+                            name="xray[]" multiple>
+                            </div>
+                            <div class="col-md-6 ">
                                 <div class="form-group">
                                     <label class="form-label" for="remarks">Remarks</label>
                                     <textarea class="form-control" id="remarks" name="remarks">remarks if any</textarea>
@@ -227,17 +241,133 @@
                                 </div>
                             </div>
                         </div>
-
-
                     </div>
                 </div>
 
                 <div class="modal-footer modal-footer-uniform">
                     <button type="button" class="btn btn-danger closeToothBtn" id="closeToothBtn"
                         data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success float-end" id="newToothTreatmentBtn">Save</button>
+                    <button type="button" class="btn btn-success float-end" id="newTreatmentBtn">Save</button>
                 </div>
             </div>
         </div>
     </div>
 </form>
+
+<script>
+    $(function() {
+        // Handle Save button click
+        $('#newTreatmentBtn').click(function() {
+            // Reset previous error messages
+            $('#patientIdError').text('');
+            $('#patientNameError').text('');
+            $('#clinicError').text('');
+            $('#doctorError').text('');
+            $('#appDateError').text('');
+            
+            // Validate form inputs
+            var clinicId = $('#clinic_branch_id').val();
+            var doctorId = $('#doctor_id').val();
+            var appDate = $('#appdate').val();
+            var patientId = $('#patientId').val();
+            var patientName = $('#patient_name').val();
+            
+            
+            // Basic client-side validation (you can add more as needed)
+            if (clinicId.length === 0) {
+                $('#clinic_branch_id').addClass('is-invalid');
+                $('#clinicError').text('Clinic is required.');
+                return; // Prevent further execution
+            } else {
+                $('#clinic_branch_id').removeClass('is-invalid');
+                $('#clinicError').text('');
+            }
+
+            if (doctorId.length === 0) {
+                $('#doctor_id').addClass('is-invalid');
+                $('#doctorError').text('Doctor is required.');
+                return; // Prevent further execution
+            } else {
+                $('#doctor_id').removeClass('is-invalid');
+                $('#doctorError').text('');
+            }
+            if (appDate.length === 0) {
+                $('#appdate').addClass('is-invalid');
+                $('#appDateError').text('Appointment date is required.');
+                return; // Prevent further execution
+            } else {
+                $('#appdate').removeClass('is-invalid');
+                $('#appDateError').text('');
+            }
+
+            // If validation passed, submit the form via AJAX
+            var form = $('#bookingForm');
+            var url = form.attr('action');
+            var formData = form.serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: formData,
+                dataType: 'json',
+                success: function(response) {
+                    // If successful, hide modal and show success message
+                    $('#existingAppointments').hide();
+                    $('#existingAppointmentsError').hide();
+                    $('#modal-booking').modal('hide');
+                    $('#successMessage').text('New Appointment added successfully');
+                    $('#successMessage').fadeIn().delay(3000)
+                        .fadeOut(); // Show for 3 seconds
+                    // location.reload();
+                    table.ajax.reload();
+                },
+                error: function(xhr) {
+                    // Reset previous error messages
+                    $('#appDateError').text('');
+
+                    // Check if there are validation errors
+                    var errors = xhr.responseJSON.errors;
+                    $('#appDateError').text('');
+
+                    // Check if there are validation errors
+                    var errors = xhr.responseJSON.errors;
+                    if (errors && errors.hasOwnProperty('app_time')) {
+                        $('#appdate').addClass('is-invalid');
+                        $('#appDateError').text(errors.appdate[0]);
+                    } else {
+                        // Handle specific error from backend
+                        var errorMessage = xhr.responseJSON.error;
+                        if (errorMessage) {
+                            $('#existingAppointmentsError').show();
+                        }
+                    }
+                }
+            });
+        });
+
+        // Reset form and errors on modal close
+        $('#modal-booking').on('hidden.bs.modal', function() {
+            $('#bookingForm').trigger('reset');
+            $('#doctor_id').removeClass('is-invalid');
+            $('#doctorError').text('');
+            $('#appDate').removeClass('is-invalid');
+            $('#appDateError').text('');
+            $('#clinic_branch_id').removeClass('is-invalid');
+            $('#clinicError').text('');
+            
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var now = new Date();
+        var year = now.getFullYear();
+        var month = (now.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+        var day = now.getDate().toString().padStart(2, '0');
+        var hours = now.getHours().toString().padStart(2, '0');
+        var minutes = now.getMinutes().toString().padStart(2, '0');
+        var datetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+        document.getElementById('appdate').value = datetime;
+    });
+</script>
+
