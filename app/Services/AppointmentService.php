@@ -22,6 +22,7 @@ class AppointmentService
             'doctor:id,name',
             'branch:id,clinic_address,city_id,state_id',
             'toothExamination.teeth:id,teeth_name,teeth_image',
+            'toothExamination.treatment:id,treat_name',
         ])
             ->where('patient_id', $patientId)
             ->where('app_date', '<', $appDate)

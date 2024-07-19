@@ -142,8 +142,13 @@ class TreatmentController extends Controller
                 ->addColumn('problem', function ($row) {
                     return $row->toothExamination ? $row->toothExamination->pluck('chief_complaint')->implode(', ') : '';
                 })
+                ->addColumn('remarks', function ($row) {
+                    return $row->toothExamination ? $row->toothExamination->pluck('remarks')->implode(', ') : '';
+                })
                 ->addColumn('treatment', function ($row) {
-                    return $row->toothExamination ? $row->toothExamination->pluck('treatment')->implode(', ') : '';
+                    return $row->toothExamination ? $row->toothExamination->map(function ($examination) {
+                        return $examination->treatment ? $examination->treatment->treat_name : '';
+                    })->implode(', ') : '';
                 })
 
                 ->rawColumns(['status', 'teeth'])
@@ -197,7 +202,7 @@ class TreatmentController extends Controller
             $mesial_condn = $request->mesial_condn != null ? 1 : 0;
             $buccal_condn = $request->buccal_condn != null ? 1 : 0;
             $distal_condn = $request->distal_condn != null ? 1 : 0;
-           
+
             $toothExamination = ToothExamination::create($request->only([
                 'app_id', 'patient_id', 'tooth_id', 'tooth_score_id', 'chief_complaint', 'disease_id', 'hpi', 'dental_examination', 'diagnosis', 'xray', 'treatment_id', 'remarks', 'palatal_condn', 'mesial_condn', 'distal_condn', 'buccal_condn', 'occulusal_condn', 'labial_condn', 'lingual_condn', 'treatment_status',
             ]));
@@ -206,12 +211,13 @@ class TreatmentController extends Controller
             $toothExaminationEdit = ToothExamination::find($toothExamination->id);
             $toothExaminationEdit->anatomy_image = $anatomyImage;
             $toothExaminationEdit->save();
-            return response()->json(['success' => 'Tooth examination for teeth no '. $toothId .' added']);
+
+            return response()->json(['success' => 'Tooth examination for teeth no '.$toothId.' added']);
 
         } catch (Exception $ex) {
-            echo "<pre>";
+            echo '<pre>';
             print_r($ex->getMessage());
-            echo "</pre>";
+            echo '</pre>';
             exit;
         }
     }

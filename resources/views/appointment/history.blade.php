@@ -11,7 +11,7 @@
                 <th>Consulted Doctor</th>
                 <th>Branch</th>
                 <th>Status</th>
-                {{-- <th>Remarks</th> --}}
+                <th>Remarks</th>
                 {{-- <th width="150px">Action</th> --}}
             </tr>
         </thead>
@@ -69,6 +69,10 @@
                     name: 'status',
                     orderable: false,
                     searchable: true
+                },
+                {
+                    data: 'remarks',
+                    name: 'remarks',
                 }
             ]
         });

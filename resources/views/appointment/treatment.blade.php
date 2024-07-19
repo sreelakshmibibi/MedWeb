@@ -29,12 +29,14 @@
                             <section class="tabSection">
                                 @include('appointment.personal_info')
                             </section>
-                            <?php if ($latestAppointment != 0) { ?>
-                            <h6 class="tabHeading">Appointment History</h6>
-                            <section class="tabSection">
-                                @include('appointment.history')
-                            </section>
-                            <?php } ?>
+                            {{-- <?php if ($latestAppointment != 0) { ?> --}}
+                            @if ($previousAppointments->isNotEmpty())
+                                <h6 class="tabHeading">Appointment History</h6>
+                                <section class="tabSection">
+                                    @include('appointment.history')
+                                </section>
+                            @endif
+                            {{-- <?php } ?> --}}
                             <h6 class="tabHeading">Dental Chart</h6>
                             <section class="tabSection">
                                 @include('appointment.dchart_images')
