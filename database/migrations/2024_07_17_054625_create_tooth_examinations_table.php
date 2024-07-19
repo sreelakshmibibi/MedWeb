@@ -33,6 +33,7 @@ return new class extends Migration
             $table->foreignId('buccal_condn')->nullable()->constrained('surface_conditions');
             $table->foreignId('treatment_status')->constrained('treatment_statuses');
             $table->string('anatomy_image')->nullable();
+            $table->string('remarks')->nullable();
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
             $table->string('status', 5)->default('Y');

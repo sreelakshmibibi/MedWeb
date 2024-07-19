@@ -101,6 +101,7 @@ $additionalNormalTeethImages = [
     <div class="box bg-white">
         <div class="box-body">
             <div class="tooth_body">
+                <div id="successMessage" style="display:none;"></div>
                 <div class="dental-chart">
                     @foreach ($upper_ped_teethImages as $row)
                         <div class="row" id="trow1">
@@ -265,6 +266,152 @@ $additionalNormalTeethImages = [
                     $('#incisors_canines').show();
                     $('#premolars_molars').hide();
                 }
+                $.ajax({
+                    url: '{{ route("get.toothExamination", ["toothId" => ":toothId", "appId" => ":appId", "patientId" => ":patientId"]) }}'
+                            .replace(':toothId', teethName)
+                            .replace(':appId', appId)
+                            .replace(':patientId', patientId),
+                    type: "GET",
+                    dataType: "json",
+                   
+                    success: function(response) {
+                        var examination = response.examination[0]; // Assuming there's only one item in the array
+
+                        // Set the value of tooth_score_id field
+                        var toothScoreId = examination.tooth_score_id;
+                        $('#tooth_score_id').val(toothScoreId);
+
+                        // Loop through options to find the corresponding text and select it
+                        $('#tooth_score_id option').each(function() {
+                            if ($(this).val() == toothScoreId) {
+                                $(this).prop('selected', true);
+                                return false; // Exit the loop once found
+                            }
+                        });
+                        $('#tooth_score_id').trigger('change');
+                        $('#chief_complaint').val(examination.chief_complaint);
+                        $('#hpi').val(examination.hpi);
+                        $('#diagnosis').val(examination.diagnosis);
+                        $('#dental_examination').val(examination.dental_examination);
+                        $('#remarks').val(examination.remarks);
+                        var disease_id = examination.disease_id;
+                        $('#disease_id').val(disease_id);
+
+                        // Loop through options to find the corresponding text and select it
+                        $('#disease_id option').each(function() {
+                            if ($(this).val() == disease_id) {
+                                $(this).prop('selected', true);
+                                return false; // Exit the loop once found
+                            }
+                        });
+
+                        var treatment_id = examination.treatment_id;
+                        $('#treatment_id').val(treatment_id);
+
+                        // Loop through options to find the corresponding text and select it
+                        $('#treatment_id option').each(function() {
+                            if ($(this).val() == treatment_id) {
+                                $(this).prop('selected', true);
+                                return false; // Exit the loop once found
+                            }
+                        });
+
+                        var treatment_status = examination.treatment_status;
+                        $('#treatment_status').val(treatment_status);
+
+                        // Loop through options to find the corresponding text and select it
+                        $('#treatment_status option').each(function() {
+                            if ($(this).val() == treatment_status) {
+                                $(this).prop('selected', true);
+                                return false; // Exit the loop once found
+                            }
+                        });
+
+                        var palatal_condn = examination.palatal_condn;
+                        $('#palatal_condn').val(palatal_condn);
+
+                        // Loop through options to find the corresponding text and select it
+                        $('#palatal_condn option').each(function() {
+                            if ($(this).val() == palatal_condn) {
+                                $(this).prop('selected', true);
+                                return false; // Exit the loop once found
+                            }
+                        });
+
+                        var mesial_condn = examination.mesial_condn;
+                        $('#mesial_condn').val(mesial_condn);
+
+                        // Loop through options to find the corresponding text and select it
+                        $('#mesial_condn option').each(function() {
+                            if ($(this).val() == mesial_condn) {
+                                $(this).prop('selected', true);
+                                return false; // Exit the loop once found
+                            }
+                        });
+
+                        var distal_condn = examination.distal_condn;
+                        $('#distal_condn').val(distal_condn);
+
+                        // Loop through options to find the corresponding text and select it
+                        $('#distal_condn option').each(function() {
+                            if ($(this).val() == distal_condn) {
+                                $(this).prop('selected', true);
+                                return false; // Exit the loop once found
+                            }
+                        });
+
+                        var buccal_condn = examination.buccal_condn;
+                        $('#buccal_condn').val(buccal_condn);
+
+                        // Loop through options to find the corresponding text and select it
+                        $('#buccal_condn option').each(function() {
+                            if ($(this).val() == buccal_condn) {
+                                $(this).prop('selected', true);
+                                return false; // Exit the loop once found
+                            }
+                        });
+
+                        var occulusal_condn = examination.occulusal_condn;
+                        $('#occulusal_condn').val(occulusal_condn);
+
+                        // Loop through options to find the corresponding text and select it
+                        $('#occulusal_condn option').each(function() {
+                            if ($(this).val() == occulusal_condn) {
+                                $(this).prop('selected', true);
+                                return false; // Exit the loop once found
+                            }
+                        });
+
+                        var labial_condn = examination.labial_condn;
+                        $('#labial_condn').val(labial_condn);
+
+                        // Loop through options to find the corresponding text and select it
+                        $('#labial_condn option').each(function() {
+                            if ($(this).val() == labial_condn) {
+                                $(this).prop('selected', true);
+                                return false; // Exit the loop once found
+                            }
+                        });
+
+                        var lingual_condn = examination.lingual_condn;
+                        $('#lingual_condn').val(lingual_condn);
+
+                        // Loop through options to find the corresponding text and select it
+                        $('#lingual_condn option').each(function() {
+                            if ($(this).val() == lingual_condn) {
+                                $(this).prop('selected', true);
+                                return false; // Exit the loop once found
+                            }
+                        });
+
+
+
+
+
+
+                    },
+                    
+                });
 
                 $('#modal-teeth').modal('show');
 

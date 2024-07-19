@@ -157,6 +157,16 @@ class TreatmentController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+
+    public function fetchExistingExamination($toothId, $appId, $patientId) 
+    {
+        $toothExamination = ToothExamination::where('tooth_id', $toothId)
+                                ->where('patient_id', $patientId)
+                                ->where('app_id', $appId)
+                                ->where('status', 'Y')
+                                ->get();
+        return response()->json(['examination' => $toothExamination]);
+    }
     public function create()
     {
         //
@@ -168,6 +178,18 @@ class TreatmentController extends Controller
     public function store(Request $request)
     {
         try {
+
+            $checkExists = ToothExamination::where('tooth_id', $request->tooth_id)
+            ->where('patient_id', $request->patient_id)
+            ->where('app_id', $request->app_id)
+            ->where('status', 'Y')
+            ->get();
+            if (!empty($checkExists)) {
+                foreach ($checkExists as $check) {
+                    $check->status = 'N';
+                    $check->save();
+                }
+            }
             // $toothExamination = new ToothExamination();
             $toothId = $request->tooth_id;
             $occulusal_condn = $request->occulusal_condn != null ? 1 : 0;

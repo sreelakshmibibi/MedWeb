@@ -382,8 +382,10 @@
             success: function(response) {
                 // If successful, hide modal and show success message
                 $('#modal-teeth').modal('hide');
-                alert('Treatment saved successfully.'); // You can customize this as per your UI needs
-                // Optionally, you can reload data or update UI here
+                $('#successMessage').text(response.success);
+                    $('#successMessage').fadeIn().delay(3000)
+                        .fadeOut();
+                
             },
             error: function(xhr) {
                 // Handle specific error messages from backend if needed
