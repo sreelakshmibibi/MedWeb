@@ -9,13 +9,13 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('tooth_examinations', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('patient_id');
             $table->foreignId('app_id')->constrained('appointments');
-            $table->foreignId('tooth_id')->constrained('teeths');
+            $table->integer('tooth_id');
             $table->foreignId('tooth_score_id')->constrained('tooth_scores');
             $table->string('chief_complaint');
             $table->string('hpi');
@@ -24,13 +24,13 @@ return new class extends Migration
             $table->foreignId('disease_id')->constrained('diseases');
             $table->foreignId('treatment_id')->constrained('treatment_types');
             $table->string('x-ray')->nullable();
-            $table->foreignId('lingual_condn')->constrained('surface_conditions')->nullable();
-            $table->foreignId('labial_condn')->constrained('surface_conditions')->nullable();
-            $table->foreignId('occulusal_condn')->constrained('surface_conditions')->nullable();
-            $table->foreignId('distal_condn')->constrained('surface_conditions')->nullable();
-            $table->foreignId('mesial_condn')->constrained('surface_conditions')->nullable();
-            $table->foreignId('palatal_condn')->constrained('surface_conditions')->nullable();
-            $table->foreignId('buccal_condn')->constrained('surface_conditions')->nullable();
+            $table->foreignId('lingual_condn')->nullable()->constrained('surface_conditions');
+            $table->foreignId('labial_condn')->nullable()->constrained('surface_conditions');
+            $table->foreignId('occulusal_condn')->nullable()->constrained('surface_conditions');
+            $table->foreignId('distal_condn')->nullable()->constrained('surface_conditions');
+            $table->foreignId('mesial_condn')->nullable()->constrained('surface_conditions');
+            $table->foreignId('palatal_condn')->nullable()->constrained('surface_conditions');
+            $table->foreignId('buccal_condn')->nullable()->constrained('surface_conditions');
             $table->foreignId('treatment_status')->constrained('treatment_statuses');
             $table->string('anatomy_image')->nullable();
             $table->foreignId('created_by')->constrained('users');
@@ -44,7 +44,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('tooth_examinations');
     }

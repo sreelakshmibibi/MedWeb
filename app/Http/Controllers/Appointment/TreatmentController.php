@@ -184,6 +184,7 @@ class TreatmentController extends Controller
             $toothExaminationEdit = ToothExamination::find($toothExamination->id);
             $toothExaminationEdit->anatomy_image = $anatomyImage;
             $toothExaminationEdit->save();
+            return response()->json(['success' => 'Tooth examination for teeth no '. $toothId .' added']);
 
         } catch (Exception $ex) {
             echo "<pre>";
