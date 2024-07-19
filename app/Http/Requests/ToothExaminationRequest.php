@@ -29,7 +29,7 @@ class ToothExaminationRequest extends FormRequest
             'disease_id' => 'required',
             'diagnosis'=> 'required|string',
             'treatment_id' => 'required',
-            'x-ray' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'xray' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'lingual_condn' => 'nullable',
             'labial_condn'=> 'nullable',
             'occulusal_condn' => 'nullable',
@@ -62,9 +62,9 @@ class ToothExaminationRequest extends FormRequest
            
             'treatment_id.required' => 'Treatment is required',
             
-            'x-ray.image' => 'The x-ray must be an image file.',
-            'x-ray.mimes' => 'The x-ray must be a file of type: jpeg, png, jpg, gif.',
-            'x-ray.max' => 'The x-ray may not be greater than :max kilobytes.',
+            'xray.image' => 'The x-ray must be an image file.',
+            'xray.mimes' => 'The x-ray must be a file of type: jpeg, png, jpg, gif.',
+            'xray.max' => 'The x-ray may not be greater than :max kilobytes.',
             
             'treatment_status.required' => 'Treatment status is required',
         ];

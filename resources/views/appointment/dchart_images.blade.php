@@ -275,7 +275,7 @@ $additionalNormalTeethImages = [
                     dataType: "json",
                    
                     success: function(response) {
-                        var examination = response.examination[0]; // Assuming there's only one item in the array
+                        var examination = response.examination; // Assuming there's only one item in the array
 
                         // Set the value of tooth_score_id field
                         var toothScoreId = examination.tooth_score_id;
@@ -404,11 +404,14 @@ $additionalNormalTeethImages = [
                             }
                         });
 
-
-
-
-
-
+                        var xrays = response.xrays;
+                        if (Array.isArray(xrays) && xrays.length > 0) {
+                            // Show the link
+                            $('#uploadedXrays').show();
+                        } else {
+                            // Hide the link if no xrays or not an array
+                            $('#uploadedXrays').hide();
+                        }
                     },
                     
                 });

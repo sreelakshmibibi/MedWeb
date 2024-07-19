@@ -142,7 +142,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="xray">X-Ray <span class="text-danger">
-                                            *</span></label>
+                                            *</span></label><a href="#" id="uploadedXrays" style="display:none;">View Uploaded</a>
                                     <input type="file" class="form-control" id="xray" type="file"
                                         name="xray[]" multiple>
                                         <div id="xrayError" class="invalid-feedback"></div>
