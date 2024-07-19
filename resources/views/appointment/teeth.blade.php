@@ -36,34 +36,35 @@
                                 <div class="row">
                                     <div class="col-md-4 ps-2">
                                         <div class="form-group">
-                                            <label class="form-label" for="tooth_no">Tooth No</label>
-                                            <input type="text" class="form-control" id="tooth_no" name="tooth_no"
-                                                placeholder="tooth no">
+                                            <label class="form-label" for="tooth_id">Tooth No</label>
+                                            <input type="text" class="form-control" id="tooth_id" name="tooth_id"
+                                                placeholder="tooth no" readonly>
                                         </div>
                                     </div>
 
                                     <div class="col-md-8 ">
                                         <div class="form-group">
-                                            <label class="form-label" for="tooth_score">Tooth Score <span
+                                            <label class="form-label" for="tooth_score_id">Tooth Score <span
                                                     class="text-danger">
                                                     *</span></label>
-                                            <select class="form-select" id="tooth_score" name="tooth_score">
+                                            <select class="form-select" id="tooth_score_id" name="tooth_score_id">
                                                 <option value="">Select Score</option>
                                                 @foreach ($toothScores as $toothScore)
                                                     <option value="<?= $toothScore->id ?>"> <?= $toothScore->score ?>
                                                     </option>
                                                 @endforeach
-
                                             </select>
+                                            <div id="toothScoreError" class="invalid-feedback"></div>
                                         </div>
                                     </div>
                                     <div class="col-md-12 ">
                                         <div class="form-group">
-                                            <label class="form-label" for="complaint">Chief Complaint <span
+                                            <label class="form-label" for="chief_complaint">Chief Complaint <span
                                                     class="text-danger">
                                                     *</span></label>
-                                            <input type="text" class="form-control" id="complaint" name="complaint"
+                                            <input type="text" class="form-control" id="chief_complaint" name="chief_complaint"
                                                 placeholder="Chief Complaint">
+                                                <div id="complaintError" class="invalid-feedback"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -81,14 +82,15 @@
                             </div> --}}
                             <div class="col-md-6 ">
                                 <div class="form-group">
-                                    <label class="form-label" for="disease">Disease <span class="text-danger">
+                                    <label class="form-label" for="disease_id">Disease <span class="text-danger">
                                             *</span></label>
-                                    <select class="form-select" id="disease" name="disease">
+                                    <select class="form-select" id="disease_id" name="disease_id">
                                         <option value="">Select disease</option>
                                         @foreach ($diseases as $disease)
                                             <option value="<?= $disease->id ?>"><?= $disease->name ?></option>
                                         @endforeach
                                     </select>
+                                    <div id="diseaseError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -97,17 +99,19 @@
                                             *</span></label>
                                     <input type="text" class="form-control" id="hpi" name="hpi"
                                         placeholder="HPI">
+                                        <div id="hpiError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 ">
                                 <div class="form-group">
-                                    <label class="form-label" for="dexam">Dental Examination <span
+                                    <label class="form-label" for="dental_examination">Dental Examination <span
                                             class="text-danger">
                                             *</span></label>
-                                    <input type="text" class="form-control" id="dexam" name="dexam"
+                                    <input type="text" class="form-control" id="dental_examination" name="dental_examination"
                                         placeholder="Dental Examination">
+                                        <div id="dexamError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6 ">
@@ -116,6 +120,7 @@
                                             *</span></label>
                                     <input type="text" class="form-control" id="diagnosis" name="diagnosis"
                                         placeholder="diagnosis">
+                                        <div id="diagnosisError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
@@ -140,19 +145,21 @@
                                             *</span></label>
                                     <input type="file" class="form-control" id="xray" type="file"
                                         name="xray[]" multiple>
+                                        <div id="xrayError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6 ">
                                 <div class="form-group">
-                                    <label class="form-label" for="treatment">Treatment <span class="text-danger">
+                                    <label class="form-label" for="treatment_id">Treatment <span class="text-danger">
                                             *</span></label>
-                                    <select class="form-select" id="treatment" name="treatment">
+                                    <select class="form-select" id="treatment_id" name="treatment_id">
                                         <option value="">Select a Treatment</option>
                                         @foreach ($treatments as $treatment)
                                             <option value="<?= $treatment->id ?>"><?= $treatment->treat_name ?>
                                             </option>
                                         @endforeach
                                     </select>
+                                    <div id="treatmentError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
@@ -166,6 +173,7 @@
                                 <div class="form-group">
                                     <label class="form-label" for="remarks">Remarks</label>
                                     <textarea class="form-control" id="remarks" name="remarks">remarks if any</textarea>
+                                    <div id="remarksError" class="invalid-feedback"></div>
                                     {{-- <input type="text" class="form-control" id="remarks" name="remarks"
                                         placeholder="remarks"> --}}
                                 </div>
@@ -185,6 +193,7 @@
                                         @endforeach
 
                                     </select>
+                                    <div id="buccal_condnError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-3 " id="Palatal" style="display: none;">
@@ -199,6 +208,7 @@
                                         @endforeach
 
                                     </select>
+                                    <div id="palatal_condnError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-3 " id="Mesial" style="display: none;">
@@ -212,6 +222,7 @@
                                                 <?= $surfaceCondition->condition ?></option>
                                         @endforeach
                                     </select>
+                                    <div id="mesial_condnError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-3 " id="Distal" style="display: none;">
@@ -225,6 +236,7 @@
                                                 <?= $surfaceCondition->condition ?></option>
                                         @endforeach
                                     </select>
+                                    <div id="distal_condnError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-3 " id="Occulusal" style="display: none;">
@@ -239,12 +251,12 @@
                                                 <?= $surfaceCondition->condition ?></option>
                                         @endforeach
                                     </select>
+                                    <div id="occulusal_condnError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-3 ">
                                 <div class="form-group">
-                                    <label class="form-label" for="lingual_condn">Lingual <span class="text-danger">
-                                            *</span></label>
+                                    <label class="form-label" for="lingual_condn">Lingual</label>
                                     <select class="form-select" id="lingual_condn" name="lingual_condn">
                                         <option value=""> Select</option>
                                         @foreach ($surfaceConditions as $surfaceCondition)
@@ -253,12 +265,12 @@
                                         @endforeach
 
                                     </select>
+                                    <div id="lingual_condnError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-3 ">
                                 <div class="form-group">
-                                    <label class="form-label" for="labial_condn">Labial <span class="text-danger">
-                                            *</span></label>
+                                    <label class="form-label" for="labial_condn">Labial</label>
                                     <select class="form-select" id="labial_condn" name="labial_condn">
                                         <option value=""> Select</option>
                                         @foreach ($surfaceConditions as $surfaceCondition)
@@ -267,6 +279,7 @@
                                         @endforeach
 
                                     </select>
+                                    <div id="labial_condnError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-3 ">
@@ -280,6 +293,7 @@
                                             <option value="<?= $status->id ?>"><?= $status->status ?></option>
                                         @endforeach
                                     </select>
+                                    <div id="treatmentStatusError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
@@ -297,118 +311,104 @@
 </form>
 
 <script>
-    $(function() {
-        // Handle Save button click
-        $('#newTreatmentBtn').click(function() {
-            // Reset previous error messages
-            $('#patientIdError').text('');
-            $('#patientNameError').text('');
-            $('#clinicError').text('');
-            $('#doctorError').text('');
-            $('#appDateError').text('');
+   
+   $(function() {
+    // Handle Save button click
+    $('#newTreatmentBtn').click(function() {
+        // Reset previous error messages
+        resetErrors();
 
-            // Validate form inputs
-            var clinicId = $('#clinic_branch_id').val();
-            var doctorId = $('#doctor_id').val();
-            var appDate = $('#appdate').val();
-            var patientId = $('#patientId').val();
-            var patientName = $('#patient_name').val();
+        // Validate form inputs
+        var toothScore = $('#tooth_score_id').val();
+        var complaint = $('#chief_complaint').val();
+        var disease = $('#disease_id').val();
+        var hpi = $('#hpi').val();
+        var dexam = $('#dental_examination').val();
+        var diagnosis = $('#diagnosis').val();
+        var xray = $('#xray').prop('files');
+        var treatment = $('#treatment_id').val();
+        var remarks = $('#remarks').val();
 
+        // Basic client-side validation
+        if (!toothScore) {
+            $('#tooth_score_id').addClass('is-invalid');
+            $('#toothScoreError').text('Tooth Score is required.');
+        }
 
-            // Basic client-side validation (you can add more as needed)
-            if (clinicId.length === 0) {
-                $('#clinic_branch_id').addClass('is-invalid');
-                $('#clinicError').text('Clinic is required.');
-                return; // Prevent further execution
-            } else {
-                $('#clinic_branch_id').removeClass('is-invalid');
-                $('#clinicError').text('');
+        if (!complaint) {
+            $('#chief_complaint').addClass('is-invalid');
+            $('#complaintError').text('Chief Complaint is required.');
+        }
+
+        if (!disease) {
+            $('#disease_id').addClass('is-invalid');
+            $('#diseaseError').text('Disease is required.');
+        }
+
+        if (!hpi) {
+            $('#hpi').addClass('is-invalid');
+            $('#hpiError').text('HPI is required.');
+        }
+
+        if (!dexam) {
+            $('#dental_examination').addClass('is-invalid');
+            $('#dexamError').text('Dental Examination is required.');
+        }
+
+        if (!diagnosis) {
+            $('#diagnosis').addClass('is-invalid');
+            $('#diagnosisError').text('Diagnosis is required.');
+        }
+
+       
+
+        if (!treatment) {
+            $('#treatment_id').addClass('is-invalid');
+            $('#treatmentError').text('Treatment is required.');
+        }
+
+        // If all validations pass, submit the form via AJAX
+        var form = $('#form-teeth');
+        var url = form.attr('action');
+        var formData = new FormData(form[0]);
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function(response) {
+                // If successful, hide modal and show success message
+                $('#modal-teeth').modal('hide');
+                alert('Treatment saved successfully.'); // You can customize this as per your UI needs
+                // Optionally, you can reload data or update UI here
+            },
+            error: function(xhr) {
+                // Handle specific error messages from backend if needed
+                console.log(xhr.responseText);
+                alert('Error saving treatment. Please try again.'); // You can customize this as per your UI needs
             }
-
-            if (doctorId.length === 0) {
-                $('#doctor_id').addClass('is-invalid');
-                $('#doctorError').text('Doctor is required.');
-                return; // Prevent further execution
-            } else {
-                $('#doctor_id').removeClass('is-invalid');
-                $('#doctorError').text('');
-            }
-            if (appDate.length === 0) {
-                $('#appdate').addClass('is-invalid');
-                $('#appDateError').text('Appointment date is required.');
-                return; // Prevent further execution
-            } else {
-                $('#appdate').removeClass('is-invalid');
-                $('#appDateError').text('');
-            }
-
-            // If validation passed, submit the form via AJAX
-            var form = $('#bookingForm');
-            var url = form.attr('action');
-            var formData = form.serialize();
-
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: formData,
-                dataType: 'json',
-                success: function(response) {
-                    // If successful, hide modal and show success message
-                    $('#existingAppointments').hide();
-                    $('#existingAppointmentsError').hide();
-                    $('#modal-booking').modal('hide');
-                    $('#successMessage').text('New Appointment added successfully');
-                    $('#successMessage').fadeIn().delay(3000)
-                        .fadeOut(); // Show for 3 seconds
-                    // location.reload();
-                    table.ajax.reload();
-                },
-                error: function(xhr) {
-                    // Reset previous error messages
-                    $('#appDateError').text('');
-
-                    // Check if there are validation errors
-                    var errors = xhr.responseJSON.errors;
-                    $('#appDateError').text('');
-
-                    // Check if there are validation errors
-                    var errors = xhr.responseJSON.errors;
-                    if (errors && errors.hasOwnProperty('app_time')) {
-                        $('#appdate').addClass('is-invalid');
-                        $('#appDateError').text(errors.appdate[0]);
-                    } else {
-                        // Handle specific error from backend
-                        var errorMessage = xhr.responseJSON.error;
-                        if (errorMessage) {
-                            $('#existingAppointmentsError').show();
-                        }
-                    }
-                }
-            });
-        });
-
-        // Reset form and errors on modal close
-        $('#modal-booking').on('hidden.bs.modal', function() {
-            $('#bookingForm').trigger('reset');
-            $('#doctor_id').removeClass('is-invalid');
-            $('#doctorError').text('');
-            $('#appDate').removeClass('is-invalid');
-            $('#appDateError').text('');
-            $('#clinic_branch_id').removeClass('is-invalid');
-            $('#clinicError').text('');
-
         });
     });
 
-    document.addEventListener('DOMContentLoaded', function() {
-        var now = new Date();
-        var year = now.getFullYear();
-        var month = (now.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
-        var day = now.getDate().toString().padStart(2, '0');
-        var hours = now.getHours().toString().padStart(2, '0');
-        var minutes = now.getMinutes().toString().padStart(2, '0');
-        var datetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+    // Function to reset all form errors
+    function resetErrors() {
+        $('.form-control').removeClass('is-invalid');
+        $('.invalid-feedback').text('');
+    }
 
-        document.getElementById('appdate').value = datetime;
+    // Reset form and errors on modal close
+    $('#modal-teeth').on('hidden.bs.modal', function() {
+        $('#form-teeth').trigger('reset');
+        resetErrors();
     });
+    $('.form-control, .form-select').on('input', function() {
+        $(this).removeClass('is-invalid');
+        $(this).next('.invalid-feedback').text('');
+    });
+
+});
+
 </script>

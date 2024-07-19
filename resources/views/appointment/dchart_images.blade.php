@@ -255,7 +255,7 @@ $additionalNormalTeethImages = [
                 });
 
                 // $(this).toggleClass('selected');
-                $('#tooth_no').val(teethName);
+                $('#tooth_id').val(teethName);
                 $('#app_id').val(appId);
                 $('#patient_id').val(patientId);
                 if ($(divId).hasClass('molar')) {

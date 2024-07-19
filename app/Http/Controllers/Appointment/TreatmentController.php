@@ -11,9 +11,11 @@ use App\Models\Disease;
 use App\Models\PatientProfile;
 use App\Models\SurfaceCondition;
 use App\Models\Teeth;
+use App\Models\ToothExamination;
 use App\Models\ToothScore;
 use App\Models\TreatmentStatus;
 use App\Models\TreatmentType;
+use App\Services\AnatomyService;
 use App\Services\AppointmentService;
 use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
@@ -99,14 +101,29 @@ class TreatmentController extends Controller
      */
     public function store(Request $request)
     {
-        echo "<pre>";
-        print_r($request->all());
-        echo "</pre>";
-        exit;
         try {
+            // $toothExamination = new ToothExamination();
+            $toothId = $request->tooth_id;
+            $occulusal_condn = $request->occulusal_condn != null ? 1 : 0;
+            $palatal_condn = $request->palatal_condn != null ? 1 : 0;
+            $mesial_condn = $request->mesial_condn != null ? 1 : 0;
+            $buccal_condn = $request->buccal_condn != null ? 1 : 0;
+            $distal_condn = $request->distal_condn != null ? 1 : 0;
+           
+            $toothExamination = ToothExamination::create($request->only([
+                'app_id', 'patient_id', 'tooth_id', 'tooth_score_id', 'chief_complaint', 'disease_id', 'hpi', 'dental_examination', 'diagnosis', 'xray', 'treatment_id', 'remarks', 'palatal_condn', 'mesial_condn', 'distal_condn', 'buccal_condn', 'occulusal_condn', 'labial_condn', 'lingual_condn', 'treatment_status',
+            ]));
+            $anatomyService = new AnatomyService();
+            $anatomyImage = $anatomyService->getAnatomyImage($toothId, $occulusal_condn, $palatal_condn, $mesial_condn, $distal_condn, $buccal_condn);
+            $toothExaminationEdit = ToothExamination::find($toothExamination->id);
+            $toothExaminationEdit->anatomy_image = $anatomyImage;
+            $toothExaminationEdit->save();
 
         } catch (Exception $ex) {
-            
+            echo "<pre>";
+            print_r($ex->getMessage());
+            echo "</pre>";
+            exit;
         }
     }
 

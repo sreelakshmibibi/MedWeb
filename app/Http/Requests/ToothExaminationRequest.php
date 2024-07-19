@@ -68,4 +68,5 @@ class ToothExaminationRequest extends FormRequest
             
             'treatment_status.required' => 'Treatment status is required',
         ];
+    }
 }
