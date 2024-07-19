@@ -11,17 +11,17 @@ class History extends Model
 {
     use HasFactory;
     use SoftDeletes;
+
     protected $fillable = [
         'patient_id',
         'app_id',
         'history',
         'doctor_id',
-        'cdate',
         'status',
-        'updt',
         'created_by',
-        'updated_by'
+        'updated_by',
     ];
+
     protected $dates = ['deleted_at'];
 
     protected static function booted()
@@ -36,5 +36,10 @@ class History extends Model
         static::updating(function ($clinic) {
             $clinic->updated_by = Auth::id(); // Set updated_by to current user's ID
         });
+    }
+
+    public function patientProfile()
+    {
+        return $this->belongsTo(PatientProfile::class, 'patient_id'); // Adjust 'patient_id' if necessary
     }
 }

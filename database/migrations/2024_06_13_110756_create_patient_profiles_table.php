@@ -29,6 +29,7 @@ return new class extends Migration
             $table->foreignId('state_id')->constrained('states');
             $table->foreignId('country_id')->constrained('countries');
             $table->integer('pincode')->nullable();
+            $table->string('marital_status', 20)->nullable();
             $table->integer('visit_count')->default(0);
             $table->string('status', 1)->default('Y');
             $table->foreignId('created_by')->constrained('users');

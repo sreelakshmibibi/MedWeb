@@ -12,8 +12,29 @@ class PatientProfile extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['patient_id', 'first_name', 'last_name', 'aadhaar_no', 'date_of_birth', 'gender', 'blood_group', 'phone', 'alternate_phone', 'email', 'address1', 'address2', 'city_id', 'state_id', 'country_id', 'pincode', 'visit_count', 'status', 'created_by',
-        'updated_by'];
+    protected $fillable = [
+        'patient_id',
+        'first_name',
+        'last_name',
+        'aadhaar_no',
+        'date_of_birth',
+        'gender',
+        'blood_group',
+        'phone',
+        'alternate_phone',
+        'email',
+        'address1',
+        'address2',
+        'city_id',
+        'state_id',
+        'country_id',
+        'pincode',
+        'marital_status',
+        'visit_count',
+        'status',
+        'created_by',
+        'updated_by',
+    ];
 
     protected $dates = ['deleted_at'];
 
@@ -36,6 +57,11 @@ class PatientProfile extends Model
         return $this->hasMany(Appointment::class, 'patient_id', 'patient_id');
     }
 
+    public function toothExamination()
+    {
+        return $this->hasMany(ToothExamination::class, 'patient_id', 'patient_id');
+    }
+
     public function latestAppointment()
     {
         return $this->hasOne(Appointment::class, 'patient_id', 'patient_id')
@@ -53,9 +79,26 @@ class PatientProfile extends Model
             ->oldest('app_time');
     }
 
+    public function nextDoctorBranchAppointment($doctorId, $branchId)
+    {
+        return $this->hasOne(Appointment::class, 'patient_id', 'patient_id')
+            ->where('app_date', '>', now())
+            ->where('doctor_id', $doctorId)
+            ->where('branch_id', $branchId)
+            ->where('status', 'Y')
+            ->where('app_status', AppointmentStatus::SCHEDULED)
+            ->orderBy('app_date')
+            ->orderBy('app_time')
+            ->first(); // Retrieve the first matching appointment
+    }
+
     public function lastAppointment()
     {
-        return $this->hasOne(Appointment::class, 'patient_id', 'patient_id')->latest();
+        return $this->hasOne(Appointment::class, 'patient_id', 'patient_id')
+            ->where('app_parent_id', null)
+            ->where('app_type', 2)
+            ->with(['doctor', 'branch'])
+            ->latest();
     }
 
     // Define the relationship with Country
@@ -74,5 +117,21 @@ class PatientProfile extends Model
     public function city()
     {
         return $this->belongsTo(City::class, 'city_id', 'id');
+    }
+
+    // public function history()
+    // {
+    //     return $this->hasMany(History::class, 'patient_id', 'patient_id');
+    // }
+
+    public function history()
+    {
+
+        $lastAppointmentId = optional($this->lastAppointment)->id; // Use optional to avoid null reference
+
+        return $this->hasMany(History::class, 'patient_id', 'patient_id')
+            ->when($lastAppointmentId, function ($query) use ($lastAppointmentId) {
+                $query->where('app_id', $lastAppointmentId);
+            });
     }
 }

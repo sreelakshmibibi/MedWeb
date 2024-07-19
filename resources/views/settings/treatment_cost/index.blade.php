@@ -37,6 +37,9 @@
                                         <th>No</th>
                                         <th>Treatment Name</th>
                                         <th>Cost</th>
+                                        <th>Discount (%)</th>
+                                        <th>Discount From</th>
+                                        <th>Discount To</th>
                                         <th>Status</th>
                                         <th width="100px">Action</th>
                                     </tr>
@@ -88,6 +91,18 @@
                         render: function(data, type, row) {
                             return parseFloat(data).toFixed(2); // Format to 2 decimal points
                         }
+                    },
+                    {
+                        data: 'discount_percentage',
+                        name: 'discount_percentage'
+                    },
+                    {
+                        data: 'discount_from',
+                        name: 'discount_from'
+                    },
+                    {
+                        data: 'discount_to',
+                        name: 'discount_to'
                     },
                     {
                         data: 'status',

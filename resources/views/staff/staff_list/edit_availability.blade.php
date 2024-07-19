@@ -45,50 +45,50 @@
                             </select>
                         </td>
                         <td>
-                            <input type="time" class="form-control timeInput" id="sunday_from{{$i}}" title="from"
+                            <input type="time" class="form-control timeInput fromTime" id="sunday_from{{$i}}" title="from"
                                 name="sunday_from{{$i}}" style="width:115px;" value="{{ $branch['timings']['sunday_from'] ?? '' }}">
-                            <input type="time" class="form-control" id="sunday_to{{$i}}" title="to" name="sunday_to{{$i}}"
+                            <input type="time" class="form-control timeInput toTime" id="sunday_to{{$i}}" title="to" name="sunday_to{{$i}}"
                                 style="width:115px;" value="{{ $branch['timings']['sunday_to'] ?? '' }}">
                         </td>
                         <td>
-                            <input type="time" class="form-control" id="monday_from{{$i}}" name="monday_from{{$i}}" title="from"
+                            <input type="time" class="form-control timeInput fromTime" id="monday_from{{$i}}" name="monday_from{{$i}}" title="from"
                                 style="width:115px;" value="{{ $branch['timings']['monday_from'] ?? '' }}">
-                            <input type="time" class="form-control" id="monday_to{{$i}}" name="monday_to{{$i}}" title="to"
+                            <input type="time" class="form-control timeInput toTime" id="monday_to{{$i}}" name="monday_to{{$i}}" title="to"
                                 style="width:115px;" value="{{ $branch['timings']['monday_to'] ?? '' }}">
                         </td>
                         <td>
-                            <input type="time" class="form-control" id="tuesday_from{{$i}}" name="tuesday_from{{$i}}"
+                            <input type="time" class="form-control timeInput fromTime" id="tuesday_from{{$i}}" name="tuesday_from{{$i}}"
                                 title="from" style="width:115px;" value="{{ $branch['timings']['tuesday_from'] ?? '' }}">
-                            <input type="time" class="form-control" id="tuesday_to{{$i}}" name="tuesday_to{{$i}}" title="to"
+                            <input type="time" class="form-control timeInput toTime" id="tuesday_to{{$i}}" name="tuesday_to{{$i}}" title="to"
                                 style="width:115px;" value="{{ $branch['timings']['tuesday_to'] ?? '' }}">
                         </td>
                         <td>
-                            <input type="time" class="form-control" id="wednesday_from{{$i}}" name="wednesday_from{{$i}}"
+                            <input type="time" class="form-control timeInput fromTime" id="wednesday_from{{$i}}" name="wednesday_from{{$i}}"
                                 title="from" style="width:115px;" value="{{ $branch['timings']['wednesday_from'] ?? '' }}">
-                            <input type="time" class="form-control" id="wednesday_to{{$i}}" name="wednesday_to{{$i}}"
+                            <input type="time" class="form-control timeInput toTime" id="wednesday_to{{$i}}" name="wednesday_to{{$i}}"
                                 title="to" style="width:115px;" value="{{ $branch['timings']['wednesday_to'] ?? '' }}">
                         </td>
                         <td>
-                            <input type="time" class="form-control" id="thursday_from{{$i}}" name="thursday_from{{$i}}"
+                            <input type="time" class="form-control timeInput fromTime" id="thursday_from{{$i}}" name="thursday_from{{$i}}"
                                 title="from" style="width:115px;" value="{{ $branch['timings']['thursday_from'] ?? '' }}">
-                            <input type="time" class="form-control" id="thursday_to{{$i}}" name="thursday_to{{$i}}" title="to"
+                            <input type="time" class="form-control timeInput toTime" id="thursday_to{{$i}}" name="thursday_to{{$i}}" title="to"
                                 style="width:115px;" value="{{ $branch['timings']['thursday_to'] ?? '' }}">
                         </td>
                         <td>
-                            <input type="time" class="form-control" id="friday_from{{$i}}" name="friday_from{{$i}}" title="from"
+                            <input type="time" class="form-control timeInput fromTime" id="friday_from{{$i}}" name="friday_from{{$i}}" title="from"
                                 style="width:115px;" value="{{ $branch['timings']['friday_from'] ?? '' }}">
-                            <input type="time" class="form-control" id="friday_to{{$i}}" name="friday_to{{$i}}" title="to"
+                            <input type="time" class="form-control timeInput toTime" id="friday_to{{$i}}" name="friday_to{{$i}}" title="to"
                                 style="width:115px;" value="{{ $branch['timings']['friday_to'] ?? '' }}">
                         </td>
                         <td>
-                            <input type="time" class="form-control" id="saturday_from{{$i}}" name="saturday_from{{$i}}"
+                            <input type="time" class="form-control timeInput fromTime" id="saturday_from{{$i}}" name="saturday_from{{$i}}"
                                 title="from" style="width:115px;" value="{{ $branch['timings']['saturday_from'] ?? '' }}">
-                            <input type="time" class="form-control" id="saturday_to{{$i}}" name="saturday_to{{$i}}"
+                            <input type="time" class="form-control timeInput toTime" id="saturday_to{{$i}}" name="saturday_to{{$i}}"
                                 title="to" style="width:115px;" value="{{ $branch['timings']['saturday_to'] ?? '' }}">
                         </td>
                         <td>
                             <button type="button" id="btnDelete" title="delete row"
-                                class="waves-effect waves-light btn btn-danger btn-sm"> <i
+                                class="waves-effect waves-light btn btn-danger btn-sm btnDelete" > <i
                                     class="fa fa-trash"></i></button>
                         </td>
                     </tr>

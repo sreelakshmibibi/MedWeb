@@ -54,7 +54,7 @@ class StaffProfileRequest extends FormRequest
             'designation' => 'required|string|max:255',
             'date_of_joining' => 'required|date',
             'date_of_relieving' => 'nullable|date',
-            'licence_number' =>  [
+            'license_number' =>  [
                 'nullable',
                 'string',
                 Rule::unique('staff_profiles')->ignore($this->edit_user_id, 'user_id'),
@@ -147,8 +147,8 @@ class StaffProfileRequest extends FormRequest
 
             'date_of_relieving.date' => 'The date of relieving must be a valid date.',
 
-            'licence_number.string' => 'The experience must be a string.',
-            'licence_number.unique' => 'Licence number already exists.',
+            'license_number.string' => 'The experience must be a string.',
+            'license_number.unique' => 'Licence number already exists.',
         ];
     }
 }

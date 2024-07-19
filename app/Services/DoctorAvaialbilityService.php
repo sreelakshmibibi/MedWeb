@@ -109,8 +109,11 @@ class DoctorAvaialbilityService
     }
     public function checkAllocatedAppointments($branchId, $appDate, $doctorId, $appTime)
     {
+        // Start building the query with basic conditions
         $query = Appointment::where('status', 'Y')
-                        ->where('app_status', AppointmentStatus::SCHEDULED );
+                            ->where('app_status', AppointmentStatus::SCHEDULED);
+
+        // Apply optional filters based on parameters
         if ($branchId) {
             $query->where('app_branch', $branchId);
         }
@@ -118,13 +121,16 @@ class DoctorAvaialbilityService
             $query->where('doctor_id', $doctorId);
         }
         if ($appDate) {
-            $query->where('app_date', $appDate);
+            $query->whereDate('app_date', $appDate); // Assuming app_date is a date field
         }
         if ($appTime) {
-            $query->where('app_date', $appTime);
+            $query->where('app_time', $appTime); // Assuming app_time is a time field
         }
-        return $query->get('app_time');
+
+        // Execute the query and return the result
+        $appointments = $query->get(['app_time']); // Fetch only app_time field
         
+        return $appointments;
     }
 
 }

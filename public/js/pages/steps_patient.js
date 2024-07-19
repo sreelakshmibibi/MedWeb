@@ -188,5 +188,13 @@ $("#patientform").steps({
             weight: { number: true },
             bp: { minlength: 3 },
             rdoctor: { minlength: 3 },
+            marital_status: { required: false },
+            smoking_status: { required: false },
+            alcoholic_status: { required: false },
+            diet: { required: false },
+            allergies: { maxlength: 500 },
+            "medical_conditions[]": { required: false, maxlength: 500 },
+            pregnant: { required: false }, // Add this line for pregnant field
+            temperature: { required: false, number: true, min: 90, max: 110 }
         },
     });

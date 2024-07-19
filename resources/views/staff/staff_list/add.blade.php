@@ -8,6 +8,8 @@
 
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Add Staff Member</h3>
+                    <a type="button" class="waves-effect waves-light btn btn-primary" href="{{ route('staff.staff_list') }}">
+                        <i class="fa-solid fa-angles-left"></i> Back</a>
                 </div>
                 <div id="error-message-container">
                     <p id="error-message"
@@ -173,6 +175,7 @@
 
             // Validation for 'from' and 'to' time fields
             $(document).on('focusout', '.fromTime, .toTime', function() {
+                console.log('hi');
                 let index = $(this).attr('id').match(/\d+/)[0];
                 let day = $(this).closest('td').prevAll().length; // Determine the column index
                 switch (day) {

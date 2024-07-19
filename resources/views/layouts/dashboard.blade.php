@@ -29,7 +29,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
-
+    <link rel="stylesheet" href="{{ asset('css/tooth_style.css') }}">
 </head>
 
 <body class="layout-top-nav dark-skin theme-primary fixed">
@@ -77,6 +77,7 @@
     <script src="{{ asset('assets/vendor_components/jquery-validation-1.17.0/dist/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('js/pages/steps.js') }}"></script>
     <script src="{{ asset('js/pages/steps_patient.js') }}"></script>
+    <script src="{{ asset('js/pages/steps_treatment.js') }}"></script>
 
     <script src="{{ asset('assets/vendor_components/bootstrap-select/dist/js/bootstrap-select.js') }}"></script>
     <script src="{{ asset('assets/vendor_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.js') }}"></script>
@@ -84,6 +85,15 @@
     <script src="{{ asset('assets/vendor_components/date-paginator/moment.min.js') }}"></script>
     <script src="{{ asset('assets/vendor_components/date-paginator/bootstrap-datepaginator.min.js') }}"></script>
     <script src="{{ asset('js/pages/date-paginator.js') }}"></script>
+
+    <script src="{{ asset('js/pages/doctor-details.js') }}"></script>
+
+    <script src="{{ asset('assets/vendor_components/apexcharts-bundle/dist/apexcharts.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/OwlCarousel2/dist/owl.carousel.js') }}"></script>
+
+    <script src="{{ asset('js/pages/dashboard2.js') }}"></script>
+
+    <script src="{{ asset('js/pages/patient-details.js') }}"></script>
 
     <!-- Include scripts section -->
     @yield('scripts')

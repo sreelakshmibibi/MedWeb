@@ -1,17 +1,18 @@
 <?php
 
+use App\Http\Controllers\Appointment\AppointmentController;
+use App\Http\Controllers\Appointment\TreatmentController;
 use App\Http\Controllers\Auth\StaffVerificationController;
 use App\Http\Controllers\HelperController;
 use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
 use App\Http\Controllers\Settings\ClinicBranchController;
+use App\Http\Controllers\Settings\ComboOfferController;
 use App\Http\Controllers\Settings\DepartmentController;
 use App\Http\Controllers\Settings\DiseaseController;
 use App\Http\Controllers\Settings\MedicineController;
 use App\Http\Controllers\Settings\TreatmentCostController;
 use App\Http\Controllers\Staff\StaffListController;
-use App\Http\Controllers\Appointment\AppointmentController;
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -38,6 +39,8 @@ Route::get('/get-states/{countryId}', [HelperController::class, 'getStates'])->n
 Route::get('/get-cities/{stateId}', [HelperController::class, 'getCities'])->name('get.cities');
 Route::get('/fetch-doctors/{branchId}', [PatientListController::class, 'fetchDoctors'])->name('get.doctors');
 Route::get('/fetch-existingAppoinmtents/{branchId}', [PatientListController::class, 'fetchExistingAppointments'])->name('get.exisitingAppointments');
+Route::get('/fetch-ExistingExamination/{toothId}/{appId}/{patientId}', [TreatmentController::class, 'fetchExistingExamination'])->name('get.toothExamination');
+
 
 Route::get('/clinic', [ClinicBranchController::class, 'index'])->name('settings.clinic');
 Route::post('/clinic/create', [ClinicBranchController::class, 'create'])->name('settings.clinic.create');
@@ -79,6 +82,8 @@ Route::get('/patient_list/{patient_list}/edit', [PatientListController::class, '
 Route::post('/patient_list/update', [PatientListController::class, 'update'])->name('patient.patient_list.update');
 Route::delete('/patient_list/{patientId}', [PatientListController::class, 'destroy'])->name('patient.patient_list.destroy');
 Route::post('/patient_list/{patientId}', [PatientListController::class, 'changeStatus'])->name('patient.patient_list.changeStatus');
+Route::post('/patient_list/appointment/store', [PatientListController::class, 'appointmentBooking'])->name('patient.patient_list.booking');
+Route::get('/patient_list/{patientId}/appointment', [PatientListController::class, 'appointmentDetails'])->name('patient.patient_list.appointment');
 
 Route::get('/today', [TodayController::class, 'index'])->name('patient.today');
 Route::post('/today/store', [TodayController::class, 'store'])->name('patient.today.store');
@@ -105,3 +110,12 @@ Route::post('/appointment/store', [AppointmentController::class, 'store'])->name
 Route::get('/appointment/{appointment}/edit', [AppointmentController::class, 'edit'])->name('appointment.edit');
 Route::post('/appointment/update', [AppointmentController::class, 'update'])->name('appointment.update');
 Route::post('/appointment/{appointment}', [AppointmentController::class, 'destroy'])->name('appointment.destroy');
+
+Route::get('/combo_offer', [ComboOfferController::class, 'index'])->name('settings.combo_offer');
+Route::post('/combo_offer/store', [ComboOfferController::class, 'store'])->name('settings.combo_offer.store');
+Route::get('/combo_offer/{offer}/edit', [ComboOfferController::class, 'edit'])->name('settings.combo_offer.edit');
+Route::post('/combo_offer/{offer}/update', [ComboOfferController::class, 'update'])->name('settings.combo_offer.update');
+Route::delete('/combo_offer/{offer}', [ComboOfferController::class, 'destroy'])->name('settings.combo_offer.destroy');
+
+Route::get('/appointment/{appointment}/treatment', [TreatmentController::class, 'index'])->name('treatment');
+Route::post('/treatment/store', [TreatmentController::class, 'store'])->name('treatment.store');

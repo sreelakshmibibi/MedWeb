@@ -92,7 +92,7 @@
 </div>
 
 <!--for others-->
-<div class="row otherFields" style="display: none;">
+<div class="row otherFields" <?php if($staffProfile->is_doctor) { ?>style="display: none;" <?php } ?>">
     <div class="col-md-4">
         <div class="form-group">
             <label class="form-label" for="specialization">Branch <span class="text-danger">

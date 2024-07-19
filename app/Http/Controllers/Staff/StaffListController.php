@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Staff;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Staff\StaffListRequest;
 use App\Http\Requests\Staff\StaffProfileRequest;
+use App\Models\Appointment;
 use App\Models\City;
 use App\Models\ClinicBranch;
 use App\Models\Country;
@@ -219,8 +220,7 @@ class StaffListController extends Controller
 
                 if ($staffProfile->save()) {
                     if ($user->is_doctor) {
-                        $staffService = new
-                            StaffService();
+                        $staffService = new StaffService();
                         if ($staffService->saveDoctorAvailability($request, $user->id)) {
                             DB::commit();
                             if (!isset($request->edit_user_id)) {
@@ -237,6 +237,7 @@ class StaffListController extends Controller
 
                         } else {
                             DB::rollBack();
+                            return response()->json(['error' => 'Failed to create doctor: Availbilty of time slots required' ], 422);
                         }
                     } else {
                         DB::commit();
@@ -254,9 +255,11 @@ class StaffListController extends Controller
                     }
                 } else {
                     DB::rollBack();
+                    return response()->json(['error' => 'Failed to create staff: Error in experience' ], 422);
                 }
             } else {
                 DB::rollBack();
+                return response()->json(['error' => 'Failed to create staff.' ], 422);
             }
 
             //example user
@@ -331,7 +334,7 @@ class StaffListController extends Controller
         return response()->json(['success', 'Staff deleted successfully.'], 201);
     }
 
-    public function view(string $id)
+    public function view(string $id, Request $request)
     {
         $staffProfile = StaffProfile::with('user')->find($id);
         abort_if(!$staffProfile, 404);
@@ -347,9 +350,40 @@ class StaffListController extends Controller
         $doctorAvailability = new DoctorAvaialbilityService();
         $availableBranches = $doctorAvailability->availableBranchAndTimings($staffProfile->user_id);
         $countries = Country::all();
-        return view('staff.staff_list.view', compact('name', 'countries', 'userTypes', 'departments', 'staffProfile', 'userDetails', 'availability', 'clinicBranches', 'availabilityCount', 'availability', 'availableBranches'));
-    }
+        $states = State::all();
+        $cities = City::all();
 
+        if ($request->ajax()) {
+            $staffId = $request->input('userId');
+            $appointments = Appointment::where('doctor_id', $staffId)
+                            ->with(['patient', 'doctor', 'branch'])
+                            ->get();
+
+            return DataTables::of($appointments)
+                ->addIndexColumn()
+                ->addColumn('name', function ($row) {
+                    return str_replace("<br>", " ", $row->patient->first_name." ".$row->patient->last_name);
+                })
+                ->addColumn('branch', function ($row) {
+                    if (!$row->branch) {
+                        return '';
+                    }
+                    $address = implode(", ", explode("<br>", $row->branch->clinic_address));
+                    return implode(", ", [$address, $row->branch->city->city, $row->branch->state->state]);
+                })
+                ->addColumn('phone', function ($row) {
+                    return $row->patient->phone;
+                })
+                ->addColumn('action', function ($row) {
+                    $button = "<button type='button' class='waves-effect waves-light btn btn-circle btn-info btn-xs'  title='view'><i class='fa fa-eye'></i></button>";
+                    return $button;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return view('staff.staff_list.view', compact('name', 'countries', 'states', 'cities', 'userTypes', 'departments', 'staffProfile', 'userDetails', 'availability', 'clinicBranches', 'availabilityCount', 'availability', 'availableBranches'));
+    }
 
 }
 

@@ -5,13 +5,16 @@
     <div class="content-wrapper">
         <div class="container-full">
             <div class="content-header">
-               
+
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Edit Staff Member</h3>
+                    <a type="button" class="waves-effect waves-light btn btn-primary" href="{{ route('staff.staff_list') }}">
+                        <i class="fa-solid fa-angles-left"></i> Back</a>
                 </div>
                 <div id="error-message-container">
-                    <p id="error-message" class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fadeOut"
-                     style="display: none;"></p>
+                    <p id="error-message"
+                        class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fadeOut"
+                        style="display: none;"></p>
                 </div>
             </div>
 
@@ -184,6 +187,7 @@
 
             // Validation for 'from' and 'to' time fields
             $(document).on('focusout', '.fromTime, .toTime', function() {
+                console.log('hi');
                 let index = $(this).attr('id').match(/\d+/)[0];
                 let day = $(this).closest('td').prevAll().length; // Determine the column index
                 switch (day) {
@@ -247,13 +251,26 @@
             });
 
             // Handle change event for role dropdown
+            // $('select[name="role[]"]').change(function() {
+            //     if ($(this).val() && $(this).val().includes('3')) {
+            //         $('.doctorFields').show();
+            //         $('.otherFields').hide();
+            //     } else {
+            //         $('.doctorFields').hide();
+            //         $('.otherFields').show();
+            //     }
+            // });
             $('select[name="role[]"]').change(function() {
                 if ($(this).val() && $(this).val().includes('3')) {
                     $('.doctorFields').show();
                     $('.otherFields').hide();
+                    $('.doctorFields input').attr('required', true);
+                    $('.otherFields select').attr('required', false);
                 } else {
                     $('.doctorFields').hide();
                     $('.otherFields').show();
+                    $('.doctorFields input').attr('required', false);
+                    $('.otherFields select').attr('required', true);
                 }
             });
 
@@ -261,7 +278,7 @@
             function loadStates(countryId, stateSelectElement, initialSelected) {
                 if (countryId) {
                     $.ajax({
-                        url: '{{ route("get.states", "") }}' + '/' + countryId,
+                        url: '{{ route('get.states', '') }}' + '/' + countryId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -295,7 +312,7 @@
             function loadCities(stateId, citySelectElement, initialSelected) {
                 if (stateId) {
                     $.ajax({
-                        url: '{{ route("get.cities", "") }}' + '/' + stateId,
+                        url: '{{ route('get.cities', '') }}' + '/' + stateId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -441,8 +458,8 @@
             var ctx = canvas.getContext('2d');
             if ('{{ $staffProfile }}') {
 
-                var profileUrl = '{{ $staffProfile->photo ?? "" }}';
-                var photoUrl = '{{ asset("storage/") }}/' + profileUrl;
+                var profileUrl = '{{ $staffProfile->photo ?? '' }}';
+                var photoUrl = '{{ asset('storage/') }}/' + profileUrl;
                 if (profileUrl) {
                     var img = new Image();
                     img.onload = function() {

@@ -17,12 +17,10 @@ return new class extends Migration
             $table->foreignId('app_id')->constrained('appointments');
             $table->string('history', 500);
             $table->foreignId('doctor_id')->constrained('users');
-            $table->dateTime('cdate');
             $table->string('status', 5)->default('Y');
-            $table->timestamp('updt')->useCurrent()->useCurrentOnUpdate();
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
-
+            $table->timestamps();
             $table->softDeletes();
             // Indexes
             $table->foreign('patient_id')
@@ -30,11 +28,6 @@ return new class extends Migration
                 ->on('patient_profiles')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            // $table->foreign('app_id')
-            //     ->references('app_id')
-            //     ->on('appointments')
-            //     ->onDelete('cascade')
-            //     ->onUpdate('cascade');
             $table->index('patient_id');
             $table->index('app_id');
             $table->index('history');

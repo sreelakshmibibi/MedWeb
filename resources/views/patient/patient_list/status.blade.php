@@ -10,7 +10,7 @@
                 </div>
                 <div class="modal-body">
                     <p>Are you sure you want to change the status of the patient?</p>
-                    <input type="hidden" id="patient_id" name="delete_patient_id" value="">
+                    <input type="hidden" id="delete_patient_id" name="delete_patient_id" value="">
                     <input type="hidden" id="change_patient_status" name="change_patient_status" value="">
                 </div>
                 <div class="modal-footer">

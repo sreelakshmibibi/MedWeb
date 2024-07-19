@@ -29,6 +29,25 @@
                             <div id="editTreatmentCostError" class="invalid-feedback"></div>
                         </div>
 
+                        <div class="form-group">
+                            <label class="form-label" for="discount_percentage">Discount Percentage</label>
+                            <input class="form-control" type="text" id="edit_discount_percentage" name="discount" placeholder="Discount Percentage" autocomplete="off">
+                            <div id="editDiscountPercentageError" class="invalid-feedback"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="discount_from">Discount From</label>
+                            <input class="form-control" type="date" id="edit_discount_from" name="discount_from" placeholder="Discount From" autocomplete="off">
+                            <div id="editDiscountFromError" class="invalid-feedback"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="discount_to">Discount To</label>
+                            <input class="form-control" type="date" id="edit_discount_to" name="discount_to" placeholder="Discount To" autocomplete="off">
+                            <div id="editDiscountToError" class="invalid-feedback"></div>
+                        </div>
+
+
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6">Active</label>
                             <div>
@@ -60,11 +79,17 @@
             $('#editTreatmentError').text('');
             $('#editTreatmentCostError').text('');
             $('#editStatusError').text('');
+            $('#editDiscountPercentageError').text('');
+            $('#editDiscountFromError').text('');
+            $('#editDiscountToError').text('');
 
             // Validate form inputs
             var treatment = $('#edit_treatment_name').val();
             var treatmentCost = $('#edit_treatment_cost').val();
             var status = $('input[name="status"]:checked').val();
+            var discountPercentage = $('#edit_discount_percentage').val();
+            var discountFrom = $('#edit_discount_from').val();
+            var discountTo = $('#edit_discount_to').val();
 
             // Basic client-side validation (you can add more as needed)
             if (treatment.length === 0) {
@@ -87,6 +112,15 @@
             } else {
                 $('#edit_treatment_cost').removeClass('is-invalid');
                 $('#editTreatmentCostError').text('');
+            }
+
+            if (discountPercentage.length > 0 && !$.isNumeric(discountPercentage)) {
+                $('#edit_discount_percentage').addClass('is-invalid');
+                $('#editDiscountPercentageError').text('The discount percentage must be a number.');
+                return; // Prevent further execution
+            } else {
+                $('#edit_discount_percentage').removeClass('is-invalid');
+                $('#editDiscountPercentageError').text('');
             }
 
             if (!status) {
@@ -131,6 +165,21 @@
                         $('#editTreatmentCostError').text(errors.treat_cost[0]);
                     }
 
+                    if (errors.hasOwnProperty('discount')) {
+                        $('#edit_discount_percentage').addClass('is-invalid');
+                        $('#editDiscountPercentageError').text(errors.discount[0]);
+                    }
+
+                    if (errors.hasOwnProperty('discount_from')) {
+                        $('#edit_discount_from').addClass('is-invalid');
+                        $('#editDiscountFromError').text(errors.discount_from[0]);
+                    }
+
+                    if (errors.hasOwnProperty('discount_to')) {
+                        $('#edit_discount_to').addClass('is-invalid');
+                        $('#editDiscountToError').text(errors.discount_to[0]);
+                    }
+
                     if (errors.hasOwnProperty('status')) {
                         $('#editStatusError').text(errors.status[0]);
                     }
@@ -143,10 +192,19 @@
             $('#editTreatmentCostForm').trigger('reset');
             $('#edit_treatment_name').removeClass('is-invalid');
             $('#edit_treatment_cost').removeClass('is-invalid');
+            $('#edit_discount_percentage').removeClass('is-invalid');
+            $('#edit_discount_from').removeClass('is-invalid');
+            $('#edit_discount_to').removeClass('is-invalid');
             $('#edit_treatment_name').next('.invalid-feedback').text('');
             $('#edit_treatment_cost').next('.invalid-feedback').text('');
+            $('#edit_discount_percentage').next('.invalid-feedback').text('');
+            $('#edit_discount_from').next('.invalid-feedback').text('');
+            $('#edit_discount_to').next('.invalid-feedback').text('');
             $('#editTreatmentError').text('');
             $('#editTreatmentCostError').text('');
+            $('#editDiscountPercentageError').text('');
+            $('#editDiscountFromError').text('');
+            $('#editDiscountToError').text('');
             $('#editStatusError').text('');
 
         });
@@ -168,6 +226,9 @@
                     // Clear input value and ensure no autofill suggestions
                     $('#edit_treatment_name').val('').focus().val(response.treat_name);
                     $('#edit_treatment_cost').val('').focus().val(formattedCost);
+                    $('#edit_discount_percentage').val(response.discount_percentage || '');
+                    $('#edit_discount_from').val(response.discount_from || '');
+                    $('#edit_discount_to').val(response.discount_to || '');
                     // Set radio button status
                     if (response.status === 'Y') {
                         $('#edit_yes').prop('checked', true);

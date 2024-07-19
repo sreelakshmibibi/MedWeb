@@ -150,49 +150,20 @@
          <input class="form-control" type="text" id="pincode" name="pincode" required placeholder="pin code">
      </div>
  </div>
-
- {{-- <div class="row">
-     <div class="form-group mb-0">
-         <label class="form-label" for="caddress1">Communication Address:&nbsp;</label>&nbsp;
-         <input type="checkbox" id="add_checkbox" class="filled-in chk-col-success" />
-         <label for="add_checkbox">Same as Residential Address</label>
-     </div>
-     <div class="form-group col-md-2">
-         <input type="text" class="form-control " id="caddress1" name="caddress1" placeholder="Adress line 1"
-             required>
-     </div>
-
-     <div class="form-group col-md-2 ">
-         <input type="text" class="form-control" id="caddress2" name="caddress2" placeholder="Adress line 2"
-             required>
+ <div class="row">
+     <div class="col-md-3">
+         <div class="form-group">
+             <label class="form-label" for="marital_status">Marital Status</label>
+             <select class="form-select" id="marital_status" name="marital_status">
+                 <option value="">Select Marital Status</option>
+                 <option value="Single">Single</option>
+                 <option value="Married">Married</option>
+                 <option value="Widowed">Widowed</option>
+                 <option value="Divorced">Divorced</option>
+                 <option value="Separated">Separated</option>
+             </select>
+         </div>
      </div>
 
-     <div class="form-group col-md-2 ">
-         <select class="select2" required id="ccity_id" name="ccity_id" data-placeholder="Select a City"
-             style="width: 100%;">
-         </select>
-     </div>
 
-     <div class="form-group col-md-2 ">
-         <select class="select2" id="cstate_id" name="cstate_id" required data-placeholder="Select a State"
-             style="width: 100%;">
-
-         </select>
-     </div>
-
-     <div class="form-group col-md-2 ">
-         <select class="select2" id="ccountry_id" name="ccountry_id" required data-placeholder="Select a Country"
-             style="width: 100%;">
-             @foreach ($countries as $country)
-                 <option value="{{ $country->id }}" <?php// if ($country->id == 101) {
-                                              //         echo 'selected';
-                                              //     } ?> ?> ?>>
-                     {{ $country->country }}</option>
-             @endforeach
-         </select>
-     </div>
-
-     <div class="form-group col-md-2 ">
-         <input class="form-control" type="text" id="cpincode" name="cpincode" required placeholder="pin code">
-     </div>
- </div> --}}
+ </div>

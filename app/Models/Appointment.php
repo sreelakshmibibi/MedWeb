@@ -24,6 +24,12 @@ class Appointment extends Model
         'height_cm',
         'weight_kg',
         'blood_pressure',
+        'temperature',
+        'smoking_status',
+        'alcoholic_status',
+        'diet',
+        'allergies',
+        'pregnant',
         'referred_doctor',
         'appointment_note',
         'nursing_note',
@@ -58,6 +64,12 @@ class Appointment extends Model
     public function patient()
     {
         return $this->belongsTo(PatientProfile::class, 'patient_id', 'patient_id');
+    }
+
+    public function toothExamination()
+    {
+        //return $this->hasMany(ToothExamination::class, 'app_id', 'app_id');
+        return $this->hasMany(ToothExamination::class, 'app_id', 'id')->with('teeth');
     }
 
     public function doctor()
