@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('diagnosis');
             $table->foreignId('disease_id')->constrained('diseases');
             $table->foreignId('treatment_id')->constrained('treatment_types');
-            $table->string('x-ray')->nullable();
+            $table->string('xray')->nullable();
             $table->foreignId('lingual_condn')->nullable()->constrained('surface_conditions');
             $table->foreignId('labial_condn')->nullable()->constrained('surface_conditions');
             $table->foreignId('occulusal_condn')->nullable()->constrained('surface_conditions');

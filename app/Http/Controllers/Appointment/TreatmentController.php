@@ -13,10 +13,12 @@ use App\Models\ToothExamination;
 use App\Models\ToothScore;
 use App\Models\TreatmentStatus;
 use App\Models\TreatmentType;
+use App\Models\XRayImage;
 use App\Services\AnatomyService;
 use App\Services\AppointmentService;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\DataTables;
@@ -164,8 +166,12 @@ class TreatmentController extends Controller
                                 ->where('patient_id', $patientId)
                                 ->where('app_id', $appId)
                                 ->where('status', 'Y')
-                                ->get();
-        return response()->json(['examination' => $toothExamination]);
+                                ->first();
+        $xrays = null;
+        if ($toothExamination->xray ==1) {
+            $xrays = XRayImage::where('tooth_examination_id', $toothExamination->id)->get();
+        }
+        return response()->json(['examination' => $toothExamination, 'xrays' => $xrays]);
     }
     public function create()
     {
@@ -178,7 +184,7 @@ class TreatmentController extends Controller
     public function store(Request $request)
     {
         try {
-
+            DB::beginTransaction();
             $checkExists = ToothExamination::where('tooth_id', $request->tooth_id)
             ->where('patient_id', $request->patient_id)
             ->where('app_id', $request->app_id)
@@ -188,6 +194,11 @@ class TreatmentController extends Controller
                 foreach ($checkExists as $check) {
                     $check->status = 'N';
                     $check->save();
+                    // $xraysExists = XRayImage::where('tooth_examination_id', $check->id)->get();
+                    // if (!empty($xraysExists)) {
+                    //     XRayImage::where('tooth_examination_id', $check->id) // Condition to match
+                    //     ->update(['status' => 'N']); 
+                    // }
                 }
             }
             // $toothExamination = new ToothExamination();
@@ -199,20 +210,38 @@ class TreatmentController extends Controller
             $distal_condn = $request->distal_condn != null ? 1 : 0;
            
             $toothExamination = ToothExamination::create($request->only([
-                'app_id', 'patient_id', 'tooth_id', 'tooth_score_id', 'chief_complaint', 'disease_id', 'hpi', 'dental_examination', 'diagnosis', 'xray', 'treatment_id', 'remarks', 'palatal_condn', 'mesial_condn', 'distal_condn', 'buccal_condn', 'occulusal_condn', 'labial_condn', 'lingual_condn', 'treatment_status',
+                'app_id', 'patient_id', 'tooth_id', 'tooth_score_id', 'chief_complaint', 'disease_id', 'hpi', 'dental_examination', 'diagnosis', 'treatment_id', 'remarks', 'palatal_condn', 'mesial_condn', 'distal_condn', 'buccal_condn', 'occulusal_condn', 'labial_condn', 'lingual_condn', 'treatment_status',
             ]));
             $anatomyService = new AnatomyService();
             $anatomyImage = $anatomyService->getAnatomyImage($toothId, $occulusal_condn, $palatal_condn, $mesial_condn, $distal_condn, $buccal_condn);
             $toothExaminationEdit = ToothExamination::find($toothExamination->id);
+            if ($request->hasFile('xray')) {
+                $toothExaminationEdit->xray = 1;
+                foreach ($request->file('xray') as $file) {
+                    $xrayPath = $file->store('x-rays/' . $request->patient_id . '/' . $request->tooth_id, 'public');
+                    $xrays = new XRayImage();
+                    $xrays->tooth_examination_id = $toothExamination->id;
+                    $xrays->xray = $xrayPath;
+                    $xrays->save();              
+                }
+            }
+           
             $toothExaminationEdit->anatomy_image = $anatomyImage;
-            $toothExaminationEdit->save();
-            return response()->json(['success' => 'Tooth examination for teeth no '. $toothId .' added']);
-
+            if ($toothExaminationEdit->save()) {
+                DB::commit();
+                return response()->json(['success' => 'Tooth examination for teeth no '. $toothId .' added']);
+            } else {
+                DB::rollback();
+                return response()->json(['error' => 'Failed adding Tooth examination for teeth no '. $toothId ]);
+            }
+            
         } catch (Exception $ex) {
+            DB::rollBack();
             echo "<pre>";
             print_r($ex->getMessage());
             echo "</pre>";
-            exit;
+            
+            return response()->json(['error' => 'Failed adding Tooth examination for teeth no '. $toothId ]);
         }
     }
 
