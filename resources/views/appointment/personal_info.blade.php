@@ -123,6 +123,28 @@ $commonService = new CommonService();
                                     @endphp
                                 </div>
                             </li>
+
+                            <?php if ($appointment->patient->gender == 'F') { ?>
+                            <li class="nav-item d-flex justify-start align-items-center">
+                                <div class="min-w-120 text-muted">
+                                    Pregnant
+                                </div>
+                                <div>
+                                    @php
+                                        if ($appointment->pregnant == '') {
+                                            echo '-';
+                                        } else {
+                                            if ($appointment->pregnant == 'Y') {
+                                                echo 'Yes';
+                                            } else {
+                                                echo 'No';
+                                            }
+                                        }
+                                    @endphp
+                                </div>
+                            </li>
+                            <?php } ?>
+
                             <li class="nav-item d-flex justify-start align-items-center">
                                 <div class="min-w-120 text-muted">
                                     Referred Doctor
