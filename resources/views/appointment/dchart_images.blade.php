@@ -352,7 +352,6 @@ $additionalNormalTeethImages = [
 
                         var mesial_condn = examination.mesial_condn;
                         $('#mesial_condn').val(mesial_condn);
-                        alert(mesial_condn);
                         if (mesial_condn !== null) {
                             $("#Mesial").show();
                             var dpartId = '#' + $('.dparts[title="Mesial"]').attr(
