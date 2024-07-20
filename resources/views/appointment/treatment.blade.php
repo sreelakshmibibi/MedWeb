@@ -168,14 +168,6 @@
                 }
             });
 
-            $("#presc_checkbox").change(function() {
-                if ($(this).is(':checked')) {
-                    $('#prescdiv').show();
-                } else {
-                    $('#prescdiv').hide();
-                }
-            });
-
             let count = 1;
             // Event listener for Add Row button click
             $(document).on('click', '#medicineAddRow', function() {
