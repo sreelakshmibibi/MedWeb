@@ -102,12 +102,14 @@
                 var partId = '#' + partName;
                 var title = $(this).attr('title');
                 var divId = '#' + title;
+                var selectId = '#' + title.toLowerCase() + '_condn';
 
                 if ($(partId).hasClass('red')) {
                     $(partId).css({
                         'background-color': 'white',
                     });
                     $(partId).removeClass('red');
+                    $(selectId).val('');
                     $(divId).hide();
                 } else {
                     $(partId).css({
