@@ -29,14 +29,14 @@
                             <section class="tabSection">
                                 @include('appointment.personal_info')
                             </section>
-                            {{-- <?php if ($latestAppointment != 0) { ?> --}}
-                            @if ($previousAppointments->isNotEmpty())
-                                <h6 class="tabHeading">Appointment History</h6>
-                                <section class="tabSection">
-                                    @include('appointment.history')
-                                </section>
-                            @endif
-                            {{-- <?php } ?> --}}
+                            <?php if ($latestAppointment != 0) { ?>
+                            {{-- <h6 class="tabHeading">Appointment History</h6>
+                            <section class="tabSection">
+                                @include('appointment.history')
+                            </section> --}}
+                            <?php } ?>
+
+
                             <h6 class="tabHeading">Dental Chart</h6>
                             <section class="tabSection">
                                 @include('appointment.dchart_images')
@@ -52,10 +52,10 @@
                                 @include('appointment.dtable')
                             </section>
 
-                            <h6 class="tabHeading">Prescription</h6>
+                            {{-- <h6 class="tabHeading">Prescription</h6>
                             <section class="tabSection">
                                 @include('appointment.prescription')
-                            </section>
+                            </section> --}}
 
                             <h6 class="tabHeading">Charge</h6>
                             <section class="tabSection">
@@ -81,6 +81,13 @@
             </section>
         </div>
     </div>
+    <div class="apphistorydiv" style="display: none;">
+        @include('appointment.history')
+    </div>
+
+    <div class="prescdiv" style="display: none;">
+        @include('appointment.prescription')
+    </div>
 
     @include('appointment.teeth')
 
@@ -95,12 +102,14 @@
                 var partId = '#' + partName;
                 var title = $(this).attr('title');
                 var divId = '#' + title;
+                var selectId = '#' + title.toLowerCase() + '_condn';
 
                 if ($(partId).hasClass('red')) {
                     $(partId).css({
                         'background-color': 'white',
                     });
                     $(partId).removeClass('red');
+                    $(selectId).val('');
                     $(divId).hide();
                 } else {
                     $(partId).css({
@@ -139,25 +148,16 @@
                 }
             });
 
-            $('.closeToothBtn').click(function() {
-                var teethName = $('#tooth_no').val();
-                var divId = '#div' + teethName;
-                $(divId).css({
-                    'border': 'none',
-                    'border-radius': '5px',
-                });
-            })
-
-            $('#newToothTreatmentBtn').click(function() {
-                var teethName = $('#tooth_no').val();
-                var divId = '#div' + teethName;
-                $(divId).css({
-                    'border': 'none',
-                    'border-radius': '5px',
-                    // 'background-color': 'rgba(0, 0, 255, 0.1)',
-                });
-                // $(divId).addClass('overlay');
-            });
+            // $('#newToothTreatmentBtn').click(function() {
+            //     var teethName = $('#tooth_no').val();
+            //     var divId = '#div' + teethName;
+            //     $(divId).css({
+            //         'border': 'none',
+            //         'border-radius': '5px',
+            //         // 'background-color': 'rgba(0, 0, 255, 0.1)',
+            //     });
+            //     // $(divId).addClass('overlay');
+            // });
 
 
             $("#follow_checkbox").change(function() {
@@ -167,14 +167,6 @@
                 } else {
                     // $('#followupdiv').show();
                     $('#followupdiv').hide();
-                }
-            });
-
-            $("#presc_checkbox").change(function() {
-                if ($(this).is(':checked')) {
-                    $('#prescdiv').show();
-                } else {
-                    $('#prescdiv').hide();
                 }
             });
 
