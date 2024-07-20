@@ -1,5 +1,65 @@
 var form = $("#treatmentform").show();
 
+let historyStepAdded = false;
+let prescriptionStepAdded = false;
+
+function handleHistoryStep(visitcount) {
+    if (visitcount != "0") {
+        var currentStep = $("#treatmentform").steps("getCurrentIndex");
+        var apphistoryContent = $(".apphistorydiv").html();
+        // Add the history step if it hasn't been added
+        if (!historyStepAdded) {
+            $("#treatmentform").steps("insert", currentStep + 1, {
+                title: "Appointment History",
+                content: apphistoryContent,
+                enableCancelButton: false,
+                // enablePreviousButton: true,
+                enableNextButton: true,
+            });
+            historyStepAdded = true;
+        }
+    }
+}
+
+function handlePrescriptionStep(presc) {
+    if (presc) {
+        var currentStep = $("#treatmentform").steps("getCurrentIndex");
+        var prescContent = $(".prescdiv").html();
+        if (!prescriptionStepAdded) {
+            $("#treatmentform").steps("insert", currentStep + 1, {
+                title: "Prescription",
+                content: prescContent,
+                enableCancelButton: false,
+                enableNextButton: true,
+            });
+            // Add a class to the newly inserted step tab
+            $("#treatmentform")
+                .find(".steps > ul > li")
+                .eq(currentStep + 1)
+                .addClass("presc_class");
+
+            // Add a class to the content of the prescription tab
+            $("#treatmentform")
+                .find(".content > .body")
+                .eq(currentStep + 1)
+                .addClass("presc_content_class");
+            prescriptionStepAdded = true;
+        }
+    } else {
+        if (prescriptionStepAdded) {
+            $(".wizard-content .wizard > .steps > ul > li.presc_class").attr(
+                "style",
+                "display:none;"
+            );
+            $(
+                ".wizard-content .wizard > .content > .presc_content_class"
+            ).remove();
+            $("#treatmentform").steps("remove", "Prescription");
+            prescriptionStepAdded = false;
+        }
+    }
+}
+
 $("#treatmentform").steps({
     headerTag: "h6",
     bodyTag: "section",
@@ -47,6 +107,15 @@ $("#treatmentform").steps({
             }
             // Return true or false based on validation result
             // return valid;
+        }
+        let visitcount = $("#visitcount").val();
+        if (currentIndex == 0) {
+            handleHistoryStep(visitcount);
+        }
+
+        let presc = $("#presc_checkbox").is(":checked");
+        if (currentIndex == 2 || currentIndex == 3) {
+            handlePrescriptionStep(presc);
         }
 
         // Return true if moving backwards or all validation passed

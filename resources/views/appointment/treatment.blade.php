@@ -30,11 +30,13 @@
                                 @include('appointment.personal_info')
                             </section>
                             <?php if ($latestAppointment != 0) { ?>
-                            <h6 class="tabHeading">Appointment History</h6>
+                            {{-- <h6 class="tabHeading">Appointment History</h6>
                             <section class="tabSection">
                                 @include('appointment.history')
-                            </section>
+                            </section> --}}
                             <?php } ?>
+
+
                             <h6 class="tabHeading">Dental Chart</h6>
                             <section class="tabSection">
                                 @include('appointment.dchart_images')
@@ -50,10 +52,10 @@
                                 @include('appointment.dtable')
                             </section>
 
-                            <h6 class="tabHeading">Prescription</h6>
+                            {{-- <h6 class="tabHeading">Prescription</h6>
                             <section class="tabSection">
                                 @include('appointment.prescription')
-                            </section>
+                            </section> --}}
 
                             <h6 class="tabHeading">Charge</h6>
                             <section class="tabSection">
@@ -78,6 +80,13 @@
                 </div>
             </section>
         </div>
+    </div>
+    <div class="apphistorydiv" style="display: none;">
+        @include('appointment.history')
+    </div>
+
+    <div class="prescdiv" style="display: none;">
+        @include('appointment.prescription')
     </div>
 
     @include('appointment.teeth')
@@ -137,25 +146,16 @@
                 }
             });
 
-            $('.closeToothBtn').click(function() {
-                var teethName = $('#tooth_no').val();
-                var divId = '#div' + teethName;
-                $(divId).css({
-                    'border': 'none',
-                    'border-radius': '5px',
-                });
-            })
-
-            $('#newToothTreatmentBtn').click(function() {
-                var teethName = $('#tooth_no').val();
-                var divId = '#div' + teethName;
-                $(divId).css({
-                    'border': 'none',
-                    'border-radius': '5px',
-                    // 'background-color': 'rgba(0, 0, 255, 0.1)',
-                });
-                // $(divId).addClass('overlay');
-            });
+            // $('#newToothTreatmentBtn').click(function() {
+            //     var teethName = $('#tooth_no').val();
+            //     var divId = '#div' + teethName;
+            //     $(divId).css({
+            //         'border': 'none',
+            //         'border-radius': '5px',
+            //         // 'background-color': 'rgba(0, 0, 255, 0.1)',
+            //     });
+            //     // $(divId).addClass('overlay');
+            // });
 
 
             $("#follow_checkbox").change(function() {
