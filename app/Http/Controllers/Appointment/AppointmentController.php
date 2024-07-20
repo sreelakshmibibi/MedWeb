@@ -58,8 +58,17 @@ class AppointmentController extends Controller
 
             return DataTables::of($appointments)
                 ->addIndexColumn()
+                ->addColumn('patient_id', function ($row) {
+                    $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
+                    $name1 = "<a href='" . route('treatment', $row->id) . "' class='waves-effect waves-light' title='open treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name) . "' >" . $row->patient->patient_id . "</i></a>";
+                    return $name1;
+                })
                 ->addColumn('name', function ($row) {
-                    return str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name);
+                    // return str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name);
+                    $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
+                    $name = str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name);
+                    $name1 = "<a href='" . route('treatment', $row->id) . "' class='waves-effect waves-light' title='open treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name) . "' >" . $name . "</i></a>";
+                    return $name1;
                 })
                 ->addColumn('doctor', function ($row) {
                     return str_replace("<br>", " ", $row->doctor->name);
@@ -106,7 +115,7 @@ class AppointmentController extends Controller
                     ];
                     return implode('', $buttons);
                 })
-                ->rawColumns(['status', 'action'])
+                ->rawColumns(['patient_id', 'name', 'status', 'action'])
                 ->make(true);
         }
 
