@@ -10,6 +10,7 @@
     <hr class="my-15 ">
 
     <div class="table-responsive ">
+
         <table class="table table-bordered table-hover table-striped mb-0 text-center">
 
             <thead>
@@ -17,7 +18,7 @@
                     <th>No</th>
                     <th>Treatment</th>
                     <th>Quantity</th>
-                    <th>Rate</th>
+                    <th class="w-200">Rate</th>
                     <th style="width:80px;">Action</th>
                 </tr>
             </thead>
@@ -49,11 +50,11 @@
             </tbody>
             <tbody>
                 <tr class="bt-3 border-primary">
-                    <th colspan="3">Total Rate</th>
+                    <th colspan="3" class="text-end">Total Rate</th>
                     <td colspan="2">1000</td>
                 </tr>
                 <tr>
-                    <th colspan="3">Discount</th>
+                    <th colspan="3" class="text-end">Discount</th>
                     <td colspan="2">
                         <div class="input-group">
                             <input type="number" class="form-control" id="discount1" name="discount1"
@@ -65,8 +66,8 @@
                     </td>
                 </tr>
                 <tr class="bg-primary">
-                    <th colspan="3">Total Amount</th>
-                    <td colspan="2">1000</td>
+                    <th colspan="3" class="text-end fs-18 fw-600">Total Amount</th>
+                    <td colspan="2" class="fs-18 fw-600">1000</td>
                 </tr>
             </tbody>
         </table>
