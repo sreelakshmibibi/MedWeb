@@ -1,3 +1,7 @@
+<?php
+
+use Illuminate\Support\Facades\Session;
+?>
 @extends('layouts.dashboard')
 @section('title', 'Patient')
 @section('content')
@@ -6,7 +10,7 @@
         <div class="container-full">
             <div class="content-header">
                 <div class="d-flex align-items-center justify-content-between">
-                    <h3 class="page-title">Treatment</h3>
+                    <h3 class="page-title">Treatment : <?= Session::get('patientName') ?> ( <?= Session::get('patientId') ?> )</h3>
                     <a type="button" class="waves-effect waves-light btn btn-primary" href="{{ route('appointment') }}">
                         <i class="fa-solid fa-angles-left"></i> Back</a>
                 </div>

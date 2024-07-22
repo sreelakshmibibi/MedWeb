@@ -50,8 +50,10 @@ class TreatmentController extends Controller
         $treatmentStatus = TreatmentStatus::all();
         $treatments = TreatmentType::where('status', 'Y')->get();
         $diseases = Disease::where('status', 'Y')->get();
+        $patientName = str_replace('<br>', ' ', $appointment->patient->first_name)." ".$appointment->patient->last_name;
         Session::put('appId', $id);
-        Session::put('patientId', $appointment->patient->id);
+        Session::put('patientName', $patientName);
+        Session::put('patientId', $appointment->patient->patient_id);
         // Log::info('$appointment: '.$previousAppointments);
         // if ($request->ajax()) {
 
