@@ -231,6 +231,20 @@ class TreatmentController extends Controller
                     $xrays->xray = $xrayPath;
                     $xrays->save();              
                 }
+                
+            }
+            if ($checkExists) {
+                foreach ($checkExists as $check) {
+                    $xraysExists = XRayImage::where('tooth_examination_id', $check->id)->get();
+                    $toothExaminationEdit->xray = 1;
+                    if (!$xraysExists->isEmpty()) {
+                        // Update XRayImage records associated with this $check
+                        XRayImage::where('tooth_examination_id', $check->id)
+                            ->update([
+                                'tooth_examination_id' => $toothExamination->id
+                            ]);
+                    }
+                }
             }
            
             $toothExaminationEdit->anatomy_image = $anatomyImage;
