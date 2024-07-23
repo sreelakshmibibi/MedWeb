@@ -413,6 +413,88 @@
                 }
             });
         });
+        $('#editTreatmentBtn').click(function() {
+            // Reset previous error messages
+            resetErrors();
+
+            // Validate form inputs
+            var toothScore = $('#tooth_score_id').val();
+            var complaint = $('#chief_complaint').val();
+            var disease = $('#disease_id').val();
+            var hpi = $('#hpi').val();
+            var dexam = $('#dental_examination').val();
+            var diagnosis = $('#diagnosis').val();
+            var xray = $('#xray').prop('files');
+            var treatment = $('#treatment_id').val();
+            var remarks = $('#remarks').val();
+
+            // Basic client-side validation
+            if (!toothScore) {
+                $('#tooth_score_id').addClass('is-invalid');
+                $('#toothScoreError').text('Tooth Score is required.');
+            }
+
+            if (!complaint) {
+                $('#chief_complaint').addClass('is-invalid');
+                $('#complaintError').text('Chief Complaint is required.');
+            }
+
+            if (!disease) {
+                $('#disease_id').addClass('is-invalid');
+                $('#diseaseError').text('Disease is required.');
+            }
+
+            if (!hpi) {
+                $('#hpi').addClass('is-invalid');
+                $('#hpiError').text('HPI is required.');
+            }
+
+            if (!dexam) {
+                $('#dental_examination').addClass('is-invalid');
+                $('#dexamError').text('Dental Examination is required.');
+            }
+
+            if (!diagnosis) {
+                $('#diagnosis').addClass('is-invalid');
+                $('#diagnosisError').text('Diagnosis is required.');
+            }
+
+
+
+            if (!treatment) {
+                $('#treatment_id').addClass('is-invalid');
+                $('#treatmentError').text('Treatment is required.');
+            }
+
+            // If all validations pass, submit the form via AJAX
+            var form = $('#form-teeth');
+            var url = form.attr('action');
+            var formData = new FormData(form[0]);
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(response) {
+                    // If successful, hide modal and show success message
+                    $('#modal-teeth').modal('hide');
+                    $('#successMessage').text(response.success);
+                    $('#successMessage').fadeIn().delay(3000)
+                        .fadeOut();
+
+                },
+                error: function(xhr) {
+                    // Handle specific error messages from backend if needed
+                    console.log(xhr.responseText);
+                    alert(
+                        'Error saving treatment. Please try again.'
+                    ); // You can customize this as per your UI needs
+                }
+            });
+        });
 
         // Function to reset all form errors
         function resetErrors() {
@@ -458,6 +540,9 @@
             $('.tooth_partsdiv').hide();
             $('#form-teeth').trigger('reset');
             resetErrors();
+
+            $('#newTreatmentBtn').show();
+
         });
         $('.form-control, .form-select').on('input', function() {
             $(this).removeClass('is-invalid');

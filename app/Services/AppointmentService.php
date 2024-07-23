@@ -18,11 +18,31 @@ class AppointmentService
     public function getPreviousAppointments($id, $appDate, $patientId)
     {
 
+        // return Appointment::with([
+        //     'doctor:id,name',
+        //     'branch:id,clinic_address,city_id,state_id',
+        //     'toothExamination.teeth:id,teeth_name,teeth_image',
+        //     'toothExamination.treatment:id,treat_name',
+        //     'toothExamination.treatmentStatus:id,status',
+        //     'toothExamination.disease:id,name',
+        // ])
+        //     ->where('patient_id', $patientId)
+        //     ->where('app_date', '<', $appDate)
+        //     ->orderBy('app_date', 'desc')
+        //     ->orderBy('app_time', 'desc')
+        //     ->get();
         return Appointment::with([
             'doctor:id,name',
             'branch:id,clinic_address,city_id,state_id',
-            'toothExamination.teeth:id,teeth_name,teeth_image',
-            'toothExamination.treatment:id,treat_name',
+            'toothExamination' => function ($query) {
+                $query->where('status', 'Y') // Filter ToothExamination records by status
+                    ->with([
+                        'teeth:id,teeth_name,teeth_image',
+                        'treatment:id,treat_name',
+                        'treatmentStatus:id,status',
+                        'disease:id,name',
+                    ]);
+            },
         ])
             ->where('patient_id', $patientId)
             ->where('app_date', '<', $appDate)

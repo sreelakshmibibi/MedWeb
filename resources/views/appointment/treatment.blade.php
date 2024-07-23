@@ -55,6 +55,7 @@ use Illuminate\Support\Facades\Session;
                             <h6 class="tabHeading">Dental Table</h6>
                             <section class="tabSection">
                                 @include('appointment.dtable')
+                                @include('appointment.teeth_delete')
                             </section>
 
                             {{-- <h6 class="tabHeading">Prescription</h6>
@@ -96,6 +97,7 @@ use Illuminate\Support\Facades\Session;
 
 
     <script>
+        var treatmentShowRoute = "{{ route('treatment.show', ['appointment' => ':appId']) }}";
         var teethId;
         $(document).ready(function() {
 
@@ -186,7 +188,7 @@ use Illuminate\Support\Facades\Session;
                             data-placeholder="Select a Medicine" style="width: 100%;">
                                 <option value=""> Select a Medicine </option>
                                 <?php foreach ( $medicines as $medicine ) { ?>}
-                                <option value="{{ $medicine->id}}"> {{ $medicine->med_name}}</option>
+                                <option value="{{ $medicine->id }}"> {{ $medicine->med_name }}</option>
                                 <?php } ?>
                         </select>
                     </td>
@@ -195,7 +197,7 @@ use Illuminate\Support\Facades\Session;
                             data-placeholder="Select a Dosage" style="width: 100%;">
                             <option value=""> Select a Dosage </option>
                             <?php foreach ( $dosages as $dosage ) { ?>
-                                <option value="{{ $dosage->id}}"> {{ $dosage->dos_name}}</option>
+                                <option value="{{ $dosage->id }}"> {{ $dosage->dos_name }}</option>
                             <?php } ?>
                         </select>
                     </td>
@@ -311,6 +313,12 @@ use Illuminate\Support\Facades\Session;
                 $(".input-group .dropdown-toggle").text(salutation);
             });
 
+        });
+
+        $(document).on('click', '.btn-danger', function() {
+            var tootExamId = $(this).data('id');
+            $('#delete_tooth_exam_id').val(tootExamId); // Set patient ID in the hidden input
+            $('#modal-delete').modal('show');
         });
     </script>
 

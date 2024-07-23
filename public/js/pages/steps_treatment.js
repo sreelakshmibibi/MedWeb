@@ -1,3 +1,73 @@
+
+
+function getSessionData() {
+    return $.ajax({
+        url: '/session-data', // URL of the PHP script
+        type: 'GET',
+        dataType: 'json'
+    });
+}
+
+function getDentalTable(stepIndex) {
+    if ((stepIndex == 2 && historyStepAdded == false) || (stepIndex == 3 && historyStepAdded == true)) {
+        getSessionData().done(function (data) {
+            var appId = data.appId;
+            var patientId = data.patientId;
+            //alert('appId: ' + appId + ', patientId: ' + patientId);
+
+            $.ajax({
+                url: treatmentShowRoute.replace(':appId', appId),
+                type: 'GET',
+                data: {
+                    patient_id: patientId,
+                    app_id: appId
+                },
+                dataType: 'json',
+                success: function (response) {
+                    var tableBody = $("#myTable tbody");
+                    tableBody.empty(); // Clear any existing rows
+
+                    var toothExaminations = response.toothExaminations;
+
+                    if (toothExaminations && toothExaminations.length > 0) {
+                        toothExaminations.forEach(function (exam, index) {
+                            var row = `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${exam.teeth.teeth_name}</td>
+                                    <td>${exam.chief_complaint}</td>
+                                    <td>${exam.disease ? exam.disease.name : ''}</td>
+                                    <td>${exam.hpi}</td>
+                                    <td>${exam.dental_examination}</td>
+                                    <td>${exam.diagnosis}</td>
+                                    <td>${exam.xray ? exam.xray : ''}</td>
+                                    <td>${exam.treatment.treat_name}</td>
+                                    <td><button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-treat-view btn-xs me-1' title='View' data-bs-toggle='modal' data-id='${exam.teeth.teeth_name}' data-bs-target='#modal-teeth'><i class='fa fa-eye'></i></button>
+                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-treat-edit btn-xs me-1' title='Edit' data-bs-toggle='modal' data-id='${exam.teeth.teeth_name}' data-bs-target='#modal-teeth'><i class='fa fa-pencil'></i></button>
+                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-treat-delete btn-xs me-1' title='Delete' data-bs-toggle='modal' data-id='${exam.id}' data-bs-target='#modal-delete'><i class='fa-solid fa-trash'></i></button>
+                                    </td>
+                                </tr>
+                            `;
+                            tableBody.append(row);
+                        });
+                    } else {
+                        var noDataRow = `
+                            <tr>
+                                <td colspan="10">No data available</td>
+                            </tr>
+                        `;
+                        tableBody.append(noDataRow);
+                    }
+                },
+                error: function (xhr) {
+                    console.error("Error fetching dental table data:", xhr);
+                }
+            });
+        }).fail(function (xhr) {
+            console.error("Error fetching session data:", xhr);
+        });
+    }
+}
 var form = $("#treatmentform").show();
 
 let historyStepAdded = false;
@@ -117,6 +187,7 @@ $("#treatmentform").steps({
         if (currentIndex == 2 || currentIndex == 3) {
             handlePrescriptionStep(presc);
         }
+        getDentalTable(newIndex);
 
         // Return true if moving backwards or all validation passed
         return currentIndex > newIndex || valid;
@@ -265,3 +336,5 @@ $("#treatmentform").steps({
             "medical_conditions[]": { required: false, maxlength: 500 },
         },
     });
+
+
