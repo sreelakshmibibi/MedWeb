@@ -319,6 +319,7 @@ class TreatmentController extends Controller
             'treatment:id,treat_name',
             'toothScore:id,score',
             'disease:id,name',
+            'xRayImages:id,tooth_examination_id,xray,status',
         ])
             ->where('app_id', $appointment)
             ->where('patient_id', $patientId)

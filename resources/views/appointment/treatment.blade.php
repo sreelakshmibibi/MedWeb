@@ -317,7 +317,7 @@ use Illuminate\Support\Facades\Session;
 
         });
 
-        $(document).on('click', '.btn-danger', function() {
+        $(document).on('click', '.btn-treat-delete', function() {
             var tootExamId = $(this).data('id');
             $('#delete_tooth_exam_id').val(tootExamId); // Set patient ID in the hidden input
             $('#modal-delete').modal('show');

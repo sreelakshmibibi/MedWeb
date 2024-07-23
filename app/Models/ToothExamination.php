@@ -66,4 +66,10 @@ class ToothExamination extends Model
     {
         return $this->belongsTo(TreatmentStatus::class, 'treatment_status', 'id'); // Relationship to TreatmentStatus
     }
+
+    public function xRayImages()
+    {
+        return $this->hasMany(XRayImage::class)
+            ->where('status', 'Y');
+    }
 }
