@@ -178,6 +178,8 @@ use Illuminate\Support\Facades\Session;
             });
 
             let count = 1;
+            // Initialize Select2 for the initial row
+   
             // Event listener for Add Row button click
             $(document).on('click', '#medicineAddRow', function() {
                 count++;
