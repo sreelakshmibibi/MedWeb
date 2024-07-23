@@ -178,7 +178,6 @@ use Illuminate\Support\Facades\Session;
             });
 
             let count = 1;
-            // Initialize Select2 for the initial row
 
             // Event listener for Add Row button click
             $(document).on('click', '#medicineAddRow', function() {
@@ -189,7 +188,7 @@ use Illuminate\Support\Facades\Session;
                         <select class="select2" id="medicine_id${count}" name="medicine_id${count}" required
                             data-placeholder="Select a Medicine" style="width: 100%;">
                                 <option value=""> Select a Medicine </option>
-                                <?php foreach ( $medicines as $medicine ) { ?>}
+                                <?php foreach ( $medicines as $medicine ) { ?>
                                 <option value="{{ $medicine->id }}"> {{ $medicine->med_name }}</option>
                                 <?php } ?>
                         </select>
@@ -231,7 +230,36 @@ use Illuminate\Support\Facades\Session;
                 // Reinitialize Select2 on the newly added select element
                 $(`#medicine_id${count}`).select2({
                     width: '100%',
-                    placeholder: 'Select a Medicine'
+                    placeholder: 'Select a Medicine',
+                    tags: true, // Allow user to add new tags (medicines)
+                    tokenSeparators: [',', ' '], // Define how tags are separated
+                    createTag: function(params) {
+                        var term = $.trim(params.term);
+
+                        if (term === '') {
+                            return null;
+                        }
+
+                        // Check if the term already exists as an option
+                        var found = false;
+                        $(this).find('option').each(function() {
+                            if ($.trim($(this).text()) === term) {
+                                found = true;
+                                return false; // Exit the loop early
+                            }
+                        });
+
+                        if (!found) {
+                            // Return object for new tag
+                            return {
+                                id: term,
+                                text: term,
+                                newTag: true // Add a custom property to indicate it's a new tag
+                            };
+                        }
+
+                        return null; // If term already exists, return null
+                    }
                 });
                 $(`#dosage${count}`).select2({
                     width: '100%',

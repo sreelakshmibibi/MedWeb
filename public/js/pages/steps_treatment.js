@@ -126,6 +126,49 @@ function handlePrescriptionStep(presc) {
                 .eq(currentStep + 1)
                 .addClass("presc_content_class");
             prescriptionStepAdded = true;
+
+            $("#medicine_id1").select2({
+                width: "100%",
+                placeholder: "Select a Medicine",
+                tags: true, // Allow user to add new tags (medicines)
+                tokenSeparators: [",", " "], // Define how tags are separated
+                createTag: function (params) {
+                    var term = $.trim(params.term);
+
+                    if (term === "") {
+                        return null;
+                    }
+
+                    // Check if the term already exists as an option
+                    var found = false;
+                    $(this)
+                        .find("option")
+                        .each(function () {
+                            if ($.trim($(this).text()) === term) {
+                                found = true;
+                                return false; // Exit the loop early
+                            }
+                        });
+
+                    if (!found) {
+                        // Return object for new tag
+                        return {
+                            id: term,
+                            text: term,
+                            newTag: true, // Add a custom property to indicate it's a new tag
+                        };
+                    }
+
+                    return null; // If term already exists, return null
+                },
+            });
+            $("#dosage1").select2({
+                width: "100%",
+                placeholder: "Select a Dosage",
+            });
+            $("#advice1").select2({
+                width: "100%",
+            });
         }
     } else {
         if (prescriptionStepAdded) {
@@ -195,17 +238,17 @@ function getTreatmentTable(stepIndex) {
         .fail(function (xhr) {
             console.error("Error fetching session data:", xhr);
         });
-    }
+}
 
-    // Function to update total charge based on discount
-    function updateTotalCharge(totalCost, discountPercentage = 0) {
-        var discountedAmount = totalCost * (1 - discountPercentage / 100);
-        var totalAmount = discountedAmount.toFixed(2);
+// Function to update total charge based on discount
+function updateTotalCharge(totalCost, discountPercentage = 0) {
+    var discountedAmount = totalCost * (1 - discountPercentage / 100);
+    var totalAmount = discountedAmount.toFixed(2);
 
-        var tableChargeBody = $("#totalChargeBody");
-        tableChargeBody.empty(); // Clear any existing rows
+    var tableChargeBody = $("#totalChargeBody");
+    tableChargeBody.empty(); // Clear any existing rows
 
-        var row = `
+    var row = `
             <tr class="bt-3 border-primary">
                 <th colspan="2" class="text-end">Total Rate</th>
                 <td colspan="1">${totalCost}</td>
@@ -226,32 +269,34 @@ function getTreatmentTable(stepIndex) {
                 <td colspan="1" class="fs-18 fw-600">${totalAmount}</td>
             </tr>
         `;
-        tableChargeBody.append(row);
+    tableChargeBody.append(row);
 
-        // Set focus back to the discount input field after updating
+    // Set focus back to the discount input field after updating
     // Set focus back to the discount input field and move cursor to end
     var discountInput = $("#discount1");
     var discountValue = discountInput.val();
     discountInput.focus().val("").val(discountValue);
+}
+
+// Event listener for discount input change
+$(document).on("input", "#discount1", function () {
+    var discountValue = $(this).val();
+    // Remove non-numeric characters from input value
+    var numericValue = discountValue.replace(/[^0-9]/g, "");
+    $(this).val(numericValue);
+
+    // If the input value is numeric, update the total charge
+    var discountPercentage = parseFloat(numericValue);
+    if (!isNaN(discountPercentage)) {
+        // Fetch current total cost from the UI
+        var currentTotalCost = parseFloat(
+            $("#totalChargeBody .bt-3.border-primary td:last-child").text()
+        );
+
+        // Update total charge with new discount
+        updateTotalCharge(currentTotalCost, discountPercentage);
     }
-
-    // Event listener for discount input change
-    $(document).on('input', '#discount1', function () {
-        var discountValue = $(this).val();
-        // Remove non-numeric characters from input value
-        var numericValue = discountValue.replace(/[^0-9]/g, '');
-        $(this).val(numericValue);
-
-        // If the input value is numeric, update the total charge
-        var discountPercentage = parseFloat(numericValue);
-        if (!isNaN(discountPercentage)) {
-            // Fetch current total cost from the UI
-            var currentTotalCost = parseFloat($("#totalChargeBody .bt-3.border-primary td:last-child").text());
-
-            // Update total charge with new discount
-            updateTotalCharge(currentTotalCost, discountPercentage);
-        }
-    });
+});
 
 $("#treatmentform").steps({
     headerTag: "h6",

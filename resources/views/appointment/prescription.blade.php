@@ -9,8 +9,8 @@
 </div>
 <hr class="my-15">
 
-<div class="table-responsive">
-    <table id="myTable" class="table table-bordered table-hover table-striped mb-0 text-center">
+<div class="table-responsive" id="prescriptionFormContainer">
+    <table id="myTable_presc" class="table table-bordered table-hover table-striped mb-0 text-center">
 
         <thead>
             <tr class="bg-primary-light">
@@ -28,23 +28,25 @@
                 <td>1</td>
                 <td>
                     <select class="form-control" id="medicine_id1" name="medicine_id1" style="width: 100%;" required>
-                        <option value=""> Select a Medicine </option>
-                        @foreach ( $medicines as $medicine )
-                        <option value="{{ $medicine->id}}"> {{ $medicine->med_name}}</option>
+                        @foreach ($medicines as $medicine)
+                            <option value="{{ $medicine->id }}">{{ $medicine->med_name }}</option>
                         @endforeach
                     </select>
                 </td>
+
                 <td>
                     <select class="form-control" id="dosage1" name="dosage1" required style="width: 100%;">
                         <option value=""> Select a Dosage </option>
-                        @foreach ( $dosages as $dosage )
-                        <option value="{{ $dosage->id}}"> {{ $dosage->dos_name}}</option>
+                        @foreach ($dosages as $dosage)
+                            <option value="{{ $dosage->id }}"> {{ $dosage->dos_name }}</option>
                         @endforeach
+
                     </select>
                 </td>
                 <td>
                     <div class="input-group">
-                        <input type="number" class="form-control" id="duration1" name="duration1" aria-describedby="basic-addon2" required>
+                        <input type="number" class="form-control" id="duration1" name="duration1"
+                            aria-describedby="basic-addon2" required>
                         <div class="input-group-append">
                             <span class="input-group-text" id="basic-addon2">days</span>
                         </div>
@@ -66,21 +68,3 @@
         </tbody>
     </table>
 </div>
-<!-- <script>
-    $(document).ready(function() {
-
-     $('#medicine_id1').select2({
-        width: '100%',
-        placeholder: 'Select a Medicine',
-    });
-
-    $('#dosage1').select2({
-        width: '100%',
-        placeholder: 'Select a Dosage',
-    });
-
-    $('#advice1').select2({
-        width: '100%',
-    });
-});
-</script> -->
