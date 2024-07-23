@@ -27,19 +27,18 @@
                 <td>
                     <select class="select2" id="medicine_id1" name="medicine_id1" data-placeholder="Select a Medicine"
                         style="width: 100%;">
-
+                        @foreach ( $medicines as $medicine )
+                            <option value="{{ $medicine->id}}"> {{ $medicine->med_name}}</option>
+                        @endforeach
                     </select>
                 </td>
                 <td>
                     <select class="select2" id="dosage1" name="dosage1" data-placeholder="Select a Dosage"
                         style="width: 100%;">
-                        <option value="1">1-0-0</option>
-                        <option value="2">0-1-0</option>
-                        <option value="3">0-0-1</option>
-                        <option value="4">1-1-1</option>
-                        <option value="5">1-0-1</option>
-                        <option value="6">1-1-0</option>
-                        <option value="7">0-1-1</option>
+                        @foreach ( $dosages as $dosage )
+                            <option value="{{ $dosage->id}}"> {{ $dosage->dos_name}}</option>
+                        @endforeach
+                            
                     </select>
                 </td>
                 <td>

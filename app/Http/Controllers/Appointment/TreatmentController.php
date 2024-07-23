@@ -8,6 +8,7 @@ use App\Models\AppointmentStatus;
 use App\Models\AppointmentType;
 use App\Models\ClinicBranch;
 use App\Models\Disease;
+use App\Models\Dosage;
 use App\Models\Medicine;
 use App\Models\PatientProfile;
 use App\Models\SurfaceCondition;
@@ -64,6 +65,7 @@ class TreatmentController extends Controller
         // Fetch all appointment types
         $appointmentTypes = AppointmentType::all();
         $medicines = Medicine::all();
+        $dosages = Dosage::all();
         $tooth = Teeth::all();
         $toothScores = ToothScore::all();
         $surfaceConditions = SurfaceCondition::all();
@@ -153,7 +155,7 @@ class TreatmentController extends Controller
                 ->make(true);
         }
 
-        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases', 'previousAppointments', 'clinicBranches', 'appointmentTypes', 'workingDoctors'));
+        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases', 'previousAppointments', 'clinicBranches', 'appointmentTypes', 'workingDoctors', 'medicines', 'dosages'));
 
     }
 
