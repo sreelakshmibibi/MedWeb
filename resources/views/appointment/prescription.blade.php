@@ -27,7 +27,7 @@
             <tr>
                 <td>1</td>
                 <td>
-                    <select id="medicine_id1" name="medicine_id1" style="width: 100%;" required>
+                    <select class="form-control" id="medicine_id1" name="medicine_id1" style="width: 100%;" required>
                         <option value=""> Select a Medicine </option>
                         @foreach ( $medicines as $medicine )
                         <option value="{{ $medicine->id}}"> {{ $medicine->med_name}}</option>
@@ -35,7 +35,7 @@
                     </select>
                 </td>
                 <td>
-                    <select  id="dosage1" name="dosage1" required style="width: 100%;">
+                    <select class="form-control" id="dosage1" name="dosage1" required style="width: 100%;">
                         <option value=""> Select a Dosage </option>
                         @foreach ( $dosages as $dosage )
                         <option value="{{ $dosage->id}}"> {{ $dosage->dos_name}}</option>
@@ -51,7 +51,7 @@
                     </div>
                 </td>
                 <td>
-                    <select id="advice1" name="advice1" required style="width: 100%;">
+                    <select class="form-control" id="advice1" name="advice1" required style="width: 100%;">
                         <option value="After food">After food</option>
                         <option value="Before food">Before food</option>
                     </select>
@@ -60,9 +60,27 @@
                     <input type="text" class="form-control" id="remarks1" name="remarks1" placeholder="remarks">
                 </td>
                 <td>
-                    <button type="button" id="btnDelete" title="delete row" class="waves-effect waves-light btn btn-danger btn-sm"> <i class="fa fa-trash"></i></button>
+                    <!-- <button type="button" id="btnDelete" title="delete row" class="waves-effect waves-light btn btn-danger btn-sm"> <i class="fa fa-trash"></i></button> -->
                 </td>
             </tr>
         </tbody>
     </table>
 </div>
+<!-- <script>
+    $(document).ready(function() {
+
+     $('#medicine_id1').select2({
+        width: '100%',
+        placeholder: 'Select a Medicine',
+    });
+
+    $('#dosage1').select2({
+        width: '100%',
+        placeholder: 'Select a Dosage',
+    });
+
+    $('#advice1').select2({
+        width: '100%',
+    });
+});
+</script> -->
