@@ -184,18 +184,19 @@ use Illuminate\Support\Facades\Session;
                     <td>
                         <select class="select2" id="medicine_id${count}" name="medicine_id${count}" required
                             data-placeholder="Select a Medicine" style="width: 100%;">
+                                <option value=""> Select a Medicine </option>
+                                <?php foreach ( $medicines as $medicine ) { ?>}
+                                <option value="{{ $medicine->id}}"> {{ $medicine->med_name}}</option>
+                                <?php } ?>
                         </select>
                     </td>
                     <td>
                         <select class="select2" id="dosage${count}" name="dosage${count}" required
                             data-placeholder="Select a Dosage" style="width: 100%;">
-                            <option value="1">1-0-0</option>
-                            <option value="2">0-1-0</option>
-                            <option value="3">0-0-1</option>
-                            <option value="4">1-1-1</option>
-                            <option value="5">1-0-1</option>
-                            <option value="6">1-1-0</option>
-                            <option value="7">0-1-1</option>
+                            <option value=""> Select a Dosage </option>
+                            <?php foreach ( $dosages as $dosage ) { ?>
+                                <option value="{{ $dosage->id}}"> {{ $dosage->dos_name}}</option>
+                            <?php } ?>
                         </select>
                     </td>
                     <td>
@@ -205,6 +206,13 @@ use Illuminate\Support\Facades\Session;
                                 <span class="input-group-text" id="basic-addon2">days</span>
                             </div>
                         </div>
+                    </td>
+                    <td>
+                        <select class="select2" id="advice${count}" name="advice${count}" required class="form-control"
+                             style="width: 100%;">
+                                <option value="After food">After food</option>
+                               <option value="Before food">Before food</option>
+                        </select>
                     </td>
                     <td>
                         <input type="text" class="form-control" id="remarks${count}" name="remarks${count}" placeholder="remarks">
@@ -224,6 +232,9 @@ use Illuminate\Support\Facades\Session;
                 $(`#dosage${count}`).select2({
                     width: '100%',
                     placeholder: 'Select a Dosage'
+                });
+                $(`#advice${count}`).select2({
+                    width: '100%',
                 });
                 updateRowCount();
             });
