@@ -316,7 +316,7 @@ class TreatmentController extends Controller
         // Fetch ToothExamination data with related teeth and treatment details
         $toothExaminations = ToothExamination::with([
             'teeth:id,teeth_name,teeth_image',
-            'treatment:id,treat_name',
+            'treatment:id,treat_name,treat_cost',
             'toothScore:id,score',
             'disease:id,name',
         ])
