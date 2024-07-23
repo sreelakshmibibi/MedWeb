@@ -787,4 +787,13 @@ use Illuminate\Support\Facades\Session;
             $('#existingAppointments').show();
         }
     }
+    $(document).on('click', '#xraybtn', function() {
+        var appointmentId = $(this).data('appointment-id');
+        var teethName = $(this).data('teeth-name');
+        var patientId = $(this).data('patient-id');
+
+        $('#xapp_id').val(appointmentId);
+        $('#xpatient_id').val(patientId);
+        $('#xteeth_id').val(teethName);
+    });
 </script>
