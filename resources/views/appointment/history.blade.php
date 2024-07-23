@@ -7,11 +7,12 @@
                 <th>Date</th>
                 <th>Teeth</th>
                 <th>Problem</th>
+                <th>Disease</th>
                 <th>Treatment</th>
                 <th>Consulted Doctor</th>
                 <th>Branch</th>
                 <th>Status</th>
-                {{-- <th>Remarks</th> --}}
+                <th>Remarks</th>
                 {{-- <th width="150px">Action</th> --}}
             </tr>
         </thead>
@@ -53,6 +54,10 @@
                     name: 'problem'
                 },
                 {
+                    data: 'disease',
+                    name: 'disease'
+                },
+                {
                     data: 'treatment',
                     name: 'treatment'
                 },
@@ -69,6 +74,10 @@
                     name: 'status',
                     orderable: false,
                     searchable: true
+                },
+                {
+                    data: 'remarks',
+                    name: 'remarks',
                 }
             ]
         });

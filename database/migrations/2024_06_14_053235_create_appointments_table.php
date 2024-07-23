@@ -25,7 +25,7 @@ return new class extends Migration
             $table->decimal('height_cm', 5, 2)->nullable();
             $table->decimal('weight_kg', 5, 2)->nullable();
             $table->string('blood_pressure', 10)->nullable();
-            $table->decimal('temperature', 4, 2)->nullable();
+            $table->decimal('temperature', 5, 2)->nullable();
             $table->string('smoking_status', 50)->nullable();
             $table->string('alcoholic_status', 30)->nullable();
             $table->string('diet', 20)->nullable();

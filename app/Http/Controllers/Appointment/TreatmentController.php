@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Appointment;
 
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
-use App\Models\AppointmentStatus;
 use App\Models\AppointmentType;
 use App\Models\ClinicBranch;
 use App\Models\Disease;
@@ -25,10 +24,9 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
-use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Storage;
+use Yajra\DataTables\DataTables;
 
 class TreatmentController extends Controller
 {
@@ -72,11 +70,12 @@ class TreatmentController extends Controller
         $treatmentStatus = TreatmentStatus::all();
         $treatments = TreatmentType::where('status', 'Y')->get();
         $diseases = Disease::where('status', 'Y')->get();
-        $patientName = str_replace('<br>', ' ', $appointment->patient->first_name) . " " . $appointment->patient->last_name;
+        $patientName = str_replace('<br>', ' ', $appointment->patient->first_name) . ' ' . $appointment->patient->last_name;
 
         Session::put('appId', $id);
         Session::put('patientName', $patientName);
         Session::put('patientId', $appointment->patient->patient_id);
+
         if ($request->ajax()) {
             return DataTables::of($previousAppointments)
                 ->addIndexColumn()
@@ -93,29 +92,19 @@ class TreatmentController extends Controller
                 })
                 ->addColumn('status', function ($row) {
                     $statusMap = [
-                            // AppointmentStatus::SCHEDULED => 'badge-success-light',
-                            // AppointmentStatus::WAITING => 'badge-success-light',
-                            // AppointmentStatus::UNAVAILABLE => 'badge-danger-light',
-                            // AppointmentStatus::CANCELLED => 'badge-danger-light',
-                            // AppointmentStatus::COMPLETED => 'badge-success-light',
-                            // AppointmentStatus::BILLING => 'badge-success-light',
-                            // AppointmentStatus::PROCEDURE => 'badge-success-light',
-                            // AppointmentStatus::MISSED => 'badge-danger-light',
-                            // AppointmentStatus::RESCHEDULED => 'badge-success-light',
-    
-                        AppointmentStatus::SCHEDULED => 'badge-success',
-                        AppointmentStatus::WAITING => 'badge-warning',
-                        AppointmentStatus::UNAVAILABLE => 'badge-warning-light',
-                        AppointmentStatus::CANCELLED => 'badge-danger',
-                        AppointmentStatus::COMPLETED => 'badge-success-light',
-                        AppointmentStatus::BILLING => 'badge-primary',
-                        AppointmentStatus::PROCEDURE => 'badge-secondary',
-                        AppointmentStatus::MISSED => 'badge-danger-light',
-                        AppointmentStatus::RESCHEDULED => 'badge-info',
+                        TreatmentStatus::COMPLETED => 'badge-success-light',
+                        TreatmentStatus::FOLLOWUP => 'badge-warning-light',
                     ];
-                    $btnClass = isset($statusMap[$row->app_status]) ? $statusMap[$row->app_status] : '';
 
-                    return "<span class='btn-sm badge {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . '</span>';
+                    // Ensure $row->toothExamination is not null and properly loaded
+                    $treatmentStatusId = $row->toothExamination->isNotEmpty()
+                        ? $row->toothExamination->first()->treatment_status
+                        : null;
+
+                    $btnClass = isset($statusMap[$treatmentStatusId]) ? $statusMap[$treatmentStatusId] : '';
+                    $statusWords = TreatmentStatus::statusToWords($treatmentStatusId);
+
+                    return "<span class='btn-sm badge {$btnClass}'>{$statusWords}</span>";
                 })
                 ->addColumn('treat_date', function ($row) {
                     return $row->app_date;
@@ -131,7 +120,8 @@ class TreatmentController extends Controller
                             $teethName = $examination->teeth->teeth_name;
                             $teethImage = $examination->teeth->teeth_image;
 
-                            return '<div>' . $teethName . '<br><img src="' . asset($teethImage) . '" alt="' . $teethName . '" width="50" height="50"></div>';
+                            //return '<div>'.$teethName.'<br><img src="'.asset($teethImage).'" alt="'.$teethName.'" width="50" height="50"></div>';
+                            return $teethName;
                         }
 
                         return '';
@@ -142,8 +132,19 @@ class TreatmentController extends Controller
                 ->addColumn('problem', function ($row) {
                     return $row->toothExamination ? $row->toothExamination->pluck('chief_complaint')->implode(', ') : '';
                 })
+                ->addColumn('disease', function ($row) {
+                    // Ensure $row->toothExamination is not null and properly loaded
+                    return $row->toothExamination->isNotEmpty()
+                        ? $row->toothExamination->first()->disease->name ?? 'No Disease'
+                        : 'No Disease';
+                })
+                ->addColumn('remarks', function ($row) {
+                    return $row->toothExamination ? $row->toothExamination->pluck('remarks')->implode(', ') : '';
+                })
                 ->addColumn('treatment', function ($row) {
-                    return $row->toothExamination ? $row->toothExamination->pluck('treatment')->implode(', ') : '';
+                    return $row->toothExamination ? $row->toothExamination->map(function ($examination) {
+                        return $examination->treatment ? $examination->treatment->treat_name : '';
+                    })->implode(', ') : '';
                 })
 
                 ->rawColumns(['status', 'teeth'])
@@ -157,7 +158,6 @@ class TreatmentController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-
     public function fetchExistingExamination($toothId, $appId, $patientId)
     {
         $toothExamination = ToothExamination::where('tooth_id', $toothId)
@@ -169,6 +169,7 @@ class TreatmentController extends Controller
         if ($toothExamination->xray == 1) {
             $xrays = XRayImage::where('tooth_examination_id', $toothExamination->id)->get();
         }
+
         return response()->json(['examination' => $toothExamination, 'xrays' => $xrays]);
     }
 
@@ -201,7 +202,7 @@ class TreatmentController extends Controller
 
     public function create()
     {
-        //
+
     }
 
     /**
@@ -223,7 +224,7 @@ class TreatmentController extends Controller
                     // $xraysExists = XRayImage::where('tooth_examination_id', $check->id)->get();
                     // if (!empty($xraysExists)) {
                     //     XRayImage::where('tooth_examination_id', $check->id) // Condition to match
-                    //     ->update(['status' => 'N']); 
+                    //     ->update(['status' => 'N']);
                     // }
                 }
             }
@@ -278,7 +279,7 @@ class TreatmentController extends Controller
                         // Update XRayImage records associated with this $check
                         XRayImage::where('tooth_examination_id', $check->id)
                             ->update([
-                                'tooth_examination_id' => $toothExamination->id
+                                'tooth_examination_id' => $toothExamination->id,
                             ]);
                     }
                 }
@@ -287,17 +288,19 @@ class TreatmentController extends Controller
             $toothExaminationEdit->anatomy_image = $anatomyImage;
             if ($toothExaminationEdit->save()) {
                 DB::commit();
+
                 return response()->json(['success' => 'Tooth examination for teeth no ' . $toothId . ' added']);
             } else {
                 DB::rollback();
+
                 return response()->json(['error' => 'Failed adding Tooth examination for teeth no ' . $toothId]);
             }
 
         } catch (Exception $ex) {
             DB::rollBack();
-            echo "<pre>";
+            echo '<pre>';
             print_r($ex->getMessage());
-            echo "</pre>";
+            echo '</pre>';
 
             return response()->json(['error' => 'Failed adding Tooth examination for teeth no ' . $toothId]);
         }
@@ -306,9 +309,26 @@ class TreatmentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($appointment, Request $request)
     {
-        //
+        // Retrieve patient_id from the query parameters
+        $patientId = $request->query('patient_id');
+        // Fetch ToothExamination data with related teeth and treatment details
+        $toothExaminations = ToothExamination::with([
+            'teeth:id,teeth_name,teeth_image',
+            'treatment:id,treat_name',
+            'toothScore:id,score',
+            'disease:id,name',
+        ])
+            ->where('app_id', $appointment)
+            ->where('patient_id', $patientId)
+            ->where('status', 'Y')
+            ->get();
+
+        // Return the data as a JSON response
+        return response()->json([
+            'toothExaminations' => $toothExaminations,
+        ]);
     }
 
     /**
@@ -330,8 +350,11 @@ class TreatmentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $toothExam = ToothExamination::findOrFail($id);
+        $toothExam->delete();
+
+        return response()->json(['success', 'Teeth exam details deleted successfully.'], 201);
     }
 }

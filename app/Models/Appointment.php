@@ -69,7 +69,7 @@ class Appointment extends Model
     public function toothExamination()
     {
         //return $this->hasMany(ToothExamination::class, 'app_id', 'app_id');
-        return $this->hasMany(ToothExamination::class, 'app_id', 'id')->with('teeth');
+        return $this->hasMany(ToothExamination::class, 'app_id', 'id')->with(['teeth', 'treatment']);
     }
 
     public function doctor()
