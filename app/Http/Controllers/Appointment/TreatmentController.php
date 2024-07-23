@@ -8,6 +8,7 @@ use App\Models\AppointmentStatus;
 use App\Models\AppointmentType;
 use App\Models\ClinicBranch;
 use App\Models\Disease;
+use App\Models\Medicine;
 use App\Models\PatientProfile;
 use App\Models\SurfaceCondition;
 use App\Models\Teeth;
@@ -61,7 +62,7 @@ class TreatmentController extends Controller
 
         // Fetch all appointment types
         $appointmentTypes = AppointmentType::all();
-    
+        $medicines = Medicine::all();
         $tooth = Teeth::all();
         $toothScores = ToothScore::all();
         $surfaceConditions = SurfaceCondition::all();
