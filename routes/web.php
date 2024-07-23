@@ -121,3 +121,4 @@ Route::get('/appointment/{appointment}/treatment', [TreatmentController::class, 
 Route::post('/treatment/store', [TreatmentController::class, 'store'])->name('treatment.store');
 
 Route::get('/images/{patientId}/{toothId}', [TreatmentController::class, 'getImages'])->name('images.index');
+Route::delete('/delete-image', [TreatmentController::class, 'deleteImage'])->name('delete.image');

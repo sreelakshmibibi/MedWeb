@@ -41,6 +41,7 @@
 
 <script>
     $(document).ready(function() {
+        var url
         // Trigger Flexslider update when modal is shown
         $('#modal-documents').on('shown.bs.modal', function() {
             $('.flexslider').resize(); // Trigger Flexslider to resize or update
@@ -50,7 +51,7 @@
             // Construct the path to the images
             var xraysrc = 'storage/x-rays/' + patientId + '/' + toothId + '/';
 
-            var url = '/images/' + patientId + '/' + toothId;
+            url = '/images/' + patientId + '/' + toothId;
 
             // Clear previous images
             // $('#imageSlides').empty();
@@ -66,9 +67,25 @@
                         var imageSrc = "{{ asset('storage/x-rays') }}/" +
                             patientId + "/" + toothId + "/" + image;
 
-                        var listItem = '<li><img src="' + imageSrc +
-                            '" alt="slide" /><p class="flex-caption" >' + image +
-                            '</p></li>';
+                        var listItem = `<li class = "fx-card-item fx-element-overlay">
+                                            <div class = "fx-card-avatar fx-overlay-1">
+                                                <img src = "${imageSrc}" alt="document" class="bbsr-0 bber-0">
+                                                <div class = "fx-overlay scrl-up">
+                                                    <ul class = "fx-info">
+                                                        <li>
+                                                            <a class = "btn btn-outline image-popup-vertical-fit " href = "${imageSrc}">
+                                                                <i class="fa-solid fa-magnifying-glass"></i></a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="btn btn-danger-outline delete-image" data-image="${image}">
+                                                                <i class="fa fa-trash"></i>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <p class="flex-caption">"${image}"</p>
+                                        </li>`;
                         $('#imageSlides').append(listItem);
 
                     });
@@ -78,6 +95,36 @@
                         animation: "slide",
                     });
 
+
+                    $('.image-popup-vertical-fit').magnificPopup({
+                        type: 'image',
+                        closeOnContentClick: true,
+                        mainClass: 'mfp-img-mobile mfp-fade',
+                        image: {
+                            verticalFit: true
+                        },
+                        callbacks: {
+                            open: function() {
+                                // Adjust z-index and CSS for Magnific Popup as needed
+                                $('.mfp-bg').css('z-index',
+                                    '1060'
+                                ); // Ensure Magnific Popup overlay is above modal
+                                $('.mfp-wrap').css('z-index',
+                                    '1070'
+                                ); // Ensure Magnific Popup container is above modal
+                            }
+                        },
+
+                    });
+
+                    // Bind click event for delete button
+                    $('.delete-image').click(function(e) {
+                        e.preventDefault();
+                        var imageToDelete = $(this).data('image');
+                        // alert(imageToDelete)
+                        deleteImage(imageToDelete, patientId, toothId);
+                    });
+
                 },
                 error: function(xhr, status, error) {
                     console.error('Error loading images:', error);
@@ -85,5 +132,100 @@
             });
 
         });
+        // Function to delete image via AJAX
+        function deleteImage(imageName, patientId, toothId) {
+            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+            $.ajax({
+                url: '/delete-image', // Replace with your route to delete image
+                method: 'DELETE', // Use appropriate HTTP method (DELETE, POST, etc.)
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken // Set CSRF token
+                },
+                data: {
+                    image: imageName, // Send image name or identifier to server
+                    patientId: patientId,
+                    toothId: toothId
+                },
+                success: function(response) {
+                    // Optionally, remove the deleted image from the UI
+                    console.log('Image deleted successfully:', imageName);
+                    // Reload images or update UI as needed
+                    reloadImages();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error deleting image:', error);
+                }
+            });
+        }
+
+        // Function to reload images after deletion
+        function reloadImages() {
+
+            $.ajax({
+                url: url,
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    var images = response.images;
+
+                    // Clear previous images
+                    // $('#imageSlides').empty();
+
+                    if (images.length === 0) {
+                        // Display a message indicating no images found
+                        $('#imageSlides').append('<p>No images found.</p>');
+                    } else {
+
+                        // Iterate over each image and add it to the modal
+                        images.forEach(function(image) {
+                            var imageSrc = "{{ asset('storage/x-rays') }}/" +
+                                patientId + "/" + toothId + "/" + image;
+
+                            var listItem = `<li class="fx-card-item fx-element-overlay">
+                                            <div class="fx-card-avatar fx-overlay-1">
+                                                <img src="${imageSrc}" alt="document" class="bbsr-0 bber-0">
+                                                <div class="fx-overlay scrl-up">
+                                                    <ul class="fx-info">
+                                                        <li>
+                                                            <a class="btn btn-outline image-popup-vertical-fit" href="${imageSrc}">
+                                                                <i class="fa-solid fa-magnifying-glass"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="btn btn-danger-outline delete-image" data-image="${image}">
+                                                                <i class="fa fa-trash"></i>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <p class="flex-caption">${image}</p>
+                                        </li>`;
+                            $('#imageSlides').append(listItem);
+                        });
+                    }
+                    // Initialize or reload FlexSlider after appending images
+                    $('.flexslider').flexslider({
+                        animation: "slide",
+                    });
+
+                    // Bind click event for delete button again after reloading
+                    $('.delete-image').click(function(e) {
+                        e.preventDefault();
+                        var imageToDelete = $(this).data('image');
+                        deleteImage(imageToDelete);
+                    });
+
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error reloading images after deletion:', error);
+                }
+            });
+        }
+
+
+
+
     });
 </script>

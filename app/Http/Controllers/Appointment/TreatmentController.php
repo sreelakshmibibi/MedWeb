@@ -187,6 +187,18 @@ class TreatmentController extends Controller
 
         return response()->json(['images' => $fileNames]);
     }
+
+    public function deleteImage(Request $request)
+    {
+        $imageName = $request->get('image');
+        $patientId = $request->get('patientId');
+        $toothId = $request->get('toothId');
+
+        Storage::delete('storage/x-rays/' . $patientId . '/' . $toothId . '/' . $imageName);
+
+        return response()->json(['message' => 'Image deleted successfully']);
+    }
+
     public function create()
     {
         //
