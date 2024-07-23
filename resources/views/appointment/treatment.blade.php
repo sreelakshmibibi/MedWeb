@@ -55,7 +55,7 @@ use Illuminate\Support\Facades\Session;
                             <h6 class="tabHeading">Dental Table</h6>
                             <section class="tabSection">
                                 @include('appointment.dtable')
-                                @include('appointment.teeth_delete')
+                                {{-- @include('appointment.teeth_delete') --}}
                             </section>
 
                             {{-- <h6 class="tabHeading">Prescription</h6>
@@ -81,19 +81,19 @@ use Illuminate\Support\Facades\Session;
                                 value="{{ $patientProfile->id }}">
                         </form>
                     </div>
+                    <div class="apphistorydiv" style="display: none;">
+                        @include('appointment.history')
+                    </div>
 
+                    <div class="prescdiv" style="display: none;">
+                        @include('appointment.prescription')
+                    </div>
                     <!-- /.box-body -->
                 </div>
             </section>
         </div>
     </div>
-    <div class="apphistorydiv" style="display: none;">
-        @include('appointment.history')
-    </div>
 
-    <div class="prescdiv" style="display: none;">
-        @include('appointment.prescription')
-    </div>
 
 
     <script>
@@ -179,7 +179,7 @@ use Illuminate\Support\Facades\Session;
 
             let count = 1;
             // Initialize Select2 for the initial row
-   
+
             // Event listener for Add Row button click
             $(document).on('click', '#medicineAddRow', function() {
                 count++;
@@ -326,4 +326,5 @@ use Illuminate\Support\Facades\Session;
 
     @include('appointment.teeth')
     @include('appointment.documents')
+    @include('appointment.teeth_delete')
 @endsection
