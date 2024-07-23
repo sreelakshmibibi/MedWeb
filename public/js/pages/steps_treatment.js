@@ -153,6 +153,117 @@ function handlePrescriptionStep(presc) {
         }
     }
 }
+function getTreatmentTable(stepIndex) {
+    getSessionData()
+        .done(function (data) {
+            var appId = data.appId;
+            var patientId = data.patientId;
+
+            $.ajax({
+                url: treatmentShowRoute.replace(":appId", appId),
+                type: "GET",
+                data: {
+                    patient_id: patientId,
+                    app_id: appId,
+                },
+                dataType: "json",
+                success: function (response) {
+                    console.log("Success response:", response);
+
+                    var tableBody = $("#chargetablebody");
+                    tableBody.empty(); // Clear any existing rows
+
+                    var treatments = response.toothExaminations;
+                    var totalCost = 0;
+                    if (treatments && treatments.length > 0) {
+                        treatments.forEach(function (exam, index) {
+                            totalCost += parseFloat(exam.treatment.treat_cost);
+                            var row = `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${exam.treatment.treat_name}</td>
+                                    <td>${exam.treatment.treat_cost}</td>
+                                </tr>
+                            `;
+                            tableBody.append(row);
+                        });
+
+                        // Update total charge table initially
+                        updateTotalCharge(totalCost);
+                    } else {
+                        var noDataRow = `
+                            <tr>
+                                <td colspan="3">No data available</td>
+                            </tr>
+                        `;
+                        tableBody.append(noDataRow);
+                    }
+                },
+                error: function (xhr) {
+                    console.error("Error fetching treatment table data:", xhr);
+                },
+            });
+        })
+        .fail(function (xhr) {
+            console.error("Error fetching session data:", xhr);
+        });
+    }
+
+    // Function to update total charge based on discount
+    function updateTotalCharge(totalCost, discountPercentage = 0) {
+        var discountedAmount = totalCost * (1 - discountPercentage / 100);
+        var totalAmount = discountedAmount.toFixed(2);
+
+        var tableChargeBody = $("#totalChargeBody");
+        tableChargeBody.empty(); // Clear any existing rows
+
+        var row = `
+            <tr class="bt-3 border-primary">
+                <th colspan="2" class="text-end">Total Rate</th>
+                <td colspan="1">${totalCost}</td>
+            </tr>
+            <tr>
+                <th colspan="2" class="text-end">Doctor Discount (if any)</th>
+                <td colspan="1">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="discount1" name="discount1" aria-describedby="basic-addon2" value="${discountPercentage}">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">%</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr class="bg-primary">
+                <th colspan="2" class="text-end fs-18 fw-600">Total Amount</th>
+                <td colspan="1" class="fs-18 fw-600">${totalAmount}</td>
+            </tr>
+        `;
+        tableChargeBody.append(row);
+
+        // Set focus back to the discount input field after updating
+    // Set focus back to the discount input field and move cursor to end
+    var discountInput = $("#discount1");
+    var discountValue = discountInput.val();
+    discountInput.focus().val("").val(discountValue);
+    }
+
+    // Event listener for discount input change
+    $(document).on('input', '#discount1', function () {
+        var discountValue = $(this).val();
+        // Remove non-numeric characters from input value
+        var numericValue = discountValue.replace(/[^0-9]/g, '');
+        $(this).val(numericValue);
+
+        // If the input value is numeric, update the total charge
+        var discountPercentage = parseFloat(numericValue);
+        if (!isNaN(discountPercentage)) {
+            // Fetch current total cost from the UI
+            var currentTotalCost = parseFloat($("#totalChargeBody .bt-3.border-primary td:last-child").text());
+
+            // Update total charge with new discount
+            updateTotalCharge(currentTotalCost, discountPercentage);
+        }
+    });
 
 $("#treatmentform").steps({
     headerTag: "h6",
@@ -212,6 +323,7 @@ $("#treatmentform").steps({
             handlePrescriptionStep(presc);
         }
         getDentalTable(newIndex);
+        getTreatmentTable(newIndex);
 
         // Return true if moving backwards or all validation passed
         return currentIndex > newIndex || valid;

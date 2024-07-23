@@ -44,14 +44,14 @@
                 </td>
                 <td>
                     <div class="input-group">
-                        <input type="number" class="form-control" id="duration1" name="duration1" aria-describedby="basic-addon2">
+                        <input type="number" class="form-control" id="duration1" name="duration1" aria-describedby="basic-addon2" required>
                         <div class="input-group-append">
                             <span class="input-group-text" id="basic-addon2">days</span>
                         </div>
                     </div>
                 </td>
                 <td>
-                    <select class="form-control" id="advice1" name="advice1" required style="width: 100%;">
+                    <select class="form-control" id="advice1" name="advice1" required style="width: 100%;" required>
                         <option value="After food">After food</option>
                         <option value="Before food">Before food</option>
                     </select>
