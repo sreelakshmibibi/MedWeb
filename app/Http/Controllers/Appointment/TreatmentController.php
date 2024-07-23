@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Appointment;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\AppointmentStatus;
+use App\Models\AppointmentType;
+use App\Models\ClinicBranch;
 use App\Models\Disease;
 use App\Models\PatientProfile;
 use App\Models\SurfaceCondition;
@@ -16,6 +18,8 @@ use App\Models\TreatmentType;
 use App\Models\XRayImage;
 use App\Services\AnatomyService;
 use App\Services\AppointmentService;
+use App\Services\DoctorAvaialbilityService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -43,7 +47,21 @@ class TreatmentController extends Controller
         //$patient = PatientProfile::find($id);
         abort_if(! $patientProfile, 404);
         $appointment = $patientProfile->lastAppointment;
+        $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])
+            ->where('clinic_status', 'Y')
+            ->get();
+        $appointmentBranchId = $appointment->app_branch;
 
+        // Get the current day name
+        $currentDayName = Carbon::now()->englishDayOfWeek;
+
+        // Initialize DoctorAvaialbilityService and fetch working doctors
+        $doctorAvailabilityService = new DoctorAvaialbilityService();
+        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($appointmentBranchId, $currentDayName);
+
+        // Fetch all appointment types
+        $appointmentTypes = AppointmentType::all();
+    
         $tooth = Teeth::all();
         $toothScores = ToothScore::all();
         $surfaceConditions = SurfaceCondition::all();
@@ -51,46 +69,10 @@ class TreatmentController extends Controller
         $treatments = TreatmentType::where('status', 'Y')->get();
         $diseases = Disease::where('status', 'Y')->get();
         $patientName = str_replace('<br>', ' ', $appointment->patient->first_name)." ".$appointment->patient->last_name;
+
         Session::put('appId', $id);
         Session::put('patientName', $patientName);
         Session::put('patientId', $appointment->patient->patient_id);
-        // Log::info('$appointment: '.$previousAppointments);
-        // if ($request->ajax()) {
-
-        //     return DataTables::of($appointment)
-        //         ->addIndexColumn()
-        //         ->addColumn('doctor', function ($row) {
-        //             return str_replace('<br>', ' ', $row->doctor->name);
-        //         })
-        //         ->addColumn('branch', function ($row) {
-        //             if (! $row->branch) {
-        //                 return '';
-        //             }
-        //             $address = implode(', ', explode('<br>', $row->branch->clinic_address));
-
-        //             return implode(', ', [$address, $row->branch->city->city, $row->branch->state->state]);
-        //         })
-        //         ->addColumn('status', function ($row) {
-        //             $statusMap = [
-        //                 AppointmentStatus::SCHEDULED => 'badge-success-light',
-        //                 AppointmentStatus::WAITING => 'badge-success-light',
-        //                 AppointmentStatus::UNAVAILABLE => 'badge-danger-light',
-        //                 AppointmentStatus::CANCELLED => 'badge-danger-light',
-        //                 AppointmentStatus::COMPLETED => 'badge-success-light',
-        //                 AppointmentStatus::BILLING => 'badge-success-light',
-        //                 AppointmentStatus::PROCEDURE => 'badge-success-light',
-        //                 AppointmentStatus::MISSED => 'badge-danger-light',
-        //                 AppointmentStatus::RESCHEDULED => 'badge-success-light',
-        //             ];
-        //             $btnClass = isset($statusMap[$row->app_status]) ? $statusMap[$row->app_status] : '';
-
-        //             return "<span class='btn-sm badge {$btnClass}'>".AppointmentStatus::statusToWords($row->app_status).'</span>';
-        //         })
-        //         ->rawColumns(['status'])
-        //         ->make(true);
-        // }
-
-        // return view('appointment.treatment');
         if ($request->ajax()) {
             return DataTables::of($previousAppointments)
                 ->addIndexColumn()
@@ -154,7 +136,7 @@ class TreatmentController extends Controller
                 ->make(true);
         }
 
-        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases', 'previousAppointments'));
+        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases', 'previousAppointments', 'clinicBranches', 'appointmentTypes', 'workingDoctors'));
 
     }
 

@@ -117,57 +117,86 @@
             <thead>
                 <tr class="bg-primary-light">
                     <th>No</th>
-                    <th>Treatment</th>
-                    <th>Consulting Doctor</th>
+                    <!-- <th>Treatment</th> -->
                     <th>Branch</th>
                     <th>Appointment Date & Time</th>
+                    <th>Consulting Doctor</th>
                     <th>Appointment Type</th>
                     <th>Remarks</th>
-                    <th><button type="button" class="waves-effect waves-light btn btn-sm btn-primary">
+                    <!-- <th><button type="button" class="waves-effect waves-light btn btn-sm btn-primary">
                             <i class="fa fa-add"></i>
-                            Add</button></th>
+                            Add</button></th> -->
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>1</td>
-                    <td>
+                    <!-- <td>
                         <select class="select2" id="treatment_id1" name="treatment_id1"
                             data-placeholder="Select a Treatment" style="width: 100%;">
 
                         </select>
-                    </td>
+                    </td> -->
+                    
                     <td>
-                        <select class="select2" id="doctor_id1" name="doctor_id1" data-placeholder="Select a Doctor"
-                            style="width: 100%;">
-
-                        </select>
-                    </td>
-                    <td>
-                        <select class="select2" id="clinic_branch_id1" name="clinic_branch_id1"
+                        <select class="select2" id="clinic_branch_id" name="clinic_branch_id"
                             data-placeholder="Select a Branch" style="width: 100%;">
-
+                            @foreach ($clinicBranches as $clinicBranch)
+                                <?php
+                                $clinicAddress = $clinicBranch->clinic_address;
+                                $clinicAddress = explode('<br>', $clinicBranch->clinic_address);
+                                $clinicAddress = implode(', ', $clinicAddress);
+                                $branch = $clinicAddress . ', ' . $clinicBranch->city->city . ', ' . $clinicBranch->state->state;
+                                ?>
+                                <option value="{{ $clinicBranch->id }}" @if ($appointment->app_branch == $clinicBranch->id) selected @endif>
+                                    {{ $branch }}</option>
+                            @endforeach
                         </select>
                     </td>
                     <td>
                         <input class="form-control" type="datetime-local" id="appdate" name="appdate"
                             value="{{ now()->setTimezone('Asia/Kolkata')->format('Y-m-d\TH:i') }}">
                     </td>
+                    
+                    <td>
+                        <select class="select2" id="doctor_id" name="doctor_id" data-placeholder="Select a Doctor"
+                            style="width: 100%;">
+                            @foreach ($workingDoctors as $doctor)
+                                <?php $doctorName = str_replace("<br>", " ", $doctor->user->name); ?>
+                                <option value="{{ $doctor->user_id }}" @if ( $doctor->user_id == $appointment->doctor_id ) selected @endif>
+                                    {{ $doctorName }}
+                                </option>  
+                            @endforeach
+                        </select>
+                    </td>
+                    
                     <td>
                         <select class="form-select" id="apptype" name="apptype">
-
+                            @foreach ($appointmentTypes as $appointmentType)
+                                <option value="{{ $appointmentType->id }}">
+                                    {{ $appointmentType->type }}</option>
+                            @endforeach
                         </select>
                     </td>
                     <td>
-                        <input type="text" class="form-control" id="remarks1" name="remarks1" placeholder="remarks">
+                        <input type="text" class="form-control" id="remarks_followup" name="remarks_followup" placeholder="remarks">
                     </td>
-                    <td>
+                    <!-- <td>
                         <button type="button" id="btnDelete" title="delete row"
                             class="waves-effect waves-light btn btn-danger btn-sm"> <i class="fa fa-trash"></i></button>
-                    </td>
+                    </td> -->
                 </tr>
             </tbody>
         </table>
+        <div class="row">
+            <div style="display:none" id="existingAppointmentsError">
+                <span class="text-danger">Already exists appointment for the selected time!</span>
+            </div>
+        </div>
+        <div class="row">
+            <div style="display:none" id="existingAppointments">
+            </div>
+        </div>
     </div>
 </div>
 
@@ -179,3 +208,130 @@
     <label for="presc_checkbox"></label>
 </div>
 <hr class="my-15 ">
+<script>
+     $('#clinic_branch_id, #appdate').change(function() {
+            var branchId = $('#clinic_branch_id').val();
+            var appDate = $('#appdate').val();
+            loadDoctors(branchId, appDate);
+
+        });
+
+
+        // Function to load doctors based on branch ID
+        function loadDoctors(branchId, appDate) {
+            if (branchId && appDate) {
+
+                $.ajax({
+                    url: '{{ route('get.doctors', '') }}' + '/' + branchId,
+                    type: "GET",
+                    data: {
+                        appdate: appDate
+                    },
+                    dataType: "json",
+                    success: function(data) {
+
+                        $('#doctor_id').empty();
+                        $('#doctor_id').append('<option value="">Select a doctor</option>');
+                        $.each(data, function(key, value) {
+                            var doctorName = value.user.name.replace(/<br>/g, ' ');
+                            $('#doctor_id').append('<option value="' + value.user_id + '">' +
+                                doctorName + '</option>');
+                        });
+
+                    }
+                });
+            } else {
+                $('#doctor_id').empty();
+            }
+        }
+
+        $('#clinic_branch_id, #appdate, #doctor_id').change(function() {
+            var branchId = $('#clinic_branch_id').val();
+            var appDate = $('#appdate').val();
+            var doctorId = $('#doctor_id').val();
+            $('#existingAppointmentsError').hide();
+            showExistingAppointments(branchId, appDate, doctorId);
+
+        });
+        
+        function showExistingAppointments(branchId, appDate, doctorId) {
+            if (branchId && appDate && doctorId) {
+
+                $.ajax({
+                    url: '{{ route("get.exisitingAppointments", "") }}' + '/' + branchId,
+                    type: "GET",
+                    data: {
+                        appdate: appDate,
+                        doctorId: doctorId
+                    },
+                    dataType: "json",
+                    success: function(data) {
+                        $('#existingAppointmentsError').hide();
+                        if (data.checkAllocated.length > 0) {
+                            $('#existingAppointmentsError').show();
+                        } else {
+                            $('#existingAppointmentsError').hide();
+                        }
+                        if (data.existingAppointments.length > 0) {
+
+                            // Clear existing content
+
+                            $('#existingAppointments').empty();
+                            // Create a table element
+                            var table = $('<table class="table table-striped">').addClass('appointment-table');
+
+                            // Create header row
+                            var headerRow = $('<tr>');
+                            headerRow.append($('<th>').text('Scheduled Appointments'));
+                            table.append(headerRow);
+
+                            // Calculate number of rows needed
+                            var numRows = Math.ceil(data.existingAppointments.length / 3);
+
+                            // Loop to create rows and populate cells
+                            for (var i = 0; i < numRows; i++) {
+                                var row = $('<tr>');
+
+                                // Create 3 cells for each row
+                                for (var j = 0; j < 3; j++) {
+                                    var dataIndex = i * 3 + j;
+                                    if (dataIndex < data.existingAppointments.length) {
+                                        var cell = $('<td>').text(data.existingAppointments[dataIndex]
+                                            .app_time);
+                                        row.append(cell);
+                                    } else {
+                                        var cell = $('<td>'); // Create empty cell if no more data
+                                        row.append(cell);
+                                    }
+                                }
+
+                                table.append(row);
+                            }
+                                // Append table to existingAppointments div
+                                $('#existingAppointments').append(table);
+
+                                // Show the div
+                                $('#existingAppointments').show();
+                            
+                        } else {
+                            $('#existingAppointments').html('No existing appointments found.');
+                            $('#existingAppointments').show();
+
+                        }
+                    },
+
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching existing appointments:', error);
+                        $('#existingAppointments').html(
+                            'Error fetching existing appointments. Please try again later.');
+                        $('#existingAppointments').show();
+
+                    }
+                });
+            } else {
+                console.log('hi no exisiting');
+
+            }
+        }
+
+</script>

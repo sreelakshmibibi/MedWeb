@@ -299,6 +299,6 @@ use Illuminate\Support\Facades\Session;
                 $(".input-group .dropdown-toggle").text(salutation);
             });
 
-        });
+        });        
     </script>
 @endsection
