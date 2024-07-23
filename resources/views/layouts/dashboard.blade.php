@@ -58,6 +58,10 @@
 
     <script src="{{ asset('assets/vendor_components/apexcharts-bundle/dist/apexcharts.js') }}"></script>
 
+    <script src="{{ asset('assets/vendor_plugins/bootstrap-slider/bootstrap-slider.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/OwlCarousel2/dist/owl.carousel.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/flexslider/jquery.flexslider.js') }}"></script>
+
     <!-- MedWeb App -->
     <script src="{{ asset('js/jquery.smartmenus.js') }}"></script>
     <script src="{{ asset('js/menus.js') }}"></script>
@@ -65,6 +69,11 @@
     <script src="{{ asset('js/pages/dashboard3.js') }}"></script>
     <script src="{{ asset('assets/vendor_components/select2/dist/js/select2.full.js') }}"></script>
     <script src="{{ asset('js/pages/advanced-form-element.js') }}"></script>
+
+    <script src="{{ asset('assets/vendor_components/Magnific-Popup-master/dist/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/Magnific-Popup-master/dist/jquery.magnific-popup-init.js') }}">
+    </script>
+
 
     <script src="{{ asset('assets/vendor_components/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
     <script src="{{ asset('assets/vendor_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}">
@@ -94,6 +103,8 @@
     <script src="{{ asset('js/pages/dashboard2.js') }}"></script>
 
     <script src="{{ asset('js/pages/patient-details.js') }}"></script>
+
+    <script src="{{ asset('js/pages/slider.js') }}"></script>
 
     <!-- Include scripts section -->
     @yield('scripts')

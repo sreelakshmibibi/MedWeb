@@ -259,6 +259,11 @@ $additionalNormalTeethImages = [
                 $('#tooth_id').val(teethName);
                 $('#app_id').val(appId);
                 $('#patient_id').val(patientId);
+                $('#xapp_id').val(appId);
+                $('#xpatient_id').val(patientId);
+                $('#xteeth_id').val(teethName);
+                // teethId = $('#xteeth_id').val();
+
                 if ($(divId).hasClass('molar')) {
                     $('#premolars_molars').show();
                     $('#incisors_canines').hide();
@@ -470,6 +475,12 @@ $additionalNormalTeethImages = [
 
                 $('#modal-teeth').modal('show');
 
+            });
+
+            $('#uploadedXrays').click(function() {
+
+
+                $('#modal-documents').modal('show');
             });
 
         });

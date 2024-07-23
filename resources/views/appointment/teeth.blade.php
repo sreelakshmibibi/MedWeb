@@ -158,9 +158,14 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="xray">X-Ray <span class="text-danger">
-                                            *</span></label><a href="#" id="uploadedXrays"
-                                        style="display:none;">View Uploaded</a>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <label class="form-label" for="xray">X-Ray</label>
+                                        <button type="button" id="uploadedXrays" style="display:none;"
+                                            class="waves-effect waves-light btn btn-circle btn-info btn-xs"
+                                            data-bs-toggle="modal" data-bs-target="#modal-documents"
+                                            data-id=" $row->id " title="view documents"><i
+                                                class="fa-solid fa-file-archive"></i></button>
+                                    </div>
                                     <input type="file" class="form-control" id="xray" type="file"
                                         name="xray[]" multiple>
                                     <div id="xrayError" class="invalid-feedback"></div>
@@ -324,6 +329,7 @@
 
 <script>
     $(function() {
+
         // Handle Save button click
         $('#newTreatmentBtn').click(function() {
             // Reset previous error messages
@@ -423,6 +429,31 @@
                 'background-color': 'white',
             });
             $('.dparts').removeClass('red');
+
+            if ($('#checkbox_all').is(':checked')) {
+                $('#checkbox_all').prop('checked', false);
+                $('.exam_toothdiv').show();
+            }
+            if ($('#checkbox_row1').is(':checked')) {
+                $('#checkbox_row1').prop('checked', false);
+                $('.exam_toothdiv').show();
+                $('#trow1').removeClass('rowbordered');
+            }
+            if ($('#checkbox_row2').is(':checked')) {
+                $('#checkbox_row2').prop('checked', false);
+                $('.exam_toothdiv').show();
+                $('#trow2').removeClass('rowbordered');
+            }
+            if ($('#checkbox_row3').is(':checked')) {
+                $('#checkbox_row3').prop('checked', false);
+                $('.exam_toothdiv').show();
+                $('#trow3').removeClass('rowbordered');
+            }
+            if ($('#checkbox_row4').is(':checked')) {
+                $('#checkbox_row4').prop('checked', false);
+                $('.exam_toothdiv').show();
+                $('#trow4').removeClass('rowbordered');
+            }
 
             $('.tooth_partsdiv').hide();
             $('#form-teeth').trigger('reset');
