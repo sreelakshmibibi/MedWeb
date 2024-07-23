@@ -24,7 +24,7 @@ function getDentalTable(stepIndex) {
                 },
                 dataType: 'json',
                 success: function (response) {
-                    var tableBody = $("#myTable tbody");
+                    var tableBody = $("#dentalTable tbody");
                     tableBody.empty(); // Clear any existing rows
 
                     var toothExaminations = response.toothExaminations;

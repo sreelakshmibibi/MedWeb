@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Session;
 <hr class="my-15 ">
 
 <div class="table-responsive mb-4">
-    <table id="myTable" class="table table-bordered table-hover table-striped mb-0 text-center">
+    <table id="dentalTable" class="table table-bordered table-hover table-striped mb-0 text-center">
 
         <thead>
             <tr class="bg-primary-light">
