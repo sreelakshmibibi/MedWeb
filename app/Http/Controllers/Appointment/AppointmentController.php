@@ -144,9 +144,9 @@ class AppointmentController extends Controller
         $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($firstBranchId, $currentDayName);
 
         // Fetch all appointment statuses
-        $appointmentStatuses = AppointmentStatus::all();
+        $appointmentTypes = AppointmentType::all();
 
-        return view('appointment.index', compact('clinicBranches', 'firstBranchId', 'currentDayName', 'workingDoctors', 'appointmentStatuses'));
+        return view('appointment.index', compact('clinicBranches', 'firstBranchId', 'currentDayName', 'workingDoctors', 'appointmentTypes'));
     }
 
 

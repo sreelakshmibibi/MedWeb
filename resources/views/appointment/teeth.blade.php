@@ -169,7 +169,7 @@
                             <div class="col-md-6 ">
                                 <div class="form-group">
                                     <label class="form-label" for="remarks">Remarks</label>
-                                    <textarea class="form-control" id="remarks" name="remarks" rows="1">remarks if any</textarea>
+                                    <textarea class="form-control" id="remarks" name="remarks" rows="1" placeholder="Remarks if any"></textarea>
                                     <div id="remarksError" class="invalid-feedback"></div>
                                 </div>
                             </div>
