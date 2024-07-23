@@ -216,13 +216,12 @@
 
         });
 
-
         // Function to load doctors based on branch ID
         function loadDoctors(branchId, appDate) {
             if (branchId && appDate) {
 
                 $.ajax({
-                    url: '{{ route('get.doctors', '') }}' + '/' + branchId,
+                    url: '{{ route("get.doctors", "") }}' + '/' + branchId,
                     type: "GET",
                     data: {
                         appdate: appDate
@@ -329,8 +328,8 @@
                     }
                 });
             } else {
-                console.log('hi no exisiting');
-
+                $('#existingAppointments').html('No existing appointments found.');
+                $('#existingAppointments').show();
             }
         }
 
