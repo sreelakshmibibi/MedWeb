@@ -45,7 +45,7 @@
                                         <th>Upcoming (if any)</th>
                                         {{-- <th>New Appointment</th> --}}
                                         <th>Status</th>
-                                        <th width="150px">Action</th>
+                                        <th width="170px">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -102,11 +102,24 @@
                     },
                     {
                         data: 'appointment',
-                        name: 'appointment'
+                        name: 'appointment',
+                        render: function(data, type, row) {
+                            if (data == 'N/A') {
+                                return data;
+                            } else {
+                                return moment(data, 'YYYY-MM-DD HH:mm:ss').format(
+                                    'DD-MM-YYYY hh:mm A');
+                            }
+                        }
                     },
                     {
                         data: 'next_appointment',
-                        name: 'next_appointment'
+                        name: 'next_appointment',
+                        render: function(data, type, row) {
+                            // Use Moment.js to format the date
+                            return moment(data, 'YYYY-MM-DD HH:mm:ss').format('DD-MM-YYYY hh:mm A');
+
+                        }
                     },
                     // {
                     //     data: 'new_appointment',
