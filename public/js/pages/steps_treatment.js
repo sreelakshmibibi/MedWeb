@@ -1,5 +1,315 @@
 var form = $("#treatmentform").show();
 
+let historyStepAdded = false;
+let prescriptionStepAdded = false;
+
+function getSessionData() {
+    return $.ajax({
+        url: "/session-data", // URL of the PHP script
+        type: "GET",
+        dataType: "json",
+    });
+}
+
+function getDentalTable(stepIndex) {
+    if (
+        (stepIndex == 2 && historyStepAdded == false) ||
+        (stepIndex == 3 && historyStepAdded == true)
+    ) {
+        getSessionData()
+            .done(function (data) {
+                var appId = data.appId;
+                var patientId = data.patientId;
+                //alert('appId: ' + appId + ', patientId: ' + patientId);
+
+                $.ajax({
+                    url: treatmentShowRoute.replace(":appId", appId),
+                    type: "GET",
+                    data: {
+                        patient_id: patientId,
+                        app_id: appId,
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        var tableBody = $("#dentalTable tbody");
+                        tableBody.empty(); // Clear any existing rows
+
+                        var toothExaminations = response.toothExaminations;
+
+                        if (toothExaminations && toothExaminations.length > 0) {
+                            toothExaminations.forEach(function (exam, index) {
+                                var viewDocumentsButton = '';
+
+                                // Check if there are x-ray images
+                                if (exam.x_ray_images && exam.x_ray_images.length > 0) {
+
+                                    viewDocumentsButton = `
+                                <button type="button" id="xraybtn" class="waves-effect waves-light btn btn-circle btn-info btn-xs"
+                                        data-bs-toggle="modal" data-bs-target="#modal-documents"
+                                        data-id="${exam.id}" 
+                                        data-appointment-id="${appId}"
+                                        data-teeth-name="${exam.teeth.teeth_name}"
+                                        data-patient-id="${patientId}"
+                                        title="View documents">
+                                    <i class="fa-solid fa-file-archive"></i>
+                                </button>
+                            `;
+                                }
+
+                                var row = `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${exam.teeth.teeth_name}</td>
+                                    <td>${exam.chief_complaint}</td>
+                                    <td>${exam.disease ? exam.disease.name : ""
+                                    }</td>
+                                    <td>${exam.hpi}</td>
+                                    <td>${exam.dental_examination}</td>
+                                    <td>${exam.diagnosis}</td>
+                                    <td>${exam.x_ray_images && exam.x_ray_images.length > 0 ? viewDocumentsButton : ''}</td>
+                                    <td>${exam.treatment.treat_name}</td>
+                                    <td><button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-treat-view btn-xs me-1' title='View' data-bs-toggle='modal' data-id='${exam.teeth.teeth_name}' data-bs-target='#modal-teeth'><i class='fa fa-eye'></i></button>
+                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-treat-edit btn-xs me-1' title='Edit' data-bs-toggle='modal' data-id='${exam.teeth.teeth_name}' data-bs-target='#modal-teeth'><i class='fa fa-pencil'></i></button>
+                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-treat-delete btn-xs me-1' title='Delete' data-bs-toggle='modal' data-id='${exam.id}' data-bs-target='#modal-delete'><i class='fa-solid fa-trash'></i></button>
+                                    
+                                    </td>
+                                </tr>
+                            `;
+                                tableBody.append(row);
+                            });
+                        } else {
+                            var noDataRow = `
+                            <tr>
+                                <td colspan="10">No data available</td>
+                            </tr>
+                        `;
+                            tableBody.append(noDataRow);
+                        }
+                    },
+                    error: function (xhr) {
+                        console.error("Error fetching dental table data:", xhr);
+                    },
+                });
+            })
+            .fail(function (xhr) {
+                console.error("Error fetching session data:", xhr);
+            });
+    }
+}
+
+function handleHistoryStep(visitcount) {
+    if (visitcount != "0") {
+        var currentStep = $("#treatmentform").steps("getCurrentIndex");
+        var apphistoryContent = $(".apphistorydiv").html();
+        // Add the history step if it hasn't been added
+        if (!historyStepAdded) {
+            $("#treatmentform").steps("insert", currentStep + 1, {
+                title: "Appointment History",
+                content: apphistoryContent,
+                enableCancelButton: false,
+                // enablePreviousButton: true,
+                enableNextButton: true,
+            });
+            historyStepAdded = true;
+        }
+    }
+}
+
+function handlePrescriptionStep(presc) {
+    if (presc) {
+        var currentStep = $("#treatmentform").steps("getCurrentIndex");
+        var prescContent = $(".prescdiv").html();
+        if (!prescriptionStepAdded) {
+            $("#treatmentform").steps("insert", currentStep + 1, {
+                title: "Prescription",
+                content: prescContent,
+                enableCancelButton: false,
+                enableNextButton: true,
+            });
+            // Add a class to the newly inserted step tab
+            $("#treatmentform")
+                .find(".steps > ul > li")
+                .eq(currentStep + 1)
+                .addClass("presc_class");
+
+            // Add a class to the content of the prescription tab
+            $("#treatmentform")
+                .find(".content > .body")
+                .eq(currentStep + 1)
+                .addClass("presc_content_class");
+            prescriptionStepAdded = true;
+
+            $("#medicine_id1").select2({
+                width: "100%",
+                placeholder: "Select a Medicine",
+                tags: true, // Allow user to add new tags (medicines)
+                tokenSeparators: [",", " "], // Define how tags are separated
+                createTag: function (params) {
+                    var term = $.trim(params.term);
+
+                    if (term === "") {
+                        return null;
+                    }
+
+                    // Check if the term already exists as an option
+                    var found = false;
+                    $(this)
+                        .find("option")
+                        .each(function () {
+                            if ($.trim($(this).text()) === term) {
+                                found = true;
+                                return false; // Exit the loop early
+                            }
+                        });
+
+                    if (!found) {
+                        // Return object for new tag
+                        return {
+                            id: term,
+                            text: term,
+                            newTag: true, // Add a custom property to indicate it's a new tag
+                        };
+                    }
+
+                    return null; // If term already exists, return null
+                },
+            });
+            $("#dosage1").select2({
+                width: "100%",
+                placeholder: "Select a Dosage",
+            });
+            $("#advice1").select2({
+                width: "100%",
+            });
+        }
+    } else {
+        if (prescriptionStepAdded) {
+            $(".wizard-content .wizard > .steps > ul > li.presc_class").attr(
+                "style",
+                "display:none;"
+            );
+            $(
+                ".wizard-content .wizard > .content > .presc_content_class"
+            ).remove();
+            $("#treatmentform").steps("remove", "Prescription");
+            prescriptionStepAdded = false;
+        }
+    }
+}
+function getTreatmentTable(stepIndex) {
+    getSessionData()
+        .done(function (data) {
+            var appId = data.appId;
+            var patientId = data.patientId;
+
+            $.ajax({
+                url: treatmentShowRoute.replace(":appId", appId),
+                type: "GET",
+                data: {
+                    patient_id: patientId,
+                    app_id: appId,
+                },
+                dataType: "json",
+                success: function (response) {
+                    console.log("Success response:", response);
+
+                    var tableBody = $("#chargetablebody");
+                    tableBody.empty(); // Clear any existing rows
+
+                    var treatments = response.toothExaminations;
+                    var totalCost = 0;
+                    if (treatments && treatments.length > 0) {
+                        treatments.forEach(function (exam, index) {
+                            totalCost += parseFloat(exam.treatment.treat_cost);
+                            var row = `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${exam.treatment.treat_name}</td>
+                                    <td>${exam.treatment.treat_cost}</td>
+                                </tr>
+                            `;
+                            tableBody.append(row);
+                        });
+
+                        // Update total charge table initially
+                        updateTotalCharge(totalCost);
+                    } else {
+                        var noDataRow = `
+                            <tr>
+                                <td colspan="3">No data available</td>
+                            </tr>
+                        `;
+                        tableBody.append(noDataRow);
+                    }
+                },
+                error: function (xhr) {
+                    console.error("Error fetching treatment table data:", xhr);
+                },
+            });
+        })
+        .fail(function (xhr) {
+            console.error("Error fetching session data:", xhr);
+        });
+}
+
+// Function to update total charge based on discount
+function updateTotalCharge(totalCost, discountPercentage = 0) {
+    var discountedAmount = totalCost * (1 - discountPercentage / 100);
+    var totalAmount = discountedAmount.toFixed(2);
+
+    var tableChargeBody = $("#totalChargeBody");
+    tableChargeBody.empty(); // Clear any existing rows
+
+    var row = `
+            <tr class="bt-3 border-primary">
+                <th colspan="2" class="text-end">Total Rate</th>
+                <td colspan="1">${totalCost}</td>
+            </tr>
+            <tr>
+                <th colspan="2" class="text-end">Doctor Discount (if any)</th>
+                <td colspan="1">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="discount1" name="discount1" aria-describedby="basic-addon2" value="${discountPercentage}">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">%</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr class="bg-primary">
+                <th colspan="2" class="text-end fs-18 fw-600">Total Amount</th>
+                <td colspan="1" class="fs-18 fw-600">${totalAmount}</td>
+            </tr>
+        `;
+    tableChargeBody.append(row);
+
+    // Set focus back to the discount input field after updating
+    // Set focus back to the discount input field and move cursor to end
+    var discountInput = $("#discount1");
+    var discountValue = discountInput.val();
+    discountInput.focus().val("").val(discountValue);
+}
+
+// Event listener for discount input change
+$(document).on("input", "#discount1", function () {
+    var discountValue = $(this).val();
+    // Remove non-numeric characters from input value
+    var numericValue = discountValue.replace(/[^0-9]/g, "");
+    $(this).val(numericValue);
+
+    // If the input value is numeric, update the total charge
+    var discountPercentage = parseFloat(numericValue);
+    if (!isNaN(discountPercentage)) {
+        // Fetch current total cost from the UI
+        var currentTotalCost = parseFloat(
+            $("#totalChargeBody .bt-3.border-primary td:last-child").text()
+        );
+
+        // Update total charge with new discount
+        updateTotalCharge(currentTotalCost, discountPercentage);
+    }
+});
+
 $("#treatmentform").steps({
     headerTag: "h6",
     bodyTag: "section",
@@ -48,6 +358,17 @@ $("#treatmentform").steps({
             // Return true or false based on validation result
             // return valid;
         }
+        let visitcount = $("#visitcount").val();
+        if (currentIndex == 0) {
+            handleHistoryStep(visitcount);
+        }
+
+        let presc = $("#presc_checkbox").is(":checked");
+        if (currentIndex == 2 || currentIndex == 3) {
+            handlePrescriptionStep(presc);
+        }
+        getDentalTable(newIndex);
+        getTreatmentTable(newIndex);
 
         // Return true if moving backwards or all validation passed
         return currentIndex > newIndex || valid;

@@ -29,6 +29,6 @@ class Teeth extends Model
 
     public function toothExaminations()
     {
-        return $this->hasMany(ToothExamination::class, 'tooth_id', 'id');
+        return $this->hasMany(ToothExamination::class, 'tooth_id', 'teeth_name');
     }
 }

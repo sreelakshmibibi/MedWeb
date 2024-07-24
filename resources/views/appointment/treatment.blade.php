@@ -1,3 +1,7 @@
+<?php
+
+use Illuminate\Support\Facades\Session;
+?>
 @extends('layouts.dashboard')
 @section('title', 'Patient')
 @section('content')
@@ -6,7 +10,8 @@
         <div class="container-full">
             <div class="content-header">
                 <div class="d-flex align-items-center justify-content-between">
-                    <h3 class="page-title">Treatment</h3>
+                    <h3 class="page-title">Treatment : <?= Session::get('patientName') ?> ( <?= Session::get('patientId') ?>
+                        )</h3>
                     <a type="button" class="waves-effect waves-light btn btn-primary" href="{{ route('appointment') }}">
                         <i class="fa-solid fa-angles-left"></i> Back</a>
                 </div>
@@ -30,11 +35,13 @@
                                 @include('appointment.personal_info')
                             </section>
                             <?php if ($latestAppointment != 0) { ?>
-                            <h6 class="tabHeading">Appointment History</h6>
+                            {{-- <h6 class="tabHeading">Appointment History</h6>
                             <section class="tabSection">
                                 @include('appointment.history')
-                            </section>
+                            </section> --}}
                             <?php } ?>
+
+
                             <h6 class="tabHeading">Dental Chart</h6>
                             <section class="tabSection">
                                 @include('appointment.dchart_images')
@@ -48,12 +55,13 @@
                             <h6 class="tabHeading">Dental Table</h6>
                             <section class="tabSection">
                                 @include('appointment.dtable')
+                                {{-- @include('appointment.teeth_delete') --}}
                             </section>
 
-                            <h6 class="tabHeading">Prescription</h6>
+                            {{-- <h6 class="tabHeading">Prescription</h6>
                             <section class="tabSection">
                                 @include('appointment.prescription')
-                            </section>
+                            </section> --}}
 
                             <h6 class="tabHeading">Charge</h6>
                             <section class="tabSection">
@@ -73,16 +81,24 @@
                                 value="{{ $patientProfile->id }}">
                         </form>
                     </div>
+                    <div class="apphistorydiv" style="display: none;">
+                        @include('appointment.history')
+                    </div>
 
+                    <div class="prescdiv" style="display: none;">
+                        @include('appointment.prescription')
+                    </div>
                     <!-- /.box-body -->
                 </div>
             </section>
         </div>
     </div>
 
-    @include('appointment.teeth')
+
 
     <script>
+        var treatmentShowRoute = "{{ route('treatment.show', ['appointment' => ':appId']) }}";
+        var teethId;
         $(document).ready(function() {
 
             $("#treatmentform .actions ul li:last-child a").addClass("bg-success btn btn-success");
@@ -93,12 +109,14 @@
                 var partId = '#' + partName;
                 var title = $(this).attr('title');
                 var divId = '#' + title;
+                var selectId = '#' + title.toLowerCase() + '_condn';
 
                 if ($(partId).hasClass('red')) {
                     $(partId).css({
                         'background-color': 'white',
                     });
                     $(partId).removeClass('red');
+                    $(selectId).val('');
                     $(divId).hide();
                 } else {
                     $(partId).css({
@@ -137,25 +155,16 @@
                 }
             });
 
-            $('.closeToothBtn').click(function() {
-                var teethName = $('#tooth_no').val();
-                var divId = '#div' + teethName;
-                $(divId).css({
-                    'border': 'none',
-                    'border-radius': '5px',
-                });
-            })
-
-            $('#newToothTreatmentBtn').click(function() {
-                var teethName = $('#tooth_no').val();
-                var divId = '#div' + teethName;
-                $(divId).css({
-                    'border': 'none',
-                    'border-radius': '5px',
-                    // 'background-color': 'rgba(0, 0, 255, 0.1)',
-                });
-                // $(divId).addClass('overlay');
-            });
+            // $('#newToothTreatmentBtn').click(function() {
+            //     var teethName = $('#tooth_no').val();
+            //     var divId = '#div' + teethName;
+            //     $(divId).css({
+            //         'border': 'none',
+            //         'border-radius': '5px',
+            //         // 'background-color': 'rgba(0, 0, 255, 0.1)',
+            //     });
+            //     // $(divId).addClass('overlay');
+            // });
 
 
             $("#follow_checkbox").change(function() {
@@ -168,15 +177,8 @@
                 }
             });
 
-            $("#presc_checkbox").change(function() {
-                if ($(this).is(':checked')) {
-                    $('#prescdiv').show();
-                } else {
-                    $('#prescdiv').hide();
-                }
-            });
-
             let count = 1;
+
             // Event listener for Add Row button click
             $(document).on('click', '#medicineAddRow', function() {
                 count++;
@@ -185,18 +187,19 @@
                     <td>
                         <select class="select2" id="medicine_id${count}" name="medicine_id${count}" required
                             data-placeholder="Select a Medicine" style="width: 100%;">
+                                <option value=""> Select a Medicine </option>
+                                <?php foreach ( $medicines as $medicine ) { ?>
+                                <option value="{{ $medicine->id }}"> {{ $medicine->med_name }}</option>
+                                <?php } ?>
                         </select>
                     </td>
                     <td>
                         <select class="select2" id="dosage${count}" name="dosage${count}" required
                             data-placeholder="Select a Dosage" style="width: 100%;">
-                            <option value="1">1-0-0</option>
-                            <option value="2">0-1-0</option>
-                            <option value="3">0-0-1</option>
-                            <option value="4">1-1-1</option>
-                            <option value="5">1-0-1</option>
-                            <option value="6">1-1-0</option>
-                            <option value="7">0-1-1</option>
+                            <option value=""> Select a Dosage </option>
+                            <?php foreach ( $dosages as $dosage ) { ?>
+                                <option value="{{ $dosage->id }}"> {{ $dosage->dos_name }}</option>
+                            <?php } ?>
                         </select>
                     </td>
                     <td>
@@ -206,6 +209,13 @@
                                 <span class="input-group-text" id="basic-addon2">days</span>
                             </div>
                         </div>
+                    </td>
+                    <td>
+                        <select class="select2" id="advice${count}" name="advice${count}" required class="form-control"
+                             style="width: 100%;">
+                                <option value="After food">After food</option>
+                               <option value="Before food">Before food</option>
+                        </select>
                     </td>
                     <td>
                         <input type="text" class="form-control" id="remarks${count}" name="remarks${count}" placeholder="remarks">
@@ -220,11 +230,43 @@
                 // Reinitialize Select2 on the newly added select element
                 $(`#medicine_id${count}`).select2({
                     width: '100%',
-                    placeholder: 'Select a Medicine'
+                    placeholder: 'Select a Medicine',
+                    tags: true, // Allow user to add new tags (medicines)
+                    tokenSeparators: [',', ' '], // Define how tags are separated
+                    createTag: function(params) {
+                        var term = $.trim(params.term);
+
+                        if (term === '') {
+                            return null;
+                        }
+
+                        // Check if the term already exists as an option
+                        var found = false;
+                        $(this).find('option').each(function() {
+                            if ($.trim($(this).text()) === term) {
+                                found = true;
+                                return false; // Exit the loop early
+                            }
+                        });
+
+                        if (!found) {
+                            // Return object for new tag
+                            return {
+                                id: term,
+                                text: term,
+                                newTag: true // Add a custom property to indicate it's a new tag
+                            };
+                        }
+
+                        return null; // If term already exists, return null
+                    }
                 });
                 $(`#dosage${count}`).select2({
                     width: '100%',
                     placeholder: 'Select a Dosage'
+                });
+                $(`#advice${count}`).select2({
+                    width: '100%',
                 });
                 updateRowCount();
             });
@@ -302,5 +344,15 @@
             });
 
         });
+
+        $(document).on('click', '.btn-treat-delete', function() {
+            var tootExamId = $(this).data('id');
+            $('#delete_tooth_exam_id').val(tootExamId); // Set patient ID in the hidden input
+            $('#modal-delete').modal('show');
+        });
     </script>
+
+    @include('appointment.teeth')
+    @include('appointment.documents')
+    @include('appointment.teeth_delete')
 @endsection

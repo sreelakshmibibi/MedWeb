@@ -58,8 +58,17 @@ class AppointmentController extends Controller
 
             return DataTables::of($appointments)
                 ->addIndexColumn()
+                ->addColumn('patient_id', function ($row) {
+                    $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
+                    $name1 = "<a href='" . route('treatment', $row->id) . "' class='waves-effect waves-light' title='open treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name) . "' >" . $row->patient->patient_id . "</i></a>";
+                    return $name1;
+                })
                 ->addColumn('name', function ($row) {
-                    return str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name);
+                    // return str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name);
+                    $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
+                    $name = str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name);
+                    $name1 = "<a href='" . route('treatment', $row->id) . "' class='waves-effect waves-light' title='open treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name) . "' >" . $name . "</i></a>";
+                    return $name1;
                 })
                 ->addColumn('doctor', function ($row) {
                     return str_replace("<br>", " ", $row->doctor->name);
@@ -80,18 +89,27 @@ class AppointmentController extends Controller
                 })
                 ->addColumn('status', function ($row) {
                     $statusMap = [
-                        AppointmentStatus::SCHEDULED => 'badge-success-light',
-                        AppointmentStatus::WAITING => 'badge-success-light',
-                        AppointmentStatus::UNAVAILABLE => 'badge-danger-light',
-                        AppointmentStatus::CANCELLED => 'badge-danger-light',
+                            // AppointmentStatus::SCHEDULED => 'badge-success-light',
+                            // AppointmentStatus::WAITING => 'badge-success-light',
+                            // AppointmentStatus::UNAVAILABLE => 'badge-danger-light',
+                            // AppointmentStatus::CANCELLED => 'badge-danger-light',
+                            // AppointmentStatus::COMPLETED => 'badge-success-light',
+                            // AppointmentStatus::BILLING => 'badge-success-light',
+                            // AppointmentStatus::PROCEDURE => 'badge-success-light',
+                            // AppointmentStatus::MISSED => 'badge-danger-light',
+                            // AppointmentStatus::RESCHEDULED => 'badge-success-light',
+                        AppointmentStatus::SCHEDULED => 'badge-success',
+                        AppointmentStatus::WAITING => 'badge-warning',
+                        AppointmentStatus::UNAVAILABLE => 'badge-warning-light',
+                        AppointmentStatus::CANCELLED => 'badge-danger',
                         AppointmentStatus::COMPLETED => 'badge-success-light',
-                        AppointmentStatus::BILLING => 'badge-success-light',
-                        AppointmentStatus::PROCEDURE => 'badge-success-light',
+                        AppointmentStatus::BILLING => 'badge-primary',
+                        AppointmentStatus::PROCEDURE => 'badge-secondary',
                         AppointmentStatus::MISSED => 'badge-danger-light',
-                        AppointmentStatus::RESCHEDULED => 'badge-success-light',
+                        AppointmentStatus::RESCHEDULED => 'badge-info',
                     ];
                     $btnClass = isset($statusMap[$row->app_status]) ? $statusMap[$row->app_status] : '';
-                    return "<span class='btn-sm badge {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . "</span>";
+                    return "<span class='btn-block btn-sm badge {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . "</span>";
                 })
                 ->addColumn('action', function ($row) {
                     if ($row->app_status == AppointmentStatus::CANCELLED || $row->app_status == AppointmentStatus::RESCHEDULED) {
@@ -106,7 +124,7 @@ class AppointmentController extends Controller
                     ];
                     return implode('', $buttons);
                 })
-                ->rawColumns(['status', 'action'])
+                ->rawColumns(['patient_id', 'name', 'status', 'action'])
                 ->make(true);
         }
 
@@ -126,9 +144,9 @@ class AppointmentController extends Controller
         $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($firstBranchId, $currentDayName);
 
         // Fetch all appointment statuses
-        $appointmentStatuses = AppointmentStatus::all();
+        $appointmentTypes = AppointmentType::all();
 
-        return view('appointment.index', compact('clinicBranches', 'firstBranchId', 'currentDayName', 'workingDoctors', 'appointmentStatuses'));
+        return view('appointment.index', compact('clinicBranches', 'firstBranchId', 'currentDayName', 'workingDoctors', 'appointmentTypes'));
     }
 
 

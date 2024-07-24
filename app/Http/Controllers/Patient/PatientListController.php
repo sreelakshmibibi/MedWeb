@@ -258,7 +258,7 @@ class PatientListController extends Controller
                 $appTime = $appDateTime->toTimeString(); // 'H:i:s'
 
                 // Generate unique token number for the appointment
-                $doctorId = $request->input('doctor_id');
+                $doctorId = $request->input('doctor2');
                 $commonService = new CommonService();
 
                 $tokenNo = $commonService->generateTokenNo($doctorId, $appDate);

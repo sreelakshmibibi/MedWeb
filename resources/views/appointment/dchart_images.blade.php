@@ -246,8 +246,8 @@ $additionalNormalTeethImages = [
 
             img.addEventListener('click', function() {
                 var teethName = this.id;
-                var appId = '<?=Session::get('appId')?>';
-                var patientId = '<?=Session::get('patientId')?>';
+                var appId = '<?= Session::get('appId') ?>';
+                var patientId = '<?= Session::get('patientId') ?>';
                 // console.log('Hover in T' + teethName);
                 var divId = '#div' + teethName;
                 $(divId).css({
@@ -259,6 +259,11 @@ $additionalNormalTeethImages = [
                 $('#tooth_id').val(teethName);
                 $('#app_id').val(appId);
                 $('#patient_id').val(patientId);
+                $('#xapp_id').val(appId);
+                $('#xpatient_id').val(patientId);
+                $('#xteeth_id').val(teethName);
+                // teethId = $('#xteeth_id').val();
+
                 if ($(divId).hasClass('molar')) {
                     $('#premolars_molars').show();
                     $('#incisors_canines').hide();
@@ -267,15 +272,16 @@ $additionalNormalTeethImages = [
                     $('#premolars_molars').hide();
                 }
                 $.ajax({
-                    url: '{{ route("get.toothExamination", ["toothId" => ":toothId", "appId" => ":appId", "patientId" => ":patientId"]) }}'
-                            .replace(':toothId', teethName)
-                            .replace(':appId', appId)
-                            .replace(':patientId', patientId),
+                    url: '{{ route('get.toothExamination', ['toothId' => ':toothId', 'appId' => ':appId', 'patientId' => ':patientId']) }}'
+                        .replace(':toothId', teethName)
+                        .replace(':appId', appId)
+                        .replace(':patientId', patientId),
                     type: "GET",
                     dataType: "json",
-                   
+
                     success: function(response) {
-                        var examination = response.examination; // Assuming there's only one item in the array
+                        var examination = response
+                            .examination; // Assuming there's only one item in the array
 
                         // Set the value of tooth_score_id field
                         var toothScoreId = examination.tooth_score_id;
@@ -292,7 +298,8 @@ $additionalNormalTeethImages = [
                         $('#chief_complaint').val(examination.chief_complaint);
                         $('#hpi').val(examination.hpi);
                         $('#diagnosis').val(examination.diagnosis);
-                        $('#dental_examination').val(examination.dental_examination);
+                        $('#dental_examination').val(examination
+                            .dental_examination);
                         $('#remarks').val(examination.remarks);
                         var disease_id = examination.disease_id;
                         $('#disease_id').val(disease_id);
@@ -330,6 +337,16 @@ $additionalNormalTeethImages = [
                         var palatal_condn = examination.palatal_condn;
                         $('#palatal_condn').val(palatal_condn);
 
+                        if (palatal_condn !== null) {
+                            $("#Palatal").show();
+                            var dpartId = '#' + $('.dparts[title="Palatal"]').attr(
+                                'id');
+                            $(dpartId).css({
+                                'background-color': 'red',
+                            });
+                            $(dpartId).addClass('red');
+                        }
+
                         // Loop through options to find the corresponding text and select it
                         $('#palatal_condn option').each(function() {
                             if ($(this).val() == palatal_condn) {
@@ -340,6 +357,15 @@ $additionalNormalTeethImages = [
 
                         var mesial_condn = examination.mesial_condn;
                         $('#mesial_condn').val(mesial_condn);
+                        if (mesial_condn !== null) {
+                            $("#Mesial").show();
+                            var dpartId = '#' + $('.dparts[title="Mesial"]').attr(
+                                'id');
+                            $(dpartId).css({
+                                'background-color': 'red',
+                            });
+                            $(dpartId).addClass('red');
+                        }
 
                         // Loop through options to find the corresponding text and select it
                         $('#mesial_condn option').each(function() {
@@ -352,6 +378,16 @@ $additionalNormalTeethImages = [
                         var distal_condn = examination.distal_condn;
                         $('#distal_condn').val(distal_condn);
 
+                        if (distal_condn !== null) {
+                            $("#Distal").show();
+                            var dpartId = '#' + $('.dparts[title="Distal"]').attr(
+                                'id');
+                            $(dpartId).css({
+                                'background-color': 'red',
+                            });
+                            $(dpartId).addClass('red');
+                        }
+
                         // Loop through options to find the corresponding text and select it
                         $('#distal_condn option').each(function() {
                             if ($(this).val() == distal_condn) {
@@ -363,6 +399,16 @@ $additionalNormalTeethImages = [
                         var buccal_condn = examination.buccal_condn;
                         $('#buccal_condn').val(buccal_condn);
 
+                        if (buccal_condn !== null) {
+                            $("#Buccal").show();
+                            var dpartId = '#' + $('.dparts[title="Buccal"]').attr(
+                                'id');
+                            $(dpartId).css({
+                                'background-color': 'red',
+                            });
+                            $(dpartId).addClass('red');
+                        }
+
                         // Loop through options to find the corresponding text and select it
                         $('#buccal_condn option').each(function() {
                             if ($(this).val() == buccal_condn) {
@@ -373,6 +419,17 @@ $additionalNormalTeethImages = [
 
                         var occulusal_condn = examination.occulusal_condn;
                         $('#occulusal_condn').val(occulusal_condn);
+
+                        if (occulusal_condn !== null) {
+                            $("#Occulusal").show();
+                            var dpartId = '#' + $('.dparts[title="Occulusal"]')
+                                .attr(
+                                    'id');
+                            $(dpartId).css({
+                                'background-color': 'red',
+                            });
+                            $(dpartId).addClass('red');
+                        }
 
                         // Loop through options to find the corresponding text and select it
                         $('#occulusal_condn option').each(function() {
@@ -413,11 +470,17 @@ $additionalNormalTeethImages = [
                             $('#uploadedXrays').hide();
                         }
                     },
-                    
+
                 });
 
                 $('#modal-teeth').modal('show');
 
+            });
+
+            $('#uploadedXrays').click(function() {
+
+
+                $('#modal-documents').modal('show');
             });
 
         });

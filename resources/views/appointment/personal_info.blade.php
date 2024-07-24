@@ -4,6 +4,7 @@ use App\Services\CommonService;
 $commonService = new CommonService();
 
 ?>
+<input type="hidden" id="visitcount" name="visitcount" value="{{ $appointment->patient->visit_count }}">
 <div class="row ">
     <div class="col-xl-8 col-12">
         <div class="box flex-grow-1 mb-3" style="border-radius: 0px; /*height: 364px;*/">
@@ -123,6 +124,28 @@ $commonService = new CommonService();
                                     @endphp
                                 </div>
                             </li>
+
+                            <?php if ($appointment->patient->gender == 'F') { ?>
+                            <li class="nav-item d-flex justify-start align-items-center">
+                                <div class="min-w-120 text-muted">
+                                    Pregnant
+                                </div>
+                                <div>
+                                    @php
+                                        if ($appointment->pregnant == '') {
+                                            echo '-';
+                                        } else {
+                                            if ($appointment->pregnant == 'Y') {
+                                                echo 'Yes';
+                                            } else {
+                                                echo 'No';
+                                            }
+                                        }
+                                    @endphp
+                                </div>
+                            </li>
+                            <?php } ?>
+
                             <li class="nav-item d-flex justify-start align-items-center">
                                 <div class="min-w-120 text-muted">
                                     Referred Doctor
@@ -308,7 +331,9 @@ $commonService = new CommonService();
                                 <div class="row  pb-10">
                                     <div class="col-6 be-1">
                                         <div class="media media-single p-2 px-0">
-                                            <div class="w-10"><i class="fas fa-smoking"></i>
+                                            <div class="w-10">
+                                                {{-- <i class="fas fa-smoking"></i> --}}
+                                                <h4 class="text-light mb-0"><i class="fas fa-smoking"></i></h4>
                                             </div>
                                             <div class="media-body">
                                                 <h6>
@@ -328,7 +353,9 @@ $commonService = new CommonService();
 
                                     <div class="col-6 ps-20">
                                         <div class="media media-single  p-2 px-0">
-                                            <div class="w-10"><i class="fas fa-wine-glass"></i>
+                                            <div class="w-10">
+                                                <h4 class="text-light mb-0"><i class="fas fa-wine-glass"></i>
+                                                </h4>
                                             </div>
                                             <div class="media-body">
                                                 <h6>
@@ -347,7 +374,53 @@ $commonService = new CommonService();
                                     </div>
                                 </div>
 
-                                <div class="media media-single bt-1 pt-10  p-2 px-0">
+                                <div class="row mx-0 bt-1 pt-2  pb-0">
+                                    <div class="col-6 px-0 be-1">
+                                        <div class="media media-single p-2 px-0">
+                                            <div class="w-10">
+                                                <h4 class="text-light mb-0"><i class="fas fa-utensils"></i></h4>
+                                            </div>
+                                            <div class="media-body">
+                                                <h6>
+                                                    @php
+                                                        if ($appointment->patient->diet == '') {
+                                                            echo '-';
+                                                        } else {
+                                                            echo $appointment->patient->diet;
+                                                        }
+                                                    @endphp
+                                                </h6>
+                                                <small class="text-fader text-muted">Dieting
+                                                    status</small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6 ps-20">
+                                        <div class="media media-single  p-2 px-0">
+                                            <div class="w-10">
+                                                <h4 class="text-light mb-0">
+                                                    <i class="fa-solid fa-temperature-half"></i>
+                                                </h4>
+                                            </div>
+                                            <div class="media-body">
+                                                <h6>
+                                                    @php
+                                                        if ($appointment->temperature == '') {
+                                                            echo '-';
+                                                        } else {
+                                                            echo $appointment->temperature;
+                                                        }
+                                                    @endphp
+                                                    &deg;F
+                                                </h6>
+                                                <small class="text-fader text-muted">Temperature</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- <div class="media media-single bt-1 pt-10  p-2 px-0">
                                     <div class="w-10"><i class="fas fa-utensils"></i></div>
                                     <div class="media-body">
                                         <h6>
@@ -362,7 +435,7 @@ $commonService = new CommonService();
                                         <small class="text-fader text-muted">Dieting
                                             status</small>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>

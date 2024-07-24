@@ -13,10 +13,11 @@ class ToothExamination extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'patient_id', 'app_id', 'tooth_id', 'tooth_score_id', 'chief_complaint', 'hpi', 'dental_examination', 'disease_id','diagnosis', 'treatment_id', 'xray', 'lingual_condn', 'labial_condn', 'occulusal_condn', 'distal_condn', 'mesial_condn', 'palatal_condn', 'buccal_condn', 'treatment_status', 'anatomy_image', 'remarks', 'created_by', 'updated_by', 'status'
+        'patient_id', 'app_id', 'tooth_id', 'tooth_score_id', 'chief_complaint', 'hpi', 'dental_examination', 'disease_id', 'diagnosis', 'treatment_id', 'xray', 'lingual_condn', 'labial_condn', 'occulusal_condn', 'distal_condn', 'mesial_condn', 'palatal_condn', 'buccal_condn', 'treatment_status', 'anatomy_image', 'remarks', 'created_by', 'updated_by', 'status',
     ];
 
     protected $dates = ['deleted_at'];
+
     protected static function booted()
     {
         // Before creating a new record
@@ -43,6 +44,32 @@ class ToothExamination extends Model
 
     public function teeth()
     {
-        return $this->belongsTo(Teeth::class, 'tooth_id', 'id');
+        return $this->belongsTo(Teeth::class, 'tooth_id', 'teeth_name');
+    }
+
+    public function treatment()
+    {
+        return $this->belongsTo(TreatmentType::class, 'treatment_id', 'id');
+    }
+
+    public function toothScore()
+    {
+        return $this->belongsTo(ToothScore::class, 'tooth_score_id', 'id');
+    }
+
+    public function disease()
+    {
+        return $this->belongsTo(Disease::class, 'disease_id', 'id');
+    }
+
+    public function treatmentStatus()
+    {
+        return $this->belongsTo(TreatmentStatus::class, 'treatment_status', 'id'); // Relationship to TreatmentStatus
+    }
+
+    public function xRayImages()
+    {
+        return $this->hasMany(XRayImage::class)
+            ->where('status', 'Y');
     }
 }

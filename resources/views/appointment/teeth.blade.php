@@ -62,9 +62,9 @@
                                             <label class="form-label" for="chief_complaint">Chief Complaint <span
                                                     class="text-danger">
                                                     *</span></label>
-                                            <input type="text" class="form-control" id="chief_complaint" name="chief_complaint"
-                                                placeholder="Chief Complaint">
-                                                <div id="complaintError" class="invalid-feedback"></div>
+                                            <input type="text" class="form-control" id="chief_complaint"
+                                                name="chief_complaint" placeholder="Chief Complaint">
+                                            <div id="complaintError" class="invalid-feedback"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -99,7 +99,7 @@
                                             *</span></label>
                                     <input type="text" class="form-control" id="hpi" name="hpi"
                                         placeholder="HPI">
-                                        <div id="hpiError" class="invalid-feedback"></div>
+                                    <div id="hpiError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
@@ -109,9 +109,9 @@
                                     <label class="form-label" for="dental_examination">Dental Examination <span
                                             class="text-danger">
                                             *</span></label>
-                                    <input type="text" class="form-control" id="dental_examination" name="dental_examination"
-                                        placeholder="Dental Examination">
-                                        <div id="dexamError" class="invalid-feedback"></div>
+                                    <input type="text" class="form-control" id="dental_examination"
+                                        name="dental_examination" placeholder="Dental Examination">
+                                    <div id="dexamError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6 ">
@@ -120,34 +120,12 @@
                                             *</span></label>
                                     <input type="text" class="form-control" id="diagnosis" name="diagnosis"
                                         placeholder="diagnosis">
-                                        <div id="diagnosisError" class="invalid-feedback"></div>
+                                    <div id="diagnosisError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="row">
-
-                            {{-- <div class="col-md-6 ">
-                                <div class="form-group">
-                                    <label class="form-label" for="disease">Disease <span class="text-danger">
-                                            *</span></label>
-                                    <select class="form-select" id="disease" name="disease">
-                                        <option value="">Select disease</option>
-                                        @foreach ($diseases as $disease)
-                                            <option value="</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div> --}}
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="xray">X-Ray <span class="text-danger">
-                                            *</span></label><a href="#" id="uploadedXrays" style="display:none;">View Uploaded</a>
-                                    <input type="file" class="form-control" id="xray" type="file"
-                                        name="xray[]" multiple>
-                                        <div id="xrayError" class="invalid-feedback"></div>
-                                </div>
-                            </div>
                             <div class="col-md-6 ">
                                 <div class="form-group">
                                     <label class="form-label" for="treatment_id">Treatment <span class="text-danger">
@@ -162,8 +140,47 @@
                                     <div id="treatmentError" class="invalid-feedback"></div>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="treatment_status">Treatment Status <span
+                                            class="text-danger">
+                                            *</span></label>
+                                    <select class="form-select" id="treatment_status" name="treatment_status">
+                                        <option value="">Select Status</option>
+                                        @foreach ($treatmentStatus as $status)
+                                            <option value="<?= $status->id ?>"><?= $status->status ?></option>
+                                        @endforeach
+                                    </select>
+                                    <div id="treatmentStatusError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
                         </div>
                         <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <label class="form-label" for="xray">X-Ray</label>
+                                        <button type="button" id="uploadedXrays" style="display:none;"
+                                            class="waves-effect waves-light btn btn-circle btn-info btn-xs"
+                                            data-bs-toggle="modal" data-bs-target="#modal-documents"
+                                            data-id=" $row->id " title="view documents"><i
+                                                class="fa-solid fa-file-archive"></i></button>
+                                    </div>
+                                    <input type="file" class="form-control" id="xray" type="file"
+                                        name="xray[]" multiple>
+                                    <div id="xrayError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 ">
+                                <div class="form-group">
+                                    <label class="form-label" for="remarks">Remarks</label>
+                                    <textarea class="form-control" id="remarks" name="remarks" rows="1" placeholder="Remarks if any"></textarea>
+                                    <div id="remarksError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-none row">
                             {{-- <div class="col-md-6">
                                 <label class="form-label" for="xray">X-Ray <span class="text-danger">
                                         <input type="file" class="form-control" id="xray" type="file"
@@ -181,7 +198,7 @@
                         </div>
                         <hr />
                         <div class=" row exam_toothdiv" style="display: none;">
-                            <div class="col-md-3 " id="Buccal" style="display: none;">
+                            <div class="col-md-3 tooth_partsdiv" id="Buccal" style="display: none;">
                                 <div class="form-group">
                                     <label class="form-label" for="buccal_condn">Buccal <span class="text-danger">
                                             *</span></label>
@@ -196,7 +213,7 @@
                                     <div id="buccal_condnError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-3 " id="Palatal" style="display: none;">
+                            <div class="col-md-3 tooth_partsdiv" id="Palatal" style="display: none;">
                                 <div class="form-group">
                                     <label class="form-label" for="palatal_condn">Palatal <span class="text-danger">
                                             *</span></label>
@@ -211,7 +228,7 @@
                                     <div id="palatal_condnError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-3 " id="Mesial" style="display: none;">
+                            <div class="col-md-3 tooth_partsdiv" id="Mesial" style="display: none;">
                                 <div class="form-group">
                                     <label class="form-label" for="mesial_condn">Mesial <span class="text-danger">
                                             *</span></label>
@@ -225,7 +242,7 @@
                                     <div id="mesial_condnError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-3 " id="Distal" style="display: none;">
+                            <div class="col-md-3 tooth_partsdiv" id="Distal" style="display: none;">
                                 <div class="form-group">
                                     <label class="form-label" for="distal_condn">Distal <span class="text-danger">
                                             *</span></label>
@@ -239,7 +256,7 @@
                                     <div id="distal_condnError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-3 " id="Occulusal" style="display: none;">
+                            <div class="col-md-3 tooth_partsdiv" id="Occulusal" style="display: none;">
                                 <div class="form-group">
                                     <label class="form-label" for="occulusal_condn">Occulusal <span
                                             class="text-danger">
@@ -282,7 +299,7 @@
                                     <div id="labial_condnError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-3 ">
+                            {{-- <div class="col-md-3 ">
                                 <div class="form-group">
                                     <label class="form-label" for="treatment_status">Treatment Status <span
                                             class="text-danger">
@@ -295,7 +312,7 @@
                                     </select>
                                     <div id="treatmentStatusError" class="invalid-feedback"></div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                 </div>
@@ -311,106 +328,145 @@
 </form>
 
 <script>
-   
-   $(function() {
-    // Handle Save button click
-    $('#newTreatmentBtn').click(function() {
-        // Reset previous error messages
-        resetErrors();
+    $(function() {
 
-        // Validate form inputs
-        var toothScore = $('#tooth_score_id').val();
-        var complaint = $('#chief_complaint').val();
-        var disease = $('#disease_id').val();
-        var hpi = $('#hpi').val();
-        var dexam = $('#dental_examination').val();
-        var diagnosis = $('#diagnosis').val();
-        var xray = $('#xray').prop('files');
-        var treatment = $('#treatment_id').val();
-        var remarks = $('#remarks').val();
+        // Handle Save button click
+        $('#newTreatmentBtn').click(function() {
+            // Reset previous error messages
+            resetErrors();
 
-        // Basic client-side validation
-        if (!toothScore) {
-            $('#tooth_score_id').addClass('is-invalid');
-            $('#toothScoreError').text('Tooth Score is required.');
-        }
+            // Validate form inputs
+            var toothScore = $('#tooth_score_id').val();
+            var complaint = $('#chief_complaint').val();
+            var disease = $('#disease_id').val();
+            var hpi = $('#hpi').val();
+            var dexam = $('#dental_examination').val();
+            var diagnosis = $('#diagnosis').val();
+            var xray = $('#xray').prop('files');
+            var treatment = $('#treatment_id').val();
+            var remarks = $('#remarks').val();
 
-        if (!complaint) {
-            $('#chief_complaint').addClass('is-invalid');
-            $('#complaintError').text('Chief Complaint is required.');
-        }
+            // Basic client-side validation
+            if (!toothScore) {
+                $('#tooth_score_id').addClass('is-invalid');
+                $('#toothScoreError').text('Tooth Score is required.');
+            }
 
-        if (!disease) {
-            $('#disease_id').addClass('is-invalid');
-            $('#diseaseError').text('Disease is required.');
-        }
+            if (!complaint) {
+                $('#chief_complaint').addClass('is-invalid');
+                $('#complaintError').text('Chief Complaint is required.');
+            }
 
-        if (!hpi) {
-            $('#hpi').addClass('is-invalid');
-            $('#hpiError').text('HPI is required.');
-        }
+            if (!disease) {
+                $('#disease_id').addClass('is-invalid');
+                $('#diseaseError').text('Disease is required.');
+            }
 
-        if (!dexam) {
-            $('#dental_examination').addClass('is-invalid');
-            $('#dexamError').text('Dental Examination is required.');
-        }
+            if (!hpi) {
+                $('#hpi').addClass('is-invalid');
+                $('#hpiError').text('HPI is required.');
+            }
 
-        if (!diagnosis) {
-            $('#diagnosis').addClass('is-invalid');
-            $('#diagnosisError').text('Diagnosis is required.');
-        }
+            if (!dexam) {
+                $('#dental_examination').addClass('is-invalid');
+                $('#dexamError').text('Dental Examination is required.');
+            }
 
-       
+            if (!diagnosis) {
+                $('#diagnosis').addClass('is-invalid');
+                $('#diagnosisError').text('Diagnosis is required.');
+            }
 
-        if (!treatment) {
-            $('#treatment_id').addClass('is-invalid');
-            $('#treatmentError').text('Treatment is required.');
-        }
 
-        // If all validations pass, submit the form via AJAX
-        var form = $('#form-teeth');
-        var url = form.attr('action');
-        var formData = new FormData(form[0]);
 
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: formData,
-            processData: false,
-            contentType: false,
-            dataType: 'json',
-            success: function(response) {
-                // If successful, hide modal and show success message
-                $('#modal-teeth').modal('hide');
-                $('#successMessage').text(response.success);
+            if (!treatment) {
+                $('#treatment_id').addClass('is-invalid');
+                $('#treatmentError').text('Treatment is required.');
+            }
+
+            // If all validations pass, submit the form via AJAX
+            var form = $('#form-teeth');
+            var url = form.attr('action');
+            var formData = new FormData(form[0]);
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(response) {
+                    // If successful, hide modal and show success message
+                    $('#modal-teeth').modal('hide');
+                    $('#successMessage').text(response.success);
                     $('#successMessage').fadeIn().delay(3000)
                         .fadeOut();
-                
-            },
-            error: function(xhr) {
-                // Handle specific error messages from backend if needed
-                console.log(xhr.responseText);
-                alert('Error saving treatment. Please try again.'); // You can customize this as per your UI needs
-            }
+
+                },
+                error: function(xhr) {
+                    // Handle specific error messages from backend if needed
+                    console.log(xhr.responseText);
+                    alert(
+                        'Error saving treatment. Please try again.'
+                    ); // You can customize this as per your UI needs
+                }
+            });
         });
+
+
+        // Function to reset all form errors
+        function resetErrors() {
+            $('.form-control').removeClass('is-invalid');
+            $('.invalid-feedback').text('');
+        }
+
+        // Reset form and errors on modal close
+        $('#modal-teeth').on('hidden.bs.modal', function() {
+            $('.tooth').css({
+                'border': 'none',
+            });
+            $('.dparts').css({
+                'background-color': 'white',
+            });
+            $('.dparts').removeClass('red');
+
+            if ($('#checkbox_all').is(':checked')) {
+                $('#checkbox_all').prop('checked', false);
+                $('.exam_toothdiv').show();
+            }
+            if ($('#checkbox_row1').is(':checked')) {
+                $('#checkbox_row1').prop('checked', false);
+                $('.exam_toothdiv').show();
+                $('#trow1').removeClass('rowbordered');
+            }
+            if ($('#checkbox_row2').is(':checked')) {
+                $('#checkbox_row2').prop('checked', false);
+                $('.exam_toothdiv').show();
+                $('#trow2').removeClass('rowbordered');
+            }
+            if ($('#checkbox_row3').is(':checked')) {
+                $('#checkbox_row3').prop('checked', false);
+                $('.exam_toothdiv').show();
+                $('#trow3').removeClass('rowbordered');
+            }
+            if ($('#checkbox_row4').is(':checked')) {
+                $('#checkbox_row4').prop('checked', false);
+                $('.exam_toothdiv').show();
+                $('#trow4').removeClass('rowbordered');
+            }
+
+            $('.tooth_partsdiv').hide();
+            $('#form-teeth').trigger('reset');
+            resetErrors();
+
+            $('#newTreatmentBtn').show();
+
+        });
+        $('.form-control, .form-select').on('input', function() {
+            $(this).removeClass('is-invalid');
+            $(this).next('.invalid-feedback').text('');
+        });
+
     });
-
-    // Function to reset all form errors
-    function resetErrors() {
-        $('.form-control').removeClass('is-invalid');
-        $('.invalid-feedback').text('');
-    }
-
-    // Reset form and errors on modal close
-    $('#modal-teeth').on('hidden.bs.modal', function() {
-        $('#form-teeth').trigger('reset');
-        resetErrors();
-    });
-    $('.form-control, .form-select').on('input', function() {
-        $(this).removeClass('is-invalid');
-        $(this).next('.invalid-feedback').text('');
-    });
-
-});
-
 </script>
