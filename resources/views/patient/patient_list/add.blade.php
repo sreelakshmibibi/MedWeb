@@ -63,26 +63,13 @@
     <script>
         $(document).ready(function() {
 
-            // $("#patientform").steps({
-            //     headerTag: "h6.tabHeading",
-            //     bodyTag: "section.tabSection",
-            //     transitionEffect: "none",
-            //     titleTemplate: "#title#",
-            //     labels: {
-            //         finish: '<span><i class="fa fa-save"></i> Save</span>',
-            //     },
-            //     onFinished: function(event, currentIndex) {
-            //         swal(
-            //             "Your Order Submitted!",
-            //             "Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor."
-            //         );
-            //     },
-            // }); please check steps_patient
-
-
             $("#patientform .actions ul li:last-child a").addClass("bg-success btn btn-success");
 
+            var today = new Date().toISOString().split('T')[0];
+            document.getElementById('regdate').setAttribute('min', today);
 
+            var now = new Date().toISOString().slice(0, 16);
+            document.getElementById('appdate').setAttribute('min', now);
 
             var initialCountryId = $('#country_id').val(); // Assuming India is selected initially
             loadStates(initialCountryId);
@@ -221,10 +208,10 @@
         function addMedicalCondition() {
             const wrapper = document.getElementById('medical-conditions-wrapper');
             const div = document.createElement('div');
-            div.className = 'input-group mb-3';
+            div.className = 'input-group mb-0';
             div.innerHTML = `
                 <input type="text" class="form-control" name="medical_conditions[]" placeholder="Medical Condition">
-                <button class="btn btn-danger" type="button" onclick="removeMedicalCondition(this)">-</button>
+                <button class="btn-sm btn-danger" type="button" onclick="removeMedicalCondition(this)">-</button>
             `;
             wrapper.appendChild(div);
         }
