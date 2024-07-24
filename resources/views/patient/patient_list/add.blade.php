@@ -71,6 +71,8 @@
             var now = new Date().toISOString().slice(0, 16);
             document.getElementById('appdate').setAttribute('min', now);
 
+            $('#pregnant').hide();
+
             var initialCountryId = $('#country_id').val(); // Assuming India is selected initially
             loadStates(initialCountryId);
 
@@ -227,7 +229,9 @@
             genderSelect.addEventListener('change', function() {
                 if (genderSelect.value === 'F') {
                     pregnantContainer.style.display = 'block';
+                    $('#pregnant').show();
                 } else {
+                    $('#pregnant').hide();
                     pregnantContainer.style.display = 'none';
                     document.getElementById('pregnant').value = '';
                 }
