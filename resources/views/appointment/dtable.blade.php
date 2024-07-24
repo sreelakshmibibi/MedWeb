@@ -418,19 +418,21 @@ use Illuminate\Support\Facades\Session;
                     }
                 });
 
-                var xrays = response.xrays;
-                if (Array.isArray(xrays) && xrays.length > 0) {
-                    // Show the link
-                    $('#uploadedXrays').show();
-                } else {
-                    // Hide the link if no xrays or not an array
-                    $('#uploadedXrays').hide();
-                }
+                // var xrays = response.xrays;
+                // if (Array.isArray(xrays) && xrays.length > 0) {
+                //     // Show the link
+                //     $('#uploadedXrays').show();
+                //$('#uploadedXrays').attr('data-id', examination.id);
+                //$('#xtooth_exam_id').val(examination.id);
+                // } else {
+                //     // Hide the link if no xrays or not an array
+                //     $('#uploadedXrays').hide();
+                // }
+                $('#teethXrayDiv').hide();
             },
 
         });
         $('#newTreatmentBtn').hide();
-        $('#editTreatmentBtn').hide();
         $('#modal-teeth').modal('show');
 
 
@@ -651,6 +653,8 @@ use Illuminate\Support\Facades\Session;
                 if (Array.isArray(xrays) && xrays.length > 0) {
                     // Show the link
                     $('#uploadedXrays').show();
+                    $('#uploadedXrays').attr('data-id', examination.id);
+                    $('#xtooth_exam_id').val(examination.id);
                 } else {
                     // Hide the link if no xrays or not an array
                     $('#uploadedXrays').hide();
@@ -791,9 +795,12 @@ use Illuminate\Support\Facades\Session;
         var appointmentId = $(this).data('appointment-id');
         var teethName = $(this).data('teeth-name');
         var patientId = $(this).data('patient-id');
+        var toothExamId = $(this).data('id');
+
 
         $('#xapp_id').val(appointmentId);
         $('#xpatient_id').val(patientId);
         $('#xteeth_id').val(teethName);
+        $('#xtooth_exam_id').val(toothExamId);
     });
 </script>

@@ -38,7 +38,7 @@ class TreatmentController extends Controller
     public function index($id, Request $request)
     {
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])->find($id);
-        abort_if(!$appointment, 404);
+        abort_if(! $appointment, 404);
         // Format clinic address
 
         //$patientProfile = PatientProfile::with(['lastAppointment'])->find($appointment->patient->id);
@@ -48,7 +48,7 @@ class TreatmentController extends Controller
         $previousAppointments = $appointmentService->getPreviousAppointments($id, $appointment->app_date, $appointment->patient->patient_id);
 
         //$patient = PatientProfile::find($id);
-        abort_if(!$patientProfile, 404);
+        abort_if(! $patientProfile, 404);
         $appointment = $patientProfile->lastAppointment;
         $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])
             ->where('clinic_status', 'Y')
@@ -72,7 +72,7 @@ class TreatmentController extends Controller
         $treatmentStatus = TreatmentStatus::all();
         $treatments = TreatmentType::where('status', 'Y')->get();
         $diseases = Disease::where('status', 'Y')->get();
-        $patientName = str_replace('<br>', ' ', $appointment->patient->first_name) . ' ' . $appointment->patient->last_name;
+        $patientName = str_replace('<br>', ' ', $appointment->patient->first_name).' '.$appointment->patient->last_name;
 
         Session::put('appId', $id);
         Session::put('patientName', $patientName);
@@ -85,7 +85,7 @@ class TreatmentController extends Controller
                     return str_replace('<br>', ' ', $row->doctor->name);
                 })
                 ->addColumn('branch', function ($row) {
-                    if (!$row->branch) {
+                    if (! $row->branch) {
                         return '';
                     }
                     $address = implode(', ', explode('<br>', $row->branch->clinic_address));
@@ -178,7 +178,6 @@ class TreatmentController extends Controller
     // public function getImages($patientId, $toothId)
     // {
 
-
     //     $directory = 'public/x-rays/' . $patientId . '/' . $toothId;
     //     $files = Storage::files($directory);
 
@@ -195,6 +194,7 @@ class TreatmentController extends Controller
     public function getImages($toothExaminationId)
     {
         $xrays = XRayImage::where('tooth_examination_id', $toothExaminationId)->where('status', 'Y')->get();
+
         return response()->json(['images' => $xrays]);
 
     }
@@ -205,7 +205,9 @@ class TreatmentController extends Controller
         $patientId = $request->get('patientId');
         $toothId = $request->get('toothId');
 
-        Storage::delete('storage/x-rays/' . $patientId . '/' . $toothId . '/' . $imageName);
+        Storage::delete('storage/x-rays/'.$patientId.'/'.$toothId.'/'.$imageName);
+        $XRayImage = XRayImage::findOrFail($imageName);
+        $XRayImage->delete();
 
         return response()->json(['message' => 'Image deleted successfully']);
     }
@@ -227,7 +229,7 @@ class TreatmentController extends Controller
                 ->where('app_id', $request->app_id)
                 ->where('status', 'Y')
                 ->get();
-            if (!empty($checkExists)) {
+            if (! empty($checkExists)) {
                 foreach ($checkExists as $check) {
                     $check->status = 'N';
                     $check->save();
@@ -273,7 +275,7 @@ class TreatmentController extends Controller
             if ($request->hasFile('xray')) {
                 $toothExaminationEdit->xray = 1;
                 foreach ($request->file('xray') as $file) {
-                    $xrayPath = $file->store('x-rays/' . $request->patient_id . '/' . $request->tooth_id, 'public');
+                    $xrayPath = $file->store('x-rays/'.$request->patient_id.'/'.$request->tooth_id, 'public');
                     $xrays = new XRayImage();
                     $xrays->tooth_examination_id = $toothExamination->id;
                     $xrays->xray = $xrayPath;
@@ -285,7 +287,7 @@ class TreatmentController extends Controller
                 foreach ($checkExists as $check) {
                     $xraysExists = XRayImage::where('tooth_examination_id', $check->id)->get();
                     $toothExaminationEdit->xray = 1;
-                    if (!$xraysExists->isEmpty()) {
+                    if (! $xraysExists->isEmpty()) {
                         // Update XRayImage records associated with this $check
                         XRayImage::where('tooth_examination_id', $check->id)
                             ->update([
@@ -299,11 +301,11 @@ class TreatmentController extends Controller
             if ($toothExaminationEdit->save()) {
                 DB::commit();
 
-                return response()->json(['success' => 'Tooth examination for teeth no ' . $toothId . ' added']);
+                return response()->json(['success' => 'Tooth examination for teeth no '.$toothId.' added']);
             } else {
                 DB::rollback();
 
-                return response()->json(['error' => 'Failed adding Tooth examination for teeth no ' . $toothId]);
+                return response()->json(['error' => 'Failed adding Tooth examination for teeth no '.$toothId]);
             }
 
         } catch (Exception $ex) {
@@ -312,7 +314,7 @@ class TreatmentController extends Controller
             print_r($ex->getMessage());
             echo '</pre>';
 
-            return response()->json(['error' => 'Failed adding Tooth examination for teeth no ' . $toothId]);
+            return response()->json(['error' => 'Failed adding Tooth examination for teeth no '.$toothId]);
         }
     }
 
@@ -370,7 +372,7 @@ class TreatmentController extends Controller
     //             if ($currentDate >= $discount_from && $currentDate <= $discount_to) {
     //                 if ($discount_percentage != null) {
     //                     $discountCost = $treatmentCost *  (1 - $discount_percentage / 100);
-                        
+
     //                 }
     //             }
     //         }
@@ -399,7 +401,7 @@ class TreatmentController extends Controller
     //     $comboOffersResult = [];
     //     if ($valid && $commonComboOfferId !== null) {
     //         $comboOffersResult = TreatmentComboOffer::where('id', $commonComboOfferId)->get();
-    //     } 
+    //     }
     //     // Return the data as a JSON response
     //     return response()->json([
     //         'toothExaminations' => $toothExaminations,
@@ -411,16 +413,16 @@ class TreatmentController extends Controller
     {
         // Retrieve patient_id from the query parameters
         $patientId = $request->query('patient_id');
-        
+
         // Fetch ToothExamination data with related teeth and treatment details
         $toothExaminations = ToothExamination::with([
             'teeth:id,teeth_name,teeth_image',
             'treatment',
         ])
-        ->where('app_id', $appointment)
-        ->where('patient_id', $patientId)
-        ->where('status', 'Y')
-        ->get();
+            ->where('app_id', $appointment)
+            ->where('patient_id', $patientId)
+            ->where('status', 'Y')
+            ->get();
 
         $treatments = [];
         $individualTreatmentAmounts = [];
@@ -449,12 +451,14 @@ class TreatmentController extends Controller
 
             // Store calculated cost back to treatment object
             $toothExamination->treatment->discount_cost = $discountCost;
+            // Store calculated cost back to treatment object
+            $toothExamination->treatment->discount_cost = $discountCost;
 
             // Check if there is a combo offer for this treatment
             if ($toothExamination->treatment->comboOffer) {
                 $comboOfferId = $toothExamination->treatment->comboOffer->id;
                 // Fetch combo offer details if not already fetched
-                if (!isset($comboOffersResult[$comboOfferId])) {
+                if (! isset($comboOffersResult[$comboOfferId])) {
                     $comboOffersResult[$comboOfferId] = TreatmentComboOffer::find($comboOfferId);
                 }
             } else {
@@ -476,7 +480,6 @@ class TreatmentController extends Controller
             'comboOffers' => $comboOffersResult,
         ]);
     }
-
 
     /**
      * Show the form for editing the specified resource.
