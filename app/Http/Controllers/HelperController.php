@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\City;
 use App\Models\State;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
 class HelperController extends Controller
@@ -36,6 +37,7 @@ class HelperController extends Controller
             'appId' => Session::get('appId'),
             'patientId' => Session::get('patientId'),
             'patientName' => Session::get('patientName'),
+            'loginedUserAdmin' => Auth::user()->is_admin,
         ];
 
         return response()->json($response);

@@ -408,74 +408,74 @@ class TreatmentController extends Controller
     // }
 
     public function showCharge($appointment, Request $request)
-{
-    // Retrieve patient_id from the query parameters
-    $patientId = $request->query('patient_id');
-    
-    // Fetch ToothExamination data with related teeth and treatment details
-    $toothExaminations = ToothExamination::with([
-        'teeth:id,teeth_name,teeth_image',
-        'treatment',
-    ])
-    ->where('app_id', $appointment)
-    ->where('patient_id', $patientId)
-    ->where('status', 'Y')
-    ->get();
+    {
+        // Retrieve patient_id from the query parameters
+        $patientId = $request->query('patient_id');
+        
+        // Fetch ToothExamination data with related teeth and treatment details
+        $toothExaminations = ToothExamination::with([
+            'teeth:id,teeth_name,teeth_image',
+            'treatment',
+        ])
+        ->where('app_id', $appointment)
+        ->where('patient_id', $patientId)
+        ->where('status', 'Y')
+        ->get();
 
-    $treatments = [];
-    $individualTreatmentAmounts = [];
-    $comboOffersResult = [];
+        $treatments = [];
+        $individualTreatmentAmounts = [];
+        $comboOffersResult = [];
 
-    // Process each tooth examination
-    foreach ($toothExaminations as $toothExamination) {
-        // Collect treatment IDs
-        $treatments[] = $toothExamination->treatment->id;
+        // Process each tooth examination
+        foreach ($toothExaminations as $toothExamination) {
+            // Collect treatment IDs
+            $treatments[] = $toothExamination->treatment->id;
 
-        // Fetch treatment cost and discount details
-        $treatmentCost = $toothExamination->treatment->treat_cost;
-        $discount_from = $toothExamination->treatment->discount_from;
-        $discount_to = $toothExamination->treatment->discount_to;
-        $discount_percentage = $toothExamination->treatment->discount_percentage;
+            // Fetch treatment cost and discount details
+            $treatmentCost = $toothExamination->treatment->treat_cost;
+            $discount_from = $toothExamination->treatment->discount_from;
+            $discount_to = $toothExamination->treatment->discount_to;
+            $discount_percentage = $toothExamination->treatment->discount_percentage;
 
-        // Calculate discount cost if applicable
-        $discountCost = $treatmentCost;
-        $currentDate = date('Y-m-d');
+            // Calculate discount cost if applicable
+            $discountCost = $treatmentCost;
+            $currentDate = date('Y-m-d');
 
-        if ($discount_from !== null && $discount_to !== null &&
-            $currentDate >= $discount_from && $currentDate <= $discount_to &&
-            $discount_percentage !== null) {
-            $discountCost = $treatmentCost * (1 - $discount_percentage / 100);
-        }
-
-        // Store calculated cost back to treatment object
-        $toothExamination->treatment->discount_cost = $discountCost;
-
-        // Check if there is a combo offer for this treatment
-        if ($toothExamination->treatment->comboOffer) {
-            $comboOfferId = $toothExamination->treatment->comboOffer->id;
-            // Fetch combo offer details if not already fetched
-            if (!isset($comboOffersResult[$comboOfferId])) {
-                $comboOffersResult[$comboOfferId] = TreatmentComboOffer::find($comboOfferId);
+            if ($discount_from !== null && $discount_to !== null &&
+                $currentDate >= $discount_from && $currentDate <= $discount_to &&
+                $discount_percentage !== null) {
+                $discountCost = $treatmentCost * (1 - $discount_percentage / 100);
             }
-        } else {
-            // If no combo offer, set comboOffersResult to empty array for this treatment
-            $comboOffersResult[$toothExamination->treatment->id] = [];
+
+            // Store calculated cost back to treatment object
+            $toothExamination->treatment->discount_cost = $discountCost;
+
+            // Check if there is a combo offer for this treatment
+            if ($toothExamination->treatment->comboOffer) {
+                $comboOfferId = $toothExamination->treatment->comboOffer->id;
+                // Fetch combo offer details if not already fetched
+                if (!isset($comboOffersResult[$comboOfferId])) {
+                    $comboOffersResult[$comboOfferId] = TreatmentComboOffer::find($comboOfferId);
+                }
+            } else {
+                // If no combo offer, set comboOffersResult to empty array for this treatment
+                $comboOffersResult[$toothExamination->treatment->id] = [];
+            }
+
+            // Store individual treatment amount
+            $individualTreatmentAmounts[$toothExamination->treatment->id] = [
+                'treat_name' => $toothExamination->treatment->treat_name,
+                'treat_cost' => $discountCost, // Use discounted cost
+            ];
         }
 
-        // Store individual treatment amount
-        $individualTreatmentAmounts[$toothExamination->treatment->id] = [
-            'treat_name' => $toothExamination->treatment->treat_name,
-            'treat_cost' => $discountCost, // Use discounted cost
-        ];
+        // Return the data as a JSON response
+        return response()->json([
+            'toothExaminations' => $toothExaminations,
+            'individualTreatmentAmounts' => $individualTreatmentAmounts,
+            'comboOffers' => $comboOffersResult,
+        ]);
     }
-
-    // Return the data as a JSON response
-    return response()->json([
-        'toothExaminations' => $toothExaminations,
-        'individualTreatmentAmounts' => $individualTreatmentAmounts,
-        'comboOffers' => $comboOffersResult,
-    ]);
-}
 
 
     /**

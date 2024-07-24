@@ -1,4 +1,4 @@
-<section id="finalStepContent" class="tabHideSection">
+<!-- <section id="finalStepContent" class="tabHideSection" @if (Auth::user()->isAdmin !=1)  style="display:none" @endif> -->
     <div class="d-flex align-items-center justify-content-between">
         <h5 class="box-title text-info mb-0 mt-2 "><i class="fa-solid fa-indian-rupee-sign me-15"></i>
             Charge
@@ -30,4 +30,4 @@
             </tbody>
         </table>
     </div>
-</section>
+<!-- </section> -->

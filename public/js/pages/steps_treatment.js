@@ -2,6 +2,7 @@ var form = $("#treatmentform").show();
 
 let historyStepAdded = false;
 let prescriptionStepAdded = false;
+let chargeStepAdded = false;
 
 function getSessionData() {
     return $.ajax({
@@ -192,12 +193,53 @@ function handlePrescriptionStep(presc) {
         }
     }
 }
+
+function getChargeSection(isAdmin) {
+    if (isAdmin) {
+        var currentStep = $("#treatmentform").steps("getCurrentIndex");
+        var chargeContent = $(".chargediv").html();
+        if (!chargeStepAdded) {
+            $("#treatmentform").steps("add", {
+                title: "Charge",
+                content: chargeContent,
+                enableCancelButton: false,
+                enableNextButton: true,
+            });
+            // Add a class to the newly inserted step tab
+            $("#treatmentform")
+                .find(".steps > ul > li")
+                .eq(currentStep + 1)
+                .addClass("presc_class");
+
+            // Add a class to the content of the prescription tab
+            $("#treatmentform")
+                .find(".content > .body")
+                .eq(currentStep + 1)
+                .addClass("presc_content_class");
+                chargeStepAdded = true;
+           
+        }
+    } else {
+        if (chargeStepAdded) {
+            $(".wizard-content .wizard > .steps > ul > li.presc_class").attr(
+                "style",
+                "display:none;"
+            );
+            $(
+                ".wizard-content .wizard > .content > .presc_content_class"
+            ).remove();
+            $("#treatmentform").steps("remove", "Prescription");
+            chargeStepAdded = false;
+        }
+    }
+}
 function getTreatmentTable(stepIndex) {
     getSessionData()
         .done(function (data) {
+            var isAdmin = data.loginedUserAdmin;
             var appId = data.appId;
             var patientId = data.patientId;
-
+            
             $.ajax({
                 url: treatmentShowChargeRoute.replace(":appId", appId),
                 type: "GET",
@@ -375,6 +417,7 @@ $("#treatmentform").steps({
             // return valid;
         }
         let visitcount = $("#visitcount").val();
+        let isAdmin = $("#isAdmin").val();
         if (currentIndex == 0) {
             handleHistoryStep(visitcount);
         }
@@ -383,9 +426,10 @@ $("#treatmentform").steps({
         if (currentIndex == 2 || currentIndex == 3) {
             handlePrescriptionStep(presc);
         }
+        getChargeSection(isAdmin);
         getDentalTable(newIndex);
         getTreatmentTable(newIndex);
-
+        
         // Return true if moving backwards or all validation passed
         return currentIndex > newIndex || valid;
     },

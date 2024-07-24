@@ -63,10 +63,10 @@ use Illuminate\Support\Facades\Session;
                                 @include('appointment.prescription')
                             </section> --}}
 
-                            <h6 class="tabHeading">Charge</h6>
+                            {{-- <h6 class="tabHeading">Charge</h6>
                             <section class="tabSection">
                                 @include('appointment.charge')
-                            </section>
+                            </section> --}}
 
                             {{-- <h6 class="tabHeading">Chart</h6>
                             <section class="tabSection">
@@ -87,6 +87,9 @@ use Illuminate\Support\Facades\Session;
 
                     <div class="prescdiv" style="display: none;">
                         @include('appointment.prescription')
+                    </div>
+                    <div class="chargediv" style="display:none;">
+                        @include('appointment.charge')
                     </div>
                     <!-- /.box-body -->
                 </div>
