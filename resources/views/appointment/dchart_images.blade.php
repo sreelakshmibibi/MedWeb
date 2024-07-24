@@ -98,7 +98,7 @@ $additionalNormalTeethImages = [
 
 ?>
 
-<div class="row" id="dchartDiv">
+<div class=" row">
     <div class="box bg-white">
         <div class="box-body">
             <div class="tooth_body">
@@ -473,7 +473,7 @@ $additionalNormalTeethImages = [
                         if (Array.isArray(xrays) && xrays.length > 0) {
                             // Show the link
                             $('#uploadedXrays').show();
-                            $('#uploadedXrays').data('examid', examination.id);
+                            $('#uploadedXrays').attr('data-id', examination.id);
                             $('#xtooth_exam_id').val(examination.id);
                         } else {
                             // Hide the link if no xrays or not an array
