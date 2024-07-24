@@ -94,7 +94,7 @@
         </select>
     </div>
 
-    <div class="form-group col-md-2 d-flex flex-wrap align-content-end">
+    <div class="form-group col-md-2 d-flex flex-wrap align-content-end" id="pregnant_container" style="display: none;">
         <select class="form-select" id="pregnant" name="pregnant">
             <option value="">Are you pregnant?</option>
             <option value="Y">Yes</option>
