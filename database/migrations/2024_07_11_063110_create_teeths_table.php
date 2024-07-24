@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('teeths', function (Blueprint $table) {
             $table->id();
-            $table->string('teeth_name');
+            $table->string('teeth_name')->unique();
             $table->string('position');
             $table->string('direction');
             $table->string('teeth_image');

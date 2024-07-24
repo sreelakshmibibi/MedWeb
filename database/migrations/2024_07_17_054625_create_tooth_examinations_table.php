@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('patient_id');
             $table->foreignId('app_id')->constrained('appointments');
-            $table->integer('tooth_id')->nullable()->constrained('teeths');
-            $table->integer('row_id')->nullable()->constrained('teeth_rows');
+            $table->string('tooth_id')->nullable();
+            $table->unsignedBigInteger('row_id')->nullable();
             $table->foreignId('tooth_score_id')->nullable()->constrained('tooth_scores');
             $table->string('chief_complaint');
             $table->string('hpi');
@@ -38,6 +38,23 @@ return new class extends Migration
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
             $table->string('status', 5)->default('Y');
+            $table->foreign('patient_id')
+            ->references('patient_id')
+            ->on('patient_profiles')
+            ->onDelete('cascade')
+            ->onUpdate('cascade');
+            $table->foreign('tooth_id')
+            ->references('teeth_name')
+            ->on('teeths')
+            ->onDelete('cascade')
+            ->onUpdate('cascade');
+            $table->foreign('row_id')
+            ->references('id')
+            ->on('teeth_rows')
+            ->onDelete('cascade')
+            ->onUpdate('cascade');
+
+
             $table->timestamps();
             $table->softDeletes();
         });

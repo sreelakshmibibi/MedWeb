@@ -98,6 +98,7 @@ use Illuminate\Support\Facades\Session;
 
     <script>
         var treatmentShowRoute = "{{ route('treatment.show', ['appointment' => ':appId']) }}";
+        var treatmentShowChargeRoute = "{{ route('treatment.showCharge', ['appointment' => ':appId']) }}";
         var teethId;
         $(document).ready(function() {
 
