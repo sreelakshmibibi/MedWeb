@@ -199,7 +199,7 @@ function getTreatmentTable(stepIndex) {
             var patientId = data.patientId;
 
             $.ajax({
-                url: treatmentShowRoute.replace(":appId", appId),
+                url: treatmentShowChargeRoute.replace(":appId", appId),
                 type: "GET",
                 data: {
                     patient_id: patientId,
@@ -213,15 +213,21 @@ function getTreatmentTable(stepIndex) {
                     tableBody.empty(); // Clear any existing rows
 
                     var treatments = response.toothExaminations;
+                    var comboOffers = response.comboOffer;
                     var totalCost = 0;
                     if (treatments && treatments.length > 0) {
                         treatments.forEach(function (exam, index) {
-                            totalCost += parseFloat(exam.treatment.treat_cost);
+                            var treatCost = parseFloat(exam.treatment.treat_cost);
+                            var discountCost = parseFloat(exam.treatment.discount_cost);
+                            totalCost += discountCost;
+                            var treatDiscount = exam.treatment.discount_percentage;
+
                             var row = `
                                 <tr>
                                     <td>${index + 1}</td>
-                                    <td>${exam.treatment.treat_name}</td>
-                                    <td>${exam.treatment.treat_cost}</td>
+                                    <td>${exam.treatment.treat_name} (${treatCost.toFixed(2)})</td>
+                                    <td>${treatDiscount != null ? treatDiscount : 0} %</td>
+                                    <td>${discountCost.toFixed(2)}</td>
                                 </tr>
                             `;
                             tableBody.append(row);
@@ -232,7 +238,7 @@ function getTreatmentTable(stepIndex) {
                     } else {
                         var noDataRow = `
                             <tr>
-                                <td colspan="3">No data available</td>
+                                <td colspan="4">No data available</td>
                             </tr>
                         `;
                         tableBody.append(noDataRow);
@@ -247,9 +253,13 @@ function getTreatmentTable(stepIndex) {
             console.error("Error fetching session data:", xhr);
         });
 }
-
 // Function to update total charge based on discount
 function updateTotalCharge(totalCost, discountPercentage = 0) {
+    // If discount percentage is null or undefined, default to 0
+    if (isNaN(discountPercentage)) {
+        discountPercentage = 0;
+    }
+
     var discountedAmount = totalCost * (1 - discountPercentage / 100);
     var totalAmount = discountedAmount.toFixed(2);
 
@@ -257,30 +267,29 @@ function updateTotalCharge(totalCost, discountPercentage = 0) {
     tableChargeBody.empty(); // Clear any existing rows
 
     var row = `
-            <tr class="bt-3 border-primary">
-                <th colspan="2" class="text-end">Total Rate</th>
-                <td colspan="1">${totalCost}</td>
-            </tr>
-            <tr>
-                <th colspan="2" class="text-end">Doctor Discount (if any)</th>
-                <td colspan="1">
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="discount1" name="discount1" aria-describedby="basic-addon2" value="${discountPercentage}">
-                        <div class="input-group-append">
-                            <span class="input-group-text" id="basic-addon2">%</span>
-                        </div>
+        <tr class="bt-3 border-primary">
+            <th colspan="3" class="text-end">Total Rate</th>
+            <td colspan="1">${totalCost.toFixed(2)}</td>
+        </tr>
+        <tr>
+            <th colspan="3" class="text-end">Doctor Discount (if any)</th>
+            <td colspan="1">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="discount1" name="discount1" aria-describedby="basic-addon2" value="${discountPercentage}">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon2">%</span>
                     </div>
-                </td>
-            </tr>
-            <tr class="bg-primary">
-                <th colspan="2" class="text-end fs-18 fw-600">Total Amount</th>
-                <td colspan="1" class="fs-18 fw-600">${totalAmount}</td>
-            </tr>
-        `;
+                </div>
+            </td>
+        </tr>
+        <tr class="bg-primary">
+            <th colspan="3" class="text-end fs-18 fw-600">Total Amount</th>
+            <td colspan="1" class="fs-18 fw-600">${totalAmount}</td>
+        </tr>
+    `;
     tableChargeBody.append(row);
 
     // Set focus back to the discount input field after updating
-    // Set focus back to the discount input field and move cursor to end
     var discountInput = $("#discount1");
     var discountValue = discountInput.val();
     discountInput.focus().val("").val(discountValue);
@@ -293,18 +302,29 @@ $(document).on("input", "#discount1", function () {
     var numericValue = discountValue.replace(/[^0-9]/g, "");
     $(this).val(numericValue);
 
-    // If the input value is numeric, update the total charge
+    // If the input value is numeric or empty, update the total charge
     var discountPercentage = parseFloat(numericValue);
-    if (!isNaN(discountPercentage)) {
+    if (!isNaN(discountPercentage) || discountValue === "") {
         // Fetch current total cost from the UI
         var currentTotalCost = parseFloat(
             $("#totalChargeBody .bt-3.border-primary td:last-child").text()
         );
 
-        // Update total charge with new discount
-        updateTotalCharge(currentTotalCost, discountPercentage);
+        // Check if currentTotalCost is NaN or not a valid number
+        if (!isNaN(currentTotalCost)) {
+            // Update total charge with new discount
+            updateTotalCharge(currentTotalCost, discountPercentage);
+        } else {
+            // Handle case where currentTotalCost is NaN or not valid
+            updateTotalCharge(0, discountPercentage); // Default to 0 if NaN
+        }
+    } else {
+        // If input value is not numeric (NaN) and not empty, default to 0
+        updateTotalCharge(0, 0);
     }
 });
+
+
 
 $("#treatmentform").steps({
     headerTag: "h6",
