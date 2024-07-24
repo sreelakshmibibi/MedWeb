@@ -45,7 +45,7 @@
                                         <th>Upcoming (if any)</th>
                                         {{-- <th>New Appointment</th> --}}
                                         <th>Status</th>
-                                        <th width="100px">Action</th>
+                                        <th width="150px">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -207,9 +207,9 @@
                             $('#medical-conditions-wrapper').empty();
                             response.history.forEach(function(condition, index) {
                                 var medicalConditionInput = `
-                                    <div class="input-group mb-3">
+                                    <div class="input-group mb-0">
                                         <input type="text" class="form-control" name="medical_conditions[]" value="${condition.history}" placeholder="Medical Condition">
-                                        <button class="btn ${index === 0 ? 'btn-success' : 'btn-danger'}" type="button" onclick="${index === 0 ? 'addPatientMedicalCondition()' : 'removePatientMedicalCondition(this)'}">${index === 0 ? '+' : '-'}</button>
+                                        <button class="btn-sm ${index === 0 ? 'btn-success' : 'btn-danger'}" type="button" onclick="${index === 0 ? 'addPatientMedicalCondition()' : 'removePatientMedicalCondition(this)'}">${index === 0 ? '+' : '-'}</button>
                                     </div>`;
                                 $('#medical-conditions-wrapper').append(
                                     medicalConditionInput);

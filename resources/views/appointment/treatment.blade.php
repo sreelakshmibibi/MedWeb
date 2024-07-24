@@ -103,6 +103,7 @@ use Illuminate\Support\Facades\Session;
         var treatmentShowRoute = "{{ route('treatment.show', ['appointment' => ':appId']) }}";
         var treatmentShowChargeRoute = "{{ route('treatment.showCharge', ['appointment' => ':appId']) }}";
         var teethId;
+        let isAdmin = $("#isAdmin").val();
         $(document).ready(function() {
 
             $("#treatmentform .actions ul li:last-child a").addClass("bg-success btn btn-success");
@@ -179,6 +180,11 @@ use Illuminate\Support\Facades\Session;
                     // $('#followupdiv').show();
                     $('#followupdiv').hide();
                 }
+            });
+
+            $("#presc_checkbox").on("change", function() {
+                var isChecked = $(this).is(":checked");
+                handlePrescription(isChecked);
             });
 
             let count = 1;

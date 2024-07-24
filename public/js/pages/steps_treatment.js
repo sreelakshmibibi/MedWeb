@@ -39,12 +39,19 @@ function getDentalTable(stepIndex) {
 
                         if (toothExaminations && toothExaminations.length > 0) {
                             toothExaminations.forEach(function (exam, index) {
-                                var viewDocumentsButton = '';
+                                var viewDocumentsButton = "";
 
                                 // Check if there are x-ray images
-                                if (exam.x_ray_images && exam.x_ray_images.length > 0) {
-                                    console.log(appId,exam.teeth.teeth_name,patientId);
-                                     viewDocumentsButton = `
+                                if (
+                                    exam.x_ray_images &&
+                                    exam.x_ray_images.length > 0
+                                ) {
+                                    console.log(
+                                        appId,
+                                        exam.teeth.teeth_name,
+                                        patientId
+                                    );
+                                    viewDocumentsButton = `
                 <button type="button" id="uploadedXrays" class="waves-effect waves-light btn btn-circle btn-info btn-xs"
                     data-bs-toggle="modal" data-bs-target="#modal-documents" data-id="${exam.id}"
                     title="View documents">
@@ -58,16 +65,23 @@ function getDentalTable(stepIndex) {
                                     <td>${index + 1}</td>
                                     <td>${exam.teeth.teeth_name}</td>
                                     <td>${exam.chief_complaint}</td>
-                                    <td>${exam.disease ? exam.disease.name : ""
+                                    <td>${
+                                        exam.disease ? exam.disease.name : ""
                                     }</td>
                                     <td>${exam.hpi}</td>
                                     <td>${exam.dental_examination}</td>
                                     <td>${exam.diagnosis}</td>
                                     <td>${viewDocumentsButton}</td>
                                     <td>${exam.treatment.treat_name}</td>
-                                    <td><button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-treat-view btn-xs me-1' title='View' data-bs-toggle='modal' data-id='${exam.teeth.teeth_name}' data-bs-target='#modal-teeth'><i class='fa fa-eye'></i></button>
-                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-treat-edit btn-xs me-1' title='Edit' data-bs-toggle='modal' data-id='${exam.teeth.teeth_name}' data-bs-target='#modal-teeth'><i class='fa fa-pencil'></i></button>
-                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-treat-delete btn-xs me-1' title='Delete' data-bs-toggle='modal' data-id='${exam.id}' data-bs-target='#modal-delete'><i class='fa-solid fa-trash'></i></button>
+                                    <td><button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-treat-view btn-xs me-1' title='View' data-bs-toggle='modal' data-id='${
+                                        exam.teeth.teeth_name
+                                    }' data-bs-target='#modal-teeth'><i class='fa fa-eye'></i></button>
+                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-treat-edit btn-xs me-1' title='Edit' data-bs-toggle='modal' data-id='${
+                                        exam.teeth.teeth_name
+                                    }' data-bs-target='#modal-teeth'><i class='fa fa-pencil'></i></button>
+                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-treat-delete btn-xs me-1' title='Delete' data-bs-toggle='modal' data-id='${
+                                        exam.id
+                                    }' data-bs-target='#modal-delete'><i class='fa-solid fa-trash'></i></button>
                                     
                                     </td>
                                 </tr>
@@ -94,6 +108,83 @@ function getDentalTable(stepIndex) {
     }
 }
 
+function handlePrescription(isChecked) {
+    if (isChecked) {
+        var prescContent = $(".prescdiv").html();
+        var currentStep = $("#treatmentform").steps("getCurrentIndex");
+
+        $("#treatmentform").steps("insert", currentStep + 1, {
+            title: "Prescription",
+            content: prescContent,
+            enableCancelButton: false,
+            enableNextButton: true,
+        });
+        // Add a class to the newly inserted step tab
+        $("#treatmentform")
+            .find(".steps > ul > li")
+            .eq(currentStep + 1)
+            .addClass("presc_class");
+
+        // Add a class to the content of the prescription tab
+        $("#treatmentform")
+            .find(".content > .body")
+            .eq(currentStep + 1)
+            .addClass("presc_content_class");
+
+        $("#medicine_id1").select2({
+            width: "100%",
+            placeholder: "Select a Medicine",
+            tags: true, // Allow user to add new tags (medicines)
+            tokenSeparators: [",", " "], // Define how tags are separated
+            createTag: function (params) {
+                var term = $.trim(params.term);
+
+                if (term === "") {
+                    return null;
+                }
+
+                // Check if the term already exists as an option
+                var found = false;
+                $(this)
+                    .find("option")
+                    .each(function () {
+                        if ($.trim($(this).text()) === term) {
+                            found = true;
+                            return false; // Exit the loop early
+                        }
+                    });
+
+                if (!found) {
+                    // Return object for new tag
+                    return {
+                        id: term,
+                        text: term,
+                        newTag: true, // Add a custom property to indicate it's a new tag
+                    };
+                }
+
+                return null; // If term already exists, return null
+            },
+        });
+        $("#dosage1").select2({
+            width: "100%",
+            placeholder: "Select a Dosage",
+        });
+        $("#advice1").select2({
+            width: "100%",
+        });
+
+        // }
+    } else {
+        $(".wizard-content .wizard > .steps > ul > li.presc_class").attr(
+            "style",
+            "display:none;"
+        );
+        $(".wizard-content .wizard > .content > .presc_content_class").remove();
+        $("#treatmentform").steps("remove", "Prescription");
+    }
+}
+
 function handleHistoryStep(visitcount) {
     if (visitcount != "0") {
         var currentStep = $("#treatmentform").steps("getCurrentIndex");
@@ -112,87 +203,88 @@ function handleHistoryStep(visitcount) {
     }
 }
 
-function handlePrescriptionStep(presc) {
-    if (presc) {
-        var currentStep = $("#treatmentform").steps("getCurrentIndex");
-        var prescContent = $(".prescdiv").html();
-        if (!prescriptionStepAdded) {
-            $("#treatmentform").steps("insert", currentStep + 1, {
-                title: "Prescription",
-                content: prescContent,
-                enableCancelButton: false,
-                enableNextButton: true,
-            });
-            // Add a class to the newly inserted step tab
-            $("#treatmentform")
-                .find(".steps > ul > li")
-                .eq(currentStep + 1)
-                .addClass("presc_class");
+// function handlePrescriptionStep(presc) {
+//     if (presc) {
+//         var currentStep = $("#treatmentform").steps("getCurrentIndex");
+//         var prescContent = $(".prescdiv").html();
+//         if (!prescriptionStepAdded) {
+//             $("#treatmentform").steps("insert", currentStep + 1, {
+//                 title: "Prescription",
+//                 content: prescContent,
+//                 enableCancelButton: false,
+//                 enableNextButton: true,
+//             });
 
-            // Add a class to the content of the prescription tab
-            $("#treatmentform")
-                .find(".content > .body")
-                .eq(currentStep + 1)
-                .addClass("presc_content_class");
-            prescriptionStepAdded = true;
+//             // Add a class to the newly inserted step tab
+//             $("#treatmentform")
+//                 .find(".steps > ul > li")
+//                 .eq(currentStep + 1)
+//                 .addClass("presc_class");
 
-            $("#medicine_id1").select2({
-                width: "100%",
-                placeholder: "Select a Medicine",
-                tags: true, // Allow user to add new tags (medicines)
-                tokenSeparators: [",", " "], // Define how tags are separated
-                createTag: function (params) {
-                    var term = $.trim(params.term);
+//             // Add a class to the content of the prescription tab
+//             $("#treatmentform")
+//                 .find(".content > .body")
+//                 .eq(currentStep + 1)
+//                 .addClass("presc_content_class");
+//             prescriptionStepAdded = true;
 
-                    if (term === "") {
-                        return null;
-                    }
+//             $("#medicine_id1").select2({
+//                 width: "100%",
+//                 placeholder: "Select a Medicine",
+//                 tags: true, // Allow user to add new tags (medicines)
+//                 tokenSeparators: [",", " "], // Define how tags are separated
+//                 createTag: function (params) {
+//                     var term = $.trim(params.term);
 
-                    // Check if the term already exists as an option
-                    var found = false;
-                    $(this)
-                        .find("option")
-                        .each(function () {
-                            if ($.trim($(this).text()) === term) {
-                                found = true;
-                                return false; // Exit the loop early
-                            }
-                        });
+//                     if (term === "") {
+//                         return null;
+//                     }
 
-                    if (!found) {
-                        // Return object for new tag
-                        return {
-                            id: term,
-                            text: term,
-                            newTag: true, // Add a custom property to indicate it's a new tag
-                        };
-                    }
+//                     // Check if the term already exists as an option
+//                     var found = false;
+//                     $(this)
+//                         .find("option")
+//                         .each(function () {
+//                             if ($.trim($(this).text()) === term) {
+//                                 found = true;
+//                                 return false; // Exit the loop early
+//                             }
+//                         });
 
-                    return null; // If term already exists, return null
-                },
-            });
-            $("#dosage1").select2({
-                width: "100%",
-                placeholder: "Select a Dosage",
-            });
-            $("#advice1").select2({
-                width: "100%",
-            });
-        }
-    } else {
-        if (prescriptionStepAdded) {
-            $(".wizard-content .wizard > .steps > ul > li.presc_class").attr(
-                "style",
-                "display:none;"
-            );
-            $(
-                ".wizard-content .wizard > .content > .presc_content_class"
-            ).remove();
-            $("#treatmentform").steps("remove", "Prescription");
-            prescriptionStepAdded = false;
-        }
-    }
-}
+//                     if (!found) {
+//                         // Return object for new tag
+//                         return {
+//                             id: term,
+//                             text: term,
+//                             newTag: true, // Add a custom property to indicate it's a new tag
+//                         };
+//                     }
+
+//                     return null; // If term already exists, return null
+//                 },
+//             });
+//             $("#dosage1").select2({
+//                 width: "100%",
+//                 placeholder: "Select a Dosage",
+//             });
+//             $("#advice1").select2({
+//                 width: "100%",
+//             });
+//         }
+//     } else {
+//         if (prescriptionStepAdded) {
+//             $(".wizard-content .wizard > .steps > ul > li.presc_class").attr(
+//                 "style",
+//                 "display:none;"
+//             );
+//             $(
+//                 ".wizard-content .wizard > .content > .presc_content_class"
+//             ).remove();
+//             $("#treatmentform").steps("remove", "Prescription");
+//             prescriptionStepAdded = false;
+//         }
+//     }
+// }
 
 function getChargeSection(isAdmin) {
     if (isAdmin) {
@@ -205,41 +297,18 @@ function getChargeSection(isAdmin) {
                 enableCancelButton: false,
                 enableNextButton: true,
             });
-            // Add a class to the newly inserted step tab
-            $("#treatmentform")
-                .find(".steps > ul > li")
-                .eq(currentStep + 1)
-                .addClass("presc_class");
-
-            // Add a class to the content of the prescription tab
-            $("#treatmentform")
-                .find(".content > .body")
-                .eq(currentStep + 1)
-                .addClass("presc_content_class");
-                chargeStepAdded = true;
-           
-        }
-    } else {
-        if (chargeStepAdded) {
-            $(".wizard-content .wizard > .steps > ul > li.presc_class").attr(
-                "style",
-                "display:none;"
-            );
-            $(
-                ".wizard-content .wizard > .content > .presc_content_class"
-            ).remove();
-            $("#treatmentform").steps("remove", "Prescription");
-            chargeStepAdded = false;
+            chargeStepAdded = true;
         }
     }
 }
+
 function getTreatmentTable(stepIndex) {
     getSessionData()
         .done(function (data) {
             var isAdmin = data.loginedUserAdmin;
             var appId = data.appId;
             var patientId = data.patientId;
-            
+
             $.ajax({
                 url: treatmentShowChargeRoute.replace(":appId", appId),
                 type: "GET",
@@ -259,16 +328,27 @@ function getTreatmentTable(stepIndex) {
                     var totalCost = 0;
                     if (treatments && treatments.length > 0) {
                         treatments.forEach(function (exam, index) {
-                            var treatCost = parseFloat(exam.treatment.treat_cost);
-                            var discountCost = parseFloat(exam.treatment.discount_cost);
+                            var treatCost = parseFloat(
+                                exam.treatment.treat_cost
+                            );
+                            var discountCost = parseFloat(
+                                exam.treatment.discount_cost
+                            );
                             totalCost += discountCost;
-                            var treatDiscount = exam.treatment.discount_percentage;
+                            var treatDiscount =
+                                exam.treatment.discount_percentage;
 
                             var row = `
                                 <tr>
                                     <td>${index + 1}</td>
-                                    <td>${exam.treatment.treat_name} (${treatCost.toFixed(2)})</td>
-                                    <td>${treatDiscount != null ? treatDiscount : 0} %</td>
+                                    <td>${
+                                        exam.treatment.treat_name
+                                    } (${treatCost.toFixed(2)})</td>
+                                    <td>${
+                                        treatDiscount != null
+                                            ? treatDiscount
+                                            : 0
+                                    } %</td>
                                     <td>${discountCost.toFixed(2)}</td>
                                 </tr>
                             `;
@@ -366,8 +446,6 @@ $(document).on("input", "#discount1", function () {
     }
 });
 
-
-
 $("#treatmentform").steps({
     headerTag: "h6",
     bodyTag: "section",
@@ -422,14 +500,10 @@ $("#treatmentform").steps({
             handleHistoryStep(visitcount);
         }
 
-        let presc = $("#presc_checkbox").is(":checked");
-        if (currentIndex == 2 || currentIndex == 3) {
-            handlePrescriptionStep(presc);
-        }
         getChargeSection(isAdmin);
         getDentalTable(newIndex);
         getTreatmentTable(newIndex);
-        
+
         // Return true if moving backwards or all validation passed
         return currentIndex > newIndex || valid;
     },
@@ -530,13 +604,15 @@ $("#treatmentform").steps({
             $(element).removeClass(errorClass);
         },
         errorPlacement: function (error, element) {
-            // alert($(element).attr("id"));
-            if ($(element).hasClass("select2")) {
+            if (
+                $(element).hasClass("select2-hidden-accessible") ||
+                $(element).hasClass("select2") ||
+                $(element).parent().hasClass("input-group")
+            ) {
                 error.insertAfter($(element).siblings());
             } else {
                 error.insertAfter(element);
             }
-            // error.insertAfter(element);
         },
         rules: {
             title: { required: true },
