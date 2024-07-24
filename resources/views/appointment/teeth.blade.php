@@ -163,7 +163,7 @@
                                         <button type="button" id="uploadedXrays" style="display:none;"
                                             class="waves-effect waves-light btn btn-circle btn-info btn-xs"
                                             data-bs-toggle="modal" data-bs-target="#modal-documents"
-                                            data-id=" $row->id " title="view documents"><i
+                                             title="view documents"><i
                                                 class="fa-solid fa-file-archive"></i></button>
                                     </div>
                                     <input type="file" class="form-control" id="xray" type="file"

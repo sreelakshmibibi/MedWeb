@@ -42,18 +42,14 @@ function getDentalTable(stepIndex) {
 
                                 // Check if there are x-ray images
                                 if (exam.x_ray_images && exam.x_ray_images.length > 0) {
-
-                                    viewDocumentsButton = `
-                                <button type="button" id="xraybtn" class="waves-effect waves-light btn btn-circle btn-info btn-xs"
-                                        data-bs-toggle="modal" data-bs-target="#modal-documents"
-                                        data-id="${exam.id}" 
-                                        data-appointment-id="${appId}"
-                                        data-teeth-name="${exam.teeth.teeth_name}"
-                                        data-patient-id="${patientId}"
-                                        title="View documents">
-                                    <i class="fa-solid fa-file-archive"></i>
-                                </button>
-                            `;
+                                    console.log(appId,exam.teeth.teeth_name,patientId);
+                                     viewDocumentsButton = `
+                <button type="button" id="uploadedXrays" class="waves-effect waves-light btn btn-circle btn-info btn-xs"
+                    data-bs-toggle="modal" data-bs-target="#modal-documents" data-id="${exam.id}"
+                    title="View documents">
+                    <i class="fa-solid fa-file-archive"></i>
+                </button>
+            `;
                                 }
 
                                 var row = `
@@ -66,7 +62,7 @@ function getDentalTable(stepIndex) {
                                     <td>${exam.hpi}</td>
                                     <td>${exam.dental_examination}</td>
                                     <td>${exam.diagnosis}</td>
-                                    <td>${exam.x_ray_images && exam.x_ray_images.length > 0 ? viewDocumentsButton : ''}</td>
+                                    <td>${viewDocumentsButton}</td>
                                     <td>${exam.treatment.treat_name}</td>
                                     <td><button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-treat-view btn-xs me-1' title='View' data-bs-toggle='modal' data-id='${exam.teeth.teeth_name}' data-bs-target='#modal-teeth'><i class='fa fa-eye'></i></button>
                                     <button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-treat-edit btn-xs me-1' title='Edit' data-bs-toggle='modal' data-id='${exam.teeth.teeth_name}' data-bs-target='#modal-teeth'><i class='fa fa-pencil'></i></button>

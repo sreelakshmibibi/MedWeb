@@ -45,13 +45,14 @@
         // Trigger Flexslider update when modal is shown
         $('#modal-documents').on('shown.bs.modal', function() {
             $('.flexslider').resize(); // Trigger Flexslider to resize or update
+            var dataId = $('#uploadedXrays').attr('data-id');
             var patientId = $('#xpatient_id').val();
             var toothId = $('#xteeth_id').val();
-
+            
             // Construct the path to the images
             var xraysrc = 'storage/x-rays/' + patientId + '/' + toothId + '/';
 
-            url = '/images/' + patientId + '/' + toothId;
+            url = '/images/' + dataId;
 
             // Clear previous images
             // $('#imageSlides').empty();
@@ -61,11 +62,10 @@
                 dataType: 'json',
                 success: function(response) {
                     var images = response.images;
-
                     // Iterate over each image and add it to the modal
                     images.forEach(function(image) {
-                        var imageSrc = "{{ asset('storage/x-rays') }}/" +
-                            patientId + "/" + toothId + "/" + image;
+                        var imageSrc = "{{ asset('storage/') }}/" +
+                            image.xray;
 
                         var listItem = `<li class = "fx-card-item fx-element-overlay">
                                             <div class = "fx-card-avatar fx-overlay-1">
@@ -77,14 +77,14 @@
                                                                 <i class="fa-solid fa-magnifying-glass"></i></a>
                                                         </li>
                                                         <li>
-                                                            <a class="btn btn-danger-outline delete-image" data-image="${image}">
+                                                            <a class="btn btn-danger-outline delete-image" data-image="${image.id}">
                                                                 <i class="fa fa-trash"></i>
                                                             </a>
                                                         </li>
                                                     </ul>
                                                 </div>
                                             </div>
-                                            <p class="flex-caption">"${image}"</p>
+                                        
                                         </li>`;
                         $('#imageSlides').append(listItem);
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\TeethRow;
 use Illuminate\Support\Facades\Session;
 
 $upper_ped_teethImages = [
@@ -189,18 +190,18 @@ $additionalNormalTeethImages = [
                 </div>
 
             </div>
-            <div class="row position-absolute" style="left:2rem; top:0;">
+            <!-- <div class="row position-absolute" style="left:2rem; top:0;">
                 {{-- <div class="row position-absolute" style="left:2rem; top:-1.5rem;"> --}}
                 <div class="select-div">
                     <input type="checkbox" id="checkbox_all" class="filled-in chk-col-success">
                     <label for="checkbox_all">Select All</label>
                 </div>
-            </div>
+            </div> -->
             <div class="select-chart position-absolute" style="right:2rem; top:1.5rem;">
                 {{-- <div class="select-chart position-absolute" style="left:2rem; top:1.5rem;"> --}}
                 <div class="row">
                     <div class="select-div">
-                        <input type="checkbox" id="checkbox_row1" class="filled-in chk-col-primary">
+                        <input type="checkbox" id="checkbox_row1" name="rowChecked" class="filled-in chk-col-primary"  value="<?=TeethRow::Row1?>">
                         <label for="checkbox_row1">Select Row</label>
                     </div>
                 </div>
@@ -209,7 +210,7 @@ $additionalNormalTeethImages = [
                 </div>
                 <div class="row">
                     <div class="select-div">
-                        <input type="checkbox" id="checkbox_row2" class="filled-in chk-col-primary">
+                        <input type="checkbox" id="checkbox_row2" name="rowChecked" class="filled-in chk-col-primary" value="<?=TeethRow::Row2?>">
                         <label for="checkbox_row2">Select Row</label>
                     </div>
                 </div>
@@ -220,7 +221,7 @@ $additionalNormalTeethImages = [
                 </div>
                 <div class="row">
                     <div class="select-div">
-                        <input type="checkbox" id="checkbox_row3" class="filled-in chk-col-primary">
+                        <input type="checkbox" id="checkbox_row3" name="rowChecked" class="filled-in chk-col-primary"  value="<?=TeethRow::Row3?>">
                         <label for="checkbox_row3">Select Row</label>
                     </div>
                 </div>
@@ -229,7 +230,7 @@ $additionalNormalTeethImages = [
                 </div>
                 <div class="row">
                     <div class="select-div">
-                        <input type="checkbox" id="checkbox_row4" class="filled-in chk-col-primary">
+                        <input type="checkbox" id="checkbox_row4" name="rowChecked" class="filled-in chk-col-primary"  value="<?=TeethRow::Row4?>">
                         <label for="checkbox_row4">Select Row</label>
                     </div>
                 </div>
@@ -465,6 +466,7 @@ $additionalNormalTeethImages = [
                         if (Array.isArray(xrays) && xrays.length > 0) {
                             // Show the link
                             $('#uploadedXrays').show();
+                            $('#uploadedXrays').attr('data-id', examination.id);
                         } else {
                             // Hide the link if no xrays or not an array
                             $('#uploadedXrays').hide();

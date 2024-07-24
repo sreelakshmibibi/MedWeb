@@ -120,7 +120,7 @@ Route::delete('/combo_offer/{offer}', [ComboOfferController::class, 'destroy'])-
 Route::get('/appointment/{appointment}/treatment', [TreatmentController::class, 'index'])->name('treatment');
 Route::post('/treatment/store', [TreatmentController::class, 'store'])->name('treatment.store');
 
-Route::get('/images/{patientId}/{toothId}', [TreatmentController::class, 'getImages'])->name('images.index');
+Route::get('/images/{dataId}', [TreatmentController::class, 'getImages'])->name('images.index');
 Route::delete('/delete-image', [TreatmentController::class, 'deleteImage'])->name('delete.image');
 
 Route::get('/appointment/fetchtreatment/{appointment}', [TreatmentController::class, 'show'])->name('treatment.show');

@@ -173,20 +173,28 @@ class TreatmentController extends Controller
         return response()->json(['examination' => $toothExamination, 'xrays' => $xrays]);
     }
 
-    public function getImages($patientId, $toothId)
+    // public function getImages($patientId, $toothId)
+    // {
+
+
+    //     $directory = 'public/x-rays/' . $patientId . '/' . $toothId;
+    //     $files = Storage::files($directory);
+
+    //     // Extract only the filenames from the full file paths
+    //     $fileNames = [];
+    //     foreach ($files as $file) {
+    //         $fileName = pathinfo($file, PATHINFO_BASENAME); // Get just the filename
+    //         $fileNames[] = $fileName;
+    //     }
+
+    //     return response()->json(['images' => $fileNames]);
+    // }
+
+    public function getImages($toothExaminationId)
     {
+        $xrays = XRayImage::where('tooth_examination_id', $toothExaminationId)->where('status', 'Y')->get();
+        return response()->json(['images' => $xrays]);
 
-        $directory = 'public/x-rays/' . $patientId . '/' . $toothId;
-        $files = Storage::files($directory);
-
-        // Extract only the filenames from the full file paths
-        $fileNames = [];
-        foreach ($files as $file) {
-            $fileName = pathinfo($file, PATHINFO_BASENAME); // Get just the filename
-            $fileNames[] = $fileName;
-        }
-
-        return response()->json(['images' => $fileNames]);
     }
 
     public function deleteImage(Request $request)
