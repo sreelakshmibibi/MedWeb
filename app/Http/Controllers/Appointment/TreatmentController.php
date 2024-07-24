@@ -168,10 +168,11 @@ class TreatmentController extends Controller
             ->where('status', 'Y')
             ->first();
         $xrays = null;
-        if ($toothExamination->xray == 1) {
-            $xrays = XRayImage::where('tooth_examination_id', $toothExamination->id)->get();
+        if ($toothExamination) {
+            if ($toothExamination->xray == 1) {
+                $xrays = XRayImage::where('tooth_examination_id', $toothExamination->id)->get();
+            }
         }
-
         return response()->json(['examination' => $toothExamination, 'xrays' => $xrays]);
     }
 
@@ -205,7 +206,7 @@ class TreatmentController extends Controller
         $patientId = $request->get('patientId');
         $toothId = $request->get('toothId');
 
-        Storage::delete('storage/x-rays/'.$patientId.'/'.$toothId.'/'.$imageName);
+        // Storage::delete('storage/x-rays/'.$patientId.'/'.$toothId.'/'.$imageName);
         $XRayImage = XRayImage::findOrFail($imageName);
         $XRayImage->delete();
 

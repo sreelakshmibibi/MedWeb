@@ -98,7 +98,7 @@ $additionalNormalTeethImages = [
 
 ?>
 
-<div class=" row">
+<div class="row" id="dchartDiv">
     <div class="box bg-white">
         <div class="box-body">
             <div class="tooth_body">
@@ -288,6 +288,9 @@ $additionalNormalTeethImages = [
                         var examination = response
                             .examination; // Assuming there's only one item in the array
 
+                        if (examination != null) {
+
+                        
                         // Set the value of tooth_score_id field
                         var toothScoreId = examination.tooth_score_id;
                         $('#tooth_score_id').val(toothScoreId);
@@ -465,16 +468,18 @@ $additionalNormalTeethImages = [
                                 return false; // Exit the loop once found
                             }
                         });
-
+                    }
                         var xrays = response.xrays;
                         if (Array.isArray(xrays) && xrays.length > 0) {
                             // Show the link
                             $('#uploadedXrays').show();
-                            $('#uploadedXrays').attr('data-id', examination.id);
+                            $('#uploadedXrays').data('examid', examination.id);
                             $('#xtooth_exam_id').val(examination.id);
                         } else {
                             // Hide the link if no xrays or not an array
                             $('#uploadedXrays').hide();
+                            $('#uploadedXrays').attr('data-id', null);
+                            $('#xtooth_exam_id').val('');
                         }
                     },
 
