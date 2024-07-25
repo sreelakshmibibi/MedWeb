@@ -41,7 +41,7 @@ function getDentalTable(stepIndex) {
                             toothExaminations.forEach(function (exam, index) {
                                 var viewDocumentsButton = "";
                                 teethName = exam.tooth_id ? exam.teeth.teeth_name : exam.row_id;
-                               
+                                teethNameDisplay = exam.tooth_id ? exam.teeth.teeth_name : 'Row ' +exam.row_id;
                                 console.log(
                                     appId,
                                     teethName,
@@ -69,7 +69,7 @@ function getDentalTable(stepIndex) {
                                 var row = `
                                 <tr>
                                     <td>${index + 1}</td>
-                                    <td>${teethName}</td>
+                                    <td>${teethNameDisplay}</td>
                                     <td>${exam.chief_complaint}</td>
                                     <td>${exam.disease ? exam.disease.name : ""
                                     }</td>
