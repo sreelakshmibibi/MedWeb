@@ -162,11 +162,20 @@ class TreatmentController extends Controller
      */
     public function fetchExistingExamination($toothId, $appId, $patientId)
     {
+        $toothExamination = [];
+        if (in_array($toothId, [1,2,3,4])) {
+            $toothExamination = ToothExamination::where('row_id', $toothId)
+            ->where('patient_id', $patientId)
+            ->where('app_id', $appId)
+            ->where('status', 'Y')
+            ->first();
+        } else {
         $toothExamination = ToothExamination::where('tooth_id', $toothId)
             ->where('patient_id', $patientId)
             ->where('app_id', $appId)
             ->where('status', 'Y')
             ->first();
+        }
         $xrays = null;
         if ($toothExamination) {
             if ($toothExamination->xray == 1) {
@@ -225,11 +234,21 @@ class TreatmentController extends Controller
     {
         try {
             DB::beginTransaction();
-            $checkExists = ToothExamination::where('tooth_id', $request->tooth_id)
+            $checkExists = [];
+            if (in_array($request->row_id, [1, 2, 3, 4])) {
+                $checkExists = ToothExamination::where('row_id', $request->row_id)
                 ->where('patient_id', $request->patient_id)
                 ->where('app_id', $request->app_id)
                 ->where('status', 'Y')
                 ->get();
+            } else {
+                $checkExists = ToothExamination::where('tooth_id', $request->tooth_id)
+                ->where('patient_id', $request->patient_id)
+                ->where('app_id', $request->app_id)
+                ->where('status', 'Y')
+                ->get();
+            }
+            
             if (! empty($checkExists)) {
                 foreach ($checkExists as $check) {
                     $check->status = 'N';
@@ -243,6 +262,7 @@ class TreatmentController extends Controller
             }
             // $toothExamination = new ToothExamination();
             $toothId = $request->tooth_id;
+            $row_id = $request->selected_row;
             $occulusal_condn = $request->occulusal_condn != null ? 1 : 0;
             $palatal_condn = $request->palatal_condn != null ? 1 : 0;
             $mesial_condn = $request->mesial_condn != null ? 1 : 0;
@@ -253,6 +273,7 @@ class TreatmentController extends Controller
                 'app_id',
                 'patient_id',
                 'tooth_id',
+                'row_id', 
                 'tooth_score_id',
                 'chief_complaint',
                 'disease_id',
