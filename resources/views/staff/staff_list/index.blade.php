@@ -35,8 +35,7 @@
                     <div class="box-body">
                         <div class="table-responsive">
                             <!-- Main content -->
-                            <table
-                                class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center"
+                            <table class="table table-bordered table-hover table-striped mb-0 data-table text-center"
                                 width="100%">
                                 <thead class="bg-primary-light">
                                     <tr>
@@ -149,7 +148,7 @@
                 var staffId = $(this).data('id');
                 $('#edit_staff_id').val(staffId); // Set staff ID in the hidden input
                 $.ajax({
-                    url: '{{ url("staff", "") }}' + "/" + staffId + "/edit",
+                    url: '{{ url('staff', '') }}' + "/" + staffId + "/edit",
                     method: 'GET',
                     success: function(response) {
                         $('#edit_staff_id').val(response.id);
