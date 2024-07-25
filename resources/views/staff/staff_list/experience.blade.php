@@ -4,7 +4,7 @@
         <div class="form-group">
             <label class="form-label" for="qualification">Qualification <span class="text-danger">
                     *</span></label>
-            <input type="text" class="form-control" id="qualification" name="qualification" placeholder="qualification"
+            <input type="text" class="form-control" id="qualification" name="qualification" placeholder="Qualification"
                 required>
         </div>
     </div>
@@ -13,7 +13,7 @@
             <label class="form-label" for="years_of_experience">Experience <span class="text-danger">
                     *</span></label>
             <input type="text" class="form-control" id="years_of_experience" name="years_of_experience"
-                placeholder="experience" required>
+                placeholder="Experience" required>
         </div>
     </div>
     <div class="col-md-4">
@@ -46,7 +46,8 @@
         <div class="form-group">
             <label class="form-label" for="date_of_joining">Date of Joining <span class="text-danger">
                     *</span></label>
-            <input class="form-control" type="date" id="date_of_joining" name="date_of_joining" required>
+            <input class="form-control" type="date" id="date_of_joining" name="date_of_joining"
+                value="<?php echo date('Y-m-d'); ?>" required>
 
         </div>
     </div>
@@ -65,7 +66,7 @@
         <div class="form-group">
             <label class="form-label" for="specialization">Specialization <span class="text-danger">
                     *</span></label>
-            <input type="text" class="form-control" id="specialization" name="specialization"
+            <input type="text" class="form-control" id="specialization" name="Specialization"
                 placeholder="Specialization">
         </div>
     </div>
@@ -73,7 +74,7 @@
         <div class="form-group">
             <label class="form-label" for="subspecialty">Subspeciality <span class="text-danger">
                     *</span></label>
-            <input type="text" class="form-control" id="subspecialty" name="subspecialty"
+            <input type="text" class="form-control" id="subspecialty" name="Subspecialty"
                 placeholder="Subspeciality">
         </div>
     </div>
