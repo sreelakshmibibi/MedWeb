@@ -19,16 +19,16 @@
             <div class="box-body">
                 <div class="table-responsive">
                     <!-- Main content -->
-                    <table class="table table-bordered table-hover table-striped mb-0 border-2 data-table "
+                    <table id="cbranch_table" class="table table-bordered table-hover table-striped mb-0 data-table"
                         width="100%">
                         <thead class="bg-primary-light text-center">
                             <tr>
-                                <th>No</th>
+                                <th width="10px">No</th>
                                 <th>Phone Number</th>
                                 <th>Address</th>
                                 <th>Is Medicine Provided?</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                                <th width="20px">Status</th>
+                                <th width="80px">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -55,20 +55,22 @@
 <script type="text/javascript">
     var table;
     jQuery(function($) {
-        table = $('.data-table').DataTable({
-            "columnDefs": [{
-                    "width": "10px",
-                    "targets": 0
-                }, // No column
-                {
-                    "width": "20px",
-                    "targets": 4
+        table = $('#cbranch_table').DataTable({
+            deferRender: true,
+            columnDefs: [{
+                    width: '10px',
+                    targets: 0
                 },
                 {
-                    "width": "80px",
-                    "targets": 5
-                } // Action column
+                    width: "20px",
+                    targets: 4
+                },
+                {
+                    width: "80px",
+                    targets: 5
+                }
             ],
+            fixedColumns: true,
             responsive: true,
             processing: true,
             serverSide: true,
@@ -116,7 +118,11 @@
                     orderable: false,
                     searchable: true
                 },
-            ]
+            ],
+            drawCallback: function(settings) {
+                table.columns.adjust().draw();
+                $('#cbranch_table').css('visibility', 'visible');
+            }
         });
 
         $(document).on('click', '.btn-edit', function() {

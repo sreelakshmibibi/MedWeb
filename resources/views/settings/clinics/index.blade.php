@@ -108,9 +108,9 @@
                                                     <input
                                                         class="form-control @error('clinic_website') is-invalid @enderror"
                                                         type="url" id="clinic_website" name="clinic_website"
-                                                        placeholder="http://" <?php// if($clinicDetails) { ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?>
+                                                        placeholder="http://" <?php// if($clinicDetails) { ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?>
                                                         value="{{ old('clinic_website', $clinicDetails->clinic_website) }}"
-                                                        <?php// } ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?>>
+                                                        <?php// } ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?>>
                                                     @error('clinic_website')
                                                         <div class="invalid-feedback">{{ $message }}</div>
                                                     @enderror
@@ -146,6 +146,7 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            $('#cbranch_table').css('visibility', 'hidden');
             var canvas = document.getElementById('logoCanvas');
             var ctx = canvas.getContext('2d');
             if ('{{ $clinicDetails }}') {
