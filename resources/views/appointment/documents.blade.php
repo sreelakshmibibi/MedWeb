@@ -29,8 +29,6 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger float-end" data-bs-dismiss="modal"
-                        id="btn-confirm-status">Change</button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -87,8 +85,9 @@
                                                     </ul>
                                                 </div>
                                             </div>
-                                        
-                                        </li>`;
+                                            <p class="flex-caption${image.id}"></p>
+                                       </li>`;
+                                         
                         $('#imageSlides').append(listItem);
 
                     });
@@ -153,7 +152,14 @@
                 },
                 success: function(response) {
                     // Optionally, remove the deleted image from the UI
-                    console.log('Image deleted successfully:', imageName);
+                    console.log('Image deleted successfully:', response);
+                    var successMessage = `<li class="success-message">Image ${imageName} deleted successfully.</li>`;
+                    $('.flex-caption'+imageName).append(response.message);
+
+                    // Remove the success message after a delay (optional)
+                    setTimeout(function() {
+                        $('.flex-caption'+imageName).remove();
+                    }, 3000); // Remove after 3 seconds
                     // Reload images or update UI as needed
                     reloadImages();
                 },
@@ -165,7 +171,8 @@
 
         // Function to reload images after deletion
         function reloadImages() {
-
+            var url = '/images/' + $('#xtooth_exam_id').val();
+            
             $.ajax({
                 url: url,
                 method: 'GET',
@@ -180,35 +187,8 @@
                         // Display a message indicating no images found
                         $('#imageSlides').append('<p>No images found.</p>');
                     } else {
-
-                        // Iterate over each image and add it to the modal
-                        // images.forEach(function(image) {
-                        //     var imageSrc = "{{ asset('storage/x-rays') }}/" +
-                        //         patientId + "/" + toothId + "/" + image;
-
-                        //     var listItem = `<li class="fx-card-item fx-element-overlay">
-                        //                     <div class="fx-card-avatar fx-overlay-1">
-                        //                         <img src="${imageSrc}" alt="document" class="bbsr-0 bber-0">
-                        //                         <div class="fx-overlay scrl-up">
-                        //                             <ul class="fx-info">
-                        //                                 <li>
-                        //                                     <a class="btn btn-outline image-popup-vertical-fit" href="${imageSrc}">
-                        //                                         <i class="fa-solid fa-magnifying-glass"></i>
-                        //                                     </a>
-                        //                                 </li>
-                        //                                 <li>
-                        //                                     <a class="btn btn-danger-outline delete-image" data-image="${image}">
-                        //                                         <i class="fa fa-trash"></i>
-                        //                                     </a>
-                        //                                 </li>
-                        //                             </ul>
-                        //                         </div>
-                        //                     </div>
-                        //                     <p class="flex-caption">${image}</p>
-                        //                 </li>`;
-                        //     $('#imageSlides').append(listItem);
-                        // });
-                        images.forEach(function(image) {
+                        $('#imageSlides').empty();
+                            images.forEach(function(image) {
                             var imageSrc = "{{ asset('storage/') }}/" +
                                 image.xray;
 

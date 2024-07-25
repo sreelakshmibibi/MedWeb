@@ -244,15 +244,20 @@ $additionalNormalTeethImages = [
 </div>
 
 <script>
+
     document.addEventListener('DOMContentLoaded', function() {
         var images = document.querySelectorAll('.teeth_image');
-
+        var appId = '<?= Session::get('appId') ?>';
+        var patientId = '<?= Session::get('patientId') ?>';
+        $('#app_id').val(appId);
+        $('#patient_id').val(patientId);
+        $('#xapp_id').val(appId);
+        $('#xpatient_id').val(patientId);
         images.forEach(function(img) {
 
             img.addEventListener('click', function() {
                 var teethName = this.id;
-                var appId = '<?= Session::get('appId') ?>';
-                var patientId = '<?= Session::get('patientId') ?>';
+                $('.exam_chiefComplaint').hide();
                 // console.log('Hover in T' + teethName);
                 var divId = '#div' + teethName;
                 $(divId).css({
@@ -262,10 +267,6 @@ $additionalNormalTeethImages = [
 
                 // $(this).toggleClass('selected');
                 $('#tooth_id').val(teethName);
-                $('#app_id').val(appId);
-                $('#patient_id').val(patientId);
-                $('#xapp_id').val(appId);
-                $('#xpatient_id').val(patientId);
                 $('#xteeth_id').val(teethName);
                 // teethId = $('#xteeth_id').val();
 
@@ -304,6 +305,8 @@ $additionalNormalTeethImages = [
                         });
                         $('#tooth_score_id').trigger('change');
                         $('#chief_complaint').val(examination.chief_complaint);
+                        
+                        // $('#chief_complaint1').val(examination.chief_complaint);
                         $('#hpi').val(examination.hpi);
                         $('#diagnosis').val(examination.diagnosis);
                         $('#dental_examination').val(examination
@@ -533,6 +536,8 @@ $additionalNormalTeethImages = [
 
         if ($('#checkbox_row1').is(':checked')) {
             $('.exam_toothdiv').hide();
+            $('#row_id').val(1);
+            getRowData(1,patientId, appId);
             $('#modal-teeth').modal('show');
             $('#trow1').addClass('rowbordered');
         } else {
@@ -544,49 +549,69 @@ $additionalNormalTeethImages = [
         $('#checkbox_row1').change(function() {
             if ($(this).is(':checked')) {
                 $('.exam_toothdiv').hide();
+                $('.exam_chiefComplaint').show();
+                $('#row_id').val(1);   
+                getRowData(1,patientId, appId);
                 $('#modal-teeth').modal('show');
                 $('#trow1').addClass('rowbordered');
             } else {
                 $('.exam_toothdiv').show();
+                $('.exam_chiefComplaint').hide();
                 $('#trow1').removeClass('rowbordered');
             }
         });
 
         if ($('#checkbox_row2').is(':checked')) {
             $('.exam_toothdiv').hide();
+            $('.exam_chiefComplaint').show();
+            $('#row_id').val(2);
+            getRowData(2,patientId, appId);
             $('#modal-teeth').modal('show');
             $('#trow2').addClass('rowbordered');
         } else {
             $('.exam_toothdiv').show();
+            $('.exam_chiefComplaint').hide();
             $('#trow2').removeClass('rowbordered');
         }
 
         $('#checkbox_row2').change(function() {
             if ($(this).is(':checked')) {
                 $('.exam_toothdiv').hide();
+                $('.exam_chiefComplaint').show();
+                $('#row_id').val(2);
+                getRowData(2,patientId, appId);
                 $('#modal-teeth').modal('show');
                 $('#trow2').addClass('rowbordered');
             } else {
                 $('.exam_toothdiv').show();
+                $('.exam_chiefComplaint').hide();
                 $('#trow2').removeClass('rowbordered');
             }
         });
 
         if ($('#checkbox_row3').is(':checked')) {
             $('.exam_toothdiv').hide();
+            $('.exam_chiefComplaint').show();
+            $('#row_id').val(3);
+            getRowData(3,patientId, appId);
             $('#modal-teeth').modal('show');
             $('#trow3').addClass('rowbordered');
         } else {
             $('.exam_toothdiv').show();
+            $('.exam_chiefComplaint').hide();
             $('#trow3').removeClass('rowbordered');
         }
 
         $('#checkbox_row3').change(function() {
             if ($(this).is(':checked')) {
                 $('.exam_toothdiv').hide();
+                $('.exam_chiefComplaint').show();
+                $('#row_id').val(3);
+                getRowData(3,patientId, appId);
                 $('#modal-teeth').modal('show');
                 $('#trow3').addClass('rowbordered');
             } else {
+                $('.exam_chiefComplaint').hide();
                 $('.exam_toothdiv').show();
                 $('#trow3').removeClass('rowbordered');
             }
@@ -594,9 +619,13 @@ $additionalNormalTeethImages = [
 
         if ($('#checkbox_row4').is(':checked')) {
             $('.exam_toothdiv').hide();
+            $('.exam_chiefComplaint').show();
+            $('#row_id').val(4);
+            getRowData(4,patientId, appId);
             $('#modal-teeth').modal('show');
             $('#trow4').addClass('rowbordered');
         } else {
+            $('.exam_chiefComplaint').hide();
             $('.exam_toothdiv').show();
             $('#trow4').removeClass('rowbordered');
         }
@@ -604,13 +633,104 @@ $additionalNormalTeethImages = [
         $('#checkbox_row4').change(function() {
             if ($(this).is(':checked')) {
                 $('.exam_toothdiv').hide();
+                $('.exam_chiefComplaint').show();
+                $('#row_id').val(4);
+                getRowData(4,patientId, appId);
                 $('#modal-teeth').modal('show');
                 $('#trow4').addClass('rowbordered');
             } else {
                 $('.exam_toothdiv').show();
+                $('.exam_chiefComplaint').hide();
                 $('#trow4').removeClass('rowbordered');
             }
         });
+
+        function getRowData(rowId,patientId, appId) {
+            $.ajax({
+                    url: '{{ route('get.toothExamination', ['toothId' => ':toothId', 'appId' => ':appId', 'patientId' => ':patientId']) }}'
+                        .replace(':toothId', rowId)
+                        .replace(':appId', appId)
+                        .replace(':patientId', patientId),
+                    type: "GET",
+                    dataType: "json",
+
+                    success: function(response) {
+                        var examination = response
+                            .examination; // Assuming there's only one item in the array
+
+                        if (examination != null) {
+
+                        
+                        // Set the value of tooth_score_id field
+                        var toothScoreId = examination.tooth_score_id;
+                        $('#tooth_score_id').val(toothScoreId);
+
+                        // Loop through options to find the corresponding text and select it
+                        $('#tooth_score_id option').each(function() {
+                            if ($(this).val() == toothScoreId) {
+                                $(this).prop('selected', true);
+                                return false; // Exit the loop once found
+                            }
+                        });
+                        $('#tooth_score_id').trigger('change');
+                        // $('#chief_complaint').val(examination.chief_complaint);
+                        $('#chief_complaint1').val(examination.chief_complaint);
+                        $('#hpi').val(examination.hpi);
+                        $('#diagnosis').val(examination.diagnosis);
+                        $('#dental_examination').val(examination
+                            .dental_examination);
+                        $('#remarks').val(examination.remarks);
+                        var disease_id = examination.disease_id;
+                        $('#disease_id').val(disease_id);
+
+                        // Loop through options to find the corresponding text and select it
+                        $('#disease_id option').each(function() {
+                            if ($(this).val() == disease_id) {
+                                $(this).prop('selected', true);
+                                return false; // Exit the loop once found
+                            }
+                        });
+
+                        var treatment_id = examination.treatment_id;
+                        $('#treatment_id').val(treatment_id);
+
+                        // Loop through options to find the corresponding text and select it
+                        $('#treatment_id option').each(function() {
+                            if ($(this).val() == treatment_id) {
+                                $(this).prop('selected', true);
+                                return false; // Exit the loop once found
+                            }
+                        });
+
+                        var treatment_status = examination.treatment_status;
+                        $('#treatment_status').val(treatment_status);
+
+                        // Loop through options to find the corresponding text and select it
+                        $('#treatment_status option').each(function() {
+                            if ($(this).val() == treatment_status) {
+                                $(this).prop('selected', true);
+                                return false; // Exit the loop once found
+                            }
+                        });
+
+                       
+                    }
+                        var xrays = response.xrays;
+                        if (Array.isArray(xrays) && xrays.length > 0) {
+                            // Show the link
+                            $('#uploadedXrays').show();
+                            $('#uploadedXrays').attr('data-id', examination.id);
+                            $('#xtooth_exam_id').val(examination.id);
+                        } else {
+                            // Hide the link if no xrays or not an array
+                            $('#uploadedXrays').hide();
+                            $('#uploadedXrays').attr('data-id', null);
+                            $('#xtooth_exam_id').val('');
+                        }
+                    },
+
+                });
+        }
 
     });
 </script>

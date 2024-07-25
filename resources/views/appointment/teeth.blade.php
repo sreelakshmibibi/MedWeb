@@ -2,6 +2,7 @@
     @csrf
     <input type="hidden" id="app_id" name="app_id" value="">
     <input type="hidden" id="patient_id" name="patient_id" value="">
+    <input type="hidden" id="row_id" name="row_id" value="">
     <div class="modal fade modal-right slideInRight" id="modal-teeth" tabindex="-1">
         <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
@@ -70,8 +71,20 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div class="row exam_chiefComplaint">
+                            <div class="col-md-12 ">
+                                <div class="form-group">
+                                    <label class="form-label" for="chief_complaint1">Chief Complaint <span
+                                            class="text-danger">
+                                            *</span></label>
+                                    <input type="text" class="form-control" id="chief_complaint1"
+                                        name="chief_complaint1" placeholder="Chief Complaint">
+                                    <div id="complaintError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
+                       
                             {{-- <div class="col-md-6 ">
                                 <div class="form-group">
                                     <label class="form-label" for="complaint">Chief Complaint <span class="text-danger">
@@ -79,7 +92,7 @@
                                     <input type="text" class="form-control" id="complaint" name="complaint"
                                         placeholder="Chief Complaint">
                                 </div>
-                            </div> --}}
+                            </div>--}}
                             <div class="col-md-6 ">
                                 <div class="form-group">
                                     <label class="form-label" for="disease_id">Disease <span class="text-danger">
@@ -337,6 +350,7 @@
             // Validate form inputs
             var toothScore = $('#tooth_score_id').val();
             var complaint = $('#chief_complaint').val();
+            var complaint = $('#chief_complaint1').val();
             var disease = $('#disease_id').val();
             var hpi = $('#hpi').val();
             var dexam = $('#dental_examination').val();
@@ -353,6 +367,7 @@
 
             if (!complaint) {
                 $('#chief_complaint').addClass('is-invalid');
+                $('#chief_complaint1').addClass('is-invalid');
                 $('#complaintError').text('Chief Complaint is required.');
             }
 
@@ -432,27 +447,34 @@
 
             if ($('#checkbox_all').is(':checked')) {
                 $('#checkbox_all').prop('checked', false);
+                $('.exam_chiefComplaint').hide();
                 $('.exam_toothdiv').show();
             }
-            if ($('#checkbox_row1').is(':checked')) {
+            else if ($('#checkbox_row1').is(':checked')) {
                 $('#checkbox_row1').prop('checked', false);
+                $('.exam_chiefComplaint').hide();
                 $('.exam_toothdiv').show();
                 $('#trow1').removeClass('rowbordered');
             }
-            if ($('#checkbox_row2').is(':checked')) {
+            else if ($('#checkbox_row2').is(':checked')) {
                 $('#checkbox_row2').prop('checked', false);
+                $('.exam_chiefComplaint').hide();
                 $('.exam_toothdiv').show();
                 $('#trow2').removeClass('rowbordered');
             }
-            if ($('#checkbox_row3').is(':checked')) {
+            else if ($('#checkbox_row3').is(':checked')) {
                 $('#checkbox_row3').prop('checked', false);
+                $('.exam_chiefComplaint').hide();
                 $('.exam_toothdiv').show();
                 $('#trow3').removeClass('rowbordered');
             }
-            if ($('#checkbox_row4').is(':checked')) {
+            else if ($('#checkbox_row4').is(':checked')) {
                 $('#checkbox_row4').prop('checked', false);
+                $('.exam_chiefComplaint').hide();
                 $('.exam_toothdiv').show();
                 $('#trow4').removeClass('rowbordered');
+            } else {
+                $('.exam_chiefComplaint').show();
             }
 
             $('.tooth_partsdiv').hide();
