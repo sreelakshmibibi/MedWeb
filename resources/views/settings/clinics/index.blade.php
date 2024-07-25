@@ -46,7 +46,7 @@
             {{-- <div class="tab-content tabcontent-border"> --}}
             <div class="tab-content">
                 <div class="tab-pane active" id="home7" role="tabpanel">
-                    <div class="p-15">
+                    <div class="py-15">
                         <form method="post" action="{{ route('settings.clinic.create') }}" enctype="multipart/form-data">
                             @csrf
                             <!-- Main content -->
@@ -54,7 +54,7 @@
                                 <div class="row d-flex justify-content-between">
                                     <div class="col-md-6 col-lg-6 col-12">
                                         <div class="box">
-                                            <div class="box-body">
+                                            <div class="box-body pb-0">
                                                 <div class="form-group">
                                                     <label class="form-label" for="name">Clinic Name <span
                                                             class="text-danger">
@@ -108,15 +108,15 @@
                                                     <input
                                                         class="form-control @error('clinic_website') is-invalid @enderror"
                                                         type="url" id="clinic_website" name="clinic_website"
-                                                        placeholder="http://" <?php// if($clinicDetails) { ?> ?> ?> ?> ?> ?> ?> ?> ?>
+                                                        placeholder="http://" <?php// if($clinicDetails) { ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?>
                                                         value="{{ old('clinic_website', $clinicDetails->clinic_website) }}"
-                                                        <?php// } ?> ?> ?> ?> ?> ?> ?> ?> ?>>
+                                                        <?php// } ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?>>
                                                     @error('clinic_website')
                                                         <div class="invalid-feedback">{{ $message }}</div>
                                                     @enderror
                                                 </div> --}}
                                             </div>
-                                            <div class="box-footer text-end">
+                                            <div class="box-footer p-3 text-end">
                                                 <button type="submit" class="btn btn-success">
                                                     <i class="fa fa-save"></i> Save Changes
                                                 </button>
@@ -133,7 +133,7 @@
                     </div>
                 </div>
                 <div class="tab-pane" id="profile7" role="tabpanel">
-                    <div class="p-15">
+                    <div class="py-15">
                         @include('settings.clinics.clinic_form')
                     </div>
                 </div>

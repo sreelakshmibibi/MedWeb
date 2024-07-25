@@ -6,9 +6,9 @@
             if ($data) { 
                 $count =0;
                 if($total == '1') { ?>
-        <div class="row row-cols-1 row-cols-lg-1 gx-4 gy-2">
+        <div class="row row-cols-1 row-cols-lg-1 gx-4 gy-0">
             <?php  } else { ?>
-            <div class="row row-cols-1 row-cols-lg-2 gx-4 gy-2">
+            <div class="row row-cols-1 row-cols-lg-2 gx-4 gy-0">
                 <?php   }
                 ?>
                 @foreach ($data as $item)

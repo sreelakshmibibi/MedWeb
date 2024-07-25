@@ -14,7 +14,7 @@
 
 <!-- Main content -->
 <section class="content">
-    <div class="row">
+    <div class="row mx-0">
         <div class="box">
             <div class="box-body">
                 <div class="table-responsive">
@@ -28,7 +28,7 @@
                                 <th>Address</th>
                                 <th>Is Medicine Provided?</th>
                                 <th>Status</th>
-                                <th width="80px">Action</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -56,6 +56,20 @@
     var table;
     jQuery(function($) {
         table = $('.data-table').DataTable({
+            "columnDefs": [{
+                    "width": "10px",
+                    "targets": 0
+                }, // No column
+                {
+                    "width": "20px",
+                    "targets": 4
+                },
+                {
+                    "width": "80px",
+                    "targets": 5
+                } // Action column
+            ],
+            responsive: true,
             processing: true,
             serverSide: true,
             ajax: "{{ route('settings.clinic') }}",
