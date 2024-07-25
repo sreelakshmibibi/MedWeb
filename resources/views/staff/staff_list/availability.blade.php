@@ -31,7 +31,8 @@
                 <tr>
                     <td>1</td>
                     <td>
-                        <select class="form-control" id="clinic_branch_id1" name="clinic_branch_id1" required>
+                        <select class="form-control clinic_branch_select" id="clinic_branch_id1"
+                            name="clinic_branch_id1" required>
                             @foreach ($clinicBranches as $clinicBranch)
                                 <?php
                                 $clinicAddress = $clinicBranch->clinic_address;

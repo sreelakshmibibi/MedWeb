@@ -20,7 +20,7 @@
 
             <section class="content">
                 <div class="box">
-                    <div class="box-body wizard-content">
+                    <div class="box-body wizard-content px-2 pb-0">
                         <form method="post" class="validation-wizard wizard-circle" id="staffform"
                             action="{{ route('staff.staff_list.update') }}" enctype="multipart/form-data">
                             @csrf
@@ -68,6 +68,9 @@
         $(document).ready(function() {
             $("#staffform .actions ul li:last-child a").addClass("bg-success btn btn-success");
 
+            var today = new Date().toISOString().split('T')[0];
+            document.getElementById('date_of_joining').setAttribute('min', today);
+
             var input = document.getElementById('profile_photo');
             var canvas = document.getElementById('profilePic');
             var ctx = canvas.getContext('2d');
@@ -96,7 +99,7 @@
 
 
             let count = '{{ $availabilityCount }}';
-
+            count++;
             // Event listener for Add Row button click
             $(document).on('click', '#buttonAddRow', function() {
                 count++;
