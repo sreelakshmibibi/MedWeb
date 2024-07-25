@@ -39,7 +39,7 @@
                                 width="100%">
                                 <thead class="bg-primary-light">
                                     <tr>
-                                        <th>No</th>
+                                        <th width="10px">No</th>
                                         <th>Staff ID</th>
                                         <th>Photo</th>
                                         <th>Name</th>
@@ -48,7 +48,7 @@
                                         <!-- <th>Department</th> -->
                                         <th>Phone Number</th>
                                         <!-- <th>Email</th> -->
-                                        <th>Status</th>
+                                        <th width="20px">Status</th>
                                         <th width="150px">Action</th>
                                     </tr>
                                 </thead>
