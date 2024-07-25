@@ -13,17 +13,17 @@ return new class extends Migration
     {
         Schema::create('medicines', function (Blueprint $table) {
             $table->id(); // Primary key
-            $table->string('med_bar_code', 100); // Barcode
+            $table->string('med_bar_code', 100)->nullable(); // Barcode
             $table->string('med_name', 200); // Medicine name
-            $table->string('med_company', 200); // Company name
+            $table->string('med_company', 200)->nullable(); // Company name
             $table->longText('med_remarks')->nullable(); // Additional remarks about the medicine
-            $table->decimal('med_price', 10, 2); // Price of the medicine
-            $table->date('expiry_date'); // Expiry date of the medicine
-            $table->integer('units_per_package'); // number of units (tablets, pills, etc.) per package
-            $table->integer('package_count'); // Number of packages
-            $table->integer('total_quantity'); // Total number of units available across all packages
-            $table->string('package_type', 50); // field helps distinguish between strips, bottles, and other packaging types
-            $table->string('stock_status', 20); // Stock status (e.g., 'In Stock', 'Out of Stock')
+            $table->decimal('med_price', 10, 2)->nullable(); // Price of the medicine
+            $table->date('expiry_date')->nullable(); // Expiry date of the medicine
+            $table->integer('units_per_package')->nullable(); // number of units (tablets, pills, etc.) per package
+            $table->integer('package_count')->nullable(); // Number of packages
+            $table->integer('total_quantity')->nullable(); // Total number of units available across all packages
+            $table->string('package_type', 50)->nullable(); // field helps distinguish between strips, bottles, and other packaging types
+            $table->string('stock_status', 20)->nullable(); // Stock status (e.g., 'In Stock', 'Out of Stock')
             $table->string('status', 5)->default('Y'); // Record status (e.g., 'Y' for active, 'N' for inactive)
             $table->timestamps(); // Timestamps for created_at and updated_at
             $table->softDeletes(); // Soft delete column (deleted_at)

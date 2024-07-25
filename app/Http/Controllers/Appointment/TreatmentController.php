@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Appointment;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Appointment\TreatmentDetailsRequest;
 use App\Models\Appointment;
+use App\Models\AppointmentStatus;
 use App\Models\AppointmentType;
 use App\Models\ClinicBranch;
 use App\Models\ComboOfferTreatment;
@@ -11,6 +13,7 @@ use App\Models\Disease;
 use App\Models\Dosage;
 use App\Models\Medicine;
 use App\Models\PatientProfile;
+use App\Models\Prescription;
 use App\Models\SurfaceCondition;
 use App\Models\Teeth;
 use App\Models\ToothExamination;
@@ -21,11 +24,13 @@ use App\Models\TreatmentType;
 use App\Models\XRayImage;
 use App\Services\AnatomyService;
 use App\Services\AppointmentService;
+use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\DataTables;
@@ -73,10 +78,23 @@ class TreatmentController extends Controller
         $treatments = TreatmentType::where('status', 'Y')->get();
         $diseases = Disease::where('status', 'Y')->get();
         $patientName = str_replace('<br>', ' ', $appointment->patient->first_name).' '.$appointment->patient->last_name;
-
+        $doctorName = str_replace('<br>', ' ', $appointment->doctor->name);
+        $patientPrescriptions = Prescription::with([
+            'medicine' => function ($query) {
+                $query->select('id', 'med_name', 'med_company'); // Select specific columns from the Medicine model
+            },
+            'dosage' => function ($query) {
+                $query->select('id', 'dos_name'); // Select specific columns from the Dosage model
+            },
+        ])
+            ->where('app_id', $id)
+            ->where('status', 'Y')
+            ->get(['id', 'patient_id', 'app_id', 'medicine_id', 'dosage_id', 'duration', 'advice', 'remark', 'prescribed_by']);
         Session::put('appId', $id);
         Session::put('patientName', $patientName);
         Session::put('patientId', $appointment->patient->patient_id);
+        Session::put('doctorName', $doctorName);
+        Session::put('doctorId', $appointment->doctor->id);
 
         if ($request->ajax()) {
             return DataTables::of($previousAppointments)
@@ -153,7 +171,7 @@ class TreatmentController extends Controller
                 ->make(true);
         }
 
-        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases', 'previousAppointments', 'clinicBranches', 'appointmentTypes', 'workingDoctors', 'medicines', 'dosages'));
+        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases', 'previousAppointments', 'clinicBranches', 'appointmentTypes', 'workingDoctors', 'medicines', 'dosages', 'patientPrescriptions'));
 
     }
 
@@ -163,18 +181,18 @@ class TreatmentController extends Controller
     public function fetchExistingExamination($toothId, $appId, $patientId)
     {
         $toothExamination = [];
-        if (in_array($toothId, [1,2,3,4])) {
+        if (in_array($toothId, [1, 2, 3, 4])) {
             $toothExamination = ToothExamination::where('row_id', $toothId)
-            ->where('patient_id', $patientId)
-            ->where('app_id', $appId)
-            ->where('status', 'Y')
-            ->first();
+                ->where('patient_id', $patientId)
+                ->where('app_id', $appId)
+                ->where('status', 'Y')
+                ->first();
         } else {
-        $toothExamination = ToothExamination::where('tooth_id', $toothId)
-            ->where('patient_id', $patientId)
-            ->where('app_id', $appId)
-            ->where('status', 'Y')
-            ->first();
+            $toothExamination = ToothExamination::where('tooth_id', $toothId)
+                ->where('patient_id', $patientId)
+                ->where('app_id', $appId)
+                ->where('status', 'Y')
+                ->first();
         }
         $xrays = null;
         if ($toothExamination) {
@@ -182,6 +200,7 @@ class TreatmentController extends Controller
                 $xrays = XRayImage::where('tooth_examination_id', $toothExamination->id)->get();
             }
         }
+
         return response()->json(['examination' => $toothExamination, 'xrays' => $xrays]);
     }
 
@@ -237,18 +256,18 @@ class TreatmentController extends Controller
             $checkExists = [];
             if (in_array($request->row_id, [1, 2, 3, 4])) {
                 $checkExists = ToothExamination::where('row_id', $request->row_id)
-                ->where('patient_id', $request->patient_id)
-                ->where('app_id', $request->app_id)
-                ->where('status', 'Y')
-                ->get();
+                    ->where('patient_id', $request->patient_id)
+                    ->where('app_id', $request->app_id)
+                    ->where('status', 'Y')
+                    ->get();
             } else {
                 $checkExists = ToothExamination::where('tooth_id', $request->tooth_id)
-                ->where('patient_id', $request->patient_id)
-                ->where('app_id', $request->app_id)
-                ->where('status', 'Y')
-                ->get();
+                    ->where('patient_id', $request->patient_id)
+                    ->where('app_id', $request->app_id)
+                    ->where('status', 'Y')
+                    ->get();
             }
-            
+
             if (! empty($checkExists)) {
                 foreach ($checkExists as $check) {
                     $check->status = 'N';
@@ -273,7 +292,7 @@ class TreatmentController extends Controller
                 'app_id',
                 'patient_id',
                 'tooth_id',
-                'row_id', 
+                'row_id',
                 'tooth_score_id',
                 'chief_complaint',
                 'disease_id',
@@ -501,6 +520,169 @@ class TreatmentController extends Controller
             'individualTreatmentAmounts' => $individualTreatmentAmounts,
             'comboOffers' => $comboOffersResult,
         ]);
+    }
+
+    public function storeDetails(TreatmentDetailsRequest $request)
+    {
+        $appId = Session::get('appId');
+        $patientId = Session::get('patientId');
+        $consultDoctorName = Session::get('doctorName');
+        $consultDoctorId = Session::get('doctorId');
+        try {
+            DB::beginTransaction();
+            $appointmentCreated = false;
+            $doctorDiscount = false;
+            $prescriptionCreated = false;
+            if ($request->input('follow_checkbox')) {
+
+                // Parse and format the appointment date and time
+                $appDateTime = Carbon::parse($request->input('appdate'));
+                $appDate = $appDateTime->toDateString(); // 'Y-m-d'
+                $appTime = $appDateTime->toTimeString(); // 'H:i:s'
+
+                // Generate unique token number for the appointment
+                $doctorId = $request->input('doctor_id');
+                $commonService = new CommonService();
+
+                $tokenNo = $commonService->generateTokenNo($doctorId, $appDate);
+                $clinicBranchId = $request->input('clinic_branch_id');
+                // Check if an appointment with the same date, time, and doctor exists
+                $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId);
+
+                if ($existingAppointment) {
+                    return response()->json(['error' => 'An appointment already exists for the given date, time, and doctor.'], 422);
+                }
+                // Determine if app_parent_id should be set
+                $apptype = $request->input('apptype');
+                $appParentId = ($apptype == AppointmentType::FOLLOWUP) ? $appId : null;
+                $referDoctor = ($consultDoctorId != $doctorId) ? $consultDoctorName : null;
+
+                // Store the appointment data
+                $appointment = new Appointment();
+                $appointment->app_id = $commonService->generateUniqueAppointmentId();
+                //$appointment->patient_id = $request->input('patient_id');
+                $appointment->patient_id = $patientId;
+                $appointment->app_date = $appDate;
+                $appointment->app_time = $appTime;
+                $appointment->token_no = $tokenNo;
+                $appointment->doctor_id = $doctorId;
+                $appointment->app_branch = $clinicBranchId;
+                $appointment->app_type = $request->input('apptype');
+                $appointment->referred_doctor = $referDoctor;
+                $appointment->remarks = $request->input('remarks_followup');
+                //$appointment->doctor_discount = $referDoctor;
+                $appointment->app_status = AppointmentStatus::SCHEDULED;
+                $appointment->app_parent_id = $appParentId;
+                $appointment->created_by = auth()->user()->id;
+                $appointment->updated_by = auth()->user()->id;
+
+                if ($appointment->save()) {
+                    //DB::commit();
+
+                    //return redirect()->back()->with('success', 'Appointment added successfully');
+                    $appointmentCreated = true;
+                } else {
+                    DB::rollBack();
+
+                    return redirect()->back()->with('error', 'Failed to create appointment');
+                }
+            }
+            // Handle prescription data
+            if ($request->input('presc_checkbox')) {
+
+                $prescriptions = $request->input('prescriptions', []);
+                // Find and update the existing appointment
+                $oldPrescriptionData = Prescription::where('app_id', $appId)
+                    ->where('patient_id', $patientId)
+                    ->get();
+                foreach ($oldPrescriptionData as $prs) {
+                    $prs->status = 'N'; // Set the new status
+                    $prs->save(); // Save the updated record
+                }
+                foreach ($prescriptions as $prescription) {
+                    // Handle new medicine
+                    $medicineId = $prescription['medicine_id'];
+
+                    // Check if the medicine_id is numeric
+                    if (is_numeric($medicineId)) {
+                        $existingMedicine = Medicine::find($medicineId);
+                        if ($existingMedicine) {
+                            // Medicine exists, use its ID
+                            $medicineId = $existingMedicine->id;
+                        } else {
+                            // Create new medicine record
+                            $medicine = Medicine::create([
+                                'med_name' => $prescription['medicine_id'],
+                                'stock_status' => 'Out of Stock',
+                                'status' => 'Y',
+                                'created_by' => auth()->user()->id,
+                                'updated_by' => auth()->user()->id,
+                            ]);
+                            $medicineId = $medicine->id;
+
+                        }
+                    } else {
+                        // Create new medicine record
+                        $medicine = Medicine::create([
+                            'med_name' => $prescription['medicine_id'],
+                            'stock_status' => 'Out of Stock',
+                            'status' => 'Y',
+                            'created_by' => auth()->user()->id,
+                            'updated_by' => auth()->user()->id,
+                        ]);
+                        $medicineId = $medicine->id;
+                    }
+
+                    $prescriptionData = new Prescription();
+                    $prescriptionData->patient_id = $patientId;
+                    $prescriptionData->app_id = $appId;
+                    $prescriptionData->medicine_id = $medicineId;
+                    $prescriptionData->dosage_id = $prescription['dosage_id'];
+                    $prescriptionData->duration = $prescription['duration'];
+                    $prescriptionData->advice = $prescription['advice'];
+                    $prescriptionData->remark = $prescription['remark'];
+                    $prescriptionData->prescribed_by = auth()->user()->id;
+                    $prescriptionData->created_by = auth()->user()->id;
+                    $prescriptionData->updated_by = auth()->user()->id;
+                    if ($prescriptionData->save()) {
+
+                        $prescriptionCreated = true;
+                    } else {
+                        DB::rollBack();
+
+                        return redirect()->back()->with('error', 'Failed to create Prescription');
+                    }
+
+                }
+
+            }
+
+            if (auth()->user()->hasRole('Admin')) {
+                $chargeAppointment = Appointment::findOrFail($appId);
+                $chargeAppointment->doctor_discount = $request->input('discount1');
+                if ($chargeAppointment->save()) {
+                    $doctorDiscount = true;
+                } else {
+                    DB::rollBack();
+
+                    return redirect()->back()->with('error', 'Failed to add doctor discount');
+                }
+            }
+
+            DB::commit();
+            //Session::flush();
+            Session::forget(['appId', 'patientId', 'doctorName', 'doctorId']);
+
+            return redirect()->back()->with('success', 'Appointment and/or prescription data added successfully');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            //Log::info('$error: '.$e->getMessage());
+            //return redirect()->back()->with('error', 'Failed to create appointment: '.$e->getMessage());
+            return response()->json(['error' => 'Failed to add treatment details: '.$e->getMessage()], 422);
+        }
+
     }
 
     /**

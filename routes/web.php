@@ -126,3 +126,4 @@ Route::delete('/delete-image', [TreatmentController::class, 'deleteImage'])->nam
 Route::get('/appointment/fetchtreatment/{appointment}', [TreatmentController::class, 'show'])->name('treatment.show');
 Route::get('/appointment/fetchTreatmentCharge/{appointment}', [TreatmentController::class, 'showCharge'])->name('treatment.showCharge');
 Route::delete('/treatment/{toothExamId}', [TreatmentController::class, 'destroy'])->name('treatment.destroy');
+Route::post('/treatment/details/store', [TreatmentController::class, 'storeDetails'])->name('treatment.details.store');

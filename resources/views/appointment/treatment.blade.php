@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Session;
                 <div class="box">
                     <div class="box-body wizard-content">
                         <form method="post" class="validation-wizard wizard-circle" id="treatmentform"
-                            action="{{ route('patient.patient_list.store') }}" enctype="multipart/form-data">
+                            action="{{ route('treatment.details.store') }}" enctype="multipart/form-data">
                             @csrf
 
                             <!-- Step 1 -->
@@ -74,8 +74,10 @@ use Illuminate\Support\Facades\Session;
                             </section> --}}
 
 
-                            <div id="updateRoute" data-url="{{ route('patient.patient_list.update') }}"
-                                data-patientlist-route="{{ route('patient.patient_list') }}"></div>
+                            {{-- <div id="updateRoute" data-url="{{ route('patient.patient_list.update') }}"
+                                data-patientlist-route="{{ route('patient.patient_list') }}"></div> --}}
+                            <div id="storeRoute" data-url="{{ route('treatment.details.store') }}"
+                                data-treatment-details-route="{{ route('appointment') }}"></div>
                             <input type="hidden" name="edit_app_id" id="edit_app_id" value="{{ $appointment->id }}">
                             <input type="hidden" name="edit_patient_id" id="edit_patient_id"
                                 value="{{ $patientProfile->id }}">
@@ -190,107 +192,171 @@ use Illuminate\Support\Facades\Session;
             let count = 1;
 
             // Event listener for Add Row button click
+            // $(document).on('click', '#medicineAddRow', function() {
+            //     count++;
+            //     let newRow = `<tr>
+        //         <td>${count}</td>
+        //         <td>
+        //             <select class="select2" id="medicine_id${count}" name="medicine_id${count}" required
+        //                 data-placeholder="Select a Medicine" style="width: 100%;">
+        //                     <option value=""> Select a Medicine </option>
+        //                     <?php foreach ( $medicines as $medicine ) { ?>
+        //                     <option value="{{ $medicine->id }}"> {{ $medicine->med_name }}</option>
+        //                     <?php } ?>
+        //             </select>
+        //         </td>
+        //         <td>
+        //             <select class="select2" id="dosage${count}" name="dosage${count}" required
+        //                 data-placeholder="Select a Dosage" style="width: 100%;">
+        //                 <option value=""> Select a Dosage </option>
+        //                 <?php foreach ( $dosages as $dosage ) { ?>
+        //                     <option value="{{ $dosage->id }}"> {{ $dosage->dos_name }}</option>
+        //                 <?php } ?>
+        //             </select>
+        //         </td>
+        //         <td>
+        //             <div class="input-group">
+        //                 <input type="number" class="form-control" id="duration${count}" name="duration${count}" aria-describedby="basic-addon2">
+        //                 <div class="input-group-append">
+        //                     <span class="input-group-text" id="basic-addon2">days</span>
+        //                 </div>
+        //             </div>
+        //         </td>
+        //         <td>
+        //             <select class="select2" id="advice${count}" name="advice${count}" required class="form-control"
+        //                  style="width: 100%;">
+        //                     <option value="After food">After food</option>
+        //                    <option value="Before food">Before food</option>
+        //             </select>
+        //         </td>
+        //         <td>
+        //             <input type="text" class="form-control" id="remarks${count}" name="remarks${count}" placeholder="remarks">
+        //         </td>
+        //         <td>
+        //             <button type="button" class="btnDelete waves-effect waves-light btn btn-danger btn-sm"
+        //                     title="delete row"> <i class="fa fa-trash"></i></button>
+        //         </td>
+        //     </tr>`;
+
+            //     $('#presctablebody').append(newRow);
+            //     // Reinitialize Select2 on the newly added select element
+            //     $(`#medicine_id${count}`).select2({
+            //         width: '100%',
+            //         placeholder: 'Select a Medicine',
+            //         tags: true, // Allow user to add new tags (medicines)
+            //         tokenSeparators: [',', ' '], // Define how tags are separated
+            //         createTag: function(params) {
+            //             var term = $.trim(params.term);
+
+            //             if (term === '') {
+            //                 return null;
+            //             }
+
+            //             // Check if the term already exists as an option
+            //             var found = false;
+            //             $(this).find('option').each(function() {
+            //                 if ($.trim($(this).text()) === term) {
+            //                     found = true;
+            //                     return false; // Exit the loop early
+            //                 }
+            //             });
+
+            //             if (!found) {
+            //                 // Return object for new tag
+            //                 return {
+            //                     id: term,
+            //                     text: term,
+            //                     newTag: true // Add a custom property to indicate it's a new tag
+            //                 };
+            //             }
+
+            //             return null; // If term already exists, return null
+            //         }
+            //     });
+            //     $(`#dosage${count}`).select2({
+            //         width: '100%',
+            //         placeholder: 'Select a Dosage'
+            //     });
+            //     $(`#advice${count}`).select2({
+            //         width: '100%',
+            //     });
+            //     updateRowCount();
+            // });
+
+            // Event listener for Delete button click
+            // $(document).on('click', '.btnDelete', function() {
+            //     $(this).closest('tr').remove();
+            //     updateRowCount();
+            // });
+
+            // Function to update row count input field value
+            // function updateRowCount() {
+            //     $('#row_count').val(count);
+            // }
+
+
+
+            let rowIndex = {{ count($patientPrescriptions) + 1 }};
             $(document).on('click', '#medicineAddRow', function() {
-                count++;
-                let newRow = `<tr>
-                    <td>${count}</td>
+
+                const tbody = document.getElementById('presctablebody');
+
+                if (!tbody) {
+                    console.error('No tbody element found.');
+                    return;
+                }
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${rowIndex}</td>
                     <td>
-                        <select class="select2" id="medicine_id${count}" name="medicine_id${count}" required
-                            data-placeholder="Select a Medicine" style="width: 100%;">
-                                <option value=""> Select a Medicine </option>
-                                <?php foreach ( $medicines as $medicine ) { ?>
-                                <option value="{{ $medicine->id }}"> {{ $medicine->med_name }}</option>
-                                <?php } ?>
+                        <select class="form-control" id="medicine_id${rowIndex}" name="prescriptions[${rowIndex}][medicine_id]" style="width: 100%;" required>
+                            <option value=""> Select a Medicine </option>
+                            @foreach ($medicines as $medicine)
+                                <option value="{{ $medicine->id }}">{{ $medicine->med_name }}</option>
+                            @endforeach
                         </select>
                     </td>
                     <td>
-                        <select class="select2" id="dosage${count}" name="dosage${count}" required
-                            data-placeholder="Select a Dosage" style="width: 100%;">
+                        <select class="form-control" id="dosage${rowIndex}" name="prescriptions[${rowIndex}][dosage_id]" required style="width: 100%;">
                             <option value=""> Select a Dosage </option>
-                            <?php foreach ( $dosages as $dosage ) { ?>
-                                <option value="{{ $dosage->id }}"> {{ $dosage->dos_name }}</option>
-                            <?php } ?>
+                            @foreach ($dosages as $dosage)
+                                <option value="{{ $dosage->id }}">{{ $dosage->dos_name }}</option>
+                            @endforeach
                         </select>
                     </td>
                     <td>
                         <div class="input-group">
-                            <input type="number" class="form-control" id="duration${count}" name="duration${count}" aria-describedby="basic-addon2">
+                            <input type="number" class="form-control" id="duration${rowIndex}" name="prescriptions[${rowIndex}][duration]" aria-describedby="basic-addon2" required>
                             <div class="input-group-append">
                                 <span class="input-group-text" id="basic-addon2">days</span>
                             </div>
                         </div>
                     </td>
                     <td>
-                        <select class="select2" id="advice${count}" name="advice${count}" required class="form-control"
-                             style="width: 100%;">
-                                <option value="After food">After food</option>
-                               <option value="Before food">Before food</option>
+                        <select class="form-control" id="advice${rowIndex}" name="prescriptions[${rowIndex}][advice]" required style="width: 100%;">
+                            <option value="After food">After food</option>
+                            <option value="Before food">Before food</option>
                         </select>
                     </td>
                     <td>
-                        <input type="text" class="form-control" id="remarks${count}" name="remarks${count}" placeholder="remarks">
+                        <input type="text" class="form-control" id="remarks${rowIndex}" name="prescriptions[${rowIndex}][remark]" placeholder="remarks">
                     </td>
                     <td>
-                        <button type="button" class="btnDelete waves-effect waves-light btn btn-danger btn-sm"
-                                title="delete row"> <i class="fa fa-trash"></i></button>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">
+                            <i class="fa fa-trash"></i>
+                        </button>
                     </td>
-                </tr>`;
+                `;
 
-                $('#presctablebody').append(newRow);
-                // Reinitialize Select2 on the newly added select element
-                $(`#medicine_id${count}`).select2({
-                    width: '100%',
-                    placeholder: 'Select a Medicine',
-                    tags: true, // Allow user to add new tags (medicines)
-                    tokenSeparators: [',', ' '], // Define how tags are separated
-                    createTag: function(params) {
-                        var term = $.trim(params.term);
-
-                        if (term === '') {
-                            return null;
-                        }
-
-                        // Check if the term already exists as an option
-                        var found = false;
-                        $(this).find('option').each(function() {
-                            if ($.trim($(this).text()) === term) {
-                                found = true;
-                                return false; // Exit the loop early
-                            }
-                        });
-
-                        if (!found) {
-                            // Return object for new tag
-                            return {
-                                id: term,
-                                text: term,
-                                newTag: true // Add a custom property to indicate it's a new tag
-                            };
-                        }
-
-                        return null; // If term already exists, return null
-                    }
-                });
-                $(`#dosage${count}`).select2({
-                    width: '100%',
-                    placeholder: 'Select a Dosage'
-                });
-                $(`#advice${count}`).select2({
-                    width: '100%',
-                });
-                updateRowCount();
+                tbody.appendChild(row);
+                rowIndex++;
             });
 
-            // Event listener for Delete button click
-            $(document).on('click', '.btnDelete', function() {
-                $(this).closest('tr').remove();
-                updateRowCount();
-            });
+            window.removeRow = function(button) {
+                button.closest('tr').remove();
+            };
 
-            // Function to update row count input field value
-            function updateRowCount() {
-                $('#row_count').val(count);
-            }
 
             let chargecount = 1;
             // Event listener for Add Row button click

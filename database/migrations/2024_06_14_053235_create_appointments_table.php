@@ -41,6 +41,8 @@ return new class extends Migration
             $table->unsignedBigInteger('app_parent_id')->nullable();
             $table->time('consult_start_time')->nullable();
             $table->time('consult_end_time')->nullable();
+            $table->string('remarks', 500)->nullable();
+            $table->decimal('doctor_discount', 5, 2)->nullable();
             $table->string('status', 5)->default('Y');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');

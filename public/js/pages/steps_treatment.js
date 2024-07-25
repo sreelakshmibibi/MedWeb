@@ -446,6 +446,32 @@ $(document).on("input", "#discount1", function () {
     }
 });
 
+function updateValidationRules() {
+    var followCheckboxChecked = $('#follow_checkbox').is(':checked');
+
+    var rules = {
+        // clinic_branch_id: { required: false },
+    };
+
+    if (followCheckboxChecked) {
+        rules['clinic_branch_id'] = { required: true, number: true };
+        rules['appdate'] = { required: true };
+        rules['doctor_id'] = { required: true, number: true };
+        rules['apptype'] = { required: true, number: true };
+        rules['remarks_followup'] = { maxlength: 255 };
+    } else {
+        rules['clinic_branch_id'] = { required: false };
+        rules['appdate'] = { required: false };
+        rules['doctor_id'] = { required: false };
+        rules['apptype'] = { required: false };
+        rules['remarks_followup'] = { maxlength: 255 };
+    }
+
+    // Apply updated rules to the form
+    $("#treatmentform").validate().settings.rules = rules;
+    $("#treatmentform").validate().element(':input'); // Revalidate the entire form
+}
+
 $("#treatmentform").steps({
     headerTag: "h6",
     bodyTag: "section",
@@ -518,26 +544,27 @@ $("#treatmentform").steps({
 
         // Adjust validation settings if needed
         form.validate().settings.ignore = ":disabled";
+        //updateValidationRules();
 
         // Check if the form is valid
         var isValid = form.valid();
-
+        // alert('in' + isValid);
         // Return true or false based on validation result
         return isValid;
     },
     onFinished: function (event, currentIndex) {
-        var formDataPatient = new FormData($("#treatmentform")[0]); // Serialize form data including files
+        var formDataTreatment = new FormData($("#treatmentform")[0]); // Serialize form data including files
         var CSRF_TOKEN = $('meta[name="csrf-token"]').attr("content");
         var storeRoute = $("#storeRoute").data("url");
         if (storeRoute == null) {
             storeRoute = $("#updateRoute").data("url");
         }
 
-        console.log("stepjs :" + formDataPatient);
+        console.log("stepjs :" + formDataTreatment);
         $.ajax({
-            url: storeRoute,
+            url: "/treatment/details/store",
             type: "POST",
-            data: formDataPatient,
+            data: formDataTreatment,
             dataType: "json",
             processData: false, // Important: To send FormData object, set processData to false
             contentType: false, // Important: To send FormData object, set contentType to falsestafflist-route
@@ -545,14 +572,13 @@ $("#treatmentform").steps({
                 "X-CSRF-TOKEN": CSRF_TOKEN, // Pass CSRF token via headers
             },
             success: function (response) {
-                //var successMessage = response.success; // Adjust as per your actual response structure
-                var message = "Patient added successfully.";
-                // Redirect to stafflist route
-                var routeReturn = $("#storeRoute").data("patientlist-route");
-                if (routeReturn == null) {
-                    routeReturn = $("#updateRoute").data("patientlist-route");
-                }
 
+                var message = "Treatment details added successfully.";
+                // Redirect to appointment route
+                var routeReturn = $("#storeRoute").data("treatment-details-route");
+                if (routeReturn == null) {
+                    routeReturn = $("#updateRoute").data("treatment-details-route");
+                }
                 // Redirect to the stafflist route
                 window.location.href =
                     routeReturn +
@@ -615,41 +641,7 @@ $("#treatmentform").steps({
             }
         },
         rules: {
-            title: { required: true },
-            firstname: { required: true, minlength: 3, maxlength: 255 },
-            lastname: { required: true, maxlength: 255 },
-            gender: { required: true },
-            date_of_birth: { required: true, date: true },
-            aadhaar_no: { minlength: 12, maxlength: 12, digits: true },
-            email: { email: true },
-            phone: {
-                required: true,
-                digits: true,
-                minlength: 10,
-                maxlength: 15,
-            },
-            alter_phone: { digits: true, minlength: 10, maxlength: 15 },
-            regdate: { required: true, date: true },
-            address1: { required: true, minlength: 3, maxlength: 255 },
-            address2: { required: true, minlength: 3, maxlength: 255 },
-            country_id: { required: true },
-            state_id: { required: true },
-            city_id: { required: true },
-            pincode: { required: true, digits: true, maxlength: 10 },
-            blood_group: { minlength: 1 },
-            clinic_branch_id0: { required: true },
-            doctor2: { required: true },
-            appdate: { required: true },
-            appstatus: { required: true },
-            height: { number: true },
-            weight: { number: true },
-            bp: { minlength: 3 },
-            rdoctor: { minlength: 3 },
-            marital_status: { required: false },
-            smoking_status: { required: false },
-            alcoholic_status: { required: false },
-            diet: { required: false },
-            allergies: { maxlength: 500 },
-            "medical_conditions[]": { required: false, maxlength: 500 },
+
+            // clinic_branch_id: { required: false },
         },
     });
