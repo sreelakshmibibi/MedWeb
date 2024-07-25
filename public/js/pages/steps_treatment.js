@@ -40,7 +40,13 @@ function getDentalTable(stepIndex) {
                         if (toothExaminations && toothExaminations.length > 0) {
                             toothExaminations.forEach(function (exam, index) {
                                 var viewDocumentsButton = "";
-
+                                teethName = exam.tooth_id ? exam.teeth.teeth_name : exam.row_id;
+                               
+                                console.log(
+                                    appId,
+                                    teethName,
+                                    patientId
+                                );
                                 // Check if there are x-ray images
                                 if (
                                     exam.x_ray_images &&
@@ -48,13 +54,13 @@ function getDentalTable(stepIndex) {
                                 ) {
                                     console.log(
                                         appId,
-                                        exam.teeth.teeth_name,
+                                        teethName,
                                         patientId
                                     );
                                     viewDocumentsButton = `
                 <button type="button" id="xraybtn" class="waves-effect waves-light btn btn-circle btn-info btn-xs"
                     data-bs-toggle="modal" data-bs-target="#modal-documents" data-id="${exam.id}" data-appointment-id="${appId}"
-                    data-teeth-name="${exam.teeth.teeth_name}" data-patient-id="${patientId}" title="View documents">
+                    data-teeth-name="${teethName}" data-patient-id="${patientId}" title="View documents">
                     <i class="fa-solid fa-file-archive"></i>
                 </button>
             `;
@@ -63,7 +69,7 @@ function getDentalTable(stepIndex) {
                                 var row = `
                                 <tr>
                                     <td>${index + 1}</td>
-                                    <td>${exam.teeth.teeth_name}</td>
+                                    <td>${teethName}</td>
                                     <td>${exam.chief_complaint}</td>
                                     <td>${exam.disease ? exam.disease.name : ""
                                     }</td>
@@ -72,9 +78,9 @@ function getDentalTable(stepIndex) {
                                     <td>${exam.diagnosis}</td>
                                     <td>${viewDocumentsButton}</td>
                                     <td>${exam.treatment.treat_name}</td>
-                                    <td><button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-treat-view btn-xs me-1' title='View' data-bs-toggle='modal' data-id='${exam.teeth.teeth_name
+                                    <td><button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-treat-view btn-xs me-1' title='View' data-bs-toggle='modal' data-id='${teethName
                                     }' data-bs-target='#modal-teeth'><i class='fa fa-eye'></i></button>
-                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-treat-edit btn-xs me-1' title='Edit' data-bs-toggle='modal' data-id='${exam.teeth.teeth_name
+                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-treat-edit btn-xs me-1' title='Edit' data-bs-toggle='modal' data-id='${teethName
                                     }' data-bs-target='#modal-teeth'><i class='fa fa-pencil'></i></button>
                                     <button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-treat-delete btn-xs me-1' title='Delete' data-bs-toggle='modal' data-id='${exam.id
                                     }' data-bs-target='#modal-delete'><i class='fa-solid fa-trash'></i></button>
