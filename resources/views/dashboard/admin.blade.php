@@ -50,7 +50,7 @@
                                                         class="text-xs text-warning">Doctors-</span><span
                                                         id="total-doctor"><?= $totalDoctors ?></span>
                                                     &nbsp; <span class="text-xs text-info">Others-</span><span
-                                                        id="total-other"><?= $totalOthers?></span></h6>
+                                                        id="total-other"><?= $totalOthers ?></span></h6>
                                             </div>
                                         </div>
                                     </div>
@@ -111,36 +111,25 @@
                                             @foreach ($workingDoctors as $workingDoctor)
                                                 <div class="me-15">
                                                     <img src="{{ asset('storage/' . $workingDoctor->user->staffProfile->photo) }}"
-                                                        class="avatar avatar-lg rounded10 bg-primary-light" alt="" />
+                                                        class="avatar avatar-lg rounded10 bg-primary-light"
+                                                        alt="" />
                                                 </div>
-                                                
-                                                    <div class="d-flex flex-column flex-grow-1 fw-500">
-                                                        <a href="#" class="text-dark hover-primary mb-1 fs-16">
-                                                            <?= str_replace("<br>", " ",$workingDoctor->user->name); ?>
-                                                        </a>
-                                                        <span class="text-fade"><?= $workingDoctor->user->staffProfile->designation ?> </span>
-                                                    </div>
-                                                    <div class="dropdown">
-                                                        <a class="px-10 pt-5" href="#" data-bs-toggle="dropdown"><i
-                                                                class="ti-more-alt"></i></a>
-                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                            <a class="dropdown-item flexbox" href="#">
-                                                                <span>Inbox</span>
-                                                                <span class="badge badge-pill badge-info">5</span>
-                                                            </a>
-                                                            <a class="dropdown-item" href="#">Sent</a>
-                                                            <a class="dropdown-item" href="#">Spam</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a class="dropdown-item flexbox" href="#">
-                                                                <span>Draft</span>
-                                                                <span class="badge badge-pill badge-default">1</span>
-                                                            </a>
-                                                        </div>
-                                                    </div>
+
+                                                <div class="d-flex flex-column flex-grow-1 fw-500">
+                                                    <a href="#" class="text-dark hover-primary mb-1 fs-16">
+                                                        <?= str_replace('<br>', ' ', $workingDoctor->user->name) ?>
+                                                    </a>
+                                                    <span
+                                                        class="text-fade"><?= $workingDoctor->user->staffProfile->designation ?>
+                                                    </span>
+                                                </div>
+                                                <a class="px-10 pt-5"
+                                                    href="{{ route('staff.staff_list.view', $workingDoctor->user->staffProfile->id) }}"><i
+                                                        class="fa fa-eye"></i></a>
                                             @endforeach
                                         @endif
                                     </div>
-                                    
+
                                 </div>
                             </div>
                         </div>
