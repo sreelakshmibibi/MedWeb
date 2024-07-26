@@ -273,7 +273,7 @@ class PatientListController extends Controller
 
                 // Store the appointment data
                 $appointment = new Appointment();
-                $appointment->app_id = $commonService->generateUniqueAppointmentId();
+                $appointment->app_id = $commonService->generateUniqueAppointmentId($appDate);
                 //$appointment->app_id = $this->generateUniqueAppointmentId();
                 $appointment->patient_id = $patient->patient_id;
                 $appointment->app_date = $appDate;
@@ -552,7 +552,7 @@ class PatientListController extends Controller
 
             // Store the appointment data
             $appointment = new Appointment();
-            $appointment->app_id = $commonService->generateUniqueAppointmentId();
+            $appointment->app_id = $commonService->generateUniqueAppointmentId($appDate);
             $appointment->patient_id = $request->input('patient_id');
             $appointment->app_date = $appDate;
             $appointment->app_time = $appTime;

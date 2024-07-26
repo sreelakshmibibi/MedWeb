@@ -186,7 +186,7 @@ class AppointmentController extends Controller
 
             // Store the appointment data
             $appointment = new Appointment();
-            $appointment->app_id = $commonService->generateUniqueAppointmentId();
+            $appointment->app_id = $commonService->generateUniqueAppointmentId($appDate);
             $appointment->patient_id = $request->input('patient_id');
             $appointment->app_date = $appDate;
             $appointment->app_time = $appTime;
@@ -268,7 +268,7 @@ class AppointmentController extends Controller
 
             // Store the appointment data
             $appointment = new Appointment();
-            $appointment->app_id = $commonService->generateUniqueAppointmentId();
+            $appointment->app_id = $commonService->generateUniqueAppointmentId($appDate);
             $appointment->patient_id = $existingAppointment->patient_id;
             $appointment->app_date = $appDate;
             $appointment->app_time = $appTime;

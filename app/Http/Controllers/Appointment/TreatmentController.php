@@ -564,7 +564,7 @@ class TreatmentController extends Controller
 
                 // Store the appointment data
                 $appointment = new Appointment();
-                $appointment->app_id = $commonService->generateUniqueAppointmentId();
+                $appointment->app_id = $commonService->generateUniqueAppointmentId($appDate);
                 //$appointment->patient_id = $request->input('patient_id');
                 $appointment->patient_id = $patientId;
                 $appointment->app_date = $appDate;
