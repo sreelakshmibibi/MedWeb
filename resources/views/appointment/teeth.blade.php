@@ -1,5 +1,5 @@
 <?php
-    use App\Models\Appointment;
+use App\Models\Appointment;
 ?>
 <form id="form-teeth" method="POST" action="{{ route('treatment.store') }}">
     @csrf
@@ -335,10 +335,10 @@
                 <div class="modal-footer modal-footer-uniform">
                     <button type="button" class="btn btn-danger closeToothBtn" id="closeToothBtn"
                         data-bs-dismiss="modal">Cancel</button>
-                        <?php
+                    <?php
                             if ($appAction == Appointment::AppOngoing) { ?>
-                            <button type="button" class="btn btn-success float-end" id="newTreatmentBtn">Save</button>
-                            <?php } ?>
+                    <button type="button" class="btn btn-success float-end" id="newTreatmentBtn">Save</button>
+                    <?php } ?>
                 </div>
             </div>
         </div>
@@ -453,6 +453,10 @@
             if (!$(toothdivid).hasClass('completed')) {
                 $(toothdivid).css({
                     'border': 'none',
+                });
+            } else {
+                $(toothdivid).css({
+                    'border': '1px solid red',
                 });
             }
             // $('.tooth').css({

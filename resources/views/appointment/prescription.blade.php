@@ -118,7 +118,7 @@
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>
-                        <select class="form-control" id="medicine_id{{ $index + 1 }}"
+                        <select class="form-control medicine_id_select" id="medicine_id{{ $index + 1 }}"
                             name="prescriptions[{{ $index + 1 }}][medicine_id]" style="width: 100%;" required>
                             <option value=""> Select a Medicine </option>
                             @foreach ($medicines as $medicine)
@@ -130,7 +130,7 @@
                         </select>
                     </td>
                     <td>
-                        <select class="form-control" id="dosage{{ $index + 1 }}"
+                        <select class="form-control dosage_id_select" id="dosage{{ $index + 1 }}"
                             name="prescriptions[{{ $index + 1 }}][dosage_id]" required style="width: 100%;">
                             <option value=""> Select a Dosage </option>
                             @foreach ($dosages as $dosage)
@@ -152,7 +152,7 @@
                         </div>
                     </td>
                     <td>
-                        <select class="form-control" id="advice{{ $index + 1 }}"
+                        <select class="form-control advice_select" id="advice{{ $index + 1 }}"
                             name="prescriptions[{{ $index + 1 }}][advice]" required style="width: 100%;">
                             <option value="After food" {{ $prescription->advice == 'After food' ? 'selected' : '' }}>
                                 After food</option>

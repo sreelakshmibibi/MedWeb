@@ -104,13 +104,20 @@ use Illuminate\Support\Facades\Session;
     <script>
         var treatmentShowRoute = "{{ route('treatment.show', ['appointment' => ':appId']) }}";
         var treatmentShowChargeRoute = "{{ route('treatment.showCharge', ['appointment' => ':appId']) }}";
-        var appAction = "{{ $appAction}}";
-        
+        var appAction = "{{ $appAction }}";
+
         var teethId;
         let isAdmin = $("#isAdmin").val();
+
         $(document).ready(function() {
 
             $("#treatmentform .actions ul li:last-child a").addClass("bg-success btn btn-success");
+
+            if (appAction === 'Show') {
+                $("#treatmentform .actions ul li:last-child").addClass("disabled").attr("aria-hidden", "true").attr(
+                    "aria-disabled", "true").hide();
+                $("#treatmentform .actions ul li:last-child a").attr("href", "#").hide();
+            }
 
             // Handle change event for dparts
             $('.dparts').click(function() {
@@ -352,6 +359,49 @@ use Illuminate\Support\Facades\Session;
                 `;
 
                 tbody.appendChild(row);
+
+                $(`#medicine_id${rowIndex}`).select2({
+                    width: "100%",
+                    placeholder: "Select a Medicine",
+                    tags: true, // Allow user to add new tags (medicines)
+                    tokenSeparators: [",", " "], // Define how tags are separated
+                    createTag: function(params) {
+                        var term = $.trim(params.term);
+
+                        if (term === "") {
+                            return null;
+                        }
+
+                        // Check if the term already exists as an option
+                        var found = false;
+                        $(this)
+                            .find("option")
+                            .each(function() {
+                                if ($.trim($(this).text()) === term) {
+                                    found = true;
+                                    return false; // Exit the loop early
+                                }
+                            });
+
+                        if (!found) {
+                            // Return object for new tag
+                            return {
+                                id: term,
+                                text: term,
+                                newTag: true, // Add a custom property to indicate it's a new tag
+                            };
+                        }
+
+                        return null; // If term already exists, return null
+                    },
+                });
+                $(`#dosage${rowIndex}`).select2({
+                    width: "100%",
+                    placeholder: "Select a Dosage",
+                });
+                $(`#advice${rowIndex}`).select2({
+                    width: "100%",
+                });
                 rowIndex++;
             });
 
