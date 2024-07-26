@@ -12,6 +12,20 @@ function getSessionData() {
     });
 }
 
+function getStepIndexByTitle(title) {
+    var stepHeaders = $("#treatmentform").find("h6.tabHeading");
+    var index = -1;
+
+    stepHeaders.each(function (i) {
+        if ($(this).text().trim() === title) {
+            index = i;
+            return false;
+        }
+    });
+
+    return index;
+}
+
 function getDentalTable(stepIndex) {
     if (
         (stepIndex == 2 && historyStepAdded == false) ||
@@ -109,9 +123,10 @@ function getDentalTable(stepIndex) {
 function handlePrescription(isChecked) {
     if (isChecked) {
         var prescContent = $(".prescdiv").html();
-        var currentStep = $("#treatmentform").steps("getCurrentIndex");
+        // var currentStep = $("#treatmentform").steps("getCurrentIndex");
+        var stepNumber = getStepIndexByTitle("Dental Table");
 
-        $("#treatmentform").steps("insert", currentStep + 1, {
+        $("#treatmentform").steps("insert", stepNumber + 1, {
             title: "Prescription",
             content: prescContent,
             enableCancelButton: false,
@@ -120,13 +135,13 @@ function handlePrescription(isChecked) {
         // Add a class to the newly inserted step tab
         $("#treatmentform")
             .find(".steps > ul > li")
-            .eq(currentStep + 1)
+            .eq(stepNumber + 1)
             .addClass("presc_class");
 
         // Add a class to the content of the prescription tab
         $("#treatmentform")
             .find(".content > .body")
-            .eq(currentStep + 1)
+            .eq(stepNumber + 1)
             .addClass("presc_content_class");
 
         $(".medicine_id_select").select2({

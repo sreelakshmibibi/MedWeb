@@ -208,6 +208,10 @@ use Illuminate\Support\Facades\Session;
 <script>
     $(function() {
 
+        let presc = {{ count($patientPrescriptions) }};
+        if (presc >= 1) {
+            $("#presc_checkbox").prop('checked', true).trigger('change');
+        }
 
     });
     $(document).on('click', '.btn-treat-view', function() {
