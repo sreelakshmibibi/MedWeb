@@ -197,6 +197,16 @@
                 $('#app_parent_id').val(app_parent_id);
                 // Replace with dynamic patient ID
 
+                var now = new Date();
+                var year = now.getFullYear();
+                var month = (now.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+                var day = now.getDate().toString().padStart(2, '0');
+                var hours = now.getHours().toString().padStart(2, '0');
+                var minutes = now.getMinutes().toString().padStart(2, '0');
+                var datetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+                document.getElementById('appdate').value = datetime;
+
                 $('#pregnant_status').hide();
 
                 var url = "{{ route('patient.patient_list.appointment', [':patientId']) }}";

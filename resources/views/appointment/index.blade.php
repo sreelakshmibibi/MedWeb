@@ -31,21 +31,20 @@
                         <br />
                         <div class="table-responsive">
                             <!-- Main content -->
-                            <table
-                                class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center"
+                            <table class="table table-bordered table-hover table-striped mb-0 data-table text-center"
                                 width="100%">
                                 <thead class="bg-primary-light">
                                     <tr>
                                         <th width="10px">Token No</th>
-                                        <th>Patient ID</th>
+                                        <th width="60px">Patient ID</th>
                                         <th>Patient Name</th>
                                         <th>Consulting Doctor</th>
-                                        <th>Phone number</th>
-                                        <th>Branch</th>
-                                        <th>Time</th>
-                                        <th>Type</th>
+                                        <th width="60px">Phone number</th>
+                                        <th width="180px">Branch</th>
+                                        <th width="10px">Time</th>
+                                        <th width="20px">Type</th>
                                         <th>Status</th>
-                                        <th width="150px">Action</th>
+                                        <th width="144px">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -157,7 +156,7 @@
                             if (data === 'NEW') {
                                 return '<span class="text-warning">' + data + '</span>';
                             } else {
-                                return '<span class="text-primary">' + data + '</span>';
+                                return '<span class="text-info">' + data + '</span>';
                             }
                         }
                     },
@@ -184,6 +183,17 @@
                 $('#patient_id').val(patientId); // Set app ID in the hidden input
                 $('#patient_name').val(patientName); // Set app ID in the hidden input
                 $('#app_parent_id').val(app_parent_id);
+
+                var now = new Date();
+                var year = now.getFullYear();
+                var month = (now.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+                var day = now.getDate().toString().padStart(2, '0');
+                var hours = now.getHours().toString().padStart(2, '0');
+                var minutes = now.getMinutes().toString().padStart(2, '0');
+                var datetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+                document.getElementById('appdate').value = datetime;
+
                 $('#modal-booking').modal('show');
 
 
@@ -229,6 +239,8 @@
         $('#clinic_branch_id, #appdate').change(function() {
             var branchId = $('#clinic_branch_id').val();
             var appDate = $('#appdate').val();
+            $('#existAppContainer').hide();
+            $('#existingAppointments').empty();
             loadDoctors(branchId, appDate);
 
         });
@@ -267,6 +279,8 @@
             var appDate = $('#appdate').val();
             var doctorId = $('#doctor_id').val();
             $('#existingAppointmentsError').hide();
+            $('#existAppContainer').hide();
+            $('#existingAppointments').empty();
             showExistingAppointments(branchId, appDate, doctorId, 'store');
 
         });
@@ -278,6 +292,19 @@
             showExistingAppointments(branchId, appDate, doctorId, 'edit');
 
         });
+
+        function convertTo12HourFormat(railwayTime) {
+            var timeArray = railwayTime.split(':');
+            var hours = parseInt(timeArray[0]);
+            var minutes = timeArray[1];
+
+            var ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            var formattedTime = hours + ':' + minutes + ' ' + ampm;
+            return formattedTime;
+        }
+
 
         function showExistingAppointments(branchId, appDate, doctorId, methodType) {
             if (branchId && appDate && doctorId) {
@@ -300,30 +327,57 @@
                         if (data.existingAppointments.length > 0) {
 
                             // Clear existing content
-
+                            $('#existAppContainer').hide();
                             $('#existingAppointments').empty();
                             $('#rescheduleExistingAppointments').empty();
                             // Create a table element
-                            var table = $('<table class="table table-striped">').addClass('appointment-table');
-
+                            // var table = $('<table class="table table-striped">').addClass('appointment-table');
+                            var table = $('<table class="table table-striped mb-0">').addClass(
+                                'appointment-table').css({
+                                'border-collapse': 'separate',
+                                'border-spacing': '0.5rem'
+                            });
                             // Create header row
-                            var headerRow = $('<tr>');
-                            headerRow.append($('<th>').text('Scheduled Appointments'));
-                            table.append(headerRow);
+                            // var headerRow = $('<tr>');
+                            // headerRow.append($('<th>').text('Scheduled Appointments'));
+                            // table.append(headerRow);
 
                             // Calculate number of rows needed
-                            var numRows = Math.ceil(data.existingAppointments.length / 3);
+                            // var numRows = Math.ceil(data.existingAppointments.length / 3);
+                            // for (var i = 0; i < numRows; i++) {
+                            //     var row = $('<tr>');
+
+                            //     // Create 3 cells for each row
+                            //     for (var j = 0; j < 3; j++) {
+                            //         var dataIndex = i * 3 + j;
+                            //         if (dataIndex < data.existingAppointments.length) {
+                            //             var cell = $('<td>').text(data.existingAppointments[dataIndex]
+                            //                 .app_time);
+                            //             row.append(cell);
+                            //         } else {
+                            //             var cell = $('<td>'); // Create empty cell if no more data
+                            //             row.append(cell);
+                            //         }
+                            //     }
+
+                            //     table.append(row);
+                            // }
+                            var numRows = Math.ceil(data.existingAppointments.length / 5);
 
                             // Loop to create rows and populate cells
                             for (var i = 0; i < numRows; i++) {
                                 var row = $('<tr>');
 
-                                // Create 3 cells for each row
-                                for (var j = 0; j < 3; j++) {
-                                    var dataIndex = i * 3 + j;
+                                // Create 5 cells for each row
+                                for (var j = 0; j < 5; j++) {
+                                    var dataIndex = i * 5 + j;
                                     if (dataIndex < data.existingAppointments.length) {
-                                        var cell = $('<td>').text(data.existingAppointments[dataIndex]
-                                            .app_time);
+                                        var app_time = data
+                                            .existingAppointments[
+                                                dataIndex]
+                                            .app_time;
+                                        var formattedTime = convertTo12HourFormat(app_time);
+                                        var cell = $('<td class="b-1 w-100 text-center">').text(formattedTime);
                                         row.append(cell);
                                     } else {
                                         var cell = $('<td>'); // Create empty cell if no more data
@@ -334,12 +388,17 @@
                                 table.append(row);
                             }
                             if (methodType == 'store') {
+                                $('#existingAppointments').append($('<h6 class="text-warning mb-1">').text(
+                                    'Scheduled Appointments'));
                                 // Append table to existingAppointments div
                                 $('#existingAppointments').append(table);
-
+                                $('#existAppContainer').show();
                                 // Show the div
                                 $('#existingAppointments').show();
                             } else if (methodType == 'edit') {
+                                $('#rescheduleExistingAppointments').append($('<h6 class="text-warning mb-1">')
+                                    .text(
+                                        'Scheduled Appointments'));
                                 // Append table to existingAppointments div
                                 $('#rescheduleExistingAppointments').append(table);
 
@@ -348,6 +407,7 @@
                             }
 
                         } else {
+                            $('#existAppContainer').show();
                             $('#existingAppointments').html('No existing appointments found.');
                             $('#existingAppointments').show();
 
@@ -358,6 +418,7 @@
                         console.error('Error fetching existing appointments:', error);
                         $('#existingAppointments').html(
                             'Error fetching existing appointments. Please try again later.');
+                        $('#existAppContainer').show();
                         $('#existingAppointments').show();
 
                     }
