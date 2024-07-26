@@ -86,10 +86,7 @@ class TodayController extends Controller
                 
                 ->addColumn('action', function ($row) {
 
-                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
-                        data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
-                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
-                        <i class="fa fa-trash"></i></button>';
+                    $btn = "<a href='" . route('treatment', $row->id) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='{$row->id}' ><i class='fa-solid fa-eye'></i></a>";
 
                     return $btn;
                 })
