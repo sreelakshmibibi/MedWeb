@@ -107,173 +107,40 @@
                             <div class="box-body">
                                 <div class="inner-user-div3">
                                     <div class="d-flex align-items-center mb-30">
-                                        <div class="me-15">
-                                            <img src="images/avatar/avatar-1.png"
-                                                class="avatar avatar-lg rounded10 bg-primary-light" alt="" />
-                                        </div>
-                                        <div class="d-flex flex-column flex-grow-1 fw-500">
-                                            <a href="#" class="text-dark hover-primary mb-1 fs-16">Dr.
-                                                Jaylon Stanton</a>
-                                            <span class="text-fade">Dentist</span>
-                                        </div>
-                                        <div class="dropdown">
-                                            <a class="px-10 pt-5" href="#" data-bs-toggle="dropdown"><i
-                                                    class="ti-more-alt"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item flexbox" href="#">
-                                                    <span>Inbox</span>
-                                                    <span class="badge badge-pill badge-info">5</span>
-                                                </a>
-                                                <a class="dropdown-item" href="#">Sent</a>
-                                                <a class="dropdown-item" href="#">Spam</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item flexbox" href="#">
-                                                    <span>Draft</span>
-                                                    <span class="badge badge-pill badge-default">1</span>
-                                                </a>
-                                            </div>
-                                        </div>
+                                        @if (!empty($workingDoctors))
+                                            @foreach ($workingDoctors as $workingDoctor)
+                                                <div class="me-15">
+                                                    <img src="{{ asset('storage/' . $workingDoctor->user->staffProfile->photo) }}"
+                                                        class="avatar avatar-lg rounded10 bg-primary-light" alt="" />
+                                                </div>
+                                                
+                                                    <div class="d-flex flex-column flex-grow-1 fw-500">
+                                                        <a href="#" class="text-dark hover-primary mb-1 fs-16">
+                                                            <?= str_replace("<br>", " ",$workingDoctor->user->name); ?>
+                                                        </a>
+                                                        <span class="text-fade"><?= $workingDoctor->user->staffProfile->designation ?> </span>
+                                                    </div>
+                                                    <div class="dropdown">
+                                                        <a class="px-10 pt-5" href="#" data-bs-toggle="dropdown"><i
+                                                                class="ti-more-alt"></i></a>
+                                                        <div class="dropdown-menu dropdown-menu-end">
+                                                            <a class="dropdown-item flexbox" href="#">
+                                                                <span>Inbox</span>
+                                                                <span class="badge badge-pill badge-info">5</span>
+                                                            </a>
+                                                            <a class="dropdown-item" href="#">Sent</a>
+                                                            <a class="dropdown-item" href="#">Spam</a>
+                                                            <div class="dropdown-divider"></div>
+                                                            <a class="dropdown-item flexbox" href="#">
+                                                                <span>Draft</span>
+                                                                <span class="badge badge-pill badge-default">1</span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                            @endforeach
+                                        @endif
                                     </div>
-                                    <div class="d-flex align-items-center mb-30">
-                                        <div class="me-15">
-                                            <img src="images/avatar/avatar-10.png"
-                                                class="avatar avatar-lg rounded10 bg-primary-light" alt="" />
-                                        </div>
-                                        <div class="d-flex flex-column flex-grow-1 fw-500">
-                                            <a href="#" class="text-dark hover-danger mb-1 fs-16">Dr.
-                                                Carla Schleifer</a>
-                                            <span class="text-fade">Oculist</span>
-                                        </div>
-                                        <div class="dropdown">
-                                            <a class="px-10 pt-5" href="#" data-bs-toggle="dropdown"><i
-                                                    class="ti-more-alt"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item flexbox" href="#">
-                                                    <span>Inbox</span>
-                                                    <span class="badge badge-pill badge-info">5</span>
-                                                </a>
-                                                <a class="dropdown-item" href="#">Sent</a>
-                                                <a class="dropdown-item" href="#">Spam</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item flexbox" href="#">
-                                                    <span>Draft</span>
-                                                    <span class="badge badge-pill badge-default">1</span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center mb-30">
-                                        <div class="me-15">
-                                            <img src="images/avatar/avatar-10.png"
-                                                class="avatar avatar-lg rounded10 bg-primary-light" alt="" />
-                                        </div>
-                                        <div class="d-flex flex-column flex-grow-1 fw-500">
-                                            <a href="#" class="text-dark hover-danger mb-1 fs-16">Dr.
-                                                Carla Schleifer</a>
-                                            <span class="text-fade">Oculist</span>
-                                        </div>
-                                        <div class="dropdown">
-                                            <a class="px-10 pt-5" href="#" data-bs-toggle="dropdown"><i
-                                                    class="ti-more-alt"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item flexbox" href="#">
-                                                    <span>Inbox</span>
-                                                    <span class="badge badge-pill badge-info">5</span>
-                                                </a>
-                                                <a class="dropdown-item" href="#">Sent</a>
-                                                <a class="dropdown-item" href="#">Spam</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item flexbox" href="#">
-                                                    <span>Draft</span>
-                                                    <span class="badge badge-pill badge-default">1</span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center mb-30">
-                                        <div class="me-15">
-                                            <img src="images/avatar/avatar-11.png"
-                                                class="avatar avatar-lg rounded10 bg-primary-light" alt="" />
-                                        </div>
-                                        <div class="d-flex flex-column flex-grow-1 fw-500">
-                                            <a href="#" class="text-dark hover-success mb-1 fs-16">Dr.
-                                                Hanna Geidt</a>
-                                            <span class="text-fade">Surgeon</span>
-                                        </div>
-                                        <div class="dropdown">
-                                            <a class="px-10 pt-5" href="#" data-bs-toggle="dropdown"><i
-                                                    class="ti-more-alt"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item flexbox" href="#">
-                                                    <span>Inbox</span>
-                                                    <span class="badge badge-pill badge-info">5</span>
-                                                </a>
-                                                <a class="dropdown-item" href="#">Sent</a>
-                                                <a class="dropdown-item" href="#">Spam</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item flexbox" href="#">
-                                                    <span>Draft</span>
-                                                    <span class="badge badge-pill badge-default">1</span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center mb-30">
-                                        <div class="me-15">
-                                            <img src="images/avatar/avatar-12.png"
-                                                class="avatar avatar-lg rounded10 bg-primary-light" alt="" />
-                                        </div>
-                                        <div class="d-flex flex-column flex-grow-1 fw-500">
-                                            <a href="#" class="text-dark hover-info mb-1 fs-16">Dr. Roger
-                                                George</a>
-                                            <span class="text-fade">General Practitioners</span>
-                                        </div>
-                                        <div class="dropdown">
-                                            <a class="px-10 pt-5" href="#" data-bs-toggle="dropdown"><i
-                                                    class="ti-more-alt"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item flexbox" href="#">
-                                                    <span>Inbox</span>
-                                                    <span class="badge badge-pill badge-info">5</span>
-                                                </a>
-                                                <a class="dropdown-item" href="#">Sent</a>
-                                                <a class="dropdown-item" href="#">Spam</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item flexbox" href="#">
-                                                    <span>Draft</span>
-                                                    <span class="badge badge-pill badge-default">1</span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <div class="me-15">
-                                            <img src="images/avatar/avatar-15.png"
-                                                class="avatar avatar-lg rounded10 bg-primary-light" alt="" />
-                                        </div>
-                                        <div class="d-flex flex-column flex-grow-1 fw-500">
-                                            <a href="#" class="text-dark hover-warning mb-1 fs-16">Dr.
-                                                Natalie doe</a>
-                                            <span class="text-fade">Physician</span>
-                                        </div>
-                                        <div class="dropdown">
-                                            <a class="px-10 pt-5" href="#" data-bs-toggle="dropdown"><i
-                                                    class="ti-more-alt"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item flexbox" href="#">
-                                                    <span>Inbox</span>
-                                                    <span class="badge badge-pill badge-info">5</span>
-                                                </a>
-                                                <a class="dropdown-item" href="#">Sent</a>
-                                                <a class="dropdown-item" href="#">Spam</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item flexbox" href="#">
-                                                    <span>Draft</span>
-                                                    <span class="badge badge-pill badge-default">1</span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
