@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Session;
 
             <section class="content">
                 <div class="box">
-                    <div class="box-body wizard-content">
+                    <div class="box-body wizard-content px-2 pb-0">
                         <form method="post" class="validation-wizard wizard-circle" id="treatmentform"
                             action="{{ route('treatment.details.store') }}" enctype="multipart/form-data">
                             @csrf
