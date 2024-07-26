@@ -65,7 +65,7 @@
 
 </div>
 
-<div class="row">
+<div class="row mb-2">
     <div class="form-group col-md-2">
         <label class="form-label" for="bp">Other Information</label>
         <input type="text" class="form-control" id="bp" name="bp" placeholder="Blood Pressure- 80/120">

@@ -32,11 +32,10 @@
                     <div class="box-body">
                         <div class="table-responsive">
                             <!-- Main content -->
-                            <table
-                                class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center">
+                            <table class="table table-bordered table-hover table-striped mb-0 data-table text-center">
                                 <thead class="bg-primary-light">
                                     <tr>
-                                        <th>No</th>
+                                        <th width="10px">No</th>
                                         <th>Patient ID</th>
                                         <th>Name</th>
                                         <th>Gender</th>
@@ -44,7 +43,7 @@
                                         <th>Last Appointment Date</th>
                                         <th>Upcoming (if any)</th>
                                         {{-- <th>New Appointment</th> --}}
-                                        <th>Status</th>
+                                        <th width="20px">Status</th>
                                         <th width="170px">Action</th>
                                     </tr>
                                 </thead>
@@ -198,6 +197,8 @@
                 $('#app_parent_id').val(app_parent_id);
                 // Replace with dynamic patient ID
 
+                $('#pregnant_status').hide();
+
                 var url = "{{ route('patient.patient_list.appointment', [':patientId']) }}";
                 url = url.replace(':patientId', patientId);
                 // Fetch patient appointment details using AJAX
@@ -216,6 +217,14 @@
                         $('#allergies').val(response.allergies);
                         $('#pregnant').val(response.pregnant);
                         $('#rdoctor').val(response.referred_doctor);
+
+                        if (response.gender === 'F') {
+                            $('#pregnant_status').show();
+                        } else {
+                            $('#pregnant_status').hide();
+                            document.getElementById('pregnant_status').value = '';
+                        }
+
                         if (response.history && response.history.length > 0) {
                             $('#medical-conditions-wrapper').empty();
                             response.history.forEach(function(condition, index) {

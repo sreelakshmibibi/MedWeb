@@ -517,6 +517,7 @@ class PatientListController extends Controller
             'doctor_id' => optional($lastAppointment)->doctor_id,
             'last_appointment_date' => optional($lastAppointment)->app_date,
             'history' => $history,
+            'gender' => $patientProfile->gender
         ];
 
         return response()->json($response);

@@ -80,7 +80,7 @@ class StaffListController extends Controller
                 ->addColumn('action', function ($row) {
                     $btn = '<a href="' . route('staff.staff_list.view', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
                     $btn .= '<a href="' . route('staff.staff_list.edit', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
-                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
+                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
                     $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete"><i class="fa-solid fa-trash"></i></button>';
                     return $btn;
                 })
@@ -237,7 +237,7 @@ class StaffListController extends Controller
 
                         } else {
                             DB::rollBack();
-                            return response()->json(['error' => 'Failed to create doctor: Availbilty of time slots required' ], 422);
+                            return response()->json(['error' => 'Failed to create doctor: Availbilty of time slots required'], 422);
                         }
                     } else {
                         DB::commit();
@@ -255,11 +255,11 @@ class StaffListController extends Controller
                     }
                 } else {
                     DB::rollBack();
-                    return response()->json(['error' => 'Failed to create staff: Error in experience' ], 422);
+                    return response()->json(['error' => 'Failed to create staff: Error in experience'], 422);
                 }
             } else {
                 DB::rollBack();
-                return response()->json(['error' => 'Failed to create staff.' ], 422);
+                return response()->json(['error' => 'Failed to create staff.'], 422);
             }
 
             //example user
@@ -356,13 +356,13 @@ class StaffListController extends Controller
         if ($request->ajax()) {
             $staffId = $request->input('userId');
             $appointments = Appointment::where('doctor_id', $staffId)
-                            ->with(['patient', 'doctor', 'branch'])
-                            ->get();
+                ->with(['patient', 'doctor', 'branch'])
+                ->get();
 
             return DataTables::of($appointments)
                 ->addIndexColumn()
                 ->addColumn('name', function ($row) {
-                    return str_replace("<br>", " ", $row->patient->first_name." ".$row->patient->last_name);
+                    return str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name);
                 })
                 ->addColumn('branch', function ($row) {
                     if (!$row->branch) {

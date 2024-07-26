@@ -12,6 +12,10 @@ function handleAvailabilityStep(role) {
                 enableFinishButton: true, // Optional: Enable finish button for this step
             });
             availabilityStepAdded = true; // Update the flag
+            $(".clinic_branch_select").select2({
+                width: "100%",
+                placeholder: "Select a Branch",
+            });
         }
     } else {
         // Remove Availability step if role does not require it

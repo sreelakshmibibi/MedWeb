@@ -31,7 +31,7 @@
 
             <section class="content">
                 <div class="box">
-                    <div class="box-body wizard-content">
+                    <div class="box-body wizard-content px-2 pb-0">
                         <form method="post" class="validation-wizard wizard-circle" id="patientform"
                             action="{{ route('patient.patient_list.store') }}" enctype="multipart/form-data">
                             @csrf

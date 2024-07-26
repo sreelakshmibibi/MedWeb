@@ -31,8 +31,8 @@
                 <tr>
                     <td>1</td>
                     <td>
-                        <select class="select2" id="clinic_branch_id1" name="clinic_branch_id1" required
-                            data-placeholder="Select a Branch" style="width: 100%;">
+                        <select class="form-control clinic_branch_select" id="clinic_branch_id1"
+                            name="clinic_branch_id1" required>
                             @foreach ($clinicBranches as $clinicBranch)
                                 <?php
                                 $clinicAddress = $clinicBranch->clinic_address;
@@ -48,45 +48,45 @@
                     <td>
                         <input type="time" class="form-control timeInput fromTime" id="sunday_from1" title="from"
                             name="sunday_from1" style="width:115px;">
-                        <input type="time" class="form-control timeInput toTime" id="sunday_to1" title="to" name="sunday_to1"
-                            style="width:115px;">
+                        <input type="time" class="form-control timeInput toTime" id="sunday_to1" title="to"
+                            name="sunday_to1" style="width:115px;">
                     </td>
                     <td>
-                        <input type="time" class="form-control timeInput fromTime" id="monday_from1" name="monday_from1" title="from"
-                            style="width:115px;">
-                        <input type="time" class="form-control timeInput toTime" id="monday_to1" name="monday_to1" title="to"
-                            style="width:115px;">
+                        <input type="time" class="form-control timeInput fromTime" id="monday_from1"
+                            name="monday_from1" title="from" style="width:115px;">
+                        <input type="time" class="form-control timeInput toTime" id="monday_to1" name="monday_to1"
+                            title="to" style="width:115px;">
                     </td>
                     <td>
-                        <input type="time" class="form-control timeInput fromTime" id="tuesday_from1" name="tuesday_from1"
-                            title="from" style="width:115px;">
-                        <input type="time" class="form-control timeInput toTime" id="tuesday_to1" name="tuesday_to1" title="to"
-                            style="width:115px;">
+                        <input type="time" class="form-control timeInput fromTime" id="tuesday_from1"
+                            name="tuesday_from1" title="from" style="width:115px;">
+                        <input type="time" class="form-control timeInput toTime" id="tuesday_to1" name="tuesday_to1"
+                            title="to" style="width:115px;">
 
                     </td>
                     <td>
-                        <input type="time" class="form-control timeInput fromTime" id="wednesday_from1" name="wednesday_from1"
-                            title="from" style="width:115px;">
-                        <input type="time" class="form-control timeInput toTime" id="wednesday_to1" name="wednesday_to1"
+                        <input type="time" class="form-control timeInput fromTime" id="wednesday_from1"
+                            name="wednesday_from1" title="from" style="width:115px;">
+                        <input type="time" class="form-control timeInput toTime" id="wednesday_to1"
+                            name="wednesday_to1" title="to" style="width:115px;">
+                    </td>
+                    <td>
+                        <input type="time" class="form-control timeInput fromTime" id="thursday_from1"
+                            name="thursday_from1" title="from" style="width:115px;">
+                        <input type="time" class="form-control timeInput toTime" id="thursday_to1"
+                            name="thursday_to1" title="to" style="width:115px;">
+                    </td>
+                    <td>
+                        <input type="time" class="form-control timeInput fromTime" id="friday_from1"
+                            name="friday_from1" title="from" style="width:115px;">
+                        <input type="time" class="form-control timeInput toTime" id="friday_to1" name="friday_to1"
                             title="to" style="width:115px;">
                     </td>
                     <td>
-                        <input type="time" class="form-control timeInput fromTime" id="thursday_from1" name="thursday_from1"
-                            title="from" style="width:115px;">
-                        <input type="time" class="form-control timeInput toTime" id="thursday_to1" name="thursday_to1" title="to"
-                            style="width:115px;">
-                    </td>
-                    <td>
-                        <input type="time" class="form-control timeInput fromTime" id="friday_from1" name="friday_from1" title="from"
-                            style="width:115px;">
-                        <input type="time" class="form-control timeInput toTime" id="friday_to1" name="friday_to1" title="to"
-                            style="width:115px;">
-                    </td>
-                    <td>
-                        <input type="time" class="form-control timeInput fromTime" id="saturday_from1" name="saturday_from1"
-                            title="from" style="width:115px;">
-                        <input type="time" class="form-control timeInput toTime" id="saturday_to1" name="saturday_to1"
-                            title="to" style="width:115px;">
+                        <input type="time" class="form-control timeInput fromTime" id="saturday_from1"
+                            name="saturday_from1" title="from" style="width:115px;">
+                        <input type="time" class="form-control timeInput toTime" id="saturday_to1"
+                            name="saturday_to1" title="to" style="width:115px;">
                     </td>
                     <td>
                         <button type="button" id="btnDelete" title="delete row"
