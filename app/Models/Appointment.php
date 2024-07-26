@@ -12,6 +12,9 @@ class Appointment extends Model
     use HasFactory;
     use SoftDeletes;
 
+    const AppOngoing = 'Treatment';
+    const AppCompleted = 'Show';
+
     protected $fillable = [
         'app_id',
         'patient_id',
