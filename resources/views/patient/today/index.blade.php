@@ -3,7 +3,7 @@
         <h4 class="box-title">Patients List</h4>
         <p class="mb-0 pull-right">Today</p>
     </div>
-    <div class="box-body no-padding">
+    <div class="box-body">
         <div class="table-responsive">
             <table class="table table-bordered table-hover table-striped mb-0 data-table text-center">
 
@@ -24,7 +24,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                   
+
                 </tbody>
             </table>
         </div>
@@ -32,7 +32,8 @@
     <div class="box-footer bg-light py-10 with-border">
         <div class="d-flex align-items-center justify-content-between">
             <p class="mb-0">Total <span id="total-value"> </span> Patients</p>
-            <a type="button" href="" class="waves-effect waves-light btn btn-primary">View
+            <a type="button" href="{{ route('patient.patient_list') }}"
+                class="waves-effect waves-light btn btn-primary">View
                 All</a>
         </div>
     </div>
@@ -50,7 +51,7 @@
 
         // function fetchTotal() {
         //     $.ajax({
-        //         url: '{{ route("totalpatients") }}',
+        //         url: '{{ route('totalpatients') }}',
         //         type: 'GET',
         //         dataType: 'json',
         //         success: function(response) {
@@ -73,74 +74,74 @@
             serverSide: true,
             lengthMenu: [5, 10, 25, 50],
             ajax: {
-            url: '{{ route("patient.today") }}',
-            type: "GET",
-        },
+                url: '{{ route('patient.today') }}',
+                type: "GET",
+            },
             columns: [{
-                        data: 'token_no',
-                        name: 'token_no'
-                    },
-                    {
-                        data: 'patient_id',
-                        name: 'patient_id'
-                    },
+                    data: 'token_no',
+                    name: 'token_no'
+                },
+                {
+                    data: 'patient_id',
+                    name: 'patient_id'
+                },
 
-                    {
-                        data: 'name',
-                        name: 'name'
-                    },
-                    {
-                        data: 'age',
-                        name: 'age'
-                    },
-                    {
-                        data: 'doctor',
-                        name: 'doctor'
-                    },
-                    {
-                        data: 'phone',
-                        name: 'phone'
-                    },
-                    
-                    {
-                        data: 'app_time',
-                        name: 'app_time',
-                        render: function(data, type, row) {
-                            var timeParts = data.split(':');
-                            var hours = parseInt(timeParts[0], 10);
-                            var minutes = parseInt(timeParts[1], 10);
-                            var ampm = hours >= 12 ? 'pm' : 'am';
-                            hours = hours % 12;
-                            hours = hours ? hours : 12; // Handle midnight (00:xx) as 12
+                {
+                    data: 'name',
+                    name: 'name'
+                },
+                {
+                    data: 'age',
+                    name: 'age'
+                },
+                {
+                    data: 'doctor',
+                    name: 'doctor'
+                },
+                {
+                    data: 'phone',
+                    name: 'phone'
+                },
 
-                            var formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+                {
+                    data: 'app_time',
+                    name: 'app_time',
+                    render: function(data, type, row) {
+                        var timeParts = data.split(':');
+                        var hours = parseInt(timeParts[0], 10);
+                        var minutes = parseInt(timeParts[1], 10);
+                        var ampm = hours >= 12 ? 'pm' : 'am';
+                        hours = hours % 12;
+                        hours = hours ? hours : 12; // Handle midnight (00:xx) as 12
 
-                            var formattedTime = hours + ':' + formattedMinutes + ' ' + ampm;
+                        var formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
 
-                            return formattedTime;
-                        }
-                    },
+                        var formattedTime = hours + ':' + formattedMinutes + ' ' + ampm;
+
+                        return formattedTime;
+                    }
+                },
 
 
-                    {
-                        data: 'app_type',
-                        name: 'app_type',
-                       
-                    },
+                {
+                    data: 'app_type',
+                    name: 'app_type',
 
-                    {
-                        data: 'status',
-                        name: 'status',
-                        orderable: false,
-                        searchable: true
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: true
-                    },
-                ]
+                },
+
+                {
+                    data: 'status',
+                    name: 'status',
+                    orderable: false,
+                    searchable: true
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: true
+                },
+            ]
         });
         $(document).on('click', '.btn-edit', function() {
             var patientId = $(this).data('patient_id');
