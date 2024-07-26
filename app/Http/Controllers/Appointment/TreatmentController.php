@@ -106,8 +106,7 @@ class TreatmentController extends Controller
             ->orderBy('app_date', 'desc')
             ->orderBy('app_time', 'desc')
             ->first();
-        Log::info('$patientName'.$patientName);
-        Log::info('$latestFollowup'.$latestFollowup);
+
         Session::put('appId', $id);
         Session::put('patientName', $patientName);
         Session::put('patientId', $appointment->patient->patient_id);
