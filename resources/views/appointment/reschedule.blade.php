@@ -123,11 +123,12 @@
             var rescheduledAppdate = $('#rescheduledAppdate').val();
             var rescheduleReason = $('#reschedule_reason').val();
             // Basic client-side validation (you can add more as needed)
-
+            var isValid = true;
             if (rescheduledAppdate.length === 0) {
                 $('#rescheduledAppdate').addClass('is-invalid');
                 $('#rescheduledAppdateError').text('Rescheduled Appointment date is required.');
                 // Prevent further execution
+                isValid = false;
             } else {
                 $('#rescheduledAppdate').removeClass('is-invalid');
                 $('#rescheduledAppdateError').text('');
@@ -137,12 +138,13 @@
                 $('#reschedule_reason').addClass('is-invalid');
                 $('#rescheduleReasonError').text('Reason for rescheduling is required.');
                 // Prevent further execution
+                isValid = false;
             } else {
                 $('#reschedule_reason').removeClass('is-invalid');
                 $('#rescheduleReasonError').text('');
             }
 
-
+            if (isValid) {
             // If validation passed, submit the form via AJAX
             var form = $('#rescheduleAppointmentForm');
             var url = form.attr('action');
@@ -185,6 +187,7 @@
                     }
                 }
             });
+        }
         });
     });
 

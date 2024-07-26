@@ -8,6 +8,8 @@ use App\Models\ClinicBranch;
 use App\Models\Country;
 use App\Models\StaffProfile;
 use App\Models\State;
+use App\Services\DoctorAvaialbilityService;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -39,6 +41,9 @@ class HomeController extends Controller
         if ($hasBranches && $hasClinics) {
             if ($user->is_admin) {
                 $role = 'Admin';
+                $doctorAvailabilityService = new DoctorAvaialbilityService();
+                $currentDayName = Carbon::now()->englishDayOfWeek;
+                $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors(null, $currentDayName);
                 $dashboardView = 'dashboard.admin';
             } elseif ($user->is_doctor) {
                 $role = 'Doctor';
@@ -68,7 +73,8 @@ class HomeController extends Controller
             if ($staffDetails) {
                 session(['staffPhoto' => $staffDetails->photo]);
             }
-            return view($dashboardView);
+            // echo "<pre>"; print_r($workingDoctors); echo "</pre>";exit;
+            return view($dashboardView, compact('workingDoctors'));
 
         } else {
             $countries = Country::all();

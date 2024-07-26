@@ -78,7 +78,7 @@ class DoctorAvaialbilityService
         return $availableBranches;
     }
 
-    public function getTodayWorkingDoctors($branchId, $weekday)
+    public function getTodayWorkingDoctors($branchId = null, $weekday)
     {
 
         $query = DoctorWorkingHour::where('week_day', $weekday)
