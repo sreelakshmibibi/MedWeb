@@ -84,7 +84,7 @@
                             </div>
                         </div>
                         <div class="row">
-                       
+
                             {{-- <div class="col-md-6 ">
                                 <div class="form-group">
                                     <label class="form-label" for="complaint">Chief Complaint <span class="text-danger">
@@ -92,7 +92,7 @@
                                     <input type="text" class="form-control" id="complaint" name="complaint"
                                         placeholder="Chief Complaint">
                                 </div>
-                            </div>--}}
+                            </div> --}}
                             <div class="col-md-6 ">
                                 <div class="form-group">
                                     <label class="form-label" for="disease_id">Disease <span class="text-danger">
@@ -411,11 +411,17 @@
                 contentType: false,
                 dataType: 'json',
                 success: function(response) {
+                    toothdivid = '#div' + $('#tooth_id').val();
+                    $(toothdivid).css({
+                        'border': '1px solid red',
+                    });
+                    $(toothdivid).addClass('completed');
                     // If successful, hide modal and show success message
                     $('#modal-teeth').modal('hide');
                     $('#successMessage').text(response.success);
                     $('#successMessage').fadeIn().delay(3000)
                         .fadeOut();
+
 
                 },
                 error: function(xhr) {
@@ -437,9 +443,15 @@
 
         // Reset form and errors on modal close
         $('#modal-teeth').on('hidden.bs.modal', function() {
-            $('.tooth').css({
-                'border': 'none',
-            });
+            toothdivid = '#div' + $('#tooth_id').val();
+            if (!$(toothdivid).hasClass('completed')) {
+                $(toothdivid).css({
+                    'border': 'none',
+                });
+            }
+            // $('.tooth').css({
+            //     'border': 'none',
+            // });
             $('.dparts').css({
                 'background-color': 'white',
             });
@@ -449,26 +461,22 @@
                 $('#checkbox_all').prop('checked', false);
                 $('.exam_chiefComplaint').hide();
                 $('.exam_toothdiv').show();
-            }
-            else if ($('#checkbox_row1').is(':checked')) {
+            } else if ($('#checkbox_row1').is(':checked')) {
                 $('#checkbox_row1').prop('checked', false);
                 $('.exam_chiefComplaint').hide();
                 $('.exam_toothdiv').show();
                 $('#trow1').removeClass('rowbordered');
-            }
-            else if ($('#checkbox_row2').is(':checked')) {
+            } else if ($('#checkbox_row2').is(':checked')) {
                 $('#checkbox_row2').prop('checked', false);
                 $('.exam_chiefComplaint').hide();
                 $('.exam_toothdiv').show();
                 $('#trow2').removeClass('rowbordered');
-            }
-            else if ($('#checkbox_row3').is(':checked')) {
+            } else if ($('#checkbox_row3').is(':checked')) {
                 $('#checkbox_row3').prop('checked', false);
                 $('.exam_chiefComplaint').hide();
                 $('.exam_toothdiv').show();
                 $('#trow3').removeClass('rowbordered');
-            }
-            else if ($('#checkbox_row4').is(':checked')) {
+            } else if ($('#checkbox_row4').is(':checked')) {
                 $('#checkbox_row4').prop('checked', false);
                 $('.exam_chiefComplaint').hide();
                 $('.exam_toothdiv').show();
