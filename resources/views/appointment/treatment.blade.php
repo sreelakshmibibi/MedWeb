@@ -109,6 +109,9 @@ use Illuminate\Support\Facades\Session;
         var teethId;
         let isAdmin = $("#isAdmin").val();
 
+        var now = new Date().toISOString().slice(0, 16);
+        document.getElementById('appdate').setAttribute('min', now);
+
         $(document).ready(function() {
 
             $("#treatmentform .actions ul li:last-child a").addClass("bg-success btn btn-success");
@@ -181,7 +184,6 @@ use Illuminate\Support\Facades\Session;
             //     });
             //     // $(divId).addClass('overlay');
             // });
-
 
             $("#follow_checkbox").change(function() {
                 if ($(this).is(':checked')) {

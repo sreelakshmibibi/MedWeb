@@ -211,7 +211,7 @@ use App\Models\Appointment;
                                 </div>
                             </div>
                         </div>
-                        <hr />
+                        <hr class="exam_toothdiv" style="display: none;" />
                         <div class=" row exam_toothdiv" style="display: none;">
                             <div class="col-md-3 tooth_partsdiv" id="Buccal" style="display: none;">
                                 <div class="form-group">

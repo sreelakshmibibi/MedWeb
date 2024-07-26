@@ -149,7 +149,7 @@ use Illuminate\Support\Facades\Session;
                         </select>
                     </td>
                     <td>
-                        <input class="form-control" type="datetime-local" id="appdate" name="appdate"
+                        <input class="form-control appdate" type="datetime-local" id="appdate" name="appdate"
                             value="{{ now()->setTimezone('Asia/Kolkata')->format('Y-m-d\TH:i') }}">
                     </td>
 
@@ -185,12 +185,12 @@ use Illuminate\Support\Facades\Session;
                 </tr>
             </tbody>
         </table>
-        <div class="row">
+        <div class="row mt-2">
             <div style="display:none" id="existingAppointmentsError">
                 <span class="text-danger">Already exists appointment for the selected time!</span>
             </div>
         </div>
-        <div class="row">
+        <div class="row mt-2" style="display:none" id="existAppContainer">
             <div style="display:none" id="existingAppointments">
             </div>
         </div>
@@ -206,6 +206,10 @@ use Illuminate\Support\Facades\Session;
 </div>
 <hr class="my-15 ">
 <script>
+    $(function() {
+
+
+    });
     $(document).on('click', '.btn-treat-view', function() {
         var teethName = $(this).data('id');
         var appId = '<?= Session::get('appId') ?>';
@@ -712,6 +716,18 @@ use Illuminate\Support\Facades\Session;
 
     });
 
+    function convertTo12HourFormat(railwayTime) {
+        var timeArray = railwayTime.split(':');
+        var hours = parseInt(timeArray[0]);
+        var minutes = timeArray[1];
+
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        var formattedTime = hours + ':' + minutes + ' ' + ampm;
+        return formattedTime;
+    }
+
     function showExistingAppointments(branchId, appDate, doctorId) {
         if (branchId && appDate && doctorId) {
 
@@ -733,29 +749,30 @@ use Illuminate\Support\Facades\Session;
                     if (data.existingAppointments.length > 0) {
 
                         // Clear existing content
-
+                        $('#existAppContainer').hide();
                         $('#existingAppointments').empty();
                         // Create a table element
-                        var table = $('<table class="table table-striped">').addClass('appointment-table');
+                        // var table = $('<table class="table table-striped">').addClass('appointment-table');
+                        var table = $('<table class="table table-striped mb-0">').addClass(
+                            'appointment-table').css({
+                            'border-collapse': 'separate',
+                            'border-spacing': '0.5rem'
+                        });
 
-                        // Create header row
-                        var headerRow = $('<tr>');
-                        headerRow.append($('<th>').text('Scheduled Appointments'));
-                        table.append(headerRow);
+                        var numRows = Math.ceil(data.existingAppointments.length / 10);
 
-                        // Calculate number of rows needed
-                        var numRows = Math.ceil(data.existingAppointments.length / 3);
-
-                        // Loop to create rows and populate cells
                         for (var i = 0; i < numRows; i++) {
                             var row = $('<tr>');
 
-                            // Create 3 cells for each row
-                            for (var j = 0; j < 3; j++) {
-                                var dataIndex = i * 3 + j;
+                            for (var j = 0; j < 10; j++) {
+                                var dataIndex = i * 10 + j;
                                 if (dataIndex < data.existingAppointments.length) {
-                                    var cell = $('<td>').text(data.existingAppointments[dataIndex]
-                                        .app_time);
+                                    var app_time = data
+                                        .existingAppointments[
+                                            dataIndex]
+                                        .app_time;
+                                    var formattedTime = convertTo12HourFormat(app_time);
+                                    var cell = $('<td class="b-1 w-100 text-center">').text(formattedTime);
                                     row.append(cell);
                                 } else {
                                     var cell = $('<td>'); // Create empty cell if no more data
@@ -765,14 +782,17 @@ use Illuminate\Support\Facades\Session;
 
                             table.append(row);
                         }
+                        $('#existingAppointments').append($('<h6 class="text-warning mb-1">').text(
+                            'Scheduled Appointments'));
                         // Append table to existingAppointments div
                         $('#existingAppointments').append(table);
-
+                        $('#existAppContainer').show();
                         // Show the div
                         $('#existingAppointments').show();
 
                     } else {
                         $('#existingAppointments').html('No existing appointments found.');
+                        $('#existAppContainer').show();
                         $('#existingAppointments').show();
 
                     }
@@ -782,12 +802,14 @@ use Illuminate\Support\Facades\Session;
                     console.error('Error fetching existing appointments:', error);
                     $('#existingAppointments').html(
                         'Error fetching existing appointments. Please try again later.');
+                    $('#existAppContainer').show();
                     $('#existingAppointments').show();
 
                 }
             });
         } else {
             $('#existingAppointments').html('No existing appointments found.');
+            $('#existAppContainer').show();
             $('#existingAppointments').show();
         }
     }
