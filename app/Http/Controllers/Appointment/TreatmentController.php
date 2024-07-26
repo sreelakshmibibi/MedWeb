@@ -42,10 +42,15 @@ class TreatmentController extends Controller
      */
     public function index($id, Request $request)
     {
+
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])->find($id);
         abort_if(! $appointment, 404);
         // Format clinic address
-
+        $appAction = "Treatment";
+        if ($appointment->app_date < date('Y-m-d') && $appointment->app_status == AppointmentStatus::COMPLETED) 
+        {
+            $appAction = "Show";
+        }
         //$patientProfile = PatientProfile::with(['lastAppointment'])->find($appointment->patient->id);
         $patientProfile = PatientProfile::with(['lastAppointment.doctor', 'lastAppointment.branch'])->find($appointment->patient->id);
         $appointmentService = new AppointmentService();
@@ -95,7 +100,7 @@ class TreatmentController extends Controller
         Session::put('patientId', $appointment->patient->patient_id);
         Session::put('doctorName', $doctorName);
         Session::put('doctorId', $appointment->doctor->id);
-
+        
         if ($request->ajax()) {
             return DataTables::of($previousAppointments)
                 ->addIndexColumn()
@@ -171,7 +176,7 @@ class TreatmentController extends Controller
                 ->make(true);
         }
 
-        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases', 'previousAppointments', 'clinicBranches', 'appointmentTypes', 'workingDoctors', 'medicines', 'dosages', 'patientPrescriptions'));
+        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases', 'previousAppointments', 'clinicBranches', 'appointmentTypes', 'workingDoctors', 'medicines', 'dosages', 'patientPrescriptions', 'appAction'));
 
     }
 

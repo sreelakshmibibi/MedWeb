@@ -1,3 +1,6 @@
+<?php
+    use App\Models\Appointment;
+?>
 <form id="form-teeth" method="POST" action="{{ route('treatment.store') }}">
     @csrf
     <input type="hidden" id="app_id" name="app_id" value="">
@@ -332,7 +335,10 @@
                 <div class="modal-footer modal-footer-uniform">
                     <button type="button" class="btn btn-danger closeToothBtn" id="closeToothBtn"
                         data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success float-end" id="newTreatmentBtn">Save</button>
+                        <?php
+                            if ($appAction == Appointment::AppOngoing) { ?>
+                            <button type="button" class="btn btn-success float-end" id="newTreatmentBtn">Save</button>
+                            <?php } ?>
                 </div>
             </div>
         </div>
