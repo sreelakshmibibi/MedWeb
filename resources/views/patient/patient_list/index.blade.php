@@ -115,8 +115,12 @@
                         data: 'next_appointment',
                         name: 'next_appointment',
                         render: function(data, type, row) {
-                            // Use Moment.js to format the date
-                            return moment(data, 'YYYY-MM-DD HH:mm:ss').format('DD-MM-YYYY hh:mm A');
+                            if (data == 'N/A') {
+                                return data;
+                            } else {
+                                return moment(data, 'YYYY-MM-DD HH:mm:ss').format(
+                                    'DD-MM-YYYY hh:mm A');
+                            }
 
                         }
                     },

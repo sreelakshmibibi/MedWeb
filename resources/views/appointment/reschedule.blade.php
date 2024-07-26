@@ -17,15 +17,15 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="patient_id">Patient ID</label>
-                                    <input class="form-control" type="text" id="edit_patient_id" name="edit_patient_id"
-                                           placeholder="Patient ID" readonly>
+                                    <input class="form-control" type="text" id="edit_patient_id"
+                                        name="edit_patient_id" placeholder="Patient ID" readonly>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="patient_name">Patient Name</label>
                                     <input class="form-control" type="text" id="edit_patient_name"
-                                           name="edit_patient_name" placeholder="Patient name" readonly>
+                                        name="edit_patient_name" placeholder="Patient name" readonly>
                                 </div>
                             </div>
                         </div>
@@ -34,17 +34,17 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="doctor">Doctor</label>
-                                    <input type="text" class="form-control" id="edit_doctor" name="edit_doctor" required
-                                             style="width: 100%;" readonly>
-                                        
+                                    <input type="text" class="form-control" id="edit_doctor" name="edit_doctor"
+                                        required style="width: 100%;" readonly>
+
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="clinic_branch_id">Branch</label>
-                                    <input type="text" class="form-control" id="edit_clinic_branch" name="edit_clinic_branch" required
-                                            style="width: 100%;" readonly>
-                                    
+                                    <input type="text" class="form-control" id="edit_clinic_branch"
+                                        name="edit_clinic_branch" required style="width: 100%;" readonly>
+
                                 </div>
                             </div>
                         </div>
@@ -52,28 +52,29 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="scheduled_appdate">Scheduled Date & Time</label>
-                                    <input class="form-control" type="text" id="scheduled_appdate" name="scheduled_appdate"
-                                           required readonly>
+                                    <input class="form-control" type="text" id="scheduled_appdate"
+                                        name="scheduled_appdate" required readonly>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="rescheduledAppdate">Reschedule Date & Time</label><span class="text-danger">*</span>
-                                    <input class="form-control" type="datetime-local" id="rescheduledAppdate" name="rescheduledAppdate"
-                                           required>
-                                           <div id="rescheduledAppdateError" class="invalid-feedback"></div>
+                                    <label class="form-label" for="rescheduledAppdate">Reschedule Date &
+                                        Time</label><span class="text-danger">*</span>
+                                    <input class="form-control" type="datetime-local" id="rescheduledAppdate"
+                                        name="rescheduledAppdate" required>
+                                    <div id="rescheduledAppdateError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="form-group">
-                                <label class="form-label" for="appdate">Reason for Rescheduling</label><span class="text-danger">*</span>
-                                <textarea class="form-control" id="reschedule_reason" name="reschedule_reason"
-                                        required></textarea>
+                                <label class="form-label" for="appdate">Reason for Rescheduling</label><span
+                                    class="text-danger">*</span>
+                                <textarea class="form-control" id="reschedule_reason" name="reschedule_reason" required></textarea>
                                 <div id="rescheduleReasonError" class="invalid-feedback"></div>
                             </div>
-                            
+
                         </div>
 
                         <div class="row">
@@ -101,6 +102,8 @@
 
 <script>
     $(function() {
+        var now = new Date().toISOString().slice(0, 16);
+        document.getElementById('rescheduledAppdate').setAttribute('min', now);
         // Reset form and errors on modal close
         $('#modal-reschedule').on('hidden.bs.modal', function() {
             $('#rescheduleAppointmentForm').trigger('reset');
@@ -116,15 +119,15 @@
             $('#rescheduledAppdateError').text('');
             $('#rescheduleReasonError').text('');
             // Validate form inputs
-           
+
             var rescheduledAppdate = $('#rescheduledAppdate').val();
             var rescheduleReason = $('#reschedule_reason').val();
             // Basic client-side validation (you can add more as needed)
-            
+
             if (rescheduledAppdate.length === 0) {
                 $('#rescheduledAppdate').addClass('is-invalid');
                 $('#rescheduledAppdateError').text('Rescheduled Appointment date is required.');
-                 // Prevent further execution
+                // Prevent further execution
             } else {
                 $('#rescheduledAppdate').removeClass('is-invalid');
                 $('#rescheduledAppdateError').text('');
@@ -133,7 +136,7 @@
             if (rescheduleReason.length === 0) {
                 $('#reschedule_reason').addClass('is-invalid');
                 $('#rescheduleReasonError').text('Reason for rescheduling is required.');
-                 // Prevent further execution
+                // Prevent further execution
             } else {
                 $('#reschedule_reason').removeClass('is-invalid');
                 $('#rescheduleReasonError').text('');
@@ -167,7 +170,7 @@
 
                     // Check if there are validation errors
                     var errors = xhr.responseJSON.errors;
-                    
+
                     // Check if there are validation errors
                     var errors = xhr.responseJSON.errors;
                     if (errors && errors.hasOwnProperty('app_date')) {

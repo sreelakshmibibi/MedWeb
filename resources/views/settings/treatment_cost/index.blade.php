@@ -34,13 +34,13 @@
                                 class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center">
                                 <thead class="bg-primary-light">
                                     <tr>
-                                        <th>No</th>
+                                        <th width="10px">No</th>
                                         <th>Treatment Name</th>
                                         <th>Cost</th>
                                         <th>Discount (%)</th>
                                         <th>Discount From</th>
                                         <th>Discount To</th>
-                                        <th>Status</th>
+                                        <th width="20px">Status</th>
                                         <th width="100px">Action</th>
                                     </tr>
                                 </thead>
@@ -65,6 +65,12 @@
     {{-- <script type="module"> --}}
     <script type="text/javascript">
         var table;
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementById('discount_from').setAttribute('min', today);
+        document.getElementById('discount_to').setAttribute('min', today);
+        document.getElementById('edit_discount_from').setAttribute('min', today);
+        document.getElementById('edit_discount_to').setAttribute('min', today);
+
         jQuery(function($) {
 
             table = $('.data-table').DataTable({
@@ -94,15 +100,45 @@
                     },
                     {
                         data: 'discount_percentage',
-                        name: 'discount_percentage'
+                        name: 'discount_percentage',
+                        render: function(data, type, row) {
+                            if (!data) {
+                                data = '-';
+                            }
+                            return data;
+                        }
                     },
                     {
                         data: 'discount_from',
-                        name: 'discount_from'
+                        name: 'discount_from',
+                        render: function(data, type, row) {
+                            if (data) {
+                                var date = new Date(data);
+                                var day = ("0" + date.getDate()).slice(-2);
+                                var month = ("0" + (date.getMonth() + 1)).slice(-2);
+                                var year = date.getFullYear();
+                                return day + '-' + month + '-' + year;
+                            } else {
+                                data = '-';
+                            }
+                            return data;
+                        }
                     },
                     {
                         data: 'discount_to',
-                        name: 'discount_to'
+                        name: 'discount_to',
+                        render: function(data, type, row) {
+                            if (data) {
+                                var date = new Date(data);
+                                var day = ("0" + date.getDate()).slice(-2);
+                                var month = ("0" + (date.getMonth() + 1)).slice(-2);
+                                var year = date.getFullYear();
+                                return day + '-' + month + '-' + year;
+                            } else {
+                                data = '-';
+                            }
+                            return data;
+                        }
                     },
                     {
                         data: 'status',
@@ -160,7 +196,7 @@
                         table.draw(); // Refresh DataTable
                         $('#successMessage').text('Department deleted successfully');
                         $('#successMessage').fadeIn().delay(3000)
-                    .fadeOut(); // Show for 3 seconds
+                            .fadeOut(); // Show for 3 seconds
                     },
                     error: function(xhr) {
                         $('#modal-delete').modal('hide');
