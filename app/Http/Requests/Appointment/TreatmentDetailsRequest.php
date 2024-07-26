@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Appointment;
 
-use App\Models\AppointmentType;
 use Illuminate\Foundation\Http\FormRequest;
 
 class TreatmentDetailsRequest extends FormRequest
@@ -28,7 +27,6 @@ class TreatmentDetailsRequest extends FormRequest
                 'appdate' => 'required|date_format:Y-m-d\TH:i',
                 'doctor_id' => 'required|exists:users,id',
                 'clinic_branch_id' => 'required|exists:clinic_branches,id',
-                'apptype' => 'required|in:'.implode(',', [AppointmentType::NEW, AppointmentType::FOLLOWUP]),
                 'remarks_followup' => 'nullable|string',
             ];
         }
@@ -61,8 +59,6 @@ class TreatmentDetailsRequest extends FormRequest
             'doctor_id.exists' => 'The selected doctor does not exist.',
             'clinic_branch_id.required' => 'The clinic branch field is required.',
             'clinic_branch_id.exists' => 'The selected clinic branch does not exist.',
-            'apptype.required' => 'The appointment type is required.',
-            'apptype.in' => 'The selected appointment type is invalid.',
             'remarks_followup.string' => 'The follow-up remarks must be a string.',
             'discount1.numeric' => 'The discount must be a numeric value.',
             'discount1.min' => 'The discount must be at least 0.',

@@ -200,6 +200,7 @@ use Illuminate\Support\Facades\Session;
                 handlePrescription(isChecked);
             });
 
+
             let count = 1;
 
             // Event listener for Add Row button click
@@ -308,17 +309,18 @@ use Illuminate\Support\Facades\Session;
 
 
             let rowIndex = {{ count($patientPrescriptions) + 1 }};
-            $(document).on('click', '#medicineAddRow', function() {
+            $(document).on('click', '#medicineAddRow',
+                function() {
 
-                const tbody = document.getElementById('presctablebody');
+                    const tbody = document.getElementById('presctablebody');
 
-                if (!tbody) {
-                    console.error('No tbody element found.');
-                    return;
-                }
+                    if (!tbody) {
+                        console.error('No tbody element found.');
+                        return;
+                    }
 
-                const row = document.createElement('tr');
-                row.innerHTML = `
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
                     <td>${rowIndex}</td>
                     <td>
                         <select class="form-control" id="medicine_id${rowIndex}" name="prescriptions[${rowIndex}][medicine_id]" style="width: 100%;" required>
@@ -360,52 +362,52 @@ use Illuminate\Support\Facades\Session;
                     </td>
                 `;
 
-                tbody.appendChild(row);
+                    tbody.appendChild(row);
 
-                $(`#medicine_id${rowIndex}`).select2({
-                    width: "100%",
-                    placeholder: "Select a Medicine",
-                    tags: true, // Allow user to add new tags (medicines)
-                    tokenSeparators: [",", " "], // Define how tags are separated
-                    createTag: function(params) {
-                        var term = $.trim(params.term);
+                    $(`#medicine_id${rowIndex}`).select2({
+                        width: "100%",
+                        placeholder: "Select a Medicine",
+                        tags: true, // Allow user to add new tags (medicines)
+                        tokenSeparators: [",", " "], // Define how tags are separated
+                        createTag: function(params) {
+                            var term = $.trim(params.term);
 
-                        if (term === "") {
-                            return null;
-                        }
+                            if (term === "") {
+                                return null;
+                            }
 
-                        // Check if the term already exists as an option
-                        var found = false;
-                        $(this)
-                            .find("option")
-                            .each(function() {
-                                if ($.trim($(this).text()) === term) {
-                                    found = true;
-                                    return false; // Exit the loop early
-                                }
-                            });
+                            // Check if the term already exists as an option
+                            var found = false;
+                            $(this)
+                                .find("option")
+                                .each(function() {
+                                    if ($.trim($(this).text()) === term) {
+                                        found = true;
+                                        return false; // Exit the loop early
+                                    }
+                                });
 
-                        if (!found) {
-                            // Return object for new tag
-                            return {
-                                id: term,
-                                text: term,
-                                newTag: true, // Add a custom property to indicate it's a new tag
-                            };
-                        }
+                            if (!found) {
+                                // Return object for new tag
+                                return {
+                                    id: term,
+                                    text: term,
+                                    newTag: true, // Add a custom property to indicate it's a new tag
+                                };
+                            }
 
-                        return null; // If term already exists, return null
-                    },
+                            return null; // If term already exists, return null
+                        },
+                    });
+                    $(`#dosage${rowIndex}`).select2({
+                        width: "100%",
+                        placeholder: "Select a Dosage",
+                    });
+                    $(`#advice${rowIndex}`).select2({
+                        width: "100%",
+                    });
+                    rowIndex++;
                 });
-                $(`#dosage${rowIndex}`).select2({
-                    width: "100%",
-                    placeholder: "Select a Dosage",
-                });
-                $(`#advice${rowIndex}`).select2({
-                    width: "100%",
-                });
-                rowIndex++;
-            });
 
             window.removeRow = function(button) {
                 button.closest('tr').remove();
