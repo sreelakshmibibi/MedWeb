@@ -23,7 +23,7 @@
                                             </div>
                                             <div>
                                                 <h4 class="mb-0">Total Patients</h4>
-                                                <h3 class="mb-0" id="total-patient"> </h3>
+                                                <h3 class="mb-0" id="total-patient"> <?= $totalPatients ?></h3>
                                             </div>
                                         </div>
                                         <pre class="mt-2"> </pre>
@@ -41,16 +41,16 @@
                                             </div>
                                             <div>
                                                 <h4 class="mb-0">Total Staffs</h4>
-                                                <h3 class="mb-0" id="total-staff">240</h3>
+                                                <h3 class="mb-0" id="total-staff"><?= $totalStaffs ?></h3>
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center justify-content-center">
                                             <div>
                                                 <h6 class="mb-0 mt-2"><span
                                                         class="text-xs text-warning">Doctors-</span><span
-                                                        id="total-doctor">45</span>
+                                                        id="total-doctor"><?= $totalDoctors ?></span>
                                                     &nbsp; <span class="text-xs text-info">Others-</span><span
-                                                        id="total-other">195</span></h6>
+                                                        id="total-other"><?= $totalOthers?></span></h6>
                                             </div>
                                         </div>
                                     </div>

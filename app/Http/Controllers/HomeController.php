@@ -6,6 +6,7 @@ use App\Models\City;
 use App\Models\ClinicBasicDetail;
 use App\Models\ClinicBranch;
 use App\Models\Country;
+use App\Models\PatientProfile;
 use App\Models\StaffProfile;
 use App\Models\State;
 use App\Services\DoctorAvaialbilityService;
@@ -38,13 +39,22 @@ class HomeController extends Controller
         $hasClinics = DB::table('clinic_basic_details')->exists();
         $hasBranches = DB::table('clinic_branches')->exists();
         $role = '';
+        $totalPatients = 0;
+        $totalStaffs = 0;
+        $totalDoctors = 0;
+        $totalOthers = 0;
         if ($hasBranches && $hasClinics) {
             if ($user->is_admin) {
                 $role = 'Admin';
                 $doctorAvailabilityService = new DoctorAvaialbilityService();
                 $currentDayName = Carbon::now()->englishDayOfWeek;
                 $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors(null, $currentDayName);
+                $totalPatients = PatientProfile::where('status', 'Y')->count(); // Replace with your actual logic to get the total
+                $totalStaffs = StaffProfile::where('status', 'Y')->count();
+                $totalDoctors = StaffProfile::where('status', 'Y')->whereNot('license_number', NULL )->count();
+                $totalOthers = $totalStaffs - $totalDoctors;
                 $dashboardView = 'dashboard.admin';
+
             } elseif ($user->is_doctor) {
                 $role = 'Doctor';
                 $dashboardView = 'dashboard.admin';
@@ -74,7 +84,7 @@ class HomeController extends Controller
                 session(['staffPhoto' => $staffDetails->photo]);
             }
             // echo "<pre>"; print_r($workingDoctors); echo "</pre>";exit;
-            return view($dashboardView, compact('workingDoctors'));
+            return view($dashboardView, compact('workingDoctors', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers'));
 
         } else {
             $countries = Country::all();
