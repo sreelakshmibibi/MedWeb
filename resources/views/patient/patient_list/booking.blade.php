@@ -100,15 +100,16 @@
                                 <span class="text-danger">Appointments already exists for the selected time!</span>
                             </div>
                         </div>
+
                         <div class="row" style="display:none" id="existAppContainer">
                             <hr />
                             <div class="mb-3" style="display:none" id="existingAppointments">
                             </div>
-                            <hr />
+
                         </div>
 
-
                         <div class="row">
+                            <hr />
                             <div class="col-md-6">
                                 <div class="form-group row">
                                     <label for="example-text-input"
