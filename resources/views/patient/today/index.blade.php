@@ -11,112 +11,20 @@
                     <tr class="bg-primary-light">
                         <th>No</th>
                         {{-- <th>Date</th> --}}
-                        <th>ID</th>
+                        <th>Token No</th>
                         <th>Name</th>
                         <th>Age</th>
-                        <th>City</th>
-                        <th>Gender</th>
                         <th>Doctor</th>
+                        <th>Phone</th>
+                        <th>Time</th>
+                        <th>Type</th>
+                        <th>Status</th>
                         {{-- <th>Settings</th> --}}
                         <th width="100px">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {{-- <tr>
-                        <td>01</td>
-                        {{-- <td>01/08/2021</td> --}}
-                    {{-- }}       <td>DO-124585</td>
-                        <td><strong>Shawn Hampton</strong></td>
-                        <td>27</td>
-                        <td>Miami</td>
-                        <td>Male</td>
-                        <td>Dr.Samuel</td>
-                        <td>
-                            <div class="d-flex">
-                                <a href="#"
-                                    class="waves-effect waves-circle btn btn-circle btn-success btn-xs me-5"><i
-                                        class="fa fa-pencil"></i></a>
-                                <a href="#" class="waves-effect waves-circle btn btn-circle btn-danger btn-xs"><i
-                                        class="fa fa-trash"></i></a>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>02</td>
-                        {{-- <td>01/08/2021</td> --}}
-                    {{-- }}    <td>DO-412577</td>
-                        <td><strong>Polly Paul</strong></td>
-                        <td>31</td>
-                        <td>Naples</td>
-                        <td>Female</td>
-                        <td>Dr.Geeta</td>
-                        <td>
-                            <div class="d-flex">
-                                <a href="#"
-                                    class="waves-effect waves-circle btn btn-circle btn-success btn-xs me-5"><i
-                                        class="fa fa-pencil"></i></a>
-                                <a href="#" class="waves-effect waves-circle btn btn-circle btn-danger btn-xs"><i
-                                        class="fa fa-trash"></i></a>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>03</td>
-                        {{-- <td>01/08/2021</td> --}}
-                    {{-- }}    <td>DO-412151</td>
-                        <td><strong>Harmani Doe</strong></td>
-                        <td>21</td>
-                        <td>Destin</td>
-                        <td>Female</td>
-                        <td>Dr.Gaya</td>
-                        <td>
-                            <div class="d-flex">
-                                <a href="#"
-                                    class="waves-effect waves-circle btn btn-circle btn-success btn-xs me-5"><i
-                                        class="fa fa-pencil"></i></a>
-                                <a href="#" class="waves-effect waves-circle btn btn-circle btn-danger btn-xs"><i
-                                        class="fa fa-trash"></i></a>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>04</td>
-                        {{-- <td>01/08/2021</td> --}}
-                    {{-- }}   <td>DO-123654</td>
-                        <td><strong>Mark Wood</strong></td>
-                        <td>30</td>
-                        <td>Orlando</td>
-                        <td>Male</td>
-                        <td>Dr.Geeta</td>
-                        <td>
-                            <div class="d-flex">
-                                <a href="#"
-                                    class="waves-effect waves-circle btn btn-circle btn-success btn-xs me-5"><i
-                                        class="fa fa-pencil"></i></a>
-                                <a href="#" class="waves-effect waves-circle btn btn-circle btn-danger btn-xs"><i
-                                        class="fa fa-trash"></i></a>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>05</td>
-                        {{-- <td>01/08/2021</td> --}}
-                    {{-- }}     <td>DO-159874</td>
-                        <td><strong>Johen Doe</strong></td>
-                        <td>58</td>
-                        <td>Tampa</td>
-                        <td>Male</td>
-                        <td>Dr.Raghu</td>
-                        <td>
-                            <div class="d-flex">
-                                <a href="#"
-                                    class="waves-effect waves-circle btn btn-circle btn-success btn-xs me-5"><i
-                                        class="fa fa-pencil"></i></a>
-                                <a href="#" class="waves-effect waves-circle btn btn-circle btn-danger btn-xs"><i
-                                        class="fa fa-trash"></i></a>
-                            </div>
-                        </td>
-                    </tr> --}}
+                   
                 </tbody>
             </table>
         </div>
@@ -140,67 +48,99 @@
 <script type="text/javascript">
     jQuery(function($) {
 
-        function fetchTotal() {
-            $.ajax({
-                url: '{{ route('totalpatients') }}',
-                type: 'GET',
-                dataType: 'json',
-                success: function(response) {
-                    $('#total-value').text(response.total);
-                    $('#total-patient').text(response.total);
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error fetching total:', error);
-                }
-            });
-        }
-        fetchTotal();
+        // function fetchTotal() {
+        //     $.ajax({
+        //         url: '{{ route("totalpatients") }}',
+        //         type: 'GET',
+        //         dataType: 'json',
+        //         success: function(response) {
+        //             $('#total-value').text(response.total);
+        //             $('#total-patient').text(response.total);
+        //             $('#total-staff').text(response.totalStaff);
+        //             $('#total-doctor').text(response.totalDoctor);
+        //             $('#total-other').text(response.totalOthers);
+
+        //         },
+        //         error: function(xhr, status, error) {
+        //             console.error('Error fetching total:', error);
+        //         }
+        //     });
+        // }
+        // fetchTotal();
 
         var table = $('.data-table').DataTable({
             processing: true,
             serverSide: true,
             lengthMenu: [5, 10, 25, 50],
-            ajax: "",
+            ajax: {
+            url: '{{ route("patient.today") }}',
+            type: "GET",
+        },
             columns: [{
-                    data: 'patient_id',
-                    name: 'patient_id'
-                },
-                {
-                    data: 'patient_id',
-                    name: 'patient_id'
-                },
-                {
-                    data: 'first_name',
-                    name: 'first_name'
-                },
-                // {
-                //     data: 'last_name',
-                //     name: 'last_name'
-                // },
-                {
-                    data: 'age',
-                    name: 'age'
-                },
-                {
-                    data: 'area',
-                    name: 'area'
-                },
-                {
-                    data: 'gender',
-                    name: 'gender'
-                },
+                        data: 'token_no',
+                        name: 'token_no'
+                    },
+                    {
+                        data: 'patient_id',
+                        name: 'patient_id'
+                    },
 
-                {
-                    data: 'doctor',
-                    name: 'doctor'
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false,
-                    searchable: true
-                },
-            ]
+                    {
+                        data: 'name',
+                        name: 'name'
+                    },
+                    {
+                        data: 'age',
+                        name: 'age'
+                    },
+                    {
+                        data: 'doctor',
+                        name: 'doctor'
+                    },
+                    {
+                        data: 'phone',
+                        name: 'phone'
+                    },
+                    
+                    {
+                        data: 'app_time',
+                        name: 'app_time',
+                        render: function(data, type, row) {
+                            var timeParts = data.split(':');
+                            var hours = parseInt(timeParts[0], 10);
+                            var minutes = parseInt(timeParts[1], 10);
+                            var ampm = hours >= 12 ? 'pm' : 'am';
+                            hours = hours % 12;
+                            hours = hours ? hours : 12; // Handle midnight (00:xx) as 12
+
+                            var formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+
+                            var formattedTime = hours + ':' + formattedMinutes + ' ' + ampm;
+
+                            return formattedTime;
+                        }
+                    },
+
+
+                    {
+                        data: 'app_type',
+                        name: 'app_type',
+                       
+                    },
+
+                    {
+                        data: 'status',
+                        name: 'status',
+                        orderable: false,
+                        searchable: true
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: true
+                    },
+                ]
         });
         $(document).on('click', '.btn-edit', function() {
             var patientId = $(this).data('patient_id');
