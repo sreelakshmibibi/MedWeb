@@ -92,7 +92,7 @@
 <div class="row otherFields" style="display: none;">
     <div class="col-md-4">
         <div class="form-group">
-            <label class="form-label" for="specialization">Branch <span class="text-danger">
+            <label class="form-label" for="clinic_branch_id">Branch <span class="text-danger">
                     *</span></label>
             <select class="select2" id="clinic_branch_id" name="clinic_branch_id" data-placeholder="Select a Branch"
                 style="width: 100%;">

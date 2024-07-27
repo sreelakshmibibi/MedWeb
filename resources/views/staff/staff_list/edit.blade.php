@@ -69,7 +69,7 @@
             $("#staffform .actions ul li:last-child a").addClass("bg-success btn btn-success");
 
             var today = new Date().toISOString().split('T')[0];
-            document.getElementById('date_of_joining').setAttribute('min', today);
+            // document.getElementById('date_of_joining').setAttribute('min', today);
 
             var input = document.getElementById('profile_photo');
             var canvas = document.getElementById('profilePic');
@@ -253,18 +253,9 @@
                 }
             });
 
-            // Handle change event for role dropdown
-            // $('select[name="role[]"]').change(function() {
-            //     if ($(this).val() && $(this).val().includes('3')) {
-            //         $('.doctorFields').show();
-            //         $('.otherFields').hide();
-            //     } else {
-            //         $('.doctorFields').hide();
-            //         $('.otherFields').show();
-            //     }
-            // });
-            $('select[name="role[]"]').change(function() {
-                if ($(this).val() && $(this).val().includes('3')) {
+            function updateFieldsBasedOnRole() {
+                var selectedRoles = $('select[name="role[]"]').val(); // Get the selected values as an array
+                if (selectedRoles && selectedRoles.includes('3')) {
                     $('.doctorFields').show();
                     $('.otherFields').hide();
                     $('.doctorFields input').attr('required', true);
@@ -275,7 +266,15 @@
                     $('.doctorFields input').attr('required', false);
                     $('.otherFields select').attr('required', true);
                 }
+            }
+
+            // Bind the change event to the select element
+            $('select[name="role[]"]').change(function() {
+                updateFieldsBasedOnRole();
             });
+
+            // Call the function on page load to handle the initial state
+            updateFieldsBasedOnRole();
 
             // Function to load states based on country ID
             function loadStates(countryId, stateSelectElement, initialSelected) {
@@ -461,8 +460,8 @@
             var ctx = canvas.getContext('2d');
             if ('{{ $staffProfile }}') {
 
-                var profileUrl = '{{ $staffProfile->photo ?? '' }}';
-                var photoUrl = '{{ asset('storage/') }}/' + profileUrl;
+                var profileUrl = '{{ $staffProfile->photo ?? "" }}';
+                var photoUrl = '{{ asset("storage/") }}/' + profileUrl;
                 if (profileUrl) {
                     var img = new Image();
                     img.onload = function() {

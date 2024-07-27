@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Staff\StaffListRequest;
 use App\Http\Requests\Staff\StaffProfileRequest;
 use App\Models\Appointment;
 use App\Models\City;
@@ -11,13 +10,11 @@ use App\Models\ClinicBranch;
 use App\Models\Country;
 use App\Models\Department;
 use App\Models\DoctorWorkingHour;
-use App\Models\PatientProfile;
 use App\Models\StaffProfile;
 use App\Models\State;
 use App\Models\User;
 use App\Models\UserType;
 use App\Models\UserVerify;
-use App\Models\WeekDay;
 use App\Notifications\WelcomeVerifyNotification;
 use App\Services\StaffService;
 use Illuminate\Http\Request;
@@ -25,7 +22,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Role;
 use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
 
@@ -37,22 +33,17 @@ class StaffListController extends Controller
     public function index(Request $request)
     {
         $successMessage = $request->query('success_message');
-
         if ($successMessage) {
             session()->flash('success', $successMessage);
         }
 
         if ($request->ajax()) {
             $staff = StaffProfile::with('user')->get();
-
             return DataTables::of($staff)
                 ->addIndexColumn()
                 ->addColumn('name', function ($row) {
                     return str_replace("<br>", " ", $row->user->name);
                 })
-                // ->addColumn('email', function ($row) {
-                //     return $row->user->email;
-                // })
                 ->addColumn('role', function ($row) {
                     $role = '';
                     if ($row->user->is_doctor) {
@@ -117,7 +108,6 @@ class StaffListController extends Controller
      */
     public function store(StaffProfileRequest $request)
     {
-
         try {
             DB::beginTransaction();
             if (isset($request->edit_user_id) && $request->edit_user_id != null) {
@@ -169,31 +159,13 @@ class StaffListController extends Controller
             if ($user->save()) {
                 // Assign roles using Spatie/Permission package (if used)
                 $user->syncRoles(array_keys(array_filter($roles)));
-
-
-
                 $staffProfile->user_id = $user->id;
                 $staffProfile->staff_id = "MEDWEB" . $user->id;
-                $staffProfile->clinic_branch_id = $request->clinic_branch_id;
+               
                 $staffProfile->fill($request->only([
-                    'aadhaar_no',
-                    'date_of_birth',
-                    'phone',
-                    'gender',
-                    'address1',
-                    'address2',
-                    'city_id',
-                    'state_id',
-                    'country_id',
-                    'pincode',
-                    'date_of_joining',
-                    'qualification',
-                    'department_id',
-                    'specialization',
-                    'years_of_experience',
-                    'license_number',
-                    'subspecialty',
-                    'designation'
+                    'aadhaar_no', 'date_of_birth', 'phone', 'gender', 'address1', 'address2',
+                    'city_id', 'state_id', 'country_id', 'pincode', 'date_of_joining', 'qualification',
+                    'department_id', 'years_of_experience', 'designation'
                 ]));
 
                 if ($request->add_checkbox == "on") {
@@ -216,8 +188,14 @@ class StaffListController extends Controller
                     $profilePath = $request->file('profile_photo')->store('profile-photos', 'public');
                     $staffProfile->photo = $profilePath;
                 }
+                if ($user->is_doctor) {
+                    $staffProfile->specialization = $request->specialization;
+                    $staffProfile->subspecialty = $request->subspecialty;
+                    $staffProfile->license_number = $request->license_number;
+                } else {
+                    $staffProfile->clinic_branch_id = $request->clinic_branch_id;
+                }
                 $staffProfile->status = "Y";
-
                 if ($staffProfile->save()) {
                     if ($user->is_doctor) {
                         $staffService = new StaffService();
@@ -225,16 +203,10 @@ class StaffListController extends Controller
                             DB::commit();
                             if (!isset($request->edit_user_id)) {
                                 $token = Str::random(64);
-                                UserVerify::create([
-                                    'user_id' => $user->id,
-                                    'token' => $token
-
-                                ]);
+                                UserVerify::create([ 'user_id' => $user->id, 'token' => $token ]);
                                 $welcomeNotification = new WelcomeVerifyNotification($staffName, $request->email, $password, $token);
                                 $user->notify($welcomeNotification);
-
                             }
-
                         } else {
                             DB::rollBack();
                             return response()->json(['error' => 'Failed to create doctor: Availbilty of time slots required'], 422);
@@ -243,14 +215,9 @@ class StaffListController extends Controller
                         DB::commit();
                         if (!isset($request->edit_user_id)) {
                             $token = Str::random(64);
-                            UserVerify::create([
-                                'user_id' => $user->id,
-                                'token' => $token
-
-                            ]);
+                            UserVerify::create([ 'user_id' => $user->id, 'token' => $token ]);
                             $welcomeNotification = new WelcomeVerifyNotification($staffName, $request->email, $password, $token);
                             $user->notify($welcomeNotification);
-
                         }
                     }
                 } else {
@@ -262,30 +229,12 @@ class StaffListController extends Controller
                 return response()->json(['error' => 'Failed to create staff.'], 422);
             }
 
-            //example user
-            // $user = User::find('19');
-
-            // $token = $request->route()->parameter('token');
-
-            // $user->token = $token;
-
-            // // Send welcome notification
-            // $user->notify(new WelcomeVerifyNotification($user->name, $user->email, $user->password, $user->$token));
-
             return redirect()->route('staff.staff_list')->with('success', 'Staff created successfully');
         } catch (\Exception $e) {
-            // echo "<pre>";
-            // print_r($e->getMessage());
-
             DB::rollback();
-            // exit;
             return response()->json(['error' => 'Failed to create staff: ' . $e->getMessage()], 422);
         }
     }
-
-
-
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -384,6 +333,4 @@ class StaffListController extends Controller
 
         return view('staff.staff_list.view', compact('name', 'countries', 'states', 'cities', 'userTypes', 'departments', 'staffProfile', 'userDetails', 'availability', 'clinicBranches', 'availabilityCount', 'availability', 'availableBranches'));
     }
-
 }
-
