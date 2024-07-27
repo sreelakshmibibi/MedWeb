@@ -96,15 +96,19 @@ use Illuminate\Support\Facades\Session;
 </div>
 
 <div class="d-flex align-items-center justify-content-between">
+
     <h5 class="box-title text-info mb-0 mt-2 "><i class="fa fa-clock me-15"></i>
         Follow up
     </h5>
-    <input type="checkbox" id="follow_checkbox" name="follow_checkbox" class="filled-in chk-col-success" />
+    {{-- <input type="checkbox" id="follow_checkbox" name="follow_checkbox" class="filled-in chk-col-success" /> --}}
+    <input type="checkbox" id="follow_checkbox" name="follow_checkbox" class="filled-in chk-col-success"
+        @if (isset($latestFollowup)) checked @endif />
     <label for="follow_checkbox"></label>
 </div>
 <hr class="my-15 ">
 
-<div class="row mb-4" id="followupdiv" style="display: none;">
+{{-- <div class="row mb-4" id="followupdiv" style="display: none;"> --}}
+<div class="row mb-4" id="followupdiv" @if (!isset($latestFollowup)) style="display: none;" @endif>
     <div class="table-responsive">
         <table id="myTable" class="table table-bordered table-hover table-striped mb-0 text-center">
 
@@ -115,7 +119,6 @@ use Illuminate\Support\Facades\Session;
                     <th>Branch</th>
                     <th>Appointment Date & Time</th>
                     <th>Consulting Doctor</th>
-                    <th>Appointment Type</th>
                     <th>Remarks</th>
                     <!-- <th><button type="button" class="waves-effect waves-light btn btn-sm btn-primary">
                             <i class="fa fa-add"></i>
@@ -133,6 +136,8 @@ use Illuminate\Support\Facades\Session;
                     </td> -->
 
                     <td>
+                        <input type="hidden" id="followupAppId" name="followupAppId"
+                            @if (isset($latestFollowup)) value="{{ $latestFollowup->id }}" @endif />
                         <select class="select2" id="clinic_branch_id" name="clinic_branch_id"
                             data-placeholder="Select a Branch" style="width: 100%;">
                             @foreach ($clinicBranches as $clinicBranch)
@@ -142,15 +147,24 @@ use Illuminate\Support\Facades\Session;
                                 $clinicAddress = implode(', ', $clinicAddress);
                                 $branch = $clinicAddress . ', ' . $clinicBranch->city->city . ', ' . $clinicBranch->state->state;
                                 ?>
-                                <option value="{{ $clinicBranch->id }}"
+                                {{-- <option value="{{ $clinicBranch->id }}"
                                     @if ($appointment->app_branch == $clinicBranch->id) selected @endif>
-                                    {{ $branch }}</option>
+                                    {{ $branch }}</option> --}}
+                                <option value="{{ $clinicBranch->id }}"
+                                    @if (isset($latestFollowup) && $latestFollowup->app_branch == $clinicBranch->id) selected 
+                                        @elseif (!isset($latestFollowup) && $appointment->app_branch == $clinicBranch->id) 
+                                            selected @endif>
+                                    {{ $branch }}
+                                </option>
                             @endforeach
                         </select>
                     </td>
                     <td>
-                        <input class="form-control appdate" type="datetime-local" id="appdate" name="appdate"
-                            value="{{ now()->setTimezone('Asia/Kolkata')->format('Y-m-d\TH:i') }}">
+                        {{-- <input class="form-control" type="datetime-local" id="appdate" name="appdate"
+                            value="{{ now()->setTimezone('Asia/Kolkata')->format('Y-m-d\TH:i') }}"> --}}
+                        <input class="form-control" type="datetime-local" id="appdate" name="appdate"
+                            @if (isset($latestFollowup)) value="{{ \Carbon\Carbon::parse($latestFollowup->app_date . ' ' . $latestFollowup->app_time)->format('Y-m-d\TH:i') }}"
+                            @else value="{{ now()->setTimezone('Asia/Kolkata')->format('Y-m-d\TH:i') }}" @endif>
                     </td>
 
                     <td>
@@ -158,24 +172,25 @@ use Illuminate\Support\Facades\Session;
                             style="width: 100%;">
                             @foreach ($workingDoctors as $doctor)
                                 <?php $doctorName = str_replace('<br>', ' ', $doctor->user->name); ?>
-                                <option value="{{ $doctor->user_id }}"
+                                {{-- <option value="{{ $doctor->user_id }}"
                                     @if ($doctor->user_id == $appointment->doctor_id) selected @endif>
+                                    {{ $doctorName }}
+                                </option> --}}
+                                <option value="{{ $doctor->user_id }}"
+                                    @if (isset($latestFollowup) && $latestFollowup->doctor_id == $doctor->user_id) selected
+                                        @elseif (!isset($latestFollowup) && $doctor->user_id == $appointment->doctor_id) selected @endif>
                                     {{ $doctorName }}
                                 </option>
                             @endforeach
                         </select>
                     </td>
 
+
                     <td>
-                        <select class="form-select" id="apptype" name="apptype">
-                            @foreach ($appointmentTypes as $appointmentType)
-                                <option value="{{ $appointmentType->id }}">
-                                    {{ $appointmentType->type }}</option>
-                            @endforeach
-                        </select>
-                    </td>
-                    <td>
+                        {{-- <input type="text" class="form-control" id="remarks_followup" name="remarks_followup"
+                            placeholder="remarks"> --}}
                         <input type="text" class="form-control" id="remarks_followup" name="remarks_followup"
+                            @if (isset($latestFollowup)) value="{{ $latestFollowup->remarks }}" @endif
                             placeholder="remarks">
                     </td>
                     <!-- <td>
@@ -202,6 +217,8 @@ use Illuminate\Support\Facades\Session;
         Prescription
     </h5>
     <input type="checkbox" id="presc_checkbox" name="presc_checkbox" class="filled-in chk-col-success" />
+    {{-- <input type="checkbox" id="presc_checkbox" name="presc_checkbox" class="filled-in chk-col-success"
+        @if (isset($patientPrescriptions) && $patientPrescriptions->isNotEmpty()) checked @endif /> --}}
     <label for="presc_checkbox"></label>
 </div>
 <hr class="my-15 ">

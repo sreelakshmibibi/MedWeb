@@ -45,12 +45,18 @@ class TreatmentController extends Controller
 
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])->find($id);
         abort_if(! $appointment, 404);
-        // Format clinic address
-        $appAction = "Treatment";
-        if ($appointment->app_date < date('Y-m-d') && $appointment->app_status == AppointmentStatus::COMPLETED) 
-        {
-            $appAction = "Show";
+
+        if ($appointment->app_status != AppointmentStatus::COMPLETED) {
+
+            $appointment->consult_start_time = Carbon::now('Asia/Kolkata'); // Get the current time
+            $appointment->save();
+
         }
+        $appAction = 'Treatment';
+        if ($appointment->app_date < date('Y-m-d') && $appointment->app_status == AppointmentStatus::COMPLETED) {
+            $appAction = 'Show';
+        }
+        $doctorDiscount = $appointment->doctor_discount;
         //$patientProfile = PatientProfile::with(['lastAppointment'])->find($appointment->patient->id);
         $patientProfile = PatientProfile::with(['lastAppointment.doctor', 'lastAppointment.branch'])->find($appointment->patient->id);
         $appointmentService = new AppointmentService();
@@ -86,21 +92,27 @@ class TreatmentController extends Controller
         $doctorName = str_replace('<br>', ' ', $appointment->doctor->name);
         $patientPrescriptions = Prescription::with([
             'medicine' => function ($query) {
-                $query->select('id', 'med_name', 'med_company'); // Select specific columns from the Medicine model
+                $query->select('id', 'med_name', 'med_company');
             },
             'dosage' => function ($query) {
-                $query->select('id', 'dos_name'); // Select specific columns from the Dosage model
+                $query->select('id', 'dos_name');
             },
         ])
             ->where('app_id', $id)
             ->where('status', 'Y')
             ->get(['id', 'patient_id', 'app_id', 'medicine_id', 'dosage_id', 'duration', 'advice', 'remark', 'prescribed_by']);
+        $latestFollowup = Appointment::where('app_parent_id', $id)
+            ->with('doctor', 'branch')
+            ->orderBy('app_date', 'desc')
+            ->orderBy('app_time', 'desc')
+            ->first();
+
         Session::put('appId', $id);
         Session::put('patientName', $patientName);
         Session::put('patientId', $appointment->patient->patient_id);
         Session::put('doctorName', $doctorName);
         Session::put('doctorId', $appointment->doctor->id);
-        
+
         if ($request->ajax()) {
             return DataTables::of($previousAppointments)
                 ->addIndexColumn()
@@ -127,6 +139,7 @@ class TreatmentController extends Controller
                         : null;
 
                     $btnClass = isset($statusMap[$treatmentStatusId]) ? $statusMap[$treatmentStatusId] : '';
+                    //$btnClass = isset($statusMap[$treatmentStatusId]) ? $statusMap[$treatmentStatusId] : 'badge-secondary';
                     $statusWords = TreatmentStatus::statusToWords($treatmentStatusId);
 
                     return "<span class='btn-sm badge {$btnClass}'>{$statusWords}</span>";
@@ -176,7 +189,7 @@ class TreatmentController extends Controller
                 ->make(true);
         }
 
-        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases', 'previousAppointments', 'clinicBranches', 'appointmentTypes', 'workingDoctors', 'medicines', 'dosages', 'patientPrescriptions', 'appAction'));
+        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases', 'previousAppointments', 'clinicBranches', 'appointmentTypes', 'workingDoctors', 'medicines', 'dosages', 'patientPrescriptions', 'appAction', 'doctorDiscount', 'latestFollowup'));
 
     }
 
@@ -519,11 +532,15 @@ class TreatmentController extends Controller
             ];
         }
 
+        $doctorDiscountApp = Appointment::findOrFail($appointment);
+        $doctorDiscount = $doctorDiscountApp->doctor_discount;
+
         // Return the data as a JSON response
         return response()->json([
             'toothExaminations' => $toothExaminations,
             'individualTreatmentAmounts' => $individualTreatmentAmounts,
             'comboOffers' => $comboOffersResult,
+            'doctorDiscount' => $doctorDiscount,
         ]);
     }
 
@@ -552,51 +569,76 @@ class TreatmentController extends Controller
                 $tokenNo = $commonService->generateTokenNo($doctorId, $appDate);
                 $clinicBranchId = $request->input('clinic_branch_id');
                 // Check if an appointment with the same date, time, and doctor exists
-                $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId);
 
-                if ($existingAppointment) {
-                    return response()->json(['error' => 'An appointment already exists for the given date, time, and doctor.'], 422);
-                }
-                // Determine if app_parent_id should be set
-                $apptype = $request->input('apptype');
-                $appParentId = ($apptype == AppointmentType::FOLLOWUP) ? $appId : null;
-                $referDoctor = ($consultDoctorId != $doctorId) ? $consultDoctorName : null;
+                $patientAppointment = Appointment::where('doctor_id', $doctorId)
+                    ->where('app_date', $appDate)
+                    ->where('patient_id', $patientId)
+                    ->where('app_branch', $clinicBranchId)
+                    ->exists();
+                if ($patientAppointment) {
+                    // $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId);
+                    // if ($existingAppointment) {
+                    //     return response()->json(['error' => 'An appointment already exists for the given date, time, and doctor.'], 422);
+                    // }
+                    // Additional check to ensure no time conflict
+                    $appointmentWithSameTime = Appointment::where('doctor_id', $doctorId)
+                        ->where('app_date', $appDate)
+                        ->where('app_branch', $clinicBranchId)
+                        ->where('patient_id', $patientId)
+                        ->first();
 
-                // Store the appointment data
-                $appointment = new Appointment();
-                $appointment->app_id = $commonService->generateUniqueAppointmentId($appDate);
-                //$appointment->patient_id = $request->input('patient_id');
-                $appointment->patient_id = $patientId;
-                $appointment->app_date = $appDate;
-                $appointment->app_time = $appTime;
-                $appointment->token_no = $tokenNo;
-                $appointment->doctor_id = $doctorId;
-                $appointment->app_branch = $clinicBranchId;
-                $appointment->app_type = $request->input('apptype');
-                $appointment->referred_doctor = $referDoctor;
-                $appointment->remarks = $request->input('remarks_followup');
-                //$appointment->doctor_discount = $referDoctor;
-                $appointment->app_status = AppointmentStatus::SCHEDULED;
-                $appointment->app_parent_id = $appParentId;
-                $appointment->created_by = auth()->user()->id;
-                $appointment->updated_by = auth()->user()->id;
+                    if ($appointmentWithSameTime && $appointmentWithSameTime->app_time != $appTime) {
+                        return response()->json([
+                            'error' => 'An appointment already exists for you at '.$appointmentWithSameTime->app_time.' on this date with the same doctor.',
+                        ], 422);
+                    }
 
-                if ($appointment->save()) {
-                    //DB::commit();
-
-                    //return redirect()->back()->with('success', 'Appointment added successfully');
-                    $appointmentCreated = true;
                 } else {
-                    DB::rollBack();
 
-                    return redirect()->back()->with('error', 'Failed to create appointment');
+                    $appParentId = $appId;
+                    $referDoctor = ($consultDoctorId != $doctorId) ? $consultDoctorName : null;
+
+                    // Store the appointment data
+                    $appointment = new Appointment();
+                    $appointment->app_id = $commonService->generateUniqueAppointmentId($appDate);
+                    $appointment->patient_id = $patientId;
+                    $appointment->app_date = $appDate;
+                    $appointment->app_time = $appTime;
+                    $appointment->token_no = $tokenNo;
+                    $appointment->doctor_id = $doctorId;
+                    $appointment->app_branch = $clinicBranchId;
+                    $appointment->app_type = AppointmentType::FOLLOWUP;
+                    $appointment->referred_doctor = $referDoctor;
+                    $appointment->remarks = $request->input('remarks_followup');
+                    $appointment->app_status = AppointmentStatus::SCHEDULED;
+                    $appointment->app_parent_id = $appParentId;
+                    $appointment->created_by = auth()->user()->id;
+                    $appointment->updated_by = auth()->user()->id;
+                    $existingFollowupAppId = $request->input('followupAppId');
+                    if ($existingFollowupAppId != '') {
+                        $previousFollowup = Appointment::findOrFail($existingFollowupAppId);
+                        if ($previousFollowup->patient_id == $patientId && $previousFollowup->app_parent_id == $appId) {
+                            $previousFollowup->delete();
+                        }
+                    }
+                    if ($appointment->save()) {
+                        //DB::commit();
+
+                        //return redirect()->back()->with('success', 'Appointment added successfully');
+                        $appointmentCreated = true;
+                    } else {
+                        DB::rollBack();
+
+                        return redirect()->back()->with('error', 'Failed to create appointment');
+                    }
                 }
+
             }
             // Handle prescription data
             if ($request->input('presc_checkbox')) {
 
                 $prescriptions = $request->input('prescriptions', []);
-                // Find and update the existing appointment
+                // Find and update the existing Prescription
                 $oldPrescriptionData = Prescription::where('app_id', $appId)
                     ->where('patient_id', $patientId)
                     ->get();
@@ -672,6 +714,21 @@ class TreatmentController extends Controller
 
                     return redirect()->back()->with('error', 'Failed to add doctor discount');
                 }
+            }
+
+            $oldAppointment = Appointment::findOrFail($appId);
+            $oldAppStatus = $oldAppointment->app_status;
+            $oldAppointment->app_status = AppointmentStatus::COMPLETED; // Update to 'Completed'
+            $oldAppointment->consult_end_time = Carbon::now('Asia/Kolkata');
+            $oldAppointment->save();
+
+            if ($oldAppStatus != AppointmentStatus::COMPLETED) {
+                // Increment the visit count of the patient
+                $patientProfile = PatientProfile::where('patient_id', $patientId)->firstOrFail();
+                $patientProfile->visit_count = $patientProfile->visit_count + 1; // Increment visit count
+                $patientProfile->save();
+                $oldAppointment->consult_end_time = Carbon::now('Asia/Kolkata');
+                $oldAppointment->save();
             }
 
             DB::commit();
