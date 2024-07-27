@@ -3,6 +3,7 @@ var form = $("#treatmentform").show();
 let historyStepAdded = false;
 let prescriptionStepAdded = false;
 let chargeStepAdded = false;
+let visitcount = 0;
 
 function getSessionData() {
     return $.ajax({
@@ -81,7 +82,8 @@ function getDentalTable(stepIndex) {
                                     <td>${index + 1}</td>
                                     <td>${teethNameDisplay}</td>
                                     <td>${exam.chief_complaint}</td>
-                                    <td>${exam.disease ? exam.disease.name : ""
+                                    <td>${
+                                        exam.disease ? exam.disease.name : ""
                                     }</td>
                                     <td>${exam.hpi}</td>
                                     <td>${exam.dental_examination}</td>
@@ -90,7 +92,8 @@ function getDentalTable(stepIndex) {
                                     <td>${exam.treatment.treat_name}</td>
                                     <td><button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-treat-view btn-xs me-1' title='View' data-bs-toggle='modal' data-id='${teethName}' data-bs-target='#modal-teeth'><i class='fa fa-eye'></i></button>
                                     <button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-treat-edit btn-xs me-1' title='Edit' data-bs-toggle='modal' data-id='${teethName}' data-bs-target='#modal-teeth'><i class='fa fa-pencil'></i></button>
-                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-treat-delete btn-xs me-1' title='Delete' data-bs-toggle='modal' data-id='${exam.id
+                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-treat-delete btn-xs me-1' title='Delete' data-bs-toggle='modal' data-id='${
+                                        exam.id
                                     }' data-bs-target='#modal-delete'><i class='fa-solid fa-trash'></i></button>
                                     
                                     </td>
@@ -123,7 +126,9 @@ function handlePrescription(isChecked) {
         var prescContent = $(".prescdiv").html();
         // var currentStep = $("#treatmentform").steps("getCurrentIndex");
         var stepNumber = getStepIndexByTitle("Dental Table");
-
+        if (visitcount != 0) {
+            stepNumber++;
+        }
         $("#treatmentform").steps("insert", stepNumber + 1, {
             title: "Prescription",
             content: prescContent,
@@ -256,7 +261,10 @@ function getTreatmentTable(stepIndex) {
                     var treatments = response.toothExaminations;
                     var comboOffers = response.comboOffer;
                     var doctorDiscount = response.doctorDiscount;
-                    if (doctorDiscount === null || doctorDiscount === undefined) {
+                    if (
+                        doctorDiscount === null ||
+                        doctorDiscount === undefined
+                    ) {
                         doctorDiscount = 0; // Or any default value you want to set
                     }
                     var totalCost = 0;
@@ -275,12 +283,14 @@ function getTreatmentTable(stepIndex) {
                             var row = `
                                 <tr>
                                     <td>${index + 1}</td>
-                                    <td>${exam.treatment.treat_name
-                                } (${treatCost.toFixed(2)})</td>
-                                    <td>${treatDiscount != null
-                                    ? treatDiscount
-                                    : 0
-                                } %</td>
+                                    <td>${
+                                        exam.treatment.treat_name
+                                    } (${treatCost.toFixed(2)})</td>
+                                    <td>${
+                                        treatDiscount != null
+                                            ? treatDiscount
+                                            : 0
+                                    } %</td>
                                     <td>${discountCost.toFixed(2)}</td>
                                 </tr>
                             `;
@@ -386,15 +396,15 @@ function updateValidationRules() {
     };
 
     if (followCheckboxChecked) {
-        rules['clinic_branch_id'] = { required: true, number: true };
-        rules['appdate'] = { required: true };
-        rules['doctor_id'] = { required: true, number: true };
-        rules['remarks_followup'] = { maxlength: 255 };
+        rules["clinic_branch_id"] = { required: true, number: true };
+        rules["appdate"] = { required: true };
+        rules["doctor_id"] = { required: true, number: true };
+        rules["remarks_followup"] = { maxlength: 255 };
     } else {
-        rules['clinic_branch_id'] = { required: false };
-        rules['appdate'] = { required: false };
-        rules['doctor_id'] = { required: false };
-        rules['remarks_followup'] = { maxlength: 255 };
+        rules["clinic_branch_id"] = { required: false };
+        rules["appdate"] = { required: false };
+        rules["doctor_id"] = { required: false };
+        rules["remarks_followup"] = { maxlength: 255 };
     }
 
     // Apply updated rules to the form
@@ -450,7 +460,7 @@ $("#treatmentform").steps({
             // Return true or false based on validation result
             // return valid;
         }
-        let visitcount = $("#visitcount").val();
+        visitcount = $("#visitcount").val();
         let isAdmin = $("#isAdmin").val();
         if (currentIndex == 0) {
             handleHistoryStep(visitcount);
