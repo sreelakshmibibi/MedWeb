@@ -95,6 +95,11 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div style="display:none" id="alreadyExistsPatient">
+                                <span class="text-danger">Already exists appointment for the selected date!</span>
+                            </div>
+                        </div>
                         <div class="row mb-3">
                             <div style="display:none" id="existingAppointmentsError" class="text-danger">
                                 <span class="text-danger">Appointments already exists for the selected time!</span>
@@ -285,6 +290,9 @@
                 data: formData,
                 dataType: 'json',
                 success: function(response) {
+                    $('#alreadyExistsPatient').hide();
+                    $('#existingAppointments').hide();
+                    $('#existingAppointmentsError').hide();
                     $('#modal-booking').modal('hide');
                     $('#successMessage').text('New Appointment added successfully');
                     $('#successMessage').fadeIn().delay(3000)
@@ -323,8 +331,14 @@
                             $('#rdoctorError').text(errors.rdoctor[0]);
                         }
                     } else {
+                        var errorPatient = xhr.responseJSON.errorPatient;
+                        if (errorPatient) {
+                            $('#alreadyExistsPatient').show();
+                        }
                         var errorMessage = xhr.responseJSON.error;
-                        $('#existingAppointmentsError').show();
+                        if (errorMessage) {
+                            $('#existingAppointmentsError').show();
+                        }
                     }
                 }
             });
@@ -336,6 +350,8 @@
             $('#bookingForm').trigger('reset');
             $('#existAppContainer').hide();
             $('#existingAppointments').empty();
+            $('#existingAppointments').hide();
+            $('#alreadyExistsPatient').hide();
             $('#clinic_branch_id').removeClass('is-invalid');
             $('#clinicError').text('');
             $('#doctor_id').removeClass('is-invalid');
@@ -379,6 +395,8 @@
         var appDate = $('#appdate').val();
         $('#existAppContainer').hide();
         $('#existingAppointments').empty();
+        $('#existingAppointments').hide();
+        $('#alreadyExistsPatient').hide();
         loadDoctors(branchId, appDate);
 
 
@@ -411,24 +429,19 @@
         }
     }
 
-
-    // $('#clinic_branch_id, #appdate, #doctor_id').change(function() {
-    //     var branchId = $('#clinic_branch_id').val();
-    //     var appDate = $('#appdate').val();
-    //     var doctorId = $('#doctor_id').val();
-    //     var patientId = $('#patient_id').val();
-    //     $('#existingAppointments').empty();
-    //     showExistingAppointments(branchId, appDate, doctorId, patientId, 'store');
-
-    // });
     $('#clinic_branch_id, #appdate, #doctor_id').change(function() {
         var branchId = $('#clinic_branch_id').val();
         var appDate = $('#appdate').val();
         var doctorId = $('#doctor_id').val();
+        $('#alreadyExistsPatient').hide();
         $('#existingAppointmentsError').hide();
+        $('#existAppContainer').hide();
+        $('#existingAppointments').empty();
         showExistingAppointments(branchId, appDate, doctorId, 'store');
 
     });
+
+
 
     function convertTo12HourFormat(railwayTime) {
         var timeArray = railwayTime.split(':');

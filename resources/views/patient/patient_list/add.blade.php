@@ -146,6 +146,18 @@
                 loadDoctors(branchId, appDate);
             });
 
+            $('#clinic_branch_id0, #appdate, #doctor2').change(function() {
+                var branchId = $('#clinic_branch_id0').val();
+                var appDate = $('#appdate').val();
+                var doctorId = $('#doctor2').val();
+                var patientId = '';
+                $('#existingAppointmentsError').hide();
+                $('#existAppContainer').hide();
+                $('#existingAppointments').empty();
+                showExistingAppointments(branchId, appDate, doctorId, patientId, 'store');
+
+            });
+
 
             // Function to load doctors based on branch ID
             function loadDoctors(branchId, appDate) {
@@ -240,5 +252,104 @@
             // Trigger change event to set initial state
             genderSelect.dispatchEvent(new Event('change'));
         });
+
+
+
+        function convertTo12HourFormat(railwayTime) {
+            var timeArray = railwayTime.split(':');
+            var hours = parseInt(timeArray[0]);
+            var minutes = timeArray[1];
+
+            var ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            var formattedTime = hours + ':' + minutes + ' ' + ampm;
+            return formattedTime;
+        }
+
+        function showExistingAppointments(branchId, appDate, doctorId, patientId, methodType) {
+            if (branchId && appDate && doctorId) {
+                $.ajax({
+                    url: '{{ route('get.exisitingAppointments', '') }}' + '/' + branchId,
+                    type: "GET",
+                    data: {
+                        appdate: appDate,
+                        doctorId: doctorId,
+                        patientId: patientId,
+                    },
+                    dataType: "json",
+                    success: function(data) {
+                        // Show/hide the 'alreadyExistsPatient' div based on 'checkAppointmentDate'
+
+
+                        // Show/hide the 'existingAppointmentsError' div based on 'checkAllocated'
+                        if (data.checkAllocated.length > 0) {
+                            $('#existingAppointmentsError').show();
+                        } else {
+                            $('#existingAppointmentsError').hide();
+                        }
+
+                        // Handle existing appointments display
+                        if (data.existingAppointments.length > 0) {
+                            $('#existAppContainer').hide();
+                            $('#existingAppointments').empty();
+                            $('#rescheduleExistingAppointments').empty();
+
+                            var table = $('<table class="table table-striped mb-0">').addClass(
+                                'appointment-table').css({
+                                'border-collapse': 'separate',
+                                'border-spacing': '0.5rem'
+                            });
+
+                            var numRows = Math.ceil(data.existingAppointments.length / 5);
+
+                            for (var i = 0; i < numRows; i++) {
+                                var row = $('<tr>');
+                                for (var j = 0; j < 5; j++) {
+                                    var dataIndex = i * 5 + j;
+                                    if (dataIndex < data.existingAppointments.length) {
+                                        var app_time = data.existingAppointments[dataIndex].app_time;
+                                        var formattedTime = convertTo12HourFormat(app_time);
+                                        var cell = $('<td class="b-1 w-100 text-center">').text(formattedTime);
+                                        row.append(cell);
+                                    } else {
+                                        var cell = $('<td>'); // Empty cell
+                                        row.append(cell);
+                                    }
+                                }
+                                table.append(row);
+                            }
+
+                            if (methodType === 'store') {
+                                $('#existingAppointments').append($('<h6 class="text-warning mb-1">').text(
+                                    'Scheduled Appointments'));
+                                $('#existingAppointments').append(table);
+                                $('#existAppContainer').show();
+                                $('#existingAppointments').show();
+                            } else if (methodType === 'edit') {
+                                $('#rescheduleExistingAppointments').append($('<h6 class="text-warning mb-1">')
+                                    .text('Scheduled Appointments'));
+                                $('#rescheduleExistingAppointments').append(table);
+                                $('#rescheduleExistingAppointments').show();
+                            }
+
+                        } else {
+                            $('#existAppContainer').show();
+                            $('#existingAppointments').html('No existing appointments found.');
+                            $('#existingAppointments').show();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching existing appointments:', error);
+                        $('#existingAppointments').html(
+                            'Error fetching existing appointments. Please try again later.');
+                        $('#existAppContainer').show();
+                        $('#existingAppointments').show();
+                    }
+                });
+            } else {
+                console.log('Missing required parameters for fetching existing appointments.');
+            }
+        }
     </script>
 @endsection

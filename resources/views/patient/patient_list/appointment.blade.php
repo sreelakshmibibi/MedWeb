@@ -65,6 +65,19 @@
 
 </div>
 
+<div class="row mb-3">
+    <div style="display:none" id="existingAppointmentsError" class="text-danger">
+        <span class="text-danger">Appointments already exists for the selected time!</span>
+    </div>
+</div>
+
+<div class="row" style="display:none" id="existAppContainer">
+    <hr />
+    <div class="mb-3" style="display:none" id="existingAppointments">
+    </div>
+    <hr />
+</div>
+
 <div class="row mb-2">
     <div class="form-group col-md-2">
         <label class="form-label" for="bp">Other Information</label>
@@ -94,7 +107,8 @@
         </select>
     </div>
 
-    <div class="form-group col-md-2 d-flex flex-wrap align-content-end" id="pregnant_container" style="display: none;">
+    <div class="form-group col-md-2 d-flex flex-wrap align-content-end" id="pregnant_container"
+        style="display: none;">
         <select class="form-select" id="pregnant" name="pregnant">
             <option value="">Are you pregnant?</option>
             <option value="Y">Yes</option>
