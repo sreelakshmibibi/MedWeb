@@ -84,6 +84,7 @@ Route::delete('/patient_list/{patientId}', [PatientListController::class, 'destr
 Route::post('/patient_list/{patientId}', [PatientListController::class, 'changeStatus'])->name('patient.patient_list.changeStatus');
 Route::post('/patient_list/appointment/store', [PatientListController::class, 'appointmentBooking'])->name('patient.patient_list.booking');
 Route::get('/patient_list/{patientId}/appointment', [PatientListController::class, 'appointmentDetails'])->name('patient.patient_list.appointment');
+Route::get('/patient_list/{patientId}/view', [PatientListController::class, 'show'])->name('patient.patient_list.view');
 
 Route::get('/today', [TodayController::class, 'index'])->name('patient.today');
 Route::post('/today/store', [TodayController::class, 'store'])->name('patient.today.store');

@@ -40,7 +40,7 @@ class PatientListController extends Controller
                 ->addColumn('name', function ($row) {
                     $firstName = str_replace('<br>', ' ', $row->first_name);
 
-                    return $firstName . ' ' . $row->last_name;
+                    return $firstName.' '.$row->last_name;
                 })
                 ->addColumn('gender', function ($row) {
                     $gender = '';
@@ -74,14 +74,14 @@ class PatientListController extends Controller
 
                 ->addColumn('appointment', function ($row) {
                     if ($row->latestAppointment) {
-                        return $row->latestAppointment->app_date . ' ' . $row->latestAppointment->app_time;
+                        return $row->latestAppointment->app_date.' '.$row->latestAppointment->app_time;
                     }
 
                     return 'N/A';
                 })
                 ->addColumn('next_appointment', function ($row) {
                     if ($row->nextAppointment) {
-                        return $row->nextAppointment->app_date . ' ' . $row->nextAppointment->app_time;
+                        return $row->nextAppointment->app_date.' '.$row->nextAppointment->app_time;
                     }
 
                     return 'N/A';
@@ -96,12 +96,12 @@ class PatientListController extends Controller
                 // })
                 ->addColumn('action', function ($row) {
                     $parent_id = '';
-                    $btn = "<button type='button' class='waves-effect waves-light btn btn-circle btn-primary btn-add btn-xs me-1' title='New Booking' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->first_name . ' ' . $row->last_name) . "' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>";
-                    $btn .= '<a href="' . route('staff.staff_list.view', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
-                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
+                    $btn = "<button type='button' class='waves-effect waves-light btn btn-circle btn-primary btn-add btn-xs me-1' title='New Booking' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->first_name.' '.$row->last_name)."' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>";
+                    $btn .= '<a href="'.route('patient.patient_list.view', $row->id).'" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
+                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="'.$row->id.'" title="change status"><i class="fa-solid fa-sliders"></i></button>';
                     if (auth()->user()->hasRole('Admin')) {
-                        $btn .= '<a href="' . route('patient.patient_list.edit', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
-                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="Delete"><i class="fa-solid fa-trash"></i></button>';
+                        $btn .= '<a href="'.route('patient.patient_list.edit', $row->id).'" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="'.$row->id.'" title="Delete"><i class="fa-solid fa-trash"></i></button>';
                     }
 
                     return $btn;
@@ -229,12 +229,12 @@ class PatientListController extends Controller
                 $dailyCount = 1;
             }
 
-            $uniquePatientId = $date . sprintf('%03d', $dailyCount);
+            $uniquePatientId = $date.sprintf('%03d', $dailyCount);
 
             // Store the patient data
             $patient = new PatientProfile();
             $patient->patient_id = $uniquePatientId; // Generate a unique patient_id
-            $patient->first_name = $request->input('title') . '<br> ' . $request->input('firstname');
+            $patient->first_name = $request->input('title').'<br> '.$request->input('firstname');
             $patient->last_name = $request->input('lastname');
             $patient->gender = $request->input('gender');
             $patient->date_of_birth = $request->input('date_of_birth');
@@ -336,7 +336,7 @@ class PatientListController extends Controller
             DB::rollback();
 
             // exit;
-            return response()->json(['error' => 'Failed to create patient: ' . $e->getMessage()], 422);
+            return response()->json(['error' => 'Failed to create patient: '.$e->getMessage()], 422);
         }
 
     }
@@ -346,7 +346,18 @@ class PatientListController extends Controller
      */
     public function show(string $id)
     {
-        //
+        // Find the PatientProfile by its ID
+        $patientProfile = PatientProfile::with(['lastAppointment.doctor', 'lastAppointment.branch', 'history'])->find($id);
+
+        // Check if the PatientProfile was found
+        if (! $patientProfile) {
+            abort(404, 'Patient Profile not found');
+        }
+        $appointment = $patientProfile->lastAppointment;
+        $history = $patientProfile->history;
+
+        // Return a view with the PatientProfile data
+        return view('patient.patient_list.view_patient', compact('patientProfile', 'appointment', 'history'));
     }
 
     /**
@@ -356,7 +367,7 @@ class PatientListController extends Controller
     {
         //$patientProfile = PatientProfile::with(['lastAppointment'])->find($id);
         $patientProfile = PatientProfile::with(['lastAppointment', 'history'])->find($id);
-        abort_if(!$patientProfile, 404);
+        abort_if(! $patientProfile, 404);
         $appointment = $patientProfile->lastAppointment;
         $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
         $countries = Country::all();
@@ -400,7 +411,7 @@ class PatientListController extends Controller
             // Update the patient data
             $patient = PatientProfile::findOrFail($request->edit_patient_id);
             $patient->fill([
-                'first_name' => $request->title . '<br> ' . $request->firstname,
+                'first_name' => $request->title.'<br> '.$request->firstname,
                 'last_name' => $request->input('lastname'),
                 'gender' => $request->input('gender'),
                 'date_of_birth' => $request->input('date_of_birth'),
@@ -424,7 +435,7 @@ class PatientListController extends Controller
                 'updated_by' => auth()->user()->id,
             ]);
 
-            if (!$patient->save()) {
+            if (! $patient->save()) {
                 //throw new \Exception('Failed to update patient');
                 return redirect()->back()->with('error', 'Failed to update patient');
             }
@@ -457,14 +468,14 @@ class PatientListController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
 
-            return response()->json(['error' => 'Failed to update patient: ' . $e->getMessage()], 422);
+            return response()->json(['error' => 'Failed to update patient: '.$e->getMessage()], 422);
         }
     }
 
     public function changeStatus(string $id)
     {
         $patientProfile = PatientProfile::find($id);
-        abort_if(!$patientProfile, 404);
+        abort_if(! $patientProfile, 404);
         if ($patientProfile) {
             $active = 'N';
             $inActive = 'Y';
@@ -491,7 +502,7 @@ class PatientListController extends Controller
             ->with('lastAppointment')
             ->first();
 
-        abort_if(!$patientProfile, 404);
+        abort_if(! $patientProfile, 404);
 
         // Get the last appointment ID
         $lastAppointmentId = $patientProfile->lastAppointment ? $patientProfile->lastAppointment->id : null;
@@ -519,7 +530,7 @@ class PatientListController extends Controller
             'doctor_id' => optional($lastAppointment)->doctor_id,
             'last_appointment_date' => optional($lastAppointment)->app_date,
             'history' => $history,
-            'gender' => $patientProfile->gender
+            'gender' => $patientProfile->gender,
         ];
 
         return response()->json($response);
@@ -544,7 +555,7 @@ class PatientListController extends Controller
             $clinicBranchId = $request->input('clinic_branch_id');
             // Check if an appointment with the same date, time, and doctor exists
             $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId);
-            //Log::info('$existingappointment: '.$existingAppointment);
+
             if ($existingAppointment) {
 
                 DB::rollBack();
@@ -581,7 +592,7 @@ class PatientListController extends Controller
                 $medicalConditions = $request->input('medical_conditions', []);
                 //Add medical conditions to the history table
                 foreach ($medicalConditions as $condition) {
-                    if (!empty($condition)) {
+                    if (! empty($condition)) {
                         $history = new History();
                         $history->patient_id = $request->input('patient_id');
                         $history->app_id = $appointment->id; // Assuming you have this in your request
@@ -603,7 +614,7 @@ class PatientListController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
 
-            return response()->json(['error' => 'Failed to create appointment: ' . $e->getMessage()], 422);
+            return response()->json(['error' => 'Failed to create appointment: '.$e->getMessage()], 422);
         }
 
     }
