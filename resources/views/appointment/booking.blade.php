@@ -89,6 +89,11 @@
 
                         </div>
                         <div class="row">
+                            <div style="display:none" id="alreadyExistsPatient">
+                                <span class="text-danger">Already exists appointment for the selected date!</span>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div style="display:none" id="existingAppointmentsError">
                                 <span class="text-danger">Already exists appointment for the selected time!</span>
                             </div>
@@ -171,6 +176,7 @@
                 dataType: 'json',
                 success: function(response) {
                     // If successful, hide modal and show success message
+                    $('#alreadyExistsPatient').hide();
                     $('#existingAppointments').hide();
                     $('#existingAppointmentsError').hide();
                     $('#modal-booking').modal('hide');
@@ -195,6 +201,10 @@
                         $('#appDateError').text(errors.appdate[0]);
                     } else {
                         // Handle specific error from backend
+                        var errorPatient = xhr.responseJSON.errorPatient;
+                        if (errorPatient) {
+                            $('#alreadyExistsPatient').show();
+                        }
                         var errorMessage = xhr.responseJSON.error;
                         if (errorMessage) {
                             $('#existingAppointmentsError').show();

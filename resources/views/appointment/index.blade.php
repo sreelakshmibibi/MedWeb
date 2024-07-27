@@ -207,7 +207,7 @@
                 $('#reschedule_app_id').val(appId); // Set app ID in the hidden input
                 // Set app ID in the hidden input
                 $.ajax({
-                    url: '{{ url('appointment', '') }}' + "/" + appId + "/edit",
+                    url: '{{ url("appointment", "") }}' + "/" + appId + "/edit",
                     method: 'GET',
                     success: function(response) {
                         $('#edit_app_id').val(response.id);
@@ -251,7 +251,7 @@
             if (branchId && appDate) {
 
                 $.ajax({
-                    url: '{{ route('get.doctors', '') }}' + '/' + branchId,
+                    url: '{{ route("get.doctors", "") }}' + '/' + branchId,
                     type: "GET",
                     data: {
                         appdate: appDate
@@ -278,18 +278,22 @@
             var branchId = $('#clinic_branch_id').val();
             var appDate = $('#appdate').val();
             var doctorId = $('#doctor_id').val();
+            var patientId = $('#patient_id').val();
+            $('#alreadyExistsPatient').hide();
             $('#existingAppointmentsError').hide();
             $('#existAppContainer').hide();
             $('#existingAppointments').empty();
-            showExistingAppointments(branchId, appDate, doctorId, 'store');
+            showExistingAppointments(branchId, appDate, doctorId, patientId, 'store');
 
         });
         $('#rescheduledAppdate').change(function() {
             var branchId = $('#edit_clinic_branch_id').val();
             var appDate = $('#rescheduledAppdate').val();
             var doctorId = $('#edit_doctor_id').val();
+            var patientId = $('#patient_id').val();
+            $('#alreadyExistsPatient').hide();
             $('#existingAppointmentsError').hide();
-            showExistingAppointments(branchId, appDate, doctorId, 'edit');
+            showExistingAppointments(branchId, appDate, doctorId, patientId, 'edit');
 
         });
 
@@ -306,129 +310,195 @@
         }
 
 
-        function showExistingAppointments(branchId, appDate, doctorId, methodType) {
-            if (branchId && appDate && doctorId) {
+        // function showExistingAppointments(branchId, appDate, doctorId, patientId, methodType) {
+        //     if (branchId && appDate && doctorId) {
 
-                $.ajax({
-                    url: '{{ route('get.exisitingAppointments', '') }}' + '/' + branchId,
-                    type: "GET",
-                    data: {
-                        appdate: appDate,
-                        doctorId: doctorId
-                    },
-                    dataType: "json",
-                    success: function(data) {
-                        $('#existingAppointmentsError').hide();
-                        if (data.checkAllocated.length > 0) {
-                            $('#existingAppointmentsError').show();
-                        } else {
-                            $('#existingAppointmentsError').hide();
-                        }
-                        if (data.existingAppointments.length > 0) {
+        //         $.ajax({
+        //             url: '{{ route("get.exisitingAppointments", "") }}' + '/' + branchId,
+        //             type: "GET",
+        //             data: {
+        //                 appdate: appDate,
+        //                 doctorId: doctorId,
+        //                 patientId: patientId,
+        //             },
+        //             dataType: "json",
+        //             success: function(data) {
+        //                 if (data.checkAppointmentDate == 1 && methodType == 'store') {
+        //                     $('#alreadyExistsPatient').show();
+        //                 } else {
+        //                     $('#alreadyExistsPatient').hide();
+        //                 }
+        //                 $('#existingAppointmentsError').hide();
+        //                 if (data.checkAllocated.length > 0) {
+        //                     $('#existingAppointmentsError').show();
+        //                 } else {
+        //                     $('#existingAppointmentsError').hide();
+        //                 }
+        //                 if (data.existingAppointments.length > 0) {
 
-                            // Clear existing content
-                            $('#existAppContainer').hide();
-                            $('#existingAppointments').empty();
-                            $('#rescheduleExistingAppointments').empty();
-                            // Create a table element
-                            // var table = $('<table class="table table-striped">').addClass('appointment-table');
-                            var table = $('<table class="table table-striped mb-0">').addClass(
-                                'appointment-table').css({
-                                'border-collapse': 'separate',
-                                'border-spacing': '0.5rem'
-                            });
-                            // Create header row
-                            // var headerRow = $('<tr>');
-                            // headerRow.append($('<th>').text('Scheduled Appointments'));
-                            // table.append(headerRow);
+        //                     // Clear existing content
+        //                     $('#existAppContainer').hide();
+        //                     $('#existingAppointments').empty();
+        //                     $('#rescheduleExistingAppointments').empty();
+        //                     // Create a table element
+        //                     // var table = $('<table class="table table-striped">').addClass('appointment-table');
+        //                     var table = $('<table class="table table-striped mb-0">').addClass(
+        //                         'appointment-table').css({
+        //                         'border-collapse': 'separate',
+        //                         'border-spacing': '0.5rem'
+        //                     });
+        //                     var numRows = Math.ceil(data.existingAppointments.length / 5);
 
-                            // Calculate number of rows needed
-                            // var numRows = Math.ceil(data.existingAppointments.length / 3);
-                            // for (var i = 0; i < numRows; i++) {
-                            //     var row = $('<tr>');
+        //                     // Loop to create rows and populate cells
+        //                     for (var i = 0; i < numRows; i++) {
+        //                         var row = $('<tr>');
 
-                            //     // Create 3 cells for each row
-                            //     for (var j = 0; j < 3; j++) {
-                            //         var dataIndex = i * 3 + j;
-                            //         if (dataIndex < data.existingAppointments.length) {
-                            //             var cell = $('<td>').text(data.existingAppointments[dataIndex]
-                            //                 .app_time);
-                            //             row.append(cell);
-                            //         } else {
-                            //             var cell = $('<td>'); // Create empty cell if no more data
-                            //             row.append(cell);
-                            //         }
-                            //     }
+        //                         // Create 5 cells for each row
+        //                         for (var j = 0; j < 5; j++) {
+        //                             var dataIndex = i * 5 + j;
+        //                             if (dataIndex < data.existingAppointments.length) {
+        //                                 var app_time = data
+        //                                     .existingAppointments[
+        //                                         dataIndex]
+        //                                     .app_time;
+        //                                 var formattedTime = convertTo12HourFormat(app_time);
+        //                                 var cell = $('<td class="b-1 w-100 text-center">').text(formattedTime);
+        //                                 row.append(cell);
+        //                             } else {
+        //                                 var cell = $('<td>'); // Create empty cell if no more data
+        //                                 row.append(cell);
+        //                             }
+        //                         }
 
-                            //     table.append(row);
-                            // }
-                            var numRows = Math.ceil(data.existingAppointments.length / 5);
+        //                         table.append(row);
+        //                     }
+        //                     if (methodType == 'store') {
+        //                         $('#existingAppointments').append($('<h6 class="text-warning mb-1">').text(
+        //                             'Scheduled Appointments'));
+        //                         // Append table to existingAppointments div
+        //                         $('#existingAppointments').append(table);
+        //                         $('#existAppContainer').show();
+        //                         // Show the div
+        //                         $('#existingAppointments').show();
+        //                     } else if (methodType == 'edit') {
+        //                         $('#rescheduleExistingAppointments').append($('<h6 class="text-warning mb-1">')
+        //                             .text(
+        //                                 'Scheduled Appointments'));
+        //                         // Append table to existingAppointments div
+        //                         $('#rescheduleExistingAppointments').append(table);
 
-                            // Loop to create rows and populate cells
-                            for (var i = 0; i < numRows; i++) {
-                                var row = $('<tr>');
+        //                         // Show the div
+        //                         $('#rescheduleExistingAppointments').show();
+        //                     }
 
-                                // Create 5 cells for each row
-                                for (var j = 0; j < 5; j++) {
-                                    var dataIndex = i * 5 + j;
-                                    if (dataIndex < data.existingAppointments.length) {
-                                        var app_time = data
-                                            .existingAppointments[
-                                                dataIndex]
-                                            .app_time;
-                                        var formattedTime = convertTo12HourFormat(app_time);
-                                        var cell = $('<td class="b-1 w-100 text-center">').text(formattedTime);
-                                        row.append(cell);
-                                    } else {
-                                        var cell = $('<td>'); // Create empty cell if no more data
-                                        row.append(cell);
-                                    }
-                                }
+        //                 } else {
+        //                     $('#existAppContainer').show();
+        //                     $('#existingAppointments').html('No existing appointments found.');
+        //                     $('#existingAppointments').show();
 
-                                table.append(row);
+        //                 }
+        //             },
+
+        //             error: function(xhr, status, error) {
+        //                 console.error('Error fetching existing appointments:', error);
+        //                 $('#existingAppointments').html(
+        //                     'Error fetching existing appointments. Please try again later.');
+        //                 $('#existAppContainer').show();
+        //                 $('#existingAppointments').show();
+
+        //             }
+        //         });
+        //     } else {
+        //         console.log('hi no exisiting');
+
+        //     }
+        // }
+        function showExistingAppointments(branchId, appDate, doctorId, patientId, methodType) {
+    if (branchId && appDate && doctorId) {
+        $.ajax({
+            url: '{{ route("get.exisitingAppointments", "") }}' + '/' + branchId,
+            type: "GET",
+            data: {
+                appdate: appDate,
+                doctorId: doctorId,
+                patientId: patientId,
+            },
+            dataType: "json",
+            success: function(data) {
+                // Show/hide the 'alreadyExistsPatient' div based on 'checkAppointmentDate'
+                if (data.checkAppointmentDate === 1 && methodType === 'store') {
+                    $('#alreadyExistsPatient').show();
+                } else {
+                    $('#alreadyExistsPatient').hide();
+                }
+                
+                // Show/hide the 'existingAppointmentsError' div based on 'checkAllocated'
+                if (data.checkAllocated.length > 0) {
+                    $('#existingAppointmentsError').show();
+                } else {
+                    $('#existingAppointmentsError').hide();
+                }
+
+                // Handle existing appointments display
+                if (data.existingAppointments.length > 0) {
+                    $('#existAppContainer').hide();
+                    $('#existingAppointments').empty();
+                    $('#rescheduleExistingAppointments').empty();
+                    
+                    var table = $('<table class="table table-striped mb-0">').addClass('appointment-table').css({
+                        'border-collapse': 'separate',
+                        'border-spacing': '0.5rem'
+                    });
+                    
+                    var numRows = Math.ceil(data.existingAppointments.length / 5);
+
+                    for (var i = 0; i < numRows; i++) {
+                        var row = $('<tr>');
+                        for (var j = 0; j < 5; j++) {
+                            var dataIndex = i * 5 + j;
+                            if (dataIndex < data.existingAppointments.length) {
+                                var app_time = data.existingAppointments[dataIndex].app_time;
+                                var formattedTime = convertTo12HourFormat(app_time);
+                                var cell = $('<td class="b-1 w-100 text-center">').text(formattedTime);
+                                row.append(cell);
+                            } else {
+                                var cell = $('<td>'); // Empty cell
+                                row.append(cell);
                             }
-                            if (methodType == 'store') {
-                                $('#existingAppointments').append($('<h6 class="text-warning mb-1">').text(
-                                    'Scheduled Appointments'));
-                                // Append table to existingAppointments div
-                                $('#existingAppointments').append(table);
-                                $('#existAppContainer').show();
-                                // Show the div
-                                $('#existingAppointments').show();
-                            } else if (methodType == 'edit') {
-                                $('#rescheduleExistingAppointments').append($('<h6 class="text-warning mb-1">')
-                                    .text(
-                                        'Scheduled Appointments'));
-                                // Append table to existingAppointments div
-                                $('#rescheduleExistingAppointments').append(table);
-
-                                // Show the div
-                                $('#rescheduleExistingAppointments').show();
-                            }
-
-                        } else {
-                            $('#existAppContainer').show();
-                            $('#existingAppointments').html('No existing appointments found.');
-                            $('#existingAppointments').show();
-
                         }
-                    },
+                        table.append(row);
+                    }
 
-                    error: function(xhr, status, error) {
-                        console.error('Error fetching existing appointments:', error);
-                        $('#existingAppointments').html(
-                            'Error fetching existing appointments. Please try again later.');
+                    if (methodType === 'store') {
+                        $('#existingAppointments').append($('<h6 class="text-warning mb-1">').text('Scheduled Appointments'));
+                        $('#existingAppointments').append(table);
                         $('#existAppContainer').show();
                         $('#existingAppointments').show();
-
+                    } else if (methodType === 'edit') {
+                        $('#rescheduleExistingAppointments').append($('<h6 class="text-warning mb-1">').text('Scheduled Appointments'));
+                        $('#rescheduleExistingAppointments').append(table);
+                        $('#rescheduleExistingAppointments').show();
                     }
-                });
-            } else {
-                console.log('hi no exisiting');
 
+                } else {
+                    $('#existAppContainer').show();
+                    $('#existingAppointments').html('No existing appointments found.');
+                    $('#existingAppointments').show();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching existing appointments:', error);
+                $('#existingAppointments').html('Error fetching existing appointments. Please try again later.');
+                $('#existAppContainer').show();
+                $('#existingAppointments').show();
             }
-        }
-        $(document).on('click', '#btn-cancel', function() {
+        });
+    } else {
+        console.log('Missing required parameters for fetching existing appointments.');
+    }
+}
+
+         $(document).on('click', '#btn-cancel', function() {
             var appId = $(this).data('id');
             $('#delete_app_id').val(appId); // Set staff ID in the hidden input
             $('#modal-cancel').modal('show');

@@ -182,8 +182,9 @@ class PatientListController extends Controller
         $appDate = $appDateTime->toDateString(); // Extract date
         $appTime = $appDateTime->toTimeString(); // Extract time
         $doctor_id = $request->input('doctorId');
-        //$patient_id = $request->input('patientId');
+        $patient_id = $request->input('patientId');
         $doctorAvailabilityService = new DoctorAvaialbilityService();
+        $checkAppointmentDate = $doctorAvailabilityService->checkAppointmentDate($branchId, $appDate, $doctor_id, $patient_id);
         $existingAppointments = $doctorAvailabilityService->getExistingAppointments($branchId, $appDate, $doctor_id);
         $checkAllocated = $doctorAvailabilityService->checkAllocatedAppointments($branchId, $appDate, $doctor_id, $appTime);
         //$patient = PatientProfile::where('patient_id', $patient_id)->first();
@@ -192,6 +193,7 @@ class PatientListController extends Controller
         $response = [
             'existingAppointments' => $existingAppointments,
             'checkAllocated' => $checkAllocated,
+            'checkAppointmentDate' => $checkAppointmentDate,
             // 'nextAppointment' => $nextAppointment,
         ];
 
