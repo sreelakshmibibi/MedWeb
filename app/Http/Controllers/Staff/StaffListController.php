@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Staff\StaffProfileRequest;
 use App\Models\Appointment;
 use App\Models\City;
+use App\Models\ClinicBasicDetail;
 use App\Models\ClinicBranch;
 use App\Models\Country;
 use App\Models\Department;
@@ -99,8 +100,9 @@ class StaffListController extends Controller
         $userTypes = UserType::where('status', 'Y')->get();
         $departments = Department::where('status', 'Y')->get();
         $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
-
-        return view('staff.staff_list.add', compact('countries', 'states', 'cities', 'userTypes', 'departments', 'clinicBranches'));
+        $clinic = ClinicBasicDetail::first();
+        $consultationFees = $clinic->consultation_fees;
+        return view('staff.staff_list.add', compact('countries', 'states', 'cities', 'userTypes', 'departments', 'clinicBranches', 'consultationFees'));
     }
 
     /**
@@ -192,6 +194,9 @@ class StaffListController extends Controller
                     $staffProfile->specialization = $request->specialization;
                     $staffProfile->subspecialty = $request->subspecialty;
                     $staffProfile->license_number = $request->license_number;
+                    $staffProfile->consultation_fees = $request->consultation_fees;
+                } else if ($user->is_nurse) {
+                    $staffProfile->license_number = $request->license_number_nurse;
                 } else {
                     $staffProfile->clinic_branch_id = $request->clinic_branch_id;
                 }

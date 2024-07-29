@@ -81,12 +81,20 @@
                 value="{{ $staffProfile->subspecialty }}">
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-2">
         <div class="form-group">
             <label class="form-label" for="license_number">Licence <span class="text-danger">
                     *</span></label>
             <input type="text" class="form-control" id="license_number" name="license_number"
                 placeholder="Council No." value="{{ $staffProfile->license_number }}">
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label class="form-label" for="consultation_fees">Consultation Fees<span class="text-danger">
+                    *</span></label>
+            <input type="text" class="form-control" id="consultation_fees" name="consultation_fees"
+                placeholder="Fees" value="{{ $staffProfile->consultation_fees }}">
         </div>
     </div>
 </div>
@@ -112,6 +120,14 @@
                         {{ $branch }}</option>
                 @endforeach
             </select>
+        </div>
+    </div>
+    <div class="col-md-4 nurseFields" style="display:none">
+        <div class="form-group">
+            <label class="form-label" for="license_number_nurse">Licence <span class="text-danger">
+                    *</span></label>
+            <input type="text" class="form-control" id="license_number_nurse" name="license_number_nurse"
+                placeholder="Nursing Council No." value="{{ $staffProfile->license_number }}">
         </div>
     </div>
 

@@ -258,13 +258,24 @@
                 if (selectedRoles && selectedRoles.includes('3')) {
                     $('.doctorFields').show();
                     $('.otherFields').hide();
+                    $('.nurseFields').hide();
                     $('.doctorFields input').attr('required', true);
                     $('.otherFields select').attr('required', false);
-                } else {
+                    $('.nurseFields input').attr('required', false);
+                } else if (selectedRoles && selectedRoles.includes('4')){
                     $('.doctorFields').hide();
                     $('.otherFields').show();
+                    $('.nurseFields').show();
+                    $('.doctorFields input').attr('required', false);
+                    $('.nurseFields input').attr('required', true);
+                    $('.otherFields select').attr('required', true);
+                }else {
+                    $('.doctorFields').hide();
+                    $('.otherFields').show();
+                    $('.nurseFields').hide();
                     $('.doctorFields input').attr('required', false);
                     $('.otherFields select').attr('required', true);
+                    $('.nurseFields input').attr('required', false);
                 }
             }
 

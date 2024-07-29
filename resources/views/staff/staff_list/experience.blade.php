@@ -66,7 +66,7 @@
         <div class="form-group">
             <label class="form-label" for="specialization">Specialization <span class="text-danger">
                     *</span></label>
-            <input type="text" class="form-control" id="specialization" name="Specialization"
+            <input type="text" class="form-control" id="specialization" name="specialization"
                 placeholder="Specialization">
         </div>
     </div>
@@ -74,16 +74,24 @@
         <div class="form-group">
             <label class="form-label" for="subspecialty">Subspeciality <span class="text-danger">
                     *</span></label>
-            <input type="text" class="form-control" id="subspecialty" name="Subspecialty"
+            <input type="text" class="form-control" id="subspecialty" name="subspecialty"
                 placeholder="Subspeciality">
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-2">
         <div class="form-group">
             <label class="form-label" for="license_number">Licence <span class="text-danger">
                     *</span></label>
             <input type="text" class="form-control" id="license_number" name="license_number"
                 placeholder="Council No.">
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label class="form-label" for="consultation_fees">Fees <span class="text-danger">
+                    *</span></label>
+            <input type="text" class="form-control" id="consultation_fees" name="consultation_fees" value="{{$consultationFees}}"
+                placeholder="Consultation fees">
         </div>
     </div>
 </div>
@@ -107,6 +115,14 @@
                         {{ $branch }}</option>
                 @endforeach
             </select>
+        </div>
+    </div>
+    <div class="col-md-4 nurseFields" style="display:none">
+        <div class="form-group">
+            <label class="form-label" for="license_number_nurse">Licence <span class="text-danger">
+                    *</span></label>
+            <input type="text" class="form-control" id="license_number_nurse" name="license_number_nurse"
+                placeholder="Nursing Council No.">
         </div>
     </div>
 

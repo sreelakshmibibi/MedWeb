@@ -45,6 +45,7 @@ return new class extends Migration
             $table->string('years_of_experience')->nullable(); 
             $table->string('license_number', 50)->unique()->nullable(); 
             $table->string('subspecialty')->nullable(); 
+            $table->integer('consultation_fees')->nullable(); 
             $table->string('status');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
