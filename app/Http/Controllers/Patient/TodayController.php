@@ -85,9 +85,12 @@ class TodayController extends Controller
                 })
                 
                 ->addColumn('action', function ($row) {
-
-                    $btn = "<a href='" . route('treatment', $row->id) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='{$row->id}' ><i class='fa-solid fa-eye'></i></a>";
-
+                    $btn = null;
+                    if ($row->app_status != AppointmentStatus::RESCHEDULED && $row->app_status != AppointmentStatus::CANCELLED) {
+                        $btn = "<a href='" . route('treatment', $row->id) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='{$row->id}' ><i class='fa-solid fa-eye'></i></a>";
+                    } else {
+                        $btn = "";
+                    }
                     return $btn;
                 })
                 ->rawColumns(['action', 'status'])
