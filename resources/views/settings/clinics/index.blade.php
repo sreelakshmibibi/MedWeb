@@ -93,12 +93,97 @@
                                                             @enderror
                                                         </div>
                                                     </div>
+                                                    
                                                     <div class="col-lg-2">
                                                         <div class="form-group">
                                                             <canvas id="logoCanvas" style="height: 64px;"></canvas>
                                                         </div>
                                                     </div>
+
                                                 </div>
+                                                <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="patient_registration_fees">Patient Registration Fees<span
+                                                                class="text-danger">
+                                                                *</span></label>
+                                                        <input class="form-control @error('patient_registration_fees') is-invalid @enderror"
+                                                            type="text" id="patient_registration_fees" name="patient_registration_fees"
+                                                            placeholder="Registration Fees" <?php if($clinicDetails) { ?>
+                                                            value="{{ old('patient_registration_fees', $clinicDetails->patient_registration_fees) }}"
+                                                            <?php }?>>
+                                                        @error('registration_fees')
+                                                            <div class="invalid-feedback">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="name">
+                                                        Is Insurance available?<span class="text-danger">*</span>
+                                                    </label>
+                                                    <div>
+                                                    <input
+                                                        name="insurance"
+                                                        type="radio"
+                                                        class="form-control with-gap"
+                                                        id="yes"
+                                                        value="Y"
+                                                        @if ($clinicDetails->clinic_insurance_available == 'Y') checked @endif
+                                                    >
+                                                    <label for="yes">Yes</label>
+                                                    
+                                                    <input
+                                                        name="insurance"
+                                                        type="radio"
+                                                        class="form-control with-gap"
+                                                        id="no"
+                                                        value="N"
+                                                        @if ($clinicDetails->clinic_insurance_available == 'N') checked @endif
+                                                    >
+                                                    <label for="no">No</label>
+                                                    
+                                                    <div id="insuranceError" class="invalid-feedback"></div>
+                                                    </div>
+                                                </div>
+
+                                                </div>
+                                               </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label class="form-label" for="consultation_fees">Consultation Fees<span
+                                                                    class="text-danger">
+                                                                    *</span></label>
+                                                            <input class="form-control @error('consultation_fees') is-invalid @enderror"
+                                                                type="text" id="consultation_fees" name="consultation_fees"
+                                                                placeholder="Consultation Fees" <?php if($clinicDetails) { ?>
+                                                                value="{{ old('consultation_fees', $clinicDetails->consultation_fees) }}"
+                                                                <?php }?>>
+                                                            @error('consultation_fees')
+                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                            @enderror
+                                                        </div>
+                                                    </div>
+                                                
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="consultation_fees_frequency">Frequency (consultation fees)<span
+                                                                class="text-danger">
+                                                                *</span></label>
+                                                        <input class="form-control @error('consultation_fees_frequency') is-invalid @enderror"
+                                                            type="text" id="consultation_fees_frequency" name="consultation_fees_frequency"
+                                                            placeholder="Fees Frequency" <?php if($clinicDetails) { ?>
+                                                            value="{{ old('consultation_fees_frequency', $clinicDetails->consultation_fees_frequency) }}"
+                                                            <?php }?>>
+                                                        @error('collect_fees')
+                                                            <div class="invalid-feedback">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                               </div>
+                                              
+                                                
 
                                                 {{-- <div class="row form-group">
                                                     <canvas id="logoCanvas" class="col-md-2" style="height: 64px;"></canvas>

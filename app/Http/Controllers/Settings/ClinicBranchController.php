@@ -87,7 +87,10 @@ class ClinicBranchController extends Controller
             $clinic_name = ucwords(strtolower($request->input('clinic_name')));
             $clinic_website = $request->input('clinic_website');
             $clinic_logo = null; // Initialize clinic_logo variable
-
+            $clinicInsurance = $request->input('insurance');
+            $consultationFees = $request->input('consultation_fees');
+            $consultationFeesFrequency = $request->input('consultation_fees_frequency');
+            $patientRegistrationFees = $request->input('patient_registration_fees');
             // Check if a file for clinic_logo was uploaded
             if ($request->hasFile('clinic_logo')) {
                 $logoPath = $request->file('clinic_logo')->store('clinic-logos', 'public');
@@ -106,6 +109,10 @@ class ClinicBranchController extends Controller
                 if ($clinic_logo !== null && $clinic_logo !== $clinic->clinic_logo) {
                     $clinic->clinic_logo = $clinic_logo;
                 }
+                $clinic->clinic_insurance_available = $clinicInsurance;
+                $clinic->patient_registration_fees = $patientRegistrationFees;
+                $clinic->consultation_fees = $consultationFees;
+                $clinic->consultation_fees_frequency = $consultationFeesFrequency;
 
                 $clinic->save();
                 $message = "Clinic details updated successfully";
@@ -115,15 +122,14 @@ class ClinicBranchController extends Controller
                     'clinic_name' => $request->input('clinic_name'),
                     'clinic_website' => $request->input('clinic_website'),
                     'clinic_logo' => $clinic_logo,
+                    'clinic_insurance_available' => $request->input('insurance'),
+                    'patient_registration_fees' => $request->input('patient_registration_fees'),
+                    'consultation_fees' => $request->input('consultation_fees'),
+                    'consultation_fees_frequency' => $request->input('consultation_fees_frequency'),
                     'clinic_type_id' => 1, // Adjust as per your requirements
                 ]);
                 $message = "Clinic details added successfully";
             }
-
-            // $clinicDetails = ClinicBasicDetail::first();
-            // // Set session variable
-            // session(['logoPath' => $clinicDetails->clinic_logo]);
-            // session(['clinicName' => $clinicDetails->clinic_name]);
 
             // Redirect to clinic index page with success message
             return redirect()->route('settings.clinic', ['active_tab' => 'home7'])->with('success', $message);

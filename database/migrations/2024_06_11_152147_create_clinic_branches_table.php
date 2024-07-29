@@ -16,6 +16,10 @@ return new class extends Migration
             $table->string('clinic_name');
             $table->string('clinic_logo')->nullable();
             $table->string('clinic_website')->nullable();
+            $table->string('clinic_insurance_available');
+            $table->integer('patient_registration_fees')->default(0);
+            $table->integer('consultation_fees')->default(0);
+            $table->integer('consultation_fees_frequency')->default(0);
             $table->foreignId('clinic_type_id')->constrained();
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');

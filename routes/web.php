@@ -4,6 +4,7 @@ use App\Http\Controllers\Appointment\AppointmentController;
 use App\Http\Controllers\Appointment\TreatmentController;
 use App\Http\Controllers\Auth\StaffVerificationController;
 use App\Http\Controllers\HelperController;
+use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
 use App\Http\Controllers\Settings\ClinicBranchController;
@@ -63,6 +64,13 @@ Route::group(['middleware' => ['permission:departments']], function () {
     Route::post('/department/update', [DepartmentController::class, 'update'])->name('settings.department.update');
     Route::delete('/department/{department}', [DepartmentController::class, 'destroy'])->name('settings.departments.destroy');
 });
+
+Route::get('/insurance', [InsuranceController::class, 'index'])->name('settings.insurance');
+Route::post('/insurance/store', [InsuranceController::class, 'store'])->name('settings.insurance.store');
+Route::get('/insurance/{insurance}/edit', [InsuranceController::class, 'edit'])->name('settings.insurance.edit');
+Route::post('/insurance/update', [InsuranceController::class, 'update'])->name('settings.insurance.update');
+Route::delete('/insurance/{insurance}', [InsuranceController::class, 'destroy'])->name('settings.insurance.destroy');
+
 Route::get('/treatment_cost', [TreatmentCostController::class, 'index'])->name('settings.treatment_cost');
 Route::post('/treatment_cost/store', [TreatmentCostController::class, 'store'])->name('settings.treatment_cost.store');
 Route::get('/treatment_cost/{department}/edit', [TreatmentCostController::class, 'edit'])->name('settings.treatment_cost.edit');
