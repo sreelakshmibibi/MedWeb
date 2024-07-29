@@ -2,49 +2,49 @@
 use App\Models\TeethRow;
 use Illuminate\Support\Facades\Session;
 
-$upper_ped_teethImages = [[['class' => 'pediatric molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '55'], ['class' => 'pediatric molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '54'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '53'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '52'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '51'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '61'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '62'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '63'], ['class' => 'pediatric molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '64'], ['class' => 'pediatric molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '65']]];
+$upper_ped_teethImages = [[['class' => 'pediatric molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '55'], ['class' => 'pediatric molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '54'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '53'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '52'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '51'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '61'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '62'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '63'], ['class' => 'pediatric molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '64'], ['class' => 'pediatric molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '65']]];
 
 $upper_teethImages = [
     [
-        ['class' => 'normal molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '18'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '17'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '16'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '15'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '14'],
-        ['class' => 'normal inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '13'],
-        ['class' => 'normal inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '12'],
-        ['class' => 'normal inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '11'],
-        ['class' => 'normal inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '21'],
-        ['class' => 'normal inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '22'],
-        ['class' => 'normal inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '23'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '24'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '25'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '26'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '27'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '28'],
+        ['class' => 'normal molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '18'],
+        ['class' => 'normal molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '17'],
+        ['class' => 'normal molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '16'],
+        ['class' => 'normal molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '15'],
+        ['class' => 'normal molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '14'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '13'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '12'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '11'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '21'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '22'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '23'],
+        ['class' => 'normal molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '24'],
+        ['class' => 'normal molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '25'],
+        ['class' => 'normal molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '26'],
+        ['class' => 'normal molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '27'],
+        ['class' => 'normal molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '28'],
     ],
 ];
 
-$lower_ped_teethImages = [[['class' => 'pediatric molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '85'], ['class' => 'pediatric molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '84'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '83'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '82'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '81'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '71'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '72'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '73'], ['class' => 'pediatric molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '74'], ['class' => 'pediatric molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '75']]];
+$lower_ped_teethImages = [[['class' => 'pediatric molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '85'], ['class' => 'pediatric molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '84'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '83'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '82'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '81'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '71'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '72'], ['class' => 'pediatric inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '73'], ['class' => 'pediatric molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '74'], ['class' => 'pediatric molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '75']]];
 
 $lower_teethImages = [
     [
-        ['class' => 'normal molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '48'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '47'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '46'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '45'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '44'],
-        ['class' => 'normal inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '43'],
-        ['class' => 'normal inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '42'],
-        ['class' => 'normal inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '41'],
-        ['class' => 'normal inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '31'],
-        ['class' => 'normal inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '32'],
-        ['class' => 'normal inccan', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '33'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '34'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '35'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '36'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '37'],
-        ['class' => 'normal molar', 'image' => 'images/teeths/Asset 5.svg', 'teeth_name' => '38'],
+        ['class' => 'normal molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '48'],
+        ['class' => 'normal molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '47'],
+        ['class' => 'normal molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '46'],
+        ['class' => 'normal molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '45'],
+        ['class' => 'normal molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '44'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '43'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '42'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '41'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '31'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '32'],
+        ['class' => 'normal inccan', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '33'],
+        ['class' => 'normal molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '34'],
+        ['class' => 'normal molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '35'],
+        ['class' => 'normal molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '36'],
+        ['class' => 'normal molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '37'],
+        ['class' => 'normal molar', 'image' => 'images/teeths/teethblue.svg', 'teeth_name' => '38'],
     ],
 ];
 
