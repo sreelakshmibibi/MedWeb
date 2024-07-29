@@ -14,6 +14,10 @@ class ClinicBasicDetail extends Model
     protected $fillable = ['clinic_name', 
     'clinic_logo', 
     'clinic_website',
+    'clinic_insurance_available',
+    'patient_registration_fees',
+    'consultation_fees',
+    'consultation_fees_frequency',
     'clinic_type_id',
     'created_by',
     'updated_by'
