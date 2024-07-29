@@ -6,7 +6,7 @@ $upper_ped_teethImages = [[['class' => 'pediatric molar', 'image' => 'images/too
 
 $upper_teethImages = [
     [
-        ['class' => 'normal molar', 'image' => 'images/tooth/tooth_img/img1.svg', 'teeth_name' => '19'],
+        ['class' => 'normal molar', 'image' => 'images/tooth/tooth_img/img1.svg', 'teeth_name' => '18'],
         ['class' => 'normal molar', 'image' => 'images/tooth/tooth_img/img1.svg', 'teeth_name' => '17'],
         ['class' => 'normal molar', 'image' => 'images/tooth/tooth_img/img1.svg', 'teeth_name' => '16'],
         ['class' => 'normal molar', 'image' => 'images/tooth/tooth_img/img1.svg', 'teeth_name' => '15'],
