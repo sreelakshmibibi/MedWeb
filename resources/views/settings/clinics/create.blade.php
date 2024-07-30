@@ -59,17 +59,17 @@
 
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6" for="branch">Is main branch?</label>
-                            <input name="branch_active" type="radio" class="form-control with-gap" id="yes"
+                            <input name="branch_active" type="radio" class="form-control with-gap" id="branch_yes"
                                 value="Y" checked>
-                            <label for="yes">Yes</label>
-                            <input name="branch_active" type="radio" class="form-control with-gap" id="no"
+                            <label for="branch_yes">Yes</label>
+                            <input name="branch_active" type="radio" class="form-control with-gap" id="branch_no"
                                 value="N">
-                            <label for="no">No</label>
+                            <label for="branch_no">No</label>
                             <div id="clinicBranchError" class="invalid-feedback"></div>
                         </div>
 
                         <div class="form-group mt-2">
-                            <label class="form-label col-md-6" for="branch">Is medicine provided?</label>
+                            <label class="form-label col-md-6" for="medicine">Is medicine provided?</label>
                             <input name="is_medicine_provided" type="radio" class="form-control with-gap"
                                 id="medicine_yes" value="Y" checked>
                             <label for="medicine_yes">Yes</label>
