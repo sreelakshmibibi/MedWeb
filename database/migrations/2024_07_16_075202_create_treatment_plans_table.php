@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('treatment_plans', function (Blueprint $table) {
             $table->id();
-            $table->string('plan');
+            $table->string('plan')->unique();
+            $table->integer('cost');
             $table->string('status')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users');
             $table->foreignId('updated_by')->nullable()->constrained('users');

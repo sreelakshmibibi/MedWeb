@@ -13,6 +13,7 @@ use App\Http\Controllers\Settings\DepartmentController;
 use App\Http\Controllers\Settings\DiseaseController;
 use App\Http\Controllers\Settings\MedicineController;
 use App\Http\Controllers\Settings\TreatmentCostController;
+use App\Http\Controllers\Settings\TreatmentPlanController;
 use App\Http\Controllers\Staff\StaffListController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -70,6 +71,12 @@ Route::post('/insurance/store', [InsuranceController::class, 'store'])->name('se
 Route::get('/insurance/{insurance}/edit', [InsuranceController::class, 'edit'])->name('settings.insurance.edit');
 Route::post('/insurance/update', [InsuranceController::class, 'update'])->name('settings.insurance.update');
 Route::delete('/insurance/{insurance}', [InsuranceController::class, 'destroy'])->name('settings.insurance.destroy');
+
+Route::get('/treatment_plan', [TreatmentPlanController::class, 'index'])->name('settings.treatment_plan');
+Route::post('/treatment_plan/store', [TreatmentPlanController::class, 'store'])->name('settings.treatment_plan.store');
+Route::get('/treatment_plan/{treatment_plan}/edit', [TreatmentPlanController::class, 'edit'])->name('settings.treatment_plan.edit');
+Route::post('/treatment_plan/update', [TreatmentPlanController::class, 'update'])->name('settings.treatment_plan.update');
+Route::delete('/treatment_plan/{treatment_plan}', [TreatmentPlanController::class, 'destroy'])->name('settings.treatment_plan.destroy');
 
 Route::get('/treatment_cost', [TreatmentCostController::class, 'index'])->name('settings.treatment_cost');
 Route::post('/treatment_cost/store', [TreatmentCostController::class, 'store'])->name('settings.treatment_cost.store');

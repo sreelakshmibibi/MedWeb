@@ -1,4 +1,4 @@
-<form id="createInsuranceForm" method="post" action="{{ route('settings.insurance.store') }}">
+<form id="createInsuranceForm" method="post" action="{{ route('settings.treatment_plan.store') }}">
     @csrf
     <div class="modal fade modal-right slideInRight" id="modal-right" tabindex="-1">
         <div class="modal-dialog modal-dialog-scrollable h-p100">
@@ -12,24 +12,21 @@
                     <div class="container-fluid">
                         <!-- Department Name -->
                         <div class="form-group">
-                            <label class="form-label" for="name">Company Name <span class="text-danger">
+                            <label class="form-label" for="plan">Plan <span class="text-danger">
                                     *</span></label>
-                            <input class="form-control" type="text" id="company_name" name="company_name"
-                                placeholder="Company Name">
-                            <div id="nameError" class="invalid-feedback"></div>
+                            <input class="form-control" type="text" id="plan" name="plan"
+                                placeholder="plan">
+                            <div id="planError" class="invalid-feedback"></div>
                         </div>
 
                         <!--Claim types-->
                         <div class="form-group">
-                            <label class="form-label" for="claim_type">Claim Type <span
+                            <label class="form-label" for="cost">Cost <span
                                     class="text-danger">
                                     *</span></label>
-                            <select class="form-select" id="claim_type" name="claim_type">
-                                <option value="">Select Claim Type</option>
-                                <option value="Cashless">Cashless</option>
-                                <option value="Reimbursement">Reimbursement</option>
-                            </select>
-                            <div id="claimTypeError" class="invalid-feedback"></div>
+                                    <input class="form-control" type="text" id="cost" name="cost"
+                                    placeholder="cost">
+                            <div id="costError" class="invalid-feedback"></div>
                         </div>
                         
                         <!-- Status -->
@@ -56,7 +53,7 @@
 </form>
 
 <!-- Include custom JavaScript file -->
-<script src="{{ asset('js/insurance.js') }}"></script>
+<script src="{{ asset('js/treatment_plan.js') }}"></script>
 
 <script>
     $(function() {
@@ -69,31 +66,31 @@
             }
             formSubmitting = true;
             // Reset previous error messages
-            $('#insuranceError').text('');
-            $('#claimTypeError').text('');
+            $('#planError').text('');
+            $('#costError').text('');
             $('#statusError').text('');
 
             // Validate form inputs
-            var insurance = $('#company_name').val();
-            var claimType = $('#claim_type').val();
+            var plan = $('#plan').val();
+            var cost = $('#cost').val();
             var status = $('input[name="status"]:checked').val();
 
             // Basic client-side validation (you can add more as needed)
-            if (insurance.length === 0) {
-                $('#company_name').addClass('is-invalid');
-                $('#nameError').text('Insurance name is required.');
+            if (plan.length === 0) {
+                $('#plan').addClass('is-invalid');
+                $('#planError').text('Plan is required.');
                 return; // Prevent further execution
             } else {
-                $('#company_name').removeClass('is-invalid');
-                $('#nameError').text('');
+                $('#plan').removeClass('is-invalid');
+                $('#planError').text('');
             }
-            if (claimType.length === 0) {
-                $('#claim_type').addClass('is-invalid');
-                $('#claimTypeError').text('Claim Type is required.');
+            if (cost.length === 0) {
+                $('#cost').addClass('is-invalid');
+                $('#costError').text('Cost is required.');
                 return; // Prevent further execution
             } else {
-                $('#claim_type').removeClass('is-invalid');
-                $('#claimTypeError').text('');
+                $('#cost').removeClass('is-invalid');
+                $('#costError').text('');
             }
 
             if (!status) {
@@ -116,7 +113,7 @@
                 success: function(response) {
                     // If successful, hide modal and show success message
                     $('#modal-right').modal('hide');
-                    $('#successMessage').text('Insurance created successfully');
+                    $('#successMessage').text('Plan created successfully');
                     $('#successMessage').fadeIn().delay(3000)
                         .fadeOut(); // Show for 3 seconds
                     // location.reload();
@@ -126,13 +123,13 @@
                     // If error, update modal to show errors
                     var errors = xhr.responseJSON.errors;
 
-                    if (errors.hasOwnProperty('company_name')) {
-                        $('#company_name').addClass('is-invalid');
-                        $('#nameError').text(errors.company_name[0]);
+                    if (errors.hasOwnProperty('plan')) {
+                        $('#plan').addClass('is-invalid');
+                        $('#planError').text(errors.plan[0]);
                     }
-                    if (errors.hasOwnProperty('claim_type')) {
-                        $('#claim_type').addClass('is-invalid');
-                        $('#claimTypeError').text(errors.claim_type[0]);
+                    if (errors.hasOwnProperty('cost')) {
+                        $('#cost').addClass('is-invalid');
+                        $('#costError').text(errors.cost[0]);
                     }
 
                     if (errors.hasOwnProperty('status')) {
@@ -149,9 +146,9 @@
         // Reset form and errors on modal close
         $('#modal-right').on('hidden.bs.modal', function() {
             $('#createInsuranceForm').trigger('reset');
-            $('#company_name').removeClass('is-invalid');
-            $("claimTypeError").text('');
-            $('#nameError').text('');
+            $('#plan').removeClass('is-invalid');
+            $("#planError").text('');
+            $('#costError').text('');
             $('#statusError').text('');
             formSubmitting = false; // Reset the flag
         });

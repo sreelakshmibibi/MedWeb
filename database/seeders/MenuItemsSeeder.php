@@ -35,7 +35,8 @@ class MenuItemsSeeder extends Seeder
             'medicines',
             'treatment_cost',
             'combo_offers',
-            'insurance'
+            'insurance',
+            'treatment_plan'
         ];
 
         foreach ($permissions as $permission) {
@@ -55,7 +56,8 @@ class MenuItemsSeeder extends Seeder
             'patients',
             'medicines',
             'staff_list',
-            'insurance'
+            'insurance',
+            'treatment_plan'
         ]);
 
         $nurse->syncPermissions([
@@ -135,6 +137,7 @@ class MenuItemsSeeder extends Seeder
             ['name' => 'Disease', 'url' => '/diseases', 'route_name' => 'settings.disease', 'icon' => 'icon-Commit', 'order_no' => 5],
             ['name' => 'Combo Offers', 'url' => '/combo_offer', 'route_name' => 'settings.combo_offer', 'icon' => 'icon-Commit', 'order_no' => 6],
             ['name' => 'Insurance', 'url' => '/insurance', 'route_name' => 'settings.insurance', 'icon' => 'icon-Commit', 'order_no' => 7],
+            ['name' => 'Treatment Plan', 'url' => '/treatment_plan', 'route_name' => 'settings.treatment_plan', 'icon' => 'icon-Commit', 'order_no' => 8],
         ]);
 
         $staffSubmenus = $staffs->children()->createMany([

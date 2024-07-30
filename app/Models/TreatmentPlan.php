@@ -11,7 +11,7 @@ class TreatmentPlan extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    protected $fillable = ['plan', 'status'];
+    protected $fillable = ['plan', 'cost', 'status'];
     protected $dates = ['deleted_at'];
     protected static function booted()
     {
