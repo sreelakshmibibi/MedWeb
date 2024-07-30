@@ -107,6 +107,8 @@
 
     <script src="{{ asset('js/pages/slider.js') }}"></script>
 
+    <script src="{{ asset('assets/vendor_components/dropzone/dropzone.js') }}"></script>
+
     <!-- Include scripts section -->
     @yield('scripts')
 </body>

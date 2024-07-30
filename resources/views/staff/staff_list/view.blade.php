@@ -27,9 +27,13 @@
                             title="edit"><i class="fa fa-pencil"></i></a>
 
 
-                        <button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs"
+                        <button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1"
                             data-bs-toggle="modal" data-bs-target="#modal-status" data-id="{{ $staffProfile->id }}"
                             title="change status"><i class="fa-solid fa-sliders"></i></button>
+
+                        <a type="button" class="waves-effect waves-light btn btn-circle btn-primary btn-xs" title="back"
+                            href="{{ route('staff.staff_list') }}">
+                            <i class="fa-solid fa-angles-left"></i></a>
                     </div>
                 </div>
             </div>
@@ -47,6 +51,7 @@
         </div>
     </div>
     @include('staff.staff_list.status')
+    @include('staff.staff_list.documents')
     <script>
         $(document).ready(function() {
             if ('{{ $userDetails->is_doctor }}' == 1) {
@@ -77,6 +82,11 @@
                 displayTimings(branchId); // Display timings for the selected branch
             });
 
+            function convertTo12HourFormat(time) {
+                if (!time) return '';
+                return moment(time, 'HH:mm').format('h:mm A');
+            }
+
             // Function to update timings on the page
             function updateTimings(branchData) {
                 var daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
@@ -86,16 +96,22 @@
                 // Loop through each day of the week and update timings
                 $.each(daysOfWeek, function(index, day) {
                     var dayName = day.charAt(0).toUpperCase() + day.slice(1); // Capitalize first letter
+
+                    // Convert times to 12-hour format
+                    var fromTime = convertTo12HourFormat(branchData.timings[day + '_from']);
+                    var toTime = convertTo12HourFormat(branchData.timings[day + '_to']);
+
                     var timingsHtml = `
                         <div class="media align-items-center justify" style="padding: 0.5rem;">
                             <div class="media-body d-flex justify-content-between">
                                 <h6 class="text-muted">${dayName}</h6>
                                 <div class="fw-600 min-w-120 text-center">
-                                    ${branchData.timings[day + '_from'] || ''} - ${branchData.timings[day + '_to'] || ''}
+                                    ${fromTime} - ${toTime}
                                 </div>
                             </div>
                         </div>
                     `;
+
                     availabilityList.append(timingsHtml);
                 });
             }
