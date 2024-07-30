@@ -129,7 +129,8 @@
                                                         class="form-control with-gap"
                                                         id="yes"
                                                         value="Y"
-                                                        @if ($clinicDetails->clinic_insurance_available == 'Y') checked @endif
+                                                        @if($clinicDetails)
+                                                        @if ($clinicDetails->clinic_insurance_available == 'Y') checked @endif @endif
                                                     >
                                                     <label for="yes">Yes</label>
                                                     
@@ -139,7 +140,8 @@
                                                         class="form-control with-gap"
                                                         id="no"
                                                         value="N"
-                                                        @if ($clinicDetails->clinic_insurance_available == 'N') checked @endif
+                                                        @if($clinicDetails)
+                                                        @if ($clinicDetails->clinic_insurance_available == 'N') checked @endif @endif
                                                     >
                                                     <label for="no">No</label>
                                                     
