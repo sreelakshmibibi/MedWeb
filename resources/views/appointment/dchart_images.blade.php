@@ -351,6 +351,16 @@ $lower_teethImages = [
                                     return false; // Exit the loop once found
                                 }
                             });
+                             var treatment_plan_id = examination.treatment_plan_id;
+                            $('#treatment_plan_id').val(treatment_plan_id);
+
+                            // Loop through options to find the corresponding text and select it
+                            $('#treatment_plan_id option').each(function() {
+                                if ($(this).val() == treatment_plan_id) {
+                                    $(this).prop('selected', true);
+                                    return false; // Exit the loop once found
+                                }
+                            });
 
                             var treatment_status = examination.treatment_status;
                             $('#treatment_status').val(treatment_status);

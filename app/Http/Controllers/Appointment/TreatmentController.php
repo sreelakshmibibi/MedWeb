@@ -324,6 +324,7 @@ class TreatmentController extends Controller
                 'dental_examination',
                 'diagnosis',
                 'treatment_id',
+                'treatment_plan_id',
                 'remarks',
                 'palatal_condn',
                 'mesial_condn',
@@ -484,6 +485,11 @@ class TreatmentController extends Controller
         $toothExaminations = ToothExamination::with([
             'teeth:id,teeth_name,teeth_image',
             'treatment',
+            'treatmentPlan',
+            'toothScore:id,score',
+            'disease:id,name',
+            'xRayImages:id,tooth_examination_id,xray,status',
+           
         ])
             ->where('app_id', $appointment)
             ->where('patient_id', $patientId)

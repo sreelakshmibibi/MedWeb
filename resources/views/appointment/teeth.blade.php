@@ -194,10 +194,10 @@ use App\Models\Appointment;
                             </div> --}}
                             <div class="col-md-6 ">
                                 <div class="form-group">
-                                    <label class="form-label" for="treatment_id">Treatment Plan <span
+                                    <label class="form-label" for="treatment_plan_id">Treatment Plan <span
                                             class="text-danger">
                                             *</span></label>
-                                    <select class="form-select" id="plan_id" name="plan_id">
+                                    <select class="form-select" id="treatment_plan_id" name="treatment_plan_id">
                                         <option value="">Select a Plan</option>
                                         @foreach ($plans as $plan)
                                             <option value="<?= $plan->id ?>"><?= $plan->plan ?>

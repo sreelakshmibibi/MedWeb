@@ -51,6 +51,10 @@ class ToothExamination extends Model
     {
         return $this->belongsTo(TreatmentType::class, 'treatment_id', 'id');
     }
+    public function treatmentPlan()
+    {
+        return $this->belongsTo(TreatmentPlan::class, 'treatment_plan_id', 'id');
+    }
 
     public function toothScore()
     {

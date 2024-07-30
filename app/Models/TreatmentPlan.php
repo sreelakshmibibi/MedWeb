@@ -26,4 +26,9 @@ class TreatmentPlan extends Model
             $plan->updated_by = Auth::id(); // Set updated_by to current user's ID
         });
     }
+
+    public function toothExaminations()
+    {
+        return $this->hasMany(ToothExamination::class, 'treatment_plan_id', 'id');
+    }
 }

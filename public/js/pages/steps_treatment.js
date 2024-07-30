@@ -39,7 +39,7 @@ function getDentalTable(stepIndex) {
                 //alert('appId: ' + appId + ', patientId: ' + patientId);
 
                 $.ajax({
-                    url: treatmentShowRoute.replace(":appId", appId),
+                    url: treatmentShowChargeRoute.replace(":appId", appId),
                     type: "GET",
                     data: {
                         patient_id: patientId,
