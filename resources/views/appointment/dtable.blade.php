@@ -217,9 +217,9 @@ use Illuminate\Support\Facades\Session;
         Prescription
     </h5>
     <input type="checkbox" id="presc_checkbox" name="presc_checkbox" class="filled-in chk-col-success" />
+    <label for="presc_checkbox"></label>
     {{-- <input type="checkbox" id="presc_checkbox" name="presc_checkbox" class="filled-in chk-col-success"
         @if (isset($patientPrescriptions) && $patientPrescriptions->isNotEmpty()) checked @endif /> --}}
-    <label for="presc_checkbox"></label>
 </div>
 <hr class="my-15 ">
 <script>
@@ -459,9 +459,8 @@ use Illuminate\Support\Facades\Session;
         });
         $('#newTreatmentBtn').hide();
         $('#modal-teeth').modal('show');
-
-
     });
+
     $(document).on('click', '.btn-treat-edit', function() {
         var teethName = $(this).data('id');
         var appId = '<?= Session::get('appId') ?>';
@@ -689,9 +688,11 @@ use Illuminate\Support\Facades\Session;
         });
         $('#newTreatmentBtn').show();
         $('#modal-teeth').modal('show');
-
-
     });
+
+    //     $('.newTreatmentBtn').click(function() {
+    // $('#dentalTable').ajax.reload();
+    //     });
 
     $('#clinic_branch_id, #appdate').change(function() {
         var branchId = $('#clinic_branch_id').val();

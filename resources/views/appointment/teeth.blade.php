@@ -325,7 +325,8 @@ use App\Models\Appointment;
                         data-bs-dismiss="modal">Cancel</button>
                     <?php
                             if ($appAction == Appointment::AppOngoing) { ?>
-                    <button type="button" class="btn btn-success float-end" id="newTreatmentBtn">Save</button>
+                    <button type="button" class="btn btn-success float-end newTreatmentBtn"
+                        id="newTreatmentBtn">Save</button>
                     <?php } ?>
                 </div>
             </div>
