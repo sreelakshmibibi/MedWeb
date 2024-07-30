@@ -40,6 +40,7 @@
              <label class="form-label" for="date_of_birth">Date of Birth <span class="text-danger">
                      *</span></label>
              <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required>
+             <div id="dobError" class="invalid-feedback"></div>
          </div>
      </div>
      <div class="col-md-2">

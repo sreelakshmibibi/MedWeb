@@ -466,6 +466,45 @@
             });
         });
 
+        $('#date_of_birth').on('change', function() {
+                const dobValue = $(this).val();
+                if (!dobValue) {
+                    $('#dobError').text('Date of birth is required.');
+                    $(this).addClass('is-invalid');
+                    return;
+                }
+                
+                const dob = new Date(dobValue);
+                const today = new Date();
+                
+                // Ensure the date is not in the future
+                if (dob > today) {
+                    $('#dobError').text('Date of birth cannot be in the future.');
+                    $(this).addClass('is-invalid');
+                    $(this).val(''); // Clear the input
+                    return;
+                }
+                
+                // Ensure the user is at least 18 years old
+                const age = today.getFullYear() - dob.getFullYear();
+                const monthDifference = today.getMonth() - dob.getMonth();
+                const dayDifference = today.getDate() - dob.getDate();
+                
+                if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
+                    age--;
+                }
+                
+                if (age < 18) {
+                    $('#dobError').text('You must be at least 18 years old.');
+                    $(this).addClass('is-invalid');
+                    $(this).val(''); // Clear the input
+                } else {
+                    // Clear error message if valid
+                    $('#dobError').text('');
+                    $(this).removeClass('is-invalid');
+                }
+            });
+
         document.addEventListener("DOMContentLoaded", function() {
             var canvas = document.getElementById('profilePic');
             var ctx = canvas.getContext('2d');
@@ -483,6 +522,7 @@
                     img.src = photoUrl;
                 }
             }
+            
         });
     </script>
 

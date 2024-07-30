@@ -25,14 +25,14 @@ return new class extends Migration
             $table->foreignId('city_id')->constrained('cities'); 
             $table->foreignId('state_id')->constrained('states'); 
             $table->foreignId('country_id')->constrained('countries'); 
-            $table->integer('pincode')->nullable(); 
+            $table->string('pincode')->nullable(); 
             
             $table->text('com_address1')->nullable(); //com = communication
             $table->text('com_address2')->nullable(); 
             $table->foreignId('com_city_id')->constrained('cities')->nullable(); 
             $table->foreignId('com_state_id')->constrained('states')->nullable(); 
             $table->foreignId('com_country_id')->constrained('countries')->nullable(); 
-            $table->integer('com_pincode')->nullable(); 
+            $table->string('com_pincode')->nullable(); 
             
             $table->string('photo', 255)->nullable(); 
             $table->date('date_of_joining');

@@ -57,6 +57,7 @@ use App\Models\User;
                     *</span></label>
             <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required
                 value="{{ $staffProfile->date_of_birth }}">
+            <div id="dobError" class="invalid-feedback"></div>
         </div>
     </div>
     <div class="col-md-2">
