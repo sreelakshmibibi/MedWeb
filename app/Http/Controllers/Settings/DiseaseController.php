@@ -66,7 +66,7 @@ class DiseaseController extends Controller
             // Create a new department instance
             $disease = new Disease();
             $disease->icd_code = $request->input('icd_code');
-            $disease->name = $request->input('name');
+            $disease->name =  ucwords(strtolower($request->input('name')));
             $disease->description = $request->input('description');
             $disease->status = $request->input('status');
 
@@ -76,8 +76,6 @@ class DiseaseController extends Controller
                 return redirect()->back()->with('success', 'Disease created successfully');
             }
         } catch (\Exception $e) {
-            print_r($e->getMessage());
-            exit;
             return redirect()->back()->with('error', 'Failed to create disease: ' . $e->getMessage());
         }
 
@@ -114,7 +112,7 @@ class DiseaseController extends Controller
 
             // Update department fields based on form data
             $disease->icd_code = $request->edit_icd_code;
-            $disease->name = $request->edit_disease;
+            $disease->name =  ucwords(strtolower($request->edit_disease));
             $disease->description = $request->edit_description;
             $disease->status = $request->status;
 
