@@ -4,7 +4,7 @@ use App\Http\Controllers\Appointment\AppointmentController;
 use App\Http\Controllers\Appointment\TreatmentController;
 use App\Http\Controllers\Auth\StaffVerificationController;
 use App\Http\Controllers\HelperController;
-use App\Http\Controllers\InsuranceController;
+use App\Http\Controllers\Settings\InsuranceController;
 use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
 use App\Http\Controllers\Settings\ClinicBranchController;
