@@ -86,7 +86,31 @@
 
             let count = 1;
 
-
+            let selectedBranchIds = [];
+            // Function to update selected branch IDs
+            function updateSelectedBranchIds() {
+                selectedBranchIds = $('select.clinic_branch_select').map(function() {
+                    return $(this).val();
+                }).get();
+            }
+            // Function to populate options for a select element
+            function populateOptions($selectElement) {
+                $selectElement.empty(); // Clear existing options
+                // Add placeholder option
+                $selectElement.append(new Option('Select a Branch', ''));
+                // Populate options excluding selected ones
+                @foreach ($clinicBranches as $clinicBranch)
+                    <?php
+                    $clinicAddress = $clinicBranch->clinic_address;
+                    $clinicAddress = explode('<br>', $clinicBranch->clinic_address);
+                    $clinicAddress = implode(', ', $clinicAddress);
+                    $branch = $clinicAddress . ', ' . $clinicBranch->city->city . ', ' . $clinicBranch->state->state;
+                    ?>
+                    if (!selectedBranchIds.includes('{{ $clinicBranch->id }}')) {
+                        $selectElement.append(new Option('{{ $branch }}', '{{ $clinicBranch->id }}'));
+                    }
+                @endforeach
+            }
 
             // Event listener for Add Row button click
             $(document).on('click', '#buttonAddRow', function() {
@@ -94,18 +118,9 @@
                 let newRow = `<tr>
                     <td>${count}</td>
                     <td>
-                        <select class="select2" id="clinic_branch_id${count}" name="clinic_branch_id${count}" required
+                        <select class="form-control clinic_branch_select" id="clinic_branch_id${count}" name="clinic_branch_id${count}" required
                             data-placeholder="Select a Branch" style="width: 100%;">
-                            @foreach ($clinicBranches as $clinicBranch)
-                                <?php
-                                $clinicAddress = $clinicBranch->clinic_address;
-                                $clinicAddress = explode('<br>', $clinicBranch->clinic_address);
-                                $clinicAddress = implode(', ', $clinicAddress);
-                                $branch = $clinicAddress . ', ' . $clinicBranch->city->city . ', ' . $clinicBranch->state->state;
-                                ?>
-                                <option value="{{ $clinicBranch->id }}">
-                                    {{ $branch }}</option>
-                            @endforeach
+                           
                         </select>
                     </td>
                     <td>
@@ -157,12 +172,19 @@
                 </tr>`;
 
                 $('#tablebody').append(newRow);
+                let $newSelect = $(`#clinic_branch_id${count}`);
+                populateOptions($newSelect);
                 // Reinitialize Select2 on the newly added select element
                 $(`#clinic_branch_id${count}`).select2({
                     width: '100%',
                     placeholder: 'Select a Branch'
                 });
                 updateRowCount();
+                updateSelectedBranchIds();
+            });
+
+            $(document).on('change', 'select.clinic_branch_select', function() {
+                updateSelectedBranchIds();
             });
 
             // Event listener for Delete button click
@@ -432,10 +454,10 @@
                     $(this).addClass('is-invalid');
                     return;
                 }
-                
+
                 const dob = new Date(dobValue);
                 const today = new Date();
-                
+
                 // Ensure the date is not in the future
                 if (dob > today) {
                     $('#dobError').text('Date of birth cannot be in the future.');
@@ -443,16 +465,16 @@
                     $(this).val(''); // Clear the input
                     return;
                 }
-                
+
                 // Ensure the user is at least 18 years old
                 const age = today.getFullYear() - dob.getFullYear();
                 const monthDifference = today.getMonth() - dob.getMonth();
                 const dayDifference = today.getDate() - dob.getDate();
-                
+
                 if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
                     age--;
                 }
-                
+
                 if (age < 18) {
                     $('#dobError').text('You must be at least 18 years old.');
                     $(this).addClass('is-invalid');

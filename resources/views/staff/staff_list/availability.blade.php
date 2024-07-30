@@ -33,6 +33,7 @@
                     <td>
                         <select class="form-control clinic_branch_select" id="clinic_branch_id1"
                             name="clinic_branch_id1" required>
+                            <option value="">Select a Branch</option>
                             @foreach ($clinicBranches as $clinicBranch)
                                 <?php
                                 $clinicAddress = $clinicBranch->clinic_address;
