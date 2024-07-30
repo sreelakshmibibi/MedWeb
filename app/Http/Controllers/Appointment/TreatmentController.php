@@ -115,7 +115,9 @@ class TreatmentController extends Controller
         Session::put('doctorId', $appointment->doctor->id);
 
         $plans = TreatmentPlan::orderBy('plan', 'asc')->get();
-        $toothIds = ToothExamination::where('patient_id', $appointment->patient->patient_id);
+        $toothIds = ToothExamination::where('patient_id', $appointment->patient->patient_id)
+            ->select('tooth_id', 'anatomy_image')
+            ->get();
 
         if ($request->ajax()) {
             return DataTables::of($previousAppointments)

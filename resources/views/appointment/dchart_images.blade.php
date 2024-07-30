@@ -253,14 +253,24 @@ $lower_teethImages = [
         $('#xapp_id').val(appId);
         $('#xpatient_id').val(patientId);
 
-        var toothIds = {!! json_encode($toothIds->pluck('tooth_id')) !!};
+        var toothData = @json($toothIds); // Convert PHP array to JSON format
 
-        toothIds.forEach(function(toothId) {
+        toothData.forEach(function(tooth) {
+            var toothId = tooth.tooth_id;
+            var anatomyImage = tooth.anatomy_image;
+
             var divId = '#div' + toothId;
             $(divId).css({
                 'border': '1px solid yellowgreen',
-                'border-radius': '5px',
+                'border-radius': '5px'
             });
+            $(divId).addClass('treatment');
+            var teethId = '#' + toothId;
+            // var imgSrc = "{{ asset('') }}" + anatomyImage;
+            // Replace the file extension from .png to .svg
+            var svgImage = anatomyImage.replace(/\.png$/, '.svg');
+            var imgSrc = "{{ asset('') }}" + svgImage;
+            $(teethId).attr('src', imgSrc);
         });
 
         images.forEach(function(img) {
