@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Settings;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\InsuranceCompanyRequest;
 use App\Models\InsuranceCompany;
 use Illuminate\Http\Request;
@@ -81,8 +82,6 @@ class InsuranceController extends Controller
                 return redirect()->back()->with('success', 'Insurance created successfully');
             }
         } catch (\Exception $e) {
-            echo "<pre>"; print_r($e->getMessage());echo "</pre>";
-            exit;
             return redirect()->back()->with('error', 'Failed to add insurance company : ' . $e->getMessage());
         }
 
