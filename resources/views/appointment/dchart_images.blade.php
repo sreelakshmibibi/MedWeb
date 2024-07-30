@@ -252,6 +252,17 @@ $lower_teethImages = [
         $('#patient_id').val(patientId);
         $('#xapp_id').val(appId);
         $('#xpatient_id').val(patientId);
+
+        var toothIds = {!! json_encode($toothIds->pluck('tooth_id')) !!};
+
+        toothIds.forEach(function(toothId) {
+            var divId = '#div' + toothId;
+            $(divId).css({
+                'border': '1px solid yellowgreen',
+                'border-radius': '5px',
+            });
+        });
+
         images.forEach(function(img) {
 
             img.addEventListener('click', function() {
@@ -347,9 +358,10 @@ $lower_teethImages = [
 
                             if (palatal_condn !== null) {
                                 $("#Palatal").show();
-                                var dpartId = '#' + $('.dparts[title="Palatal"]')
-                                    .attr(
-                                        'id');
+                                // var dpartId = '#' + $('.dparts[title="Palatal"]')
+                                //     .attr(
+                                //         'id');
+                                var dpartId = $('.dparts[title="Palatal"]');
                                 $(dpartId).css({
                                     'background-color': 'red',
                                 });
@@ -368,9 +380,10 @@ $lower_teethImages = [
                             $('#mesial_condn').val(mesial_condn);
                             if (mesial_condn !== null) {
                                 $("#Mesial").show();
-                                var dpartId = '#' + $('.dparts[title="Mesial"]')
-                                    .attr(
-                                        'id');
+                                // var dpartId = '#' + $('.dparts[title="Mesial"]')
+                                //     .attr(
+                                //         'id');
+                                var dpartId = $('.dparts[title="Mesial"]');
                                 $(dpartId).css({
                                     'background-color': 'red',
                                 });
@@ -390,9 +403,10 @@ $lower_teethImages = [
 
                             if (distal_condn !== null) {
                                 $("#Distal").show();
-                                var dpartId = '#' + $('.dparts[title="Distal"]')
-                                    .attr(
-                                        'id');
+                                // var dpartId = '#' + $('.dparts[title="Distal"]')
+                                //     .attr(
+                                //         'id');
+                                var dpartId = $('.dparts[title="Distal"]');
                                 $(dpartId).css({
                                     'background-color': 'red',
                                 });
@@ -412,9 +426,10 @@ $lower_teethImages = [
 
                             if (buccal_condn !== null) {
                                 $("#Buccal").show();
-                                var dpartId = '#' + $('.dparts[title="Buccal"]')
-                                    .attr(
-                                        'id');
+                                // var dpartId = '#' + $('.dparts[title="Buccal"]')
+                                //     .attr(
+                                //         'id');
+                                var dpartId = $('.dparts[title="Buccal"]');
                                 $(dpartId).css({
                                     'background-color': 'red',
                                 });
@@ -434,9 +449,10 @@ $lower_teethImages = [
 
                             if (occulusal_condn !== null) {
                                 $("#Occulusal").show();
-                                var dpartId = '#' + $('.dparts[title="Occulusal"]')
-                                    .attr(
-                                        'id');
+                                // var dpartId = '#' + $('.dparts[title="Occulusal"]')
+                                //     .attr(
+                                //         'id');
+                                var dpartId = $('.dparts[title="Occulusal"]');
                                 $(dpartId).css({
                                     'background-color': 'red',
                                 });

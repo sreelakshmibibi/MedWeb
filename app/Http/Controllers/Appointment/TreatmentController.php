@@ -22,6 +22,7 @@ use App\Models\TreatmentComboOffer;
 use App\Models\TreatmentStatus;
 use App\Models\TreatmentType;
 use App\Models\XRayImage;
+use App\Models\TreatmentPlan;
 use App\Services\AnatomyService;
 use App\Services\AppointmentService;
 use App\Services\CommonService;
@@ -44,7 +45,7 @@ class TreatmentController extends Controller
     {
 
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])->find($id);
-        abort_if(! $appointment, 404);
+        abort_if(!$appointment, 404);
 
         if ($appointment->app_status != AppointmentStatus::COMPLETED) {
 
@@ -64,7 +65,7 @@ class TreatmentController extends Controller
         $previousAppointments = $appointmentService->getPreviousAppointments($id, $appointment->app_date, $appointment->patient->patient_id);
 
         //$patient = PatientProfile::find($id);
-        abort_if(! $patientProfile, 404);
+        abort_if(!$patientProfile, 404);
         $appointment = $patientProfile->lastAppointment;
         $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])
             ->where('clinic_status', 'Y')
@@ -88,7 +89,7 @@ class TreatmentController extends Controller
         $treatmentStatus = TreatmentStatus::all();
         $treatments = TreatmentType::where('status', 'Y')->get();
         $diseases = Disease::where('status', 'Y')->get();
-        $patientName = str_replace('<br>', ' ', $appointment->patient->first_name).' '.$appointment->patient->last_name;
+        $patientName = str_replace('<br>', ' ', $appointment->patient->first_name) . ' ' . $appointment->patient->last_name;
         $doctorName = str_replace('<br>', ' ', $appointment->doctor->name);
         $patientPrescriptions = Prescription::with([
             'medicine' => function ($query) {
@@ -113,6 +114,9 @@ class TreatmentController extends Controller
         Session::put('doctorName', $doctorName);
         Session::put('doctorId', $appointment->doctor->id);
 
+        $plans = TreatmentPlan::orderBy('plan', 'asc')->get();
+        $toothIds = ToothExamination::where('patient_id', $appointment->patient->patient_id);
+
         if ($request->ajax()) {
             return DataTables::of($previousAppointments)
                 ->addIndexColumn()
@@ -120,7 +124,7 @@ class TreatmentController extends Controller
                     return str_replace('<br>', ' ', $row->doctor->name);
                 })
                 ->addColumn('branch', function ($row) {
-                    if (! $row->branch) {
+                    if (!$row->branch) {
                         return '';
                     }
                     $address = implode(', ', explode('<br>', $row->branch->clinic_address));
@@ -189,7 +193,7 @@ class TreatmentController extends Controller
                 ->make(true);
         }
 
-        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases', 'previousAppointments', 'clinicBranches', 'appointmentTypes', 'workingDoctors', 'medicines', 'dosages', 'patientPrescriptions', 'appAction', 'doctorDiscount', 'latestFollowup'));
+        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases', 'previousAppointments', 'clinicBranches', 'appointmentTypes', 'workingDoctors', 'medicines', 'dosages', 'patientPrescriptions', 'appAction', 'doctorDiscount', 'latestFollowup', 'plans', 'toothIds'));
 
     }
 
@@ -286,7 +290,7 @@ class TreatmentController extends Controller
                     ->get();
             }
 
-            if (! empty($checkExists)) {
+            if (!empty($checkExists)) {
                 foreach ($checkExists as $check) {
                     $check->status = 'N';
                     $check->save();
@@ -334,7 +338,7 @@ class TreatmentController extends Controller
             if ($request->hasFile('xray')) {
                 $toothExaminationEdit->xray = 1;
                 foreach ($request->file('xray') as $file) {
-                    $xrayPath = $file->store('x-rays/'.$request->patient_id.'/'.$request->tooth_id, 'public');
+                    $xrayPath = $file->store('x-rays/' . $request->patient_id . '/' . $request->tooth_id, 'public');
                     $xrays = new XRayImage();
                     $xrays->tooth_examination_id = $toothExamination->id;
                     $xrays->xray = $xrayPath;
@@ -346,7 +350,7 @@ class TreatmentController extends Controller
                 foreach ($checkExists as $check) {
                     $xraysExists = XRayImage::where('tooth_examination_id', $check->id)->get();
                     $toothExaminationEdit->xray = 1;
-                    if (! $xraysExists->isEmpty()) {
+                    if (!$xraysExists->isEmpty()) {
                         // Update XRayImage records associated with this $check
                         XRayImage::where('tooth_examination_id', $check->id)
                             ->update([
@@ -360,11 +364,11 @@ class TreatmentController extends Controller
             if ($toothExaminationEdit->save()) {
                 DB::commit();
 
-                return response()->json(['success' => 'Tooth examination for teeth no '.$toothId.' added']);
+                return response()->json(['success' => 'Tooth examination for teeth no ' . $toothId . ' added']);
             } else {
                 DB::rollback();
 
-                return response()->json(['error' => 'Failed adding Tooth examination for teeth no '.$toothId]);
+                return response()->json(['error' => 'Failed adding Tooth examination for teeth no ' . $toothId]);
             }
 
         } catch (Exception $ex) {
@@ -373,7 +377,7 @@ class TreatmentController extends Controller
             print_r($ex->getMessage());
             echo '</pre>';
 
-            return response()->json(['error' => 'Failed adding Tooth examination for teeth no '.$toothId]);
+            return response()->json(['error' => 'Failed adding Tooth examination for teeth no ' . $toothId]);
         }
     }
 
@@ -384,6 +388,7 @@ class TreatmentController extends Controller
     {
         // Retrieve patient_id from the query parameters
         $patientId = $request->query('patient_id');
+        echo $patientId;
         // Fetch ToothExamination data with related teeth and treatment details
         $toothExaminations = ToothExamination::with([
             'teeth:id,teeth_name,teeth_image',
@@ -502,9 +507,11 @@ class TreatmentController extends Controller
             $discountCost = $treatmentCost;
             $currentDate = date('Y-m-d');
 
-            if ($discount_from !== null && $discount_to !== null &&
+            if (
+                $discount_from !== null && $discount_to !== null &&
                 $currentDate >= $discount_from && $currentDate <= $discount_to &&
-                $discount_percentage !== null) {
+                $discount_percentage !== null
+            ) {
                 $discountCost = $treatmentCost * (1 - $discount_percentage / 100);
             }
 
@@ -517,7 +524,7 @@ class TreatmentController extends Controller
             if ($toothExamination->treatment->comboOffer) {
                 $comboOfferId = $toothExamination->treatment->comboOffer->id;
                 // Fetch combo offer details if not already fetched
-                if (! isset($comboOffersResult[$comboOfferId])) {
+                if (!isset($comboOffersResult[$comboOfferId])) {
                     $comboOffersResult[$comboOfferId] = TreatmentComboOffer::find($comboOfferId);
                 }
             } else {
@@ -589,7 +596,7 @@ class TreatmentController extends Controller
 
                     if ($appointmentWithSameTime && $appointmentWithSameTime->app_time != $appTime) {
                         return response()->json([
-                            'error' => 'An appointment already exists for you at '.$appointmentWithSameTime->app_time.' on this date with the same doctor.',
+                            'error' => 'An appointment already exists for you at ' . $appointmentWithSameTime->app_time . ' on this date with the same doctor.',
                         ], 422);
                     }
 
@@ -742,7 +749,7 @@ class TreatmentController extends Controller
 
             //Log::info('$error: '.$e->getMessage());
             //return redirect()->back()->with('error', 'Failed to create appointment: '.$e->getMessage());
-            return response()->json(['error' => 'Failed to add treatment details: '.$e->getMessage()], 422);
+            return response()->json(['error' => 'Failed to add treatment details: ' . $e->getMessage()], 422);
         }
 
     }

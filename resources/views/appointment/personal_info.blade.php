@@ -6,8 +6,8 @@ $commonService = new CommonService();
 ?>
 <input type="hidden" id="visitcount" name="visitcount" value="{{ $appointment->patient->visit_count }}">
 <input type="hidden" id="isAdmin" name="isAdmin" value="{{ Auth::user()->is_admin }}">
-<div class="row ">
-    <div class="col-xl-8 col-12">
+<div class="row px-2">
+    <div class="col-xl-8 col-12 ps-0">
         <div class="box flex-grow-1 mb-3" style="border-radius: 0px; /*height: 364px;*/">
             <div class="box-body bb-1" style="border-radius: 0px; ">
                 <div class="d-flex align-items-center">

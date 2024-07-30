@@ -111,8 +111,7 @@ use App\Models\Appointment;
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="hpi">HPI <span class="text-danger">
-                                            *</span></label>
+                                    <label class="form-label" for="hpi">HPI</label>
                                     <input type="text" class="form-control" id="hpi" name="hpi"
                                         placeholder="HPI">
                                     <div id="hpiError" class="invalid-feedback"></div>
@@ -186,28 +185,36 @@ use App\Models\Appointment;
                                     <div id="xrayError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-6 ">
+                            {{-- <div class="col-md-6 ">
                                 <div class="form-group">
                                     <label class="form-label" for="remarks">Remarks</label>
                                     <textarea class="form-control" id="remarks" name="remarks" rows="1" placeholder="Remarks if any"></textarea>
                                     <div id="remarksError" class="invalid-feedback"></div>
                                 </div>
+                            </div> --}}
+                            <div class="col-md-6 ">
+                                <div class="form-group">
+                                    <label class="form-label" for="treatment_id">Treatment Plan <span
+                                            class="text-danger">
+                                            *</span></label>
+                                    <select class="form-select" id="plan_id" name="plan_id">
+                                        <option value="">Select a Plan</option>
+                                        @foreach ($plans as $plan)
+                                            <option value="<?= $plan->id ?>"><?= $plan->plan ?>
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div id="planError" class="invalid-feedback"></div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="d-none row">
-                            {{-- <div class="col-md-6">
-                                <label class="form-label" for="xray">X-Ray <span class="text-danger">
-                                        <input type="file" class="form-control" id="xray" type="file"
-                                            name="xray[]" multiple>
-                            </div> --}}
+                        <div class="row">
                             <div class="col-md-12 ">
                                 <div class="form-group">
                                     <label class="form-label" for="remarks">Remarks</label>
-                                    <textarea class="form-control" id="remarks" name="remarks">remarks if any</textarea>
+                                    <textarea class="form-control" id="remarks" name="remarks" rows="1" placeholder="Remarks if any"></textarea>
                                     <div id="remarksError" class="invalid-feedback"></div>
-                                    {{-- <input type="text" class="form-control" id="remarks" name="remarks"
-                                        placeholder="remarks"> --}}
                                 </div>
                             </div>
                         </div>
@@ -223,7 +230,6 @@ use App\Models\Appointment;
                                             <option value="<?= $surfaceCondition->id ?>">
                                                 <?= $surfaceCondition->condition ?></option>
                                         @endforeach
-
                                     </select>
                                     <div id="buccal_condnError" class="invalid-feedback"></div>
                                 </div>
@@ -238,7 +244,6 @@ use App\Models\Appointment;
                                             <option value="<?= $surfaceCondition->id ?>">
                                                 <?= $surfaceCondition->condition ?></option>
                                         @endforeach
-
                                     </select>
                                     <div id="palatal_condnError" class="invalid-feedback"></div>
                                 </div>
@@ -295,7 +300,6 @@ use App\Models\Appointment;
                                             <option value="<?= $surfaceCondition->id ?>">
                                                 <?= $surfaceCondition->condition ?></option>
                                         @endforeach
-
                                     </select>
                                     <div id="lingual_condnError" class="invalid-feedback"></div>
                                 </div>
@@ -309,29 +313,13 @@ use App\Models\Appointment;
                                             <option value="<?= $surfaceCondition->id ?>">
                                                 <?= $surfaceCondition->condition ?></option>
                                         @endforeach
-
                                     </select>
                                     <div id="labial_condnError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            {{-- <div class="col-md-3 ">
-                                <div class="form-group">
-                                    <label class="form-label" for="treatment_status">Treatment Status <span
-                                            class="text-danger">
-                                            *</span></label>
-                                    <select class="form-select" id="treatment_status" name="treatment_status">
-                                        <option value="">Select Status</option>
-                                        @foreach ($treatmentStatus as $status)
-                                            <option value="<?= $status->id ?>"><?= $status->status ?></option>
-                                        @endforeach
-                                    </select>
-                                    <div id="treatmentStatusError" class="invalid-feedback"></div>
-                                </div>
-                            </div> --}}
                         </div>
                     </div>
                 </div>
-
                 <div class="modal-footer modal-footer-uniform">
                     <button type="button" class="btn btn-danger closeToothBtn" id="closeToothBtn"
                         data-bs-dismiss="modal">Cancel</button>
@@ -449,6 +437,11 @@ use App\Models\Appointment;
 
         // Reset form and errors on modal close
         $('#modal-teeth').on('hidden.bs.modal', function() {
+            $('.dparts').css({
+                'background-color': 'white',
+            });
+            $('.dparts').removeClass('red');
+
             toothdivid = '#div' + $('#tooth_id').val();
             if (!$(toothdivid).hasClass('completed')) {
                 $(toothdivid).css({
@@ -462,10 +455,6 @@ use App\Models\Appointment;
             // $('.tooth').css({
             //     'border': 'none',
             // });
-            $('.dparts').css({
-                'background-color': 'white',
-            });
-            $('.dparts').removeClass('red');
 
             if ($('#checkbox_all').is(':checked')) {
                 $('#checkbox_all').prop('checked', false);
