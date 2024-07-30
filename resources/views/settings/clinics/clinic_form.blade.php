@@ -129,7 +129,7 @@
             var clinicId = $(this).data('id');
             $('#edit_clinic_id').val(clinicId); // Set department ID in the hidden input
             $.ajax({
-                url: '{{ url('clinic') }}' + "/" + clinicId + "/edit",
+                url: '{{ url("clinic") }}' + "/" + clinicId + "/edit",
                 method: 'GET',
                 success: function(response) {
                     $('#edit_clinic_id').val(response.id);
@@ -150,7 +150,7 @@
                     $('#edit_clinic_pincode').val(response.pincode);
                     // $('#edit_clinic_logo').val(response.clinic_logo);
                     if (response.clinic_logo) {
-                        var logoUrl = '{{ asset('storage/') }}/' + response.clinic_logo;
+                        var logoUrl = '{{ asset("storage/") }}/' + response.clinic_logo;
                         console.log(logoUrl);
                         $('#currentClinicLogoImg').attr('src', logoUrl);
                         $('#currentClinicLogoImg').show(); // Show the image element
@@ -228,7 +228,7 @@
     function loadStates(countryId) {
         if (countryId) {
             $.ajax({
-                url: '{{ route('get.states', '') }}' + '/' + countryId,
+                url: '{{ route("get.states", "") }}' + '/' + countryId,
                 type: "GET",
                 dataType: "json",
                 success: function(data) {
@@ -251,7 +251,7 @@
     function loadCitiesEdit(stateId, cityId) {
         if (stateId) {
             $.ajax({
-                url: '{{ route('get.cities', '') }}' + '/' + stateId,
+                url: '{{ route("get.cities", "") }}' + '/' + stateId,
                 type: "GET",
                 dataType: "json",
                 success: function(data) {
