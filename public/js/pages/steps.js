@@ -31,6 +31,8 @@ function handleAvailabilityStep(role) {
             $("#staffform").steps("remove", "Availability");
             availabilityStepAdded = false; // Reset the flag
 
+            $(".clinic_branch_select").select2("destroy");
+
             // Remove the tab title and its content from DOM
             $("#staffform > .content > .body")
                 .find(".content > .body")

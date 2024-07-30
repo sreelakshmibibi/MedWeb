@@ -250,7 +250,7 @@
                     $('.doctorFields input').attr('required', true);
                     $('.otherFields select').attr('required', false);
                     $('.nurseFields input').attr('required', false);
-                } else  if ($(this).val() && $(this).val().includes('3')) {
+                } else if ($(this).val() && $(this).val().includes('4')) {
                     $('.doctorFields').hide();
                     $('.otherFields').show();
                     $('.nurseFields').show();
