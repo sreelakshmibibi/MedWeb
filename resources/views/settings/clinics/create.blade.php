@@ -166,6 +166,7 @@
 
 <script>
     $(function() {
+        var formSubmitting = false;//flag to prevent multiple submissions        
         var initialCountryId = $('#clinic_country').val(); // Assuming India is selected initially
         loadStates(initialCountryId);
 
@@ -228,6 +229,11 @@
 
         // Function to handle form submission
         $('#saveClinicBtn').click(function(event) {
+            // Prevent multiple submissions
+            if (formSubmitting) {
+                return;
+            }
+            formSubmitting = true;
             // Reset previous error messages
             resetErrors();
             event.preventDefault(); // Prevent default form submission
@@ -272,7 +278,7 @@
                         //     .reload(); // Optionally, you can reload or update the table here
                         table.ajax.reload();
                         reloadbranch();
-
+                        formSubmitting = false;
                     },
                     error: function(xhr) {
                         // Reset previous errors
