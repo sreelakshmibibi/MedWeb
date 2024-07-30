@@ -121,8 +121,8 @@ class StaffListController extends Controller
                 $user->password = Hash::make($password);
                 $staffProfile = new StaffProfile();
             }
-            $staffName = $request->title . "" . $request->firstname . " " . $request->lastname;
-            $user->name = $request->title . "<br> " . $request->firstname . "<br>" . $request->lastname;
+            $staffName = $request->title . "" . ucwords(strtolower($request->firstname)) . " " . ucwords(strtolower($request->lastname));
+            $user->name = $request->title . "<br> " . ucwords(strtolower($request->firstname)) . "<br>" . ucwords(strtolower($request->lastname));
             $user->email = $request->email;
             $roles = [
                 User::IS_ADMIN => false,
@@ -316,7 +316,7 @@ class StaffListController extends Controller
             return DataTables::of($appointments)
                 ->addIndexColumn()
                 ->addColumn('name', function ($row) {
-                    return str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name);
+                    return str_replace("<br>", " ",  ucwords(strtolower($row->patient->first_name)) . " " .  ucwords(strtolower($row->patient->last_name)));
                 })
                 ->addColumn('branch', function ($row) {
                     if (!$row->branch) {
