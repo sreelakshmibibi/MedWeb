@@ -340,8 +340,11 @@
                             // Scroll to the top of the modal to show the first error
                             $('#modal-right .modal-body').scrollTop(0);
                         }
+                        formSubmitting = false;
                     }
                 });
+            } else {
+                formSubmitting = false;
             }
         });
 
@@ -349,6 +352,7 @@
         $('#modal-right').on('hidden.bs.modal', function() {
             $('#createClinicForm').trigger('reset');
             resetErrors();
+            formSubmitting = false; // Reset the flag
         });
 
     });
