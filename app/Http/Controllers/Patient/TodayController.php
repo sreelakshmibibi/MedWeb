@@ -4,13 +4,18 @@ namespace App\Http\Controllers\Patient;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Patient\TodayRequest;
+use App\Models\Appointment;
+use App\Models\AppointmentStatus;
+use App\Models\AppointmentType;
 use App\Models\PatientProfile;
 use App\Models\Department;
+use App\Models\StaffProfile;
 use App\Models\User;
+use DateTime;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
-
-
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Yajra\DataTables\DataTables as DataTables;
 
 class TodayController extends Controller
@@ -23,19 +28,72 @@ class TodayController extends Controller
 
         if ($request->ajax()) {
 
-            $patients = PatientProfile::query();
-            return DataTables::of($patients)
+            $selectedDate = date('Y-m-d');
+
+            // Example: Fetch data from your model based on selected date
+            $appointments = Appointment::whereDate('app_date', $selectedDate);
+            if (!Auth::user()->is_admin) {
+                $appointments =  $appointments->where('doctor_id', Auth::user()->id);
+            } 
+            $appointments =  $appointments->with(['patient', 'doctor', 'branch'])
+                ->orderBy('token_no', 'ASC')
+                ->get();
+            return DataTables::of($appointments)
                 ->addIndexColumn()
+                ->addColumn('name', function ($row) {
+                    // return str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name);
+                    // $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
+                    $name = str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name);
+                    // $name1 = "<a href='" . route('treatment', $row->id) . "' class='waves-effect waves-light' title='open treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name) . "' >" . $name . "</i></a>";
+                    return $name;
+                })
+                ->addColumn('doctor', function ($row) {
+                    return str_replace("<br>", " ", $row->doctor->name);
+                })
+                ->addColumn('age', function ($row) {
+                    $dob = new DateTime($row->patient->date_of_birth); // Create a DateTime object from the DOB
+                    $now = new DateTime(); // Current date and time
+                    $interval = $now->diff($dob); // Difference between current date and DOB
+                    return $interval->y;
+                })
+                
+                ->addColumn('phone', function ($row) {
+                    // return str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name);
+                    // $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
+                    $phone = $row->patient->phone;
+                    // $name1 = "<a href='" . route('treatment', $row->id) . "' class='waves-effect waves-light' title='open treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name) . "' >" . $name . "</i></a>";
+                    return $phone;
+                })
+                ->addColumn('app_type', function ($row) {
+                    return $row->app_type == AppointmentType::NEW ? AppointmentType::NEW_WORDS :
+                        ($row->app_type == AppointmentType::FOLLOWUP ? AppointmentType::FOLLOWUP_WORDS : '');
+                })
+                ->addColumn('status', function ($row) {
+                    $statusMap = [
+                        AppointmentStatus::SCHEDULED => 'badge-success',
+                        AppointmentStatus::WAITING => 'badge-warning',
+                        AppointmentStatus::UNAVAILABLE => 'badge-warning-light',
+                        AppointmentStatus::CANCELLED => 'badge-danger',
+                        AppointmentStatus::COMPLETED => 'badge-success-light',
+                        AppointmentStatus::BILLING => 'badge-primary',
+                        AppointmentStatus::PROCEDURE => 'badge-secondary',
+                        AppointmentStatus::MISSED => 'badge-danger-light',
+                        AppointmentStatus::RESCHEDULED => 'badge-info',
+                    ];
+                    $btnClass = isset($statusMap[$row->app_status]) ? $statusMap[$row->app_status] : '';
+                    return "<span class='btn d-block btn-xs badge {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . "</span>";
+                })
+                
                 ->addColumn('action', function ($row) {
-
-                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
-                        data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
-                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
-                        <i class="fa fa-trash"></i></button>';
-
+                    $btn = null;
+                    if ($row->app_status != AppointmentStatus::RESCHEDULED && $row->app_status != AppointmentStatus::CANCELLED) {
+                        $btn = "<a href='" . route('treatment', $row->id) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='{$row->id}' ><i class='fa-solid fa-eye'></i></a>";
+                    } else {
+                        $btn = "";
+                    }
                     return $btn;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'status'])
                 ->make(true);
         }
 
@@ -45,9 +103,12 @@ class TodayController extends Controller
     public function getTotal()
     {
         // Perform logic to calculate or retrieve the total
-        $total = 1000; // Replace with your actual logic to get the total
-
-        return response()->json(['total' => $total]);
+        $total = PatientProfile::where('status', 'Y')->count(); // Replace with your actual logic to get the total
+        $totalStaff = StaffProfile::where('status', 'Y')->count();
+        $totalDoctor = StaffProfile::where('status', 'Y')->whereNot('license_number', NULL )->count();
+        $totalOthers = $totalStaff - $totalDoctor;
+       
+        return response()->json(['total' => $total, 'totalStaff' => $totalStaff, 'totalDoctor' => $totalDoctor, 'totalOthers' => $totalOthers]);
     }
 
     /**

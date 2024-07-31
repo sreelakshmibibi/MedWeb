@@ -30,6 +30,7 @@
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
     <link rel="stylesheet" href="{{ asset('css/tooth_style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
 </head>
 
 <body class="layout-top-nav dark-skin theme-primary fixed">
@@ -105,6 +106,8 @@
     <script src="{{ asset('js/pages/patient-details.js') }}"></script>
 
     <script src="{{ asset('js/pages/slider.js') }}"></script>
+
+    <script src="{{ asset('assets/vendor_components/dropzone/dropzone.js') }}"></script>
 
     <!-- Include scripts section -->
     @yield('scripts')

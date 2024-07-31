@@ -59,17 +59,17 @@
 
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6" for="branch">Is main branch?</label>
-                            <input name="branch_active" type="radio" class="form-control with-gap" id="yes"
+                            <input name="branch_active" type="radio" class="form-control with-gap" id="branch_yes"
                                 value="Y" checked>
-                            <label for="yes">Yes</label>
-                            <input name="branch_active" type="radio" class="form-control with-gap" id="no"
+                            <label for="branch_yes">Yes</label>
+                            <input name="branch_active" type="radio" class="form-control with-gap" id="branch_no"
                                 value="N">
-                            <label for="no">No</label>
+                            <label for="branch_no">No</label>
                             <div id="clinicBranchError" class="invalid-feedback"></div>
                         </div>
 
                         <div class="form-group mt-2">
-                            <label class="form-label col-md-6" for="branch">Is medicine provided?</label>
+                            <label class="form-label col-md-6" for="medicine">Is medicine provided?</label>
                             <input name="is_medicine_provided" type="radio" class="form-control with-gap"
                                 id="medicine_yes" value="Y" checked>
                             <label for="medicine_yes">Yes</label>
@@ -166,6 +166,7 @@
 
 <script>
     $(function() {
+        var formSubmitting = false;//flag to prevent multiple submissions        
         var initialCountryId = $('#clinic_country').val(); // Assuming India is selected initially
         loadStates(initialCountryId);
 
@@ -185,7 +186,7 @@
         function loadStates(countryId) {
             if (countryId) {
                 $.ajax({
-                    url: '{{ route('get.states', '') }}' + '/' + countryId,
+                    url: '{{ route("get.states", "") }}' + '/' + countryId,
                     type: "GET",
                     dataType: "json",
                     success: function(data) {
@@ -208,7 +209,7 @@
         function loadCities(stateId) {
             if (stateId) {
                 $.ajax({
-                    url: '{{ route('get.cities', '') }}' + '/' + stateId,
+                    url: '{{ route("get.cities", "") }}' + '/' + stateId,
                     type: "GET",
                     dataType: "json",
                     success: function(data) {
@@ -228,6 +229,11 @@
 
         // Function to handle form submission
         $('#saveClinicBtn').click(function(event) {
+            // Prevent multiple submissions
+            if (formSubmitting) {
+                return;
+            }
+            formSubmitting = true;
             // Reset previous error messages
             resetErrors();
             event.preventDefault(); // Prevent default form submission
@@ -272,7 +278,7 @@
                         //     .reload(); // Optionally, you can reload or update the table here
                         table.ajax.reload();
                         reloadbranch();
-
+                        formSubmitting = false;
                     },
                     error: function(xhr) {
                         // Reset previous errors
@@ -334,8 +340,11 @@
                             // Scroll to the top of the modal to show the first error
                             $('#modal-right .modal-body').scrollTop(0);
                         }
+                        formSubmitting = false;
                     }
                 });
+            } else {
+                formSubmitting = false;
             }
         });
 
@@ -343,6 +352,7 @@
         $('#modal-right').on('hidden.bs.modal', function() {
             $('#createClinicForm').trigger('reset');
             resetErrors();
+            formSubmitting = false; // Reset the flag
         });
 
     });

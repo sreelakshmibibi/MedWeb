@@ -1,6 +1,6 @@
 <!--qualification-->
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="form-group">
             <label class="form-label" for="qualification">Qualification <span class="text-danger">
                     *</span></label>
@@ -8,15 +8,15 @@
                 required value="{{ $staffProfile->qualification }}">
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="form-group">
             <label class="form-label" for="years_of_experience">Experience <span class="text-danger">
                     *</span></label>
-            <input type="text" class="form-control" id="years_of_experience" name="years_of_experience" placeholder="experience"
-                required value="{{ $staffProfile->years_of_experience }}">
+            <input type="text" class="form-control" id="years_of_experience" name="years_of_experience"
+                placeholder="experience" required value="{{ $staffProfile->years_of_experience }}">
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="form-group">
             <label class="form-label" for="department">Department <span class="text-danger">
                     *</span></label>
@@ -31,10 +31,7 @@
             </select>
         </div>
     </div>
-</div>
-
-<div class="row">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="form-group">
             <label class="form-label" for="designation">Designation <span class="text-danger">
                     *</span></label>
@@ -42,7 +39,26 @@
                 required value="{{ $staffProfile->designation }}">
         </div>
     </div>
-    <div class="col-md-4">
+</div>
+
+<div class="row">
+    <div class="col-md-3 doctorFields" style="display:none">
+        <div class="form-group">
+            <label class="form-label" for="specialization">Specialization <span class="text-danger">
+                    *</span></label>
+            <input type="text" class="form-control" id="specialization" name="specialization"
+                placeholder="Specialization" value="{{ $staffProfile->specialization }}">
+        </div>
+    </div>
+    <div class="col-md-3 doctorFields" style="display:none">
+        <div class="form-group">
+            <label class="form-label" for="subspecialty">Subspeciality <span class="text-danger">
+                    *</span></label>
+            <input type="text" class="form-control" id="subspecialty" name="subspecialty" placeholder="Subspeciality"
+                value="{{ $staffProfile->subspecialty }}">
+        </div>
+    </div>
+    <div class="col-md-3">
         <div class="form-group">
             <label class="form-label" for="date_of_joining">Date of Joining <span class="text-danger">
                     *</span></label>
@@ -51,7 +67,7 @@
 
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="form-group">
             <label class="form-label" for="date_of_relieving">Date of Relieving</label>
             <input class="form-control" type="date" id="date_of_relieving" name="date_of_relieving"
@@ -59,41 +75,7 @@
 
         </div>
     </div>
-</div>
-
-<!--for doctors-->
-<div class="row doctorFields" style="<?php if ($userDetails->is_doctor == 0) {
-    echo 'display: none';
-} ?>">
-    <div class="col-md-4">
-        <div class="form-group">
-            <label class="form-label" for="specialization">Specialization <span class="text-danger">
-                    *</span></label>
-            <input type="text" class="form-control" id="specialization" name="specialization"
-                placeholder="Specialization" value="{{ $staffProfile->specialization }}">
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="form-group">
-            <label class="form-label" for="subspecialty">Subspeciality <span class="text-danger">
-                    *</span></label>
-            <input type="text" class="form-control" id="subspecialty" name="subspecialty" placeholder="Subspeciality"
-                value="{{ $staffProfile->subspecialty }}">
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="form-group">
-            <label class="form-label" for="license_number">Licence <span class="text-danger">
-                    *</span></label>
-            <input type="text" class="form-control" id="license_number" name="license_number"
-                placeholder="Council No." value="{{ $staffProfile->license_number }}">
-        </div>
-    </div>
-</div>
-
-<!--for others-->
-<div class="row otherFields" <?php if($staffProfile->is_doctor) { ?>style="display: none;" <?php } ?>">
-    <div class="col-md-4">
+    <div class="col-md-3 otherFields" style="display:none">
         <div class="form-group">
             <label class="form-label" for="specialization">Branch <span class="text-danger">
                     *</span></label>
@@ -114,5 +96,32 @@
             </select>
         </div>
     </div>
+    <div class="col-md-3 nurseFields" style="display:none">
+        <div class="form-group">
+            <label class="form-label" for="license_number_nurse">Licence <span class="text-danger">
+                    *</span></label>
+            <input type="text" class="form-control" id="license_number_nurse" name="license_number_nurse"
+                placeholder="Nursing Council No." value="{{ $staffProfile->license_number }}">
+        </div>
+    </div>
+</div>
 
+<!--for doctors-->
+<div class="row doctorFields" style="display:none">
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label" for="license_number">Licence <span class="text-danger">
+                    *</span></label>
+            <input type="text" class="form-control" id="license_number" name="license_number"
+                placeholder="Council No." value="{{ $staffProfile->license_number }}">
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label" for="consultation_fees">Consultation Fees<span class="text-danger">
+                    *</span></label>
+            <input type="text" class="form-control" id="consultation_fees" name="consultation_fees"
+                placeholder="Fees" value="{{ $staffProfile->consultation_fees }}">
+        </div>
+    </div>
 </div>

@@ -23,6 +23,10 @@ class ClinicBasicDetailRequest extends FormRequest
     {
         return [
             'clinic_name' => 'required|string|max:255',
+            'insurance' => 'required|string|max:255',
+            'consultation_fees' => 'required|integer|max:999',
+            'patient_registration_fees' => 'required|integer|max:999',
+            'consultation_fees_frequency' => 'required|integer|max:30',
             'clinic_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'clinic_website' => 'nullable|url|max:255',
          

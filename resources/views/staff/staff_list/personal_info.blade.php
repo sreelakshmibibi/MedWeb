@@ -40,6 +40,7 @@
              <label class="form-label" for="date_of_birth">Date of Birth <span class="text-danger">
                      *</span></label>
              <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required>
+             <div id="dobError" class="invalid-feedback"></div>
          </div>
      </div>
      <div class="col-md-2">
@@ -150,7 +151,7 @@
          <input type="checkbox" id="add_checkbox" name="add_checkbox" class="filled-in chk-col-success" />
          <label for="add_checkbox">Same as Residential Address</label>
      </div>
-     <div class="row" id="communicationAddress">
+     <div class="row px-0 mx-0" id="communicationAddress">
          <div class="form-group col-md-2">
              <input type="text" class="form-control " id="com_address1" name="com_address1"
                  placeholder="Adress line 1" required>

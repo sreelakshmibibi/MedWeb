@@ -20,7 +20,7 @@
 
             <section class="content">
                 <div class="box">
-                    <div class="box-body wizard-content">
+                    <div class="box-body wizard-content px-2 pb-0">
                         <form method="post" class="validation-wizard wizard-circle" id="staffform"
                             action="{{ route('staff.staff_list.store') }}" enctype="multipart/form-data">
                             @csrf
@@ -55,6 +55,9 @@
         $(document).ready(function() {
             $("#staffform .actions ul li:last-child a").addClass("bg-success btn btn-success");
 
+            var today = new Date().toISOString().split('T')[0];
+            document.getElementById('date_of_joining').setAttribute('min', today);
+
             var input = document.getElementById('profile_photo');
             var canvas = document.getElementById('logoCanvas');
             var ctx = canvas.getContext('2d');
@@ -83,7 +86,31 @@
 
             let count = 1;
 
-
+            let selectedBranchIds = [];
+            // Function to update selected branch IDs
+            function updateSelectedBranchIds() {
+                selectedBranchIds = $('select.clinic_branch_select').map(function() {
+                    return $(this).val();
+                }).get();
+            }
+            // Function to populate options for a select element
+            function populateOptions($selectElement) {
+                $selectElement.empty(); // Clear existing options
+                // Add placeholder option
+                $selectElement.append(new Option('Select a Branch', ''));
+                // Populate options excluding selected ones
+                @foreach ($clinicBranches as $clinicBranch)
+                    <?php
+                    $clinicAddress = $clinicBranch->clinic_address;
+                    $clinicAddress = explode('<br>', $clinicBranch->clinic_address);
+                    $clinicAddress = implode(', ', $clinicAddress);
+                    $branch = $clinicAddress . ', ' . $clinicBranch->city->city . ', ' . $clinicBranch->state->state;
+                    ?>
+                    if (!selectedBranchIds.includes('{{ $clinicBranch->id }}')) {
+                        $selectElement.append(new Option('{{ $branch }}', '{{ $clinicBranch->id }}'));
+                    }
+                @endforeach
+            }
 
             // Event listener for Add Row button click
             $(document).on('click', '#buttonAddRow', function() {
@@ -91,18 +118,9 @@
                 let newRow = `<tr>
                     <td>${count}</td>
                     <td>
-                        <select class="select2" id="clinic_branch_id${count}" name="clinic_branch_id${count}" required
+                        <select class="form-control clinic_branch_select" id="clinic_branch_id${count}" name="clinic_branch_id${count}" required
                             data-placeholder="Select a Branch" style="width: 100%;">
-                            @foreach ($clinicBranches as $clinicBranch)
-                                <?php
-                                $clinicAddress = $clinicBranch->clinic_address;
-                                $clinicAddress = explode('<br>', $clinicBranch->clinic_address);
-                                $clinicAddress = implode(', ', $clinicAddress);
-                                $branch = $clinicAddress . ', ' . $clinicBranch->city->city . ', ' . $clinicBranch->state->state;
-                                ?>
-                                <option value="{{ $clinicBranch->id }}">
-                                    {{ $branch }}</option>
-                            @endforeach
+                           
                         </select>
                     </td>
                     <td>
@@ -154,12 +172,19 @@
                 </tr>`;
 
                 $('#tablebody').append(newRow);
+                let $newSelect = $(`#clinic_branch_id${count}`);
+                populateOptions($newSelect);
                 // Reinitialize Select2 on the newly added select element
                 $(`#clinic_branch_id${count}`).select2({
                     width: '100%',
                     placeholder: 'Select a Branch'
                 });
                 updateRowCount();
+                updateSelectedBranchIds();
+            });
+
+            $(document).on('change', 'select.clinic_branch_select', function() {
+                updateSelectedBranchIds();
             });
 
             // Event listener for Delete button click
@@ -243,13 +268,24 @@
                 if ($(this).val() && $(this).val().includes('3')) {
                     $('.doctorFields').show();
                     $('.otherFields').hide();
+                    $('.nurseFields').hide();
                     $('.doctorFields input').attr('required', true);
                     $('.otherFields select').attr('required', false);
+                    $('.nurseFields input').attr('required', false);
+                } else if ($(this).val() && $(this).val().includes('4')) {
+                    $('.doctorFields').hide();
+                    $('.otherFields').show();
+                    $('.nurseFields').show();
+                    $('.doctorFields input').attr('required', false);
+                    $('.nurseFields input').attr('required', true);
+                    $('.otherFields select').attr('required', true);
                 } else {
                     $('.doctorFields').hide();
                     $('.otherFields').show();
+                    $('.nurseFields').hide();
                     $('.doctorFields input').attr('required', false);
                     $('.otherFields select').attr('required', true);
+                    $('.nurseFields input').attr('required', false);
                 }
             });
 
@@ -257,7 +293,7 @@
             function loadStates(countryId, stateSelectElement) {
                 if (countryId) {
                     $.ajax({
-                        url: '{{ route('get.states', '') }}' + '/' + countryId,
+                        url: '{{ route("get.states", "") }}' + '/' + countryId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -283,7 +319,7 @@
             function loadCities(stateId, citySelectElement) {
                 if (stateId) {
                     $.ajax({
-                        url: '{{ route('get.cities', '') }}' + '/' + stateId,
+                        url: '{{ route("get.cities", "") }}' + '/' + stateId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -408,6 +444,45 @@
                     $('#com_state_id').attr('required', true);
                     $('#com_country_id').attr('required', true);
                     $('#com_pincode').attr('required', true);
+                }
+            });
+
+            $('#date_of_birth').on('change', function() {
+                const dobValue = $(this).val();
+                if (!dobValue) {
+                    $('#dobError').text('Date of birth is required.');
+                    $(this).addClass('is-invalid');
+                    return;
+                }
+
+                const dob = new Date(dobValue);
+                const today = new Date();
+
+                // Ensure the date is not in the future
+                if (dob > today) {
+                    $('#dobError').text('Date of birth cannot be in the future.');
+                    $(this).addClass('is-invalid');
+                    $(this).val(''); // Clear the input
+                    return;
+                }
+
+                // Ensure the user is at least 18 years old
+                const age = today.getFullYear() - dob.getFullYear();
+                const monthDifference = today.getMonth() - dob.getMonth();
+                const dayDifference = today.getDate() - dob.getDate();
+
+                if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
+                    age--;
+                }
+
+                if (age < 18) {
+                    $('#dobError').text('You must be at least 18 years old.');
+                    $(this).addClass('is-invalid');
+                    $(this).val(''); // Clear the input
+                } else {
+                    // Clear error message if valid
+                    $('#dobError').text('');
+                    $(this).removeClass('is-invalid');
                 }
             });
         });

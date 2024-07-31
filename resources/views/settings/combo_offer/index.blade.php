@@ -30,18 +30,17 @@
                 <div class="box">
                     <div class="box-body">
                         <div class="table-responsive">
-                            <table
-                                class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center">
+                            <table class="table table-bordered table-hover table-striped mb-0 data-table text-center">
                                 <thead class="bg-primary-light">
                                     <tr>
-                                        <th>No</th>
+                                        <th width="10px">No</th>
                                         <th>Treatments</th>
                                         <th>Total Treatment Amount</th>
                                         <th>Offer Amount</th>
                                         <th>Offer From</th>
                                         <th>Offer To</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
+                                        <th width="20px">Status</th>
+                                        <th width="80px">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -62,6 +61,12 @@
 
     <script type="text/javascript">
         var table;
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementById('offer_from').setAttribute('min', today);
+        document.getElementById('offer_to').setAttribute('min', today);
+        document.getElementById('edit_offer_from').setAttribute('min', today);
+        document.getElementById('edit_offer_to').setAttribute('min', today);
+
         jQuery(function($) {
             table = $('.data-table').DataTable({
                 processing: true,
@@ -99,11 +104,35 @@
                     },
                     {
                         data: 'offer_from',
-                        name: 'offer_from'
+                        name: 'offer_from',
+                        render: function(data, type, row) {
+                            if (data) {
+                                var date = new Date(data);
+                                var day = ("0" + date.getDate()).slice(-2);
+                                var month = ("0" + (date.getMonth() + 1)).slice(-2);
+                                var year = date.getFullYear();
+                                return day + '-' + month + '-' + year;
+                            } else {
+                                data = '-';
+                            }
+                            return data;
+                        }
                     },
                     {
                         data: 'offer_to',
-                        name: 'offer_to'
+                        name: 'offer_to',
+                        render: function(data, type, row) {
+                            if (data) {
+                                var date = new Date(data);
+                                var day = ("0" + date.getDate()).slice(-2);
+                                var month = ("0" + (date.getMonth() + 1)).slice(-2);
+                                var year = date.getFullYear();
+                                return day + '-' + month + '-' + year;
+                            } else {
+                                data = '-';
+                            }
+                            return data;
+                        }
                     },
                     {
                         data: 'status',

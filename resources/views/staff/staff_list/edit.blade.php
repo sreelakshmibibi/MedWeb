@@ -20,7 +20,7 @@
 
             <section class="content">
                 <div class="box">
-                    <div class="box-body wizard-content">
+                    <div class="box-body wizard-content px-2 pb-0">
                         <form method="post" class="validation-wizard wizard-circle" id="staffform"
                             action="{{ route('staff.staff_list.update') }}" enctype="multipart/form-data">
                             @csrf
@@ -68,6 +68,9 @@
         $(document).ready(function() {
             $("#staffform .actions ul li:last-child a").addClass("bg-success btn btn-success");
 
+            var today = new Date().toISOString().split('T')[0];
+            // document.getElementById('date_of_joining').setAttribute('min', today);
+
             var input = document.getElementById('profile_photo');
             var canvas = document.getElementById('profilePic');
             var ctx = canvas.getContext('2d');
@@ -96,7 +99,7 @@
 
 
             let count = '{{ $availabilityCount }}';
-
+            count++;
             // Event listener for Add Row button click
             $(document).on('click', '#buttonAddRow', function() {
                 count++;
@@ -250,35 +253,45 @@
                 }
             });
 
-            // Handle change event for role dropdown
-            // $('select[name="role[]"]').change(function() {
-            //     if ($(this).val() && $(this).val().includes('3')) {
-            //         $('.doctorFields').show();
-            //         $('.otherFields').hide();
-            //     } else {
-            //         $('.doctorFields').hide();
-            //         $('.otherFields').show();
-            //     }
-            // });
-            $('select[name="role[]"]').change(function() {
-                if ($(this).val() && $(this).val().includes('3')) {
+            function updateFieldsBasedOnRole() {
+                var selectedRoles = $('select[name="role[]"]').val(); // Get the selected values as an array
+                if (selectedRoles && selectedRoles.includes('3')) {
                     $('.doctorFields').show();
                     $('.otherFields').hide();
+                    $('.nurseFields').hide();
                     $('.doctorFields input').attr('required', true);
                     $('.otherFields select').attr('required', false);
-                } else {
+                    $('.nurseFields input').attr('required', false);
+                } else if (selectedRoles && selectedRoles.includes('4')){
                     $('.doctorFields').hide();
                     $('.otherFields').show();
+                    $('.nurseFields').show();
+                    $('.doctorFields input').attr('required', false);
+                    $('.nurseFields input').attr('required', true);
+                    $('.otherFields select').attr('required', true);
+                }else {
+                    $('.doctorFields').hide();
+                    $('.otherFields').show();
+                    $('.nurseFields').hide();
                     $('.doctorFields input').attr('required', false);
                     $('.otherFields select').attr('required', true);
+                    $('.nurseFields input').attr('required', false);
                 }
+            }
+
+            // Bind the change event to the select element
+            $('select[name="role[]"]').change(function() {
+                updateFieldsBasedOnRole();
             });
+
+            // Call the function on page load to handle the initial state
+            updateFieldsBasedOnRole();
 
             // Function to load states based on country ID
             function loadStates(countryId, stateSelectElement, initialSelected) {
                 if (countryId) {
                     $.ajax({
-                        url: '{{ route('get.states', '') }}' + '/' + countryId,
+                        url: '{{ route("get.states", "") }}' + '/' + countryId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -312,7 +325,7 @@
             function loadCities(stateId, citySelectElement, initialSelected) {
                 if (stateId) {
                     $.ajax({
-                        url: '{{ route('get.cities', '') }}' + '/' + stateId,
+                        url: '{{ route("get.cities", "") }}' + '/' + stateId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -453,13 +466,52 @@
             });
         });
 
+        $('#date_of_birth').on('change', function() {
+                const dobValue = $(this).val();
+                if (!dobValue) {
+                    $('#dobError').text('Date of birth is required.');
+                    $(this).addClass('is-invalid');
+                    return;
+                }
+                
+                const dob = new Date(dobValue);
+                const today = new Date();
+                
+                // Ensure the date is not in the future
+                if (dob > today) {
+                    $('#dobError').text('Date of birth cannot be in the future.');
+                    $(this).addClass('is-invalid');
+                    $(this).val(''); // Clear the input
+                    return;
+                }
+                
+                // Ensure the user is at least 18 years old
+                const age = today.getFullYear() - dob.getFullYear();
+                const monthDifference = today.getMonth() - dob.getMonth();
+                const dayDifference = today.getDate() - dob.getDate();
+                
+                if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
+                    age--;
+                }
+                
+                if (age < 18) {
+                    $('#dobError').text('You must be at least 18 years old.');
+                    $(this).addClass('is-invalid');
+                    $(this).val(''); // Clear the input
+                } else {
+                    // Clear error message if valid
+                    $('#dobError').text('');
+                    $(this).removeClass('is-invalid');
+                }
+            });
+
         document.addEventListener("DOMContentLoaded", function() {
             var canvas = document.getElementById('profilePic');
             var ctx = canvas.getContext('2d');
             if ('{{ $staffProfile }}') {
 
-                var profileUrl = '{{ $staffProfile->photo ?? '' }}';
-                var photoUrl = '{{ asset('storage/') }}/' + profileUrl;
+                var profileUrl = '{{ $staffProfile->photo ?? "" }}';
+                var photoUrl = '{{ asset("storage/") }}/' + profileUrl;
                 if (profileUrl) {
                     var img = new Image();
                     img.onload = function() {
@@ -470,6 +522,7 @@
                     img.src = photoUrl;
                 }
             }
+            
         });
     </script>
 

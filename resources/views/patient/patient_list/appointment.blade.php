@@ -1,8 +1,5 @@
 <!--appointment-->
 <div class="row">
-
-
-
     <div class="col-md-3">
         <div class="form-group">
             <label class="form-label" for="clinic_branch_id0">Branch <span class="text-danger">
@@ -33,7 +30,7 @@
         </div>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="form-group">
             <label class="form-label" for="doctor2">Doctor <span class="text-danger">
                     *</span></label>
@@ -48,9 +45,7 @@
         </div>
     </div>
 
-
-
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="form-group">
             <label class="form-label" for="appstatus">Appointment Status <span class="text-danger">
                     *</span></label>
@@ -61,49 +56,73 @@
             </select>
         </div>
     </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label class="form-label" for="rdoctor">Referrerd Doctor</label>
+            <input type="text" class="form-control" id="rdoctor" name="rdoctor" placeholder="Enter doctor name">
+        </div>
+    </div>
 
 </div>
 
-<!--basic-->
-<div class="row">
-
-    <div class="col-md-3">
-        <div class="form-group">
-            <label class="form-label" for="bp">Blood Pressure</label>
-            <input type="text" class="form-control" id="bp" name="bp" placeholder="Enter Blood Pressure">
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="form-group">
-            <label class="form-label" for="height">Height</label>
-            <input type="text" class="form-control" id="height" name="height" placeholder="Enter Height">
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="form-group">
-            <label class="form-label" for="weight">Weight</label>
-            <input type="text" class="form-control" id="weight" name="weight" placeholder="Enter Weight">
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="form-group">
-            <label class="form-label" for="temperature">Temperature</label>
-            <input type="text" class="form-control" id="temperature" name="temperature"
-                placeholder="Enter Temperature in °F">
-        </div>
+<div class="row mb-3">
+    <div style="display:none" id="existingAppointmentsError" class="text-danger">
+        <span class="text-danger">Appointments already exists for the selected time!</span>
     </div>
 </div>
+
+<div class="row" style="display:none" id="existAppContainer">
+    <hr />
+    <div class="mb-3" style="display:none" id="existingAppointments">
+    </div>
+    <hr />
+</div>
+
+<div class="row mb-2">
+    <div class="form-group col-md-2">
+        <label class="form-label" for="bp">Other Information</label>
+        <input type="text" class="form-control" id="bp" name="bp" placeholder="Blood Pressure- 80/120">
+    </div>
+
+    <div class="form-group col-md-2 d-flex flex-wrap align-content-end">
+        <input type="text" class="form-control" id="height" name="height" placeholder="Height">
+    </div>
+
+    <div class="form-group col-md-2 d-flex flex-wrap align-content-end">
+        <input type="text" class="form-control" id="weight" name="weight" placeholder="Weight">
+    </div>
+
+    <div class="form-group col-md-2 d-flex flex-wrap align-content-end">
+        <input type="text" class="form-control" id="temperature" name="temperature" placeholder="Temperature in °F">
+    </div>
+
+    <div class="form-group col-md-2 d-flex flex-wrap align-content-end">
+        <select class="form-select" id="marital_status" name="marital_status">
+            <option value="">Marital Status</option>
+            <option value="Single">Single</option>
+            <option value="Married">Married</option>
+            <option value="Widowed">Widowed</option>
+            <option value="Divorced">Divorced</option>
+            <option value="Separated">Separated</option>
+        </select>
+    </div>
+
+    <div class="form-group col-md-2 d-flex flex-wrap align-content-end" id="pregnant_container"
+        style="display: none;">
+        <select class="form-select" id="pregnant" name="pregnant">
+            <option value="">Are you pregnant?</option>
+            <option value="Y">Yes</option>
+            <option value="N">No</option>
+        </select>
+    </div>
+</div>
+
 <div class="row">
-
-
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="form-group">
-            <label class="form-label" for="smoking_status">Smoking Status</label>
+            {{-- <label class="form-label" for="smoking_status">Smoking Status</label> --}}
             <select class="form-select" id="smoking_status" name="smoking_status">
-                <option value="">Select Smoking Status</option>
+                <option value="">Smoking Status</option>
                 <option value="Non-smoker">Non-smoker</option>
                 <option value="Former smoker">Former smoker</option>
                 <option value="Current smoker">Current smoker</option>
@@ -111,11 +130,11 @@
         </div>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="form-group">
-            <label class="form-label" for="alcoholic_status">Alcoholic Status</label>
+            {{-- <label class="form-label" for="alcoholic_status">Alcoholic Status</label> --}}
             <select class="form-select" id="alcoholic_status" name="alcoholic_status">
-                <option value="">Select Alcoholic Status</option>
+                <option value="">Alcoholic Status</option>
                 <option value="Non-drinker">Non-drinker</option>
                 <option value="Former drinker">Former drinker</option>
                 <option value="Current drinker">Current drinker</option>
@@ -123,11 +142,11 @@
         </div>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="form-group">
-            <label class="form-label" for="diet">Diet</label>
+            {{-- <label class="form-label" for="diet">Diet</label> --}}
             <select class="form-select" id="diet" name="diet">
-                <option value="">Select Diet</option>
+                <option value="">Diet</option>
                 <option value="Vegetarian">Vegetarian</option>
                 <option value="Non-Vegetarian">Non-Vegetarian</option>
                 <option value="Vegan">Vegan</option>
@@ -136,44 +155,21 @@
         </div>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="form-group">
-            <label class="form-label" for="rdoctor">Referrerd Doctor</label>
-            <input type="text" class="form-control" id="rdoctor" name="rdoctor"
-                placeholder="Enter doctor name">
+            {{-- <label class="form-label" for="allergies">Allergies</label> --}}
+            <textarea class="form-control" id="allergies" name="allergies" placeholder="List any allergies" rows="1"></textarea>
         </div>
     </div>
-    <div class="col-md-3" id="pregnant_container" style="display: none;">
-        <div class="form-group">
-            <label class="form-label" for="pregnant">Are you pregnant?</label>
-            <select class="form-select" id="pregnant" name="pregnant">
-                <option value="">Select an option</option>
-                <option value="Y">Yes</option>
-                <option value="N">No</option>
-            </select>
-        </div>
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-md-12">
+    <div class="col-md-2">
         <div class="form-group">
-            <label class="form-label" for="allergies">Allergies</label>
-            <textarea class="form-control" id="allergies" name="allergies" placeholder="List any allergies"></textarea>
-        </div>
-    </div>
-</div>
-
-
-<div class="row">
-    <div class="col-md-12">
-        <div class="form-group">
-            <label class="form-label" for="medical_conditions">Medical Conditions</label>
+            {{-- <label class="form-label" for="medical_conditions">Medical Conditions</label> --}}
             <div id="medical-conditions-wrapper">
-                <div class="input-group mb-3">
+                <div class="input-group mb-0">
                     <input type="text" class="form-control" name="medical_conditions[]"
-                        placeholder="Medical Condition">
-                    <button class="btn btn-success" type="button" onclick="addMedicalCondition()">+</button>
+                        placeholder="Medical Conditions">
+                    <button class="btn-sm btn-success" type="button" onclick="addMedicalCondition()">+</button>
                 </div>
             </div>
         </div>

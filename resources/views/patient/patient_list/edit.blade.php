@@ -19,7 +19,7 @@
 
             <section class="content">
                 <div class="box">
-                    <div class="box-body wizard-content">
+                    <div class="box-body wizard-content px-2 pb-0">
                         <form method="post" class="validation-wizard wizard-circle" id="patientform"
                             action="{{ route('patient.patient_list.store') }}" enctype="multipart/form-data">
                             @csrf
@@ -55,6 +55,9 @@
         $(document).ready(function() {
 
             $("#patientform .actions ul li:last-child a").addClass("bg-success btn btn-success");
+
+            var today = new Date().toISOString().split('T')[0];
+            document.getElementById('regdate').setAttribute('min', today);
 
             // Initializations
             var initialSelectedStateId = '{{ $patientProfile->state_id }}';

@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('patient_id');
             $table->foreignId('app_id')->constrained('appointments');
-            $table->integer('tooth_id');
+            $table->string('tooth_id')->nullable();
+            $table->unsignedBigInteger('row_id')->nullable();
             $table->foreignId('tooth_score_id')->nullable()->constrained('tooth_scores');
             $table->string('chief_complaint');
             $table->string('hpi');
@@ -23,6 +24,7 @@ return new class extends Migration
             $table->string('diagnosis');
             $table->foreignId('disease_id')->nullable()->constrained('diseases');
             $table->foreignId('treatment_id')->constrained('treatment_types');
+            $table->foreignId('treatment_plan_id')->nullable()->constrained('treatment_plans');
             $table->string('xray')->nullable();
             $table->foreignId('lingual_condn')->nullable()->constrained('surface_conditions');
             $table->foreignId('labial_condn')->nullable()->constrained('surface_conditions');
@@ -37,6 +39,23 @@ return new class extends Migration
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
             $table->string('status', 5)->default('Y');
+            $table->foreign('patient_id')
+            ->references('patient_id')
+            ->on('patient_profiles')
+            ->onDelete('cascade')
+            ->onUpdate('cascade');
+            $table->foreign('tooth_id')
+            ->references('teeth_name')
+            ->on('teeths')
+            ->onDelete('cascade')
+            ->onUpdate('cascade');
+            $table->foreign('row_id')
+            ->references('id')
+            ->on('teeth_rows')
+            ->onDelete('cascade')
+            ->onUpdate('cascade');
+
+
             $table->timestamps();
             $table->softDeletes();
         });

@@ -59,6 +59,8 @@ class StaffProfileRequest extends FormRequest
                 'string',
                 Rule::unique('staff_profiles')->ignore($this->edit_user_id, 'user_id'),
             ],
+            'specialization' =>  'nullable|string|max:255', 
+            'subspecialty' => 'nullable|string|max:255', 
         ];
     }
 
@@ -149,6 +151,12 @@ class StaffProfileRequest extends FormRequest
 
             'license_number.string' => 'The experience must be a string.',
             'license_number.unique' => 'Licence number already exists.',
+
+            'specialization.string' => 'The specialization must be a string.',
+            'specialization.max' => 'The specialization may not be greater than :max characters.',
+
+            'subspecialty.string' => 'The subspecialty must be a string.',
+            'subspecialty.max' => 'The subspecialty may not be greater than :max characters.',
         ];
     }
 }

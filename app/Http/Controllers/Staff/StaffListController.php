@@ -3,21 +3,19 @@
 namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Staff\StaffListRequest;
 use App\Http\Requests\Staff\StaffProfileRequest;
 use App\Models\Appointment;
 use App\Models\City;
+use App\Models\ClinicBasicDetail;
 use App\Models\ClinicBranch;
 use App\Models\Country;
 use App\Models\Department;
 use App\Models\DoctorWorkingHour;
-use App\Models\PatientProfile;
 use App\Models\StaffProfile;
 use App\Models\State;
 use App\Models\User;
 use App\Models\UserType;
 use App\Models\UserVerify;
-use App\Models\WeekDay;
 use App\Notifications\WelcomeVerifyNotification;
 use App\Services\StaffService;
 use Illuminate\Http\Request;
@@ -25,9 +23,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Role;
 use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
+use Illuminate\Support\Facades\Crypt;
 
 class StaffListController extends Controller
 {
@@ -37,22 +35,17 @@ class StaffListController extends Controller
     public function index(Request $request)
     {
         $successMessage = $request->query('success_message');
-
         if ($successMessage) {
             session()->flash('success', $successMessage);
         }
 
         if ($request->ajax()) {
             $staff = StaffProfile::with('user')->get();
-
             return DataTables::of($staff)
                 ->addIndexColumn()
                 ->addColumn('name', function ($row) {
                     return str_replace("<br>", " ", $row->user->name);
                 })
-                // ->addColumn('email', function ($row) {
-                //     return $row->user->email;
-                // })
                 ->addColumn('role', function ($row) {
                     $role = '';
                     if ($row->user->is_doctor) {
@@ -77,10 +70,13 @@ class StaffListController extends Controller
                     }
                     return $btn1;
                 })
+
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . route('staff.staff_list.view', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
-                    $btn .= '<a href="' . route('staff.staff_list.edit', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
-                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
+                    $base64Id = base64_encode($row->id);
+                    $idEncrypted = Crypt::encrypt($base64Id);
+                    $btn = '<a href="' . route('staff.staff_list.view', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
+                    $btn .= '<a href="' . route('staff.staff_list.edit', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
+                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
                     $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete"><i class="fa-solid fa-trash"></i></button>';
                     return $btn;
                 })
@@ -108,8 +104,9 @@ class StaffListController extends Controller
         $userTypes = UserType::where('status', 'Y')->get();
         $departments = Department::where('status', 'Y')->get();
         $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
-
-        return view('staff.staff_list.add', compact('countries', 'states', 'cities', 'userTypes', 'departments', 'clinicBranches'));
+        $clinic = ClinicBasicDetail::first();
+        $consultationFees = $clinic->consultation_fees;
+        return view('staff.staff_list.add', compact('countries', 'states', 'cities', 'userTypes', 'departments', 'clinicBranches', 'consultationFees'));
     }
 
     /**
@@ -117,7 +114,6 @@ class StaffListController extends Controller
      */
     public function store(StaffProfileRequest $request)
     {
-
         try {
             DB::beginTransaction();
             if (isset($request->edit_user_id) && $request->edit_user_id != null) {
@@ -129,8 +125,8 @@ class StaffListController extends Controller
                 $user->password = Hash::make($password);
                 $staffProfile = new StaffProfile();
             }
-            $staffName = $request->title . "" . $request->firstname . " " . $request->lastname;
-            $user->name = $request->title . "<br> " . $request->firstname . "<br>" . $request->lastname;
+            $staffName = $request->title . "" . ucwords(strtolower($request->firstname)) . " " . ucwords(strtolower($request->lastname));
+            $user->name = $request->title . "<br> " . ucwords(strtolower($request->firstname)) . "<br>" . ucwords(strtolower($request->lastname));
             $user->email = $request->email;
             $roles = [
                 User::IS_ADMIN => false,
@@ -169,31 +165,13 @@ class StaffListController extends Controller
             if ($user->save()) {
                 // Assign roles using Spatie/Permission package (if used)
                 $user->syncRoles(array_keys(array_filter($roles)));
-
-
-
                 $staffProfile->user_id = $user->id;
                 $staffProfile->staff_id = "MEDWEB" . $user->id;
-                $staffProfile->clinic_branch_id = $request->clinic_branch_id;
+               
                 $staffProfile->fill($request->only([
-                    'aadhaar_no',
-                    'date_of_birth',
-                    'phone',
-                    'gender',
-                    'address1',
-                    'address2',
-                    'city_id',
-                    'state_id',
-                    'country_id',
-                    'pincode',
-                    'date_of_joining',
-                    'qualification',
-                    'department_id',
-                    'specialization',
-                    'years_of_experience',
-                    'license_number',
-                    'subspecialty',
-                    'designation'
+                    'aadhaar_no', 'date_of_birth', 'phone', 'gender', 'address1', 'address2',
+                    'city_id', 'state_id', 'country_id', 'pincode', 'date_of_joining', 'qualification',
+                    'department_id', 'years_of_experience', 'designation'
                 ]));
 
                 if ($request->add_checkbox == "on") {
@@ -216,8 +194,17 @@ class StaffListController extends Controller
                     $profilePath = $request->file('profile_photo')->store('profile-photos', 'public');
                     $staffProfile->photo = $profilePath;
                 }
+                if ($user->is_doctor) {
+                    $staffProfile->specialization = $request->specialization;
+                    $staffProfile->subspecialty = $request->subspecialty;
+                    $staffProfile->license_number = $request->license_number;
+                    $staffProfile->consultation_fees = $request->consultation_fees;
+                } else if ($user->is_nurse) {
+                    $staffProfile->license_number = $request->license_number_nurse;
+                } else {
+                    $staffProfile->clinic_branch_id = $request->clinic_branch_id;
+                }
                 $staffProfile->status = "Y";
-
                 if ($staffProfile->save()) {
                     if ($user->is_doctor) {
                         $staffService = new StaffService();
@@ -225,72 +212,44 @@ class StaffListController extends Controller
                             DB::commit();
                             if (!isset($request->edit_user_id)) {
                                 $token = Str::random(64);
-                                UserVerify::create([
-                                    'user_id' => $user->id,
-                                    'token' => $token
-
-                                ]);
+                                UserVerify::create([ 'user_id' => $user->id, 'token' => $token ]);
                                 $welcomeNotification = new WelcomeVerifyNotification($staffName, $request->email, $password, $token);
                                 $user->notify($welcomeNotification);
-
                             }
-
                         } else {
                             DB::rollBack();
-                            return response()->json(['error' => 'Failed to create doctor: Availbilty of time slots required' ], 422);
+                            return response()->json(['error' => 'Failed to create doctor: Availbilty of time slots required'], 422);
                         }
                     } else {
                         DB::commit();
                         if (!isset($request->edit_user_id)) {
                             $token = Str::random(64);
-                            UserVerify::create([
-                                'user_id' => $user->id,
-                                'token' => $token
-
-                            ]);
+                            UserVerify::create([ 'user_id' => $user->id, 'token' => $token ]);
                             $welcomeNotification = new WelcomeVerifyNotification($staffName, $request->email, $password, $token);
                             $user->notify($welcomeNotification);
-
                         }
                     }
                 } else {
                     DB::rollBack();
-                    return response()->json(['error' => 'Failed to create staff: Error in experience' ], 422);
+                    return response()->json(['error' => 'Failed to create staff: Error in experience'], 422);
                 }
             } else {
                 DB::rollBack();
-                return response()->json(['error' => 'Failed to create staff.' ], 422);
+                return response()->json(['error' => 'Failed to create staff.'], 422);
             }
-
-            //example user
-            // $user = User::find('19');
-
-            // $token = $request->route()->parameter('token');
-
-            // $user->token = $token;
-
-            // // Send welcome notification
-            // $user->notify(new WelcomeVerifyNotification($user->name, $user->email, $user->password, $user->$token));
 
             return redirect()->route('staff.staff_list')->with('success', 'Staff created successfully');
         } catch (\Exception $e) {
-            // echo "<pre>";
-            // print_r($e->getMessage());
-
             DB::rollback();
-            // exit;
             return response()->json(['error' => 'Failed to create staff: ' . $e->getMessage()], 422);
         }
     }
-
-
-
-
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
+        $id = base64_decode(Crypt::decrypt($id));
         $staffProfile = StaffProfile::with('user')->find($id);
         abort_if(!$staffProfile, 404);
 
@@ -336,6 +295,7 @@ class StaffListController extends Controller
 
     public function view(string $id, Request $request)
     {
+        $id = base64_decode(Crypt::decrypt($id));
         $staffProfile = StaffProfile::with('user')->find($id);
         abort_if(!$staffProfile, 404);
 
@@ -356,13 +316,13 @@ class StaffListController extends Controller
         if ($request->ajax()) {
             $staffId = $request->input('userId');
             $appointments = Appointment::where('doctor_id', $staffId)
-                            ->with(['patient', 'doctor', 'branch'])
-                            ->get();
+                ->with(['patient', 'doctor', 'branch'])
+                ->get();
 
             return DataTables::of($appointments)
                 ->addIndexColumn()
                 ->addColumn('name', function ($row) {
-                    return str_replace("<br>", " ", $row->patient->first_name." ".$row->patient->last_name);
+                    return str_replace("<br>", " ",  ucwords(strtolower($row->patient->first_name)) . " " .  ucwords(strtolower($row->patient->last_name)));
                 })
                 ->addColumn('branch', function ($row) {
                     if (!$row->branch) {
@@ -384,6 +344,4 @@ class StaffListController extends Controller
 
         return view('staff.staff_list.view', compact('name', 'countries', 'states', 'cities', 'userTypes', 'departments', 'staffProfile', 'userDetails', 'availability', 'clinicBranches', 'availabilityCount', 'availability', 'availableBranches'));
     }
-
 }
-

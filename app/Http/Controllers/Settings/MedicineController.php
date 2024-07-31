@@ -67,8 +67,8 @@ class MedicineController extends Controller
             // Create a new medicine instance
             $medicineEntry = new Medicine();
             $medicineEntry->med_bar_code = $request->input('med_bar_code');
-            $medicineEntry->med_name = $request->input('med_name');
-            $medicineEntry->med_company = $request->input('med_company');
+            $medicineEntry->med_name = ucwords(strtolower($request->input('med_name')));
+            $medicineEntry->med_company = ucwords($request->input('med_company'));
             $medicineEntry->med_remarks = $request->input('med_remarks');
             $medicineEntry->med_price = $request->input('med_price');
             $medicineEntry->expiry_date = $request->input('expiry_date');
@@ -124,8 +124,8 @@ class MedicineController extends Controller
 
             // Update medicine fields based on form data
             $medicine->med_bar_code = $request->med_bar_code;
-            $medicine->med_name = $request->med_name;
-            $medicine->med_company = $request->med_company;
+            $medicine->med_name = ucwords(strtolower($request->med_name));
+            $medicine->med_company = ucwords($request->med_company);
             $medicine->med_remarks = $request->med_remarks;
             $medicine->med_price = $request->med_price;
             $medicine->expiry_date = $request->expiry_date;

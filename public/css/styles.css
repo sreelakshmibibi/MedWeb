@@ -1,0 +1,14 @@
+.table > tbody > tr > td,
+.table > tbody > tr > th,
+.table > thead > tr > th {
+    padding: 0.5rem;
+}
+.content-header {
+    padding: 0 0 1rem;
+}
+.alert {
+    padding: 0.5rem 0.5rem;
+}
+.form-group {
+    margin-bottom: 0.5rem;
+}

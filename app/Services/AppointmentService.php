@@ -58,24 +58,6 @@ class AppointmentService
         return $split_name;
     }
 
-    public function generateUniqueAppointmentId()
-    {
-        // Get the current year and month in the format 'Ym'
-        $yearMonth = Carbon::now()->format('Ym');
-        // Count the number of appointments created in the current month
-        $appointmentCount = Appointment::whereYear('app_date', Carbon::now()->year)
-            ->whereMonth('app_date', Carbon::now()->month)
-            ->count();
-        // Increment the count by 1
-        $newAppointmentNumber = $appointmentCount + 1;
-
-        // Concatenate the year, month, and the incremented count to form the appointment ID
-        $appId = 'APP'.$yearMonth.str_pad($newAppointmentNumber, 4, '0', STR_PAD_LEFT);
-        //Log::info('$appId: '.$appId);
-
-        return $appId;
-    }
-
     public function generateTokenNo($doctorId, $appDate)
     {
         $maxToken = Appointment::where('doctor_id', $doctorId)

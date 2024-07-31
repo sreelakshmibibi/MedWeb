@@ -20,6 +20,7 @@ use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\DataTables as DataTables;
@@ -96,11 +97,13 @@ class PatientListController extends Controller
                 // })
                 ->addColumn('action', function ($row) {
                     $parent_id = '';
-                    $btn = "<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1' title='New Booking' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->first_name.' '.$row->last_name)."' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>";
-                    $btn .= '<a href="'.route('staff.staff_list.view', $row->id).'" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
-                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="'.$row->id.'" title="change status"><i class="fa-solid fa-sliders"></i></button>';
+                    $base64Id = base64_encode($row->id);
+                    $idEncrypted = Crypt::encrypt($base64Id);
+                    $btn = "<button type='button' class='waves-effect waves-light btn btn-circle btn-primary btn-add btn-xs me-1' title='New Booking' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->first_name.' '.$row->last_name)."' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>";
+                    $btn .= '<a href="'.route('patient.patient_list.view', $idEncrypted).'" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
+                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="'.$row->id.'" title="change status"><i class="fa-solid fa-sliders"></i></button>';
                     if (auth()->user()->hasRole('Admin')) {
-                        $btn .= '<a href="'.route('patient.patient_list.edit', $row->id).'" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
+                        $btn .= '<a href="'.route('patient.patient_list.edit', $idEncrypted).'" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
                         $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="'.$row->id.'" title="Delete"><i class="fa-solid fa-trash"></i></button>';
                     }
 
@@ -182,8 +185,9 @@ class PatientListController extends Controller
         $appDate = $appDateTime->toDateString(); // Extract date
         $appTime = $appDateTime->toTimeString(); // Extract time
         $doctor_id = $request->input('doctorId');
-        //$patient_id = $request->input('patientId');
+        $patient_id = $request->input('patientId');
         $doctorAvailabilityService = new DoctorAvaialbilityService();
+        $checkAppointmentDate = $doctorAvailabilityService->checkAppointmentDate($branchId, $appDate, $doctor_id, $patient_id);
         $existingAppointments = $doctorAvailabilityService->getExistingAppointments($branchId, $appDate, $doctor_id);
         $checkAllocated = $doctorAvailabilityService->checkAllocatedAppointments($branchId, $appDate, $doctor_id, $appTime);
         //$patient = PatientProfile::where('patient_id', $patient_id)->first();
@@ -192,6 +196,7 @@ class PatientListController extends Controller
         $response = [
             'existingAppointments' => $existingAppointments,
             'checkAllocated' => $checkAllocated,
+            'checkAppointmentDate' => $checkAppointmentDate,
             // 'nextAppointment' => $nextAppointment,
         ];
 
@@ -262,7 +267,7 @@ class PatientListController extends Controller
                 $commonService = new CommonService();
 
                 $tokenNo = $commonService->generateTokenNo($doctorId, $appDate);
-                $clinicBranchId = $request->input('clinic_branch_id');
+                $clinicBranchId = $request->input('clinic_branch_id0');
                 // Check if an appointment with the same date, time, and doctor exists
                 $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId);
                 if ($existingAppointment) {
@@ -273,7 +278,7 @@ class PatientListController extends Controller
 
                 // Store the appointment data
                 $appointment = new Appointment();
-                $appointment->app_id = $commonService->generateUniqueAppointmentId();
+                $appointment->app_id = $commonService->generateUniqueAppointmentId($appDate);
                 //$appointment->app_id = $this->generateUniqueAppointmentId();
                 $appointment->patient_id = $patient->patient_id;
                 $appointment->app_date = $appDate;
@@ -344,7 +349,19 @@ class PatientListController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $id = base64_decode(Crypt::decrypt($id));
+        // Find the PatientProfile by its ID
+        $patientProfile = PatientProfile::with(['lastAppointment.doctor', 'lastAppointment.branch', 'history'])->find($id);
+
+        // Check if the PatientProfile was found
+        if (! $patientProfile) {
+            abort(404, 'Patient Profile not found');
+        }
+        $appointment = $patientProfile->lastAppointment;
+        $history = $patientProfile->history;
+
+        // Return a view with the PatientProfile data
+        return view('patient.patient_list.view_patient', compact('patientProfile', 'appointment', 'history'));
     }
 
     /**
@@ -352,6 +369,7 @@ class PatientListController extends Controller
      */
     public function edit(string $id)
     {
+        $id = base64_decode(Crypt::decrypt($id));
         //$patientProfile = PatientProfile::with(['lastAppointment'])->find($id);
         $patientProfile = PatientProfile::with(['lastAppointment', 'history'])->find($id);
         abort_if(! $patientProfile, 404);
@@ -374,17 +392,20 @@ class PatientListController extends Controller
             ->format('Y-m-d\TH:i');
         $medicalConditions = $patientProfile->history->pluck('history')->toArray();
 
-        return view('patient.patient_list.edit', compact(
-            'name',
-            'patientProfile',
-            'countries',
-            'appointment',
-            'clinicBranches',
-            'appointmentStatuses',
-            'workingDoctors',
-            'dateTime',
-            'medicalConditions'
-        ));
+        return view(
+            'patient.patient_list.edit',
+            compact(
+                'name',
+                'patientProfile',
+                'countries',
+                'appointment',
+                'clinicBranches',
+                'appointmentStatuses',
+                'workingDoctors',
+                'dateTime',
+                'medicalConditions'
+            )
+        );
     }
 
     public function update(PatientEditRequest $request)
@@ -514,6 +535,7 @@ class PatientListController extends Controller
             'doctor_id' => optional($lastAppointment)->doctor_id,
             'last_appointment_date' => optional($lastAppointment)->app_date,
             'history' => $history,
+            'gender' => $patientProfile->gender,
         ];
 
         return response()->json($response);
@@ -533,12 +555,18 @@ class PatientListController extends Controller
             // Generate unique token number for the appointment
             $doctorId = $request->input('doctor_id');
             $commonService = new CommonService();
+            $doctorAvailabilityService = new DoctorAvaialbilityService();
 
             $tokenNo = $commonService->generateTokenNo($doctorId, $appDate);
             $clinicBranchId = $request->input('clinic_branch_id');
+            $patientId = $request->input('patient_id');
             // Check if an appointment with the same date, time, and doctor exists
             $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId);
-            //Log::info('$existingappointment: '.$existingAppointment);
+            $existingAppointmentPatient = $doctorAvailabilityService->checkAppointmentDate($clinicBranchId, $appDate, $doctorId, $patientId);
+            if ($existingAppointmentPatient) {
+                return response()->json(['errorPatient' => 'An appointment already exists for the given date and doctor.'], 422);
+            }
+
             if ($existingAppointment) {
 
                 DB::rollBack();
@@ -548,7 +576,7 @@ class PatientListController extends Controller
 
             // Store the appointment data
             $appointment = new Appointment();
-            $appointment->app_id = $commonService->generateUniqueAppointmentId();
+            $appointment->app_id = $commonService->generateUniqueAppointmentId($appDate);
             $appointment->patient_id = $request->input('patient_id');
             $appointment->app_date = $appDate;
             $appointment->app_time = $appTime;

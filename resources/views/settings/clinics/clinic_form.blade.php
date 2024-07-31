@@ -14,20 +14,20 @@
 
 <!-- Main content -->
 <section class="content">
-    <div class="row">
+    <div class="row mx-0">
         <div class="box">
             <div class="box-body">
                 <div class="table-responsive">
                     <!-- Main content -->
-                    <table class="table table-bordered table-hover table-striped mb-0 border-2 data-table "
+                    <table id="cbranch_table" class="table table-bordered table-hover table-striped mb-0 data-table"
                         width="100%">
                         <thead class="bg-primary-light text-center">
                             <tr>
-                                <th>No</th>
+                                <th width="10px">No</th>
                                 <th>Phone Number</th>
                                 <th>Address</th>
                                 <th>Is Medicine Provided?</th>
-                                <th>Status</th>
+                                <th width="20px">Status</th>
                                 <th width="80px">Action</th>
                             </tr>
                         </thead>
@@ -55,7 +55,23 @@
 <script type="text/javascript">
     var table;
     jQuery(function($) {
-        table = $('.data-table').DataTable({
+        table = $('#cbranch_table').DataTable({
+            deferRender: true,
+            columnDefs: [{
+                    width: '10px',
+                    targets: 0
+                },
+                {
+                    width: "20px",
+                    targets: 4
+                },
+                {
+                    width: "80px",
+                    targets: 5
+                }
+            ],
+            fixedColumns: true,
+            responsive: true,
             processing: true,
             serverSide: true,
             ajax: "{{ route('settings.clinic') }}",
@@ -102,14 +118,18 @@
                     orderable: false,
                     searchable: true
                 },
-            ]
+            ],
+            drawCallback: function(settings) {
+                table.columns.adjust().draw();
+                $('#cbranch_table').css('visibility', 'visible');
+            }
         });
 
         $(document).on('click', '.btn-edit', function() {
             var clinicId = $(this).data('id');
             $('#edit_clinic_id').val(clinicId); // Set department ID in the hidden input
             $.ajax({
-                url: '{{ url('clinic') }}' + "/" + clinicId + "/edit",
+                url: '{{ url("clinic") }}' + "/" + clinicId + "/edit",
                 method: 'GET',
                 success: function(response) {
                     $('#edit_clinic_id').val(response.id);
@@ -130,7 +150,7 @@
                     $('#edit_clinic_pincode').val(response.pincode);
                     // $('#edit_clinic_logo').val(response.clinic_logo);
                     if (response.clinic_logo) {
-                        var logoUrl = '{{ asset('storage/') }}/' + response.clinic_logo;
+                        var logoUrl = '{{ asset("storage/") }}/' + response.clinic_logo;
                         console.log(logoUrl);
                         $('#currentClinicLogoImg').attr('src', logoUrl);
                         $('#currentClinicLogoImg').show(); // Show the image element
@@ -208,7 +228,7 @@
     function loadStates(countryId) {
         if (countryId) {
             $.ajax({
-                url: '{{ route('get.states', '') }}' + '/' + countryId,
+                url: '{{ route("get.states", "") }}' + '/' + countryId,
                 type: "GET",
                 dataType: "json",
                 success: function(data) {
@@ -231,7 +251,7 @@
     function loadCitiesEdit(stateId, cityId) {
         if (stateId) {
             $.ajax({
-                url: '{{ route('get.cities', '') }}' + '/' + stateId,
+                url: '{{ route("get.cities", "") }}' + '/' + stateId,
                 type: "GET",
                 dataType: "json",
                 success: function(data) {

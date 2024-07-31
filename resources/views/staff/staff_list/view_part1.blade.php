@@ -91,11 +91,19 @@
                             </li>
                             <li class="nav-item d-flex justify-start align-items-center">
                                 <div class="min-w-120 text-muted">
-                                    Aadhaar no
+                                    Aadhaar No.
                                 </div>
                                 <div>{{ $staffProfile->aadhaar_no }}</div>
                             </li>
-
+                            <?php 
+                            if ($userDetails->is_nurse) { ?>
+                            <li class="nav-item d-flex justify-start align-items-center">
+                                <div class="min-w-120 text-muted">
+                                    License No.
+                                </div>
+                                <div>{{ $staffProfile->license_number }}</div>
+                            </li>
+                            <?php } ?>
                         </div>
 
                         <div class="col  ps-20">
@@ -231,6 +239,12 @@
                                                 License No.
                                             </div>
                                             <div>{{ $staffProfile->license_number }}</div>
+                                        </li>
+                                        <li class="nav-item d-flex justify-start align-items-center">
+                                            <div class="min-w-120 text-muted">
+                                                Consultation Fee
+                                            </div>
+                                            <div>&#8377; {{ $staffProfile->consultation_fees }}</div>
                                         </li>
                                     </div>
                                     <div class="col ps-20">
@@ -451,10 +465,10 @@
             </div>
         </div>
 
-        <button class="btn btn-success btn-file w-p100 mb-4" type="button" id="uploadButton"><i
-                class="fa-solid fa-upload"></i>
+        <button class="btn btn-success btn-file w-p100 mb-4" type="button" id="uploadButton" data-bs-toggle="modal"
+            data-bs-target="#modal-documents"><i class="fa-solid fa-upload"></i>
             Upload Documents
-            <input id="fileInput" type="file" name="documents[]" multiple>
+            {{-- <input id="fileInput" type="file" name="documents[]" multiple> --}}
         </button>
     </div>
 </div>

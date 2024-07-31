@@ -12,6 +12,10 @@ function handleAvailabilityStep(role) {
                 enableFinishButton: true, // Optional: Enable finish button for this step
             });
             availabilityStepAdded = true; // Update the flag
+            $(".clinic_branch_select").select2({
+                width: "100%",
+                placeholder: "Select a Branch",
+            });
         }
     } else {
         // Remove Availability step if role does not require it
@@ -26,6 +30,8 @@ function handleAvailabilityStep(role) {
             );
             $("#staffform").steps("remove", "Availability");
             availabilityStepAdded = false; // Reset the flag
+
+            $(".clinic_branch_select").select2("destroy");
 
             // Remove the tab title and its content from DOM
             $("#staffform > .content > .body")

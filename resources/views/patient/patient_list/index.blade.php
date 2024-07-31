@@ -32,11 +32,10 @@
                     <div class="box-body">
                         <div class="table-responsive">
                             <!-- Main content -->
-                            <table
-                                class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center">
+                            <table class="table table-bordered table-hover table-striped mb-0 data-table text-center">
                                 <thead class="bg-primary-light">
                                     <tr>
-                                        <th>No</th>
+                                        <th width="10px">No</th>
                                         <th>Patient ID</th>
                                         <th>Name</th>
                                         <th>Gender</th>
@@ -44,8 +43,8 @@
                                         <th>Last Appointment Date</th>
                                         <th>Upcoming (if any)</th>
                                         {{-- <th>New Appointment</th> --}}
-                                        <th>Status</th>
-                                        <th width="100px">Action</th>
+                                        <th width="20px">Status</th>
+                                        <th width="170px">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -102,11 +101,28 @@
                     },
                     {
                         data: 'appointment',
-                        name: 'appointment'
+                        name: 'appointment',
+                        render: function(data, type, row) {
+                            if (data == 'N/A') {
+                                return data;
+                            } else {
+                                return moment(data, 'YYYY-MM-DD HH:mm:ss').format(
+                                    'DD-MM-YYYY hh:mm A');
+                            }
+                        }
                     },
                     {
                         data: 'next_appointment',
-                        name: 'next_appointment'
+                        name: 'next_appointment',
+                        render: function(data, type, row) {
+                            if (data == 'N/A') {
+                                return data;
+                            } else {
+                                return moment(data, 'YYYY-MM-DD HH:mm:ss').format(
+                                    'DD-MM-YYYY hh:mm A');
+                            }
+
+                        }
                     },
                     // {
                     //     data: 'new_appointment',
@@ -185,6 +201,18 @@
                 $('#app_parent_id').val(app_parent_id);
                 // Replace with dynamic patient ID
 
+                var now = new Date();
+                var year = now.getFullYear();
+                var month = (now.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+                var day = now.getDate().toString().padStart(2, '0');
+                var hours = now.getHours().toString().padStart(2, '0');
+                var minutes = now.getMinutes().toString().padStart(2, '0');
+                var datetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+                document.getElementById('appdate').value = datetime;
+
+                $('#pregnant_status').hide();
+
                 var url = "{{ route('patient.patient_list.appointment', [':patientId']) }}";
                 url = url.replace(':patientId', patientId);
                 // Fetch patient appointment details using AJAX
@@ -203,13 +231,21 @@
                         $('#allergies').val(response.allergies);
                         $('#pregnant').val(response.pregnant);
                         $('#rdoctor').val(response.referred_doctor);
+
+                        if (response.gender === 'F') {
+                            $('#pregnant_status').show();
+                        } else {
+                            $('#pregnant_status').hide();
+                            document.getElementById('pregnant_status').value = '';
+                        }
+
                         if (response.history && response.history.length > 0) {
                             $('#medical-conditions-wrapper').empty();
                             response.history.forEach(function(condition, index) {
                                 var medicalConditionInput = `
-                                    <div class="input-group mb-3">
+                                    <div class="input-group mb-0">
                                         <input type="text" class="form-control" name="medical_conditions[]" value="${condition.history}" placeholder="Medical Condition">
-                                        <button class="btn ${index === 0 ? 'btn-success' : 'btn-danger'}" type="button" onclick="${index === 0 ? 'addPatientMedicalCondition()' : 'removePatientMedicalCondition(this)'}">${index === 0 ? '+' : '-'}</button>
+                                        <button class="btn-sm ${index === 0 ? 'btn-success' : 'btn-danger'}" type="button" onclick="${index === 0 ? 'addPatientMedicalCondition()' : 'removePatientMedicalCondition(this)'}">${index === 0 ? '+' : '-'}</button>
                                     </div>`;
                                 $('#medical-conditions-wrapper').append(
                                     medicalConditionInput);

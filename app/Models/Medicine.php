@@ -30,4 +30,9 @@ class Medicine extends Model
             $clinic->updated_by = Auth::id(); // Set updated_by to current user's ID
         });
     }
+
+    public function prescriptions()
+    {
+        return $this->hasMany(Prescription::class, 'medicine_id', 'id');
+    }
 }

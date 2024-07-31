@@ -150,7 +150,7 @@
          <input class="form-control" type="text" id="pincode" name="pincode" required placeholder="pin code">
      </div>
  </div>
- <div class="row">
+ {{-- <div class="row">
      <div class="col-md-3">
          <div class="form-group">
              <label class="form-label" for="marital_status">Marital Status</label>
@@ -166,4 +166,4 @@
      </div>
 
 
- </div>
+ </div> --}}

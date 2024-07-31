@@ -14,22 +14,24 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <input class="form-control" type="hidden" id="app_parent_id" name="app_parent_id">
-                                    
+
                                 <div class="form-group">
-                                    <label class="form-label" for="patient_id">Patient ID</label><span class="text-danger">
-                                    *</span>
+                                    <label class="form-label" for="patient_id">Patient ID</label><span
+                                        class="text-danger">
+                                        *</span>
                                     <input class="form-control" type="text" id="patient_id" name="patient_id"
                                         placeholder="Patient ID" readonly>
-                                        <div id="patientIdError" class="invalid-feedback"></div>
+                                    <div id="patientIdError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="patient_name">Patient Name</label><span class="text-danger">
-                                    *</span>
-                                    <input class="form-control" type="text" id="patient_name"
-                                        name="patient_name" placeholder="Patient name" readonly>
-                                        <div id="patientNameError" class="invalid-feedback"></div>
+                                    <label class="form-label" for="patient_name">Patient Name</label><span
+                                        class="text-danger">
+                                        *</span>
+                                    <input class="form-control" type="text" id="patient_name" name="patient_name"
+                                        placeholder="Patient name" readonly>
+                                    <div id="patientNameError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
@@ -37,8 +39,9 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="clinic_branch_id">Branch</label><span class="text-danger">
-                                    *</span>
+                                    <label class="form-label" for="clinic_branch_id">Branch</label><span
+                                        class="text-danger">
+                                        *</span>
                                     <select class="form-select" id="clinic_branch_id" name="clinic_branch_id" required
                                         data-placeholder="Select a Branch" style="width: 100%;">
                                         @foreach ($clinicBranches as $clinicBranch)
@@ -57,41 +60,50 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="appdate">Booking Date & Time</label><span class="text-danger">*</span>
-                                    <input class="form-control" type="datetime-local" id="appdate" name="appdate" required>
+                                    <label class="form-label" for="appdate">Booking Date & Time</label><span
+                                        class="text-danger">*</span>
+                                    <input class="form-control" type="datetime-local" id="appdate" name="appdate"
+                                        required>
                                     <div id="appDateError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            
+
                         </div>
 
                         <div class="row">
-                        <div class="col-md-6">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="doctor">Doctor</label><span class="text-danger">
-                                    *</span>
-                                    <select  class="form-select" id="doctor_id" name="doctor_id" required data-placeholder="Select a Doctor" style="width: 100%;">
+                                        *</span>
+                                    <select class="form-select" id="doctor_id" name="doctor_id" required
+                                        data-placeholder="Select a Doctor" style="width: 100%;">
                                         <option value="">Select a doctor</option>
                                         @foreach ($workingDoctors as $doctor)
-                                            <?php $doctorName = str_replace("<br>", " ", $doctor->user->name); ?>
-                                            <option value="{{ $doctor->user_id }}">{{ $doctorName }}</option>  
+                                            <?php $doctorName = str_replace('<br>', ' ', $doctor->user->name); ?>
+                                            <option value="{{ $doctor->user_id }}">{{ $doctorName }}</option>
                                         @endforeach
                                     </select>
                                     <div id="doctorError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            
+
+                        </div>
+                        <div class="row">
+                            <div style="display:none" id="alreadyExistsPatient">
+                                <span class="text-danger">Already exists appointment for the selected date!</span>
+                            </div>
                         </div>
                         <div class="row">
                             <div style="display:none" id="existingAppointmentsError">
                                 <span class="text-danger">Already exists appointment for the selected time!</span>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row mt-1" style="display:none" id="existAppContainer">
+                            <hr />
                             <div style="display:none" id="existingAppointments">
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
 
@@ -106,6 +118,8 @@
 
 <script>
     $(function() {
+        var now = new Date().toISOString().slice(0, 16);
+        document.getElementById('appdate').setAttribute('min', now);
         // Handle Save button click
         $('#newAppointmentBtn').click(function() {
             // Reset previous error messages
@@ -114,15 +128,15 @@
             $('#clinicError').text('');
             $('#doctorError').text('');
             $('#appDateError').text('');
-            
+
             // Validate form inputs
             var clinicId = $('#clinic_branch_id').val();
             var doctorId = $('#doctor_id').val();
             var appDate = $('#appdate').val();
             var patientId = $('#patientId').val();
             var patientName = $('#patient_name').val();
-            
-            
+
+
             // Basic client-side validation (you can add more as needed)
             if (clinicId.length === 0) {
                 $('#clinic_branch_id').addClass('is-invalid');
@@ -162,6 +176,7 @@
                 dataType: 'json',
                 success: function(response) {
                     // If successful, hide modal and show success message
+                    $('#alreadyExistsPatient').hide();
                     $('#existingAppointments').hide();
                     $('#existingAppointmentsError').hide();
                     $('#modal-booking').modal('hide');
@@ -186,6 +201,10 @@
                         $('#appDateError').text(errors.appdate[0]);
                     } else {
                         // Handle specific error from backend
+                        var errorPatient = xhr.responseJSON.errorPatient;
+                        if (errorPatient) {
+                            $('#alreadyExistsPatient').show();
+                        }
                         var errorMessage = xhr.responseJSON.error;
                         if (errorMessage) {
                             $('#existingAppointmentsError').show();
@@ -201,10 +220,14 @@
             $('#doctor_id').removeClass('is-invalid');
             $('#doctorError').text('');
             $('#appDate').removeClass('is-invalid');
+            $('#appDate').val('');
             $('#appDateError').text('');
             $('#clinic_branch_id').removeClass('is-invalid');
             $('#clinicError').text('');
-            
+            $('#existAppContainer').hide();
+            $('#existingAppointments').empty();
+            $('#existingAppointments').hide();
+
         });
     });
 

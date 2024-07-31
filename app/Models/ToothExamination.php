@@ -13,7 +13,7 @@ class ToothExamination extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'patient_id', 'app_id', 'tooth_id', 'tooth_score_id', 'chief_complaint', 'hpi', 'dental_examination', 'disease_id', 'diagnosis', 'treatment_id', 'xray', 'lingual_condn', 'labial_condn', 'occulusal_condn', 'distal_condn', 'mesial_condn', 'palatal_condn', 'buccal_condn', 'treatment_status', 'anatomy_image', 'remarks', 'created_by', 'updated_by', 'status',
+        'patient_id', 'app_id', 'tooth_id', 'row_id', 'tooth_score_id', 'chief_complaint', 'hpi', 'dental_examination', 'disease_id', 'diagnosis', 'treatment_id', 'treatment_plan_id', 'xray', 'lingual_condn', 'labial_condn', 'occulusal_condn', 'distal_condn', 'mesial_condn', 'palatal_condn', 'buccal_condn', 'treatment_status', 'anatomy_image', 'remarks', 'created_by', 'updated_by', 'status',
     ];
 
     protected $dates = ['deleted_at'];
@@ -52,6 +52,11 @@ class ToothExamination extends Model
         return $this->belongsTo(TreatmentType::class, 'treatment_id', 'id');
     }
 
+    public function treatmentPlan()
+    {
+        return $this->belongsTo(TreatmentPlan::class, 'treatment_plan_id', 'id');
+    }
+
     public function toothScore()
     {
         return $this->belongsTo(ToothScore::class, 'tooth_score_id', 'id');
@@ -71,5 +76,40 @@ class ToothExamination extends Model
     {
         return $this->hasMany(XRayImage::class)
             ->where('status', 'Y');
+    }
+
+    public function lingualCondition()
+    {
+        return $this->belongsTo(SurfaceCondition::class, 'lingual_condn', 'id');
+    }
+
+    public function labialCondition()
+    {
+        return $this->belongsTo(SurfaceCondition::class, 'labial_condn', 'id');
+    }
+
+    public function occulusalCondition()
+    {
+        return $this->belongsTo(SurfaceCondition::class, 'occulusal_condn', 'id');
+    }
+
+    public function distalCondition()
+    {
+        return $this->belongsTo(SurfaceCondition::class, 'distal_condn', 'id');
+    }
+
+    public function mesialCondition()
+    {
+        return $this->belongsTo(SurfaceCondition::class, 'mesial_condn', 'id');
+    }
+
+    public function palatalCondition()
+    {
+        return $this->belongsTo(SurfaceCondition::class, 'palatal_condn', 'id');
+    }
+
+    public function buccalCondition()
+    {
+        return $this->belongsTo(SurfaceCondition::class, 'buccal_condn', 'id');
     }
 }

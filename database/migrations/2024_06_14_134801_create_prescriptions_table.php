@@ -15,17 +15,16 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('patient_id');
             $table->foreignId('app_id')->constrained('appointments');
-            $table->foreignId('medid')->constrained('medicines');
-            $table->dateTime('endate');
-            $table->string('medd_name', 200);
-            $table->string('str', 150);
-            $table->string('dose', 100);
-            $table->string('days', 10);
-            $table->string('duration', 20);
-            $table->string('remark', 300);
-            $table->foreignId('prby')->constrained('users');
-            $table->string('finalsave', 5)->default('NO');
-            $table->string('status', 5)->default('Y');
+            $table->foreignId('medicine_id')->constrained('medicines')->nullable();
+            $table->string('medicine_name', 200)->nullable();
+            $table->string('medicine_company', 150)->nullable();
+            $table->foreignId('dosage_id')->constrained('dosages')->nullable();
+            $table->unsignedInteger('duration');
+            $table->string('advice', 50)->nullable();
+            $table->string('remark', 300)->nullable();
+            $table->foreignId('prescribed_by')->constrained('users');
+            $table->string('finalsave', 5)->default('NO')->nullable();
+            $table->string('status', 5)->default('Y')->nullable();
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
 
@@ -40,13 +39,8 @@ return new class extends Migration
             // Indexes
             $table->index('patient_id');
             $table->index('app_id');
-            $table->index('medid');
-            $table->index('medd_name');
-            $table->index('str');
-            $table->index('dose');
-            $table->index('days');
-            $table->index('duration');
-            $table->index('remark');
+            $table->index('medicine_id');
+            $table->index('medicine_name');
         });
     }
 
@@ -58,8 +52,6 @@ return new class extends Migration
         Schema::table('prescriptions', function (Blueprint $table) {
             $table->dropForeign(['app_id']);
             $table->dropForeign(['patient_id']);
-            $table->dropForeign(['medid']);
-            $table->dropForeign(['prby']);
             $table->dropForeign(['created_by']);
             $table->dropForeign(['updated_by']);
         });

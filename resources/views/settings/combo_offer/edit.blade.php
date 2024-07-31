@@ -1,9 +1,9 @@
 <form id="editComboOfferForm" method="post" action="{{ route('settings.combo_offer.update', ['offer' => ':id']) }}">
     @csrf
     <input type="hidden" id="edit_combo_offer_id" name="edit_combo_offer_id" value="">
+    <div class="modal fade modal-right slideInRight" id="modal-edit" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable h-p100">
 
-    <div class="modal fade" id="modal-edit" tabindex="-1">
-        <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fa fa-tags"></i> Edit Combo Offer</h5>

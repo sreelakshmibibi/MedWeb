@@ -71,6 +71,10 @@
 
     <script type="text/javascript">
         var table;
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementById('expiry_date').setAttribute('min', today);
+        document.getElementById('edit_expiry_date').setAttribute('min', today);
+
         jQuery(function($) {
             table = $('.data-table').DataTable({
                 processing: true,

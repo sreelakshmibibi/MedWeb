@@ -96,15 +96,19 @@ use Illuminate\Support\Facades\Session;
 </div>
 
 <div class="d-flex align-items-center justify-content-between">
+
     <h5 class="box-title text-info mb-0 mt-2 "><i class="fa fa-clock me-15"></i>
         Follow up
     </h5>
-    <input type="checkbox" id="follow_checkbox" name="follow_checkbox" class="filled-in chk-col-success" />
+    {{-- <input type="checkbox" id="follow_checkbox" name="follow_checkbox" class="filled-in chk-col-success" /> --}}
+    <input type="checkbox" id="follow_checkbox" name="follow_checkbox" class="filled-in chk-col-success"
+        @if (isset($latestFollowup)) checked @endif />
     <label for="follow_checkbox"></label>
 </div>
 <hr class="my-15 ">
 
-<div class="row mb-4" id="followupdiv" style="display: none;">
+{{-- <div class="row mb-4" id="followupdiv" style="display: none;"> --}}
+<div class="row mb-4" id="followupdiv" @if (!isset($latestFollowup)) style="display: none;" @endif>
     <div class="table-responsive">
         <table id="myTable" class="table table-bordered table-hover table-striped mb-0 text-center">
 
@@ -115,7 +119,6 @@ use Illuminate\Support\Facades\Session;
                     <th>Branch</th>
                     <th>Appointment Date & Time</th>
                     <th>Consulting Doctor</th>
-                    <th>Appointment Type</th>
                     <th>Remarks</th>
                     <!-- <th><button type="button" class="waves-effect waves-light btn btn-sm btn-primary">
                             <i class="fa fa-add"></i>
@@ -133,6 +136,8 @@ use Illuminate\Support\Facades\Session;
                     </td> -->
 
                     <td>
+                        <input type="hidden" id="followupAppId" name="followupAppId"
+                            @if (isset($latestFollowup)) value="{{ $latestFollowup->id }}" @endif />
                         <select class="select2" id="clinic_branch_id" name="clinic_branch_id"
                             data-placeholder="Select a Branch" style="width: 100%;">
                             @foreach ($clinicBranches as $clinicBranch)
@@ -142,15 +147,24 @@ use Illuminate\Support\Facades\Session;
                                 $clinicAddress = implode(', ', $clinicAddress);
                                 $branch = $clinicAddress . ', ' . $clinicBranch->city->city . ', ' . $clinicBranch->state->state;
                                 ?>
-                                <option value="{{ $clinicBranch->id }}"
+                                {{-- <option value="{{ $clinicBranch->id }}"
                                     @if ($appointment->app_branch == $clinicBranch->id) selected @endif>
-                                    {{ $branch }}</option>
+                                    {{ $branch }}</option> --}}
+                                <option value="{{ $clinicBranch->id }}"
+                                    @if (isset($latestFollowup) && $latestFollowup->app_branch == $clinicBranch->id) selected 
+                                        @elseif (!isset($latestFollowup) && $appointment->app_branch == $clinicBranch->id) 
+                                            selected @endif>
+                                    {{ $branch }}
+                                </option>
                             @endforeach
                         </select>
                     </td>
                     <td>
+                        {{-- <input class="form-control" type="datetime-local" id="appdate" name="appdate"
+                            value="{{ now()->setTimezone('Asia/Kolkata')->format('Y-m-d\TH:i') }}"> --}}
                         <input class="form-control" type="datetime-local" id="appdate" name="appdate"
-                            value="{{ now()->setTimezone('Asia/Kolkata')->format('Y-m-d\TH:i') }}">
+                            @if (isset($latestFollowup)) value="{{ \Carbon\Carbon::parse($latestFollowup->app_date . ' ' . $latestFollowup->app_time)->format('Y-m-d\TH:i') }}"
+                            @else value="{{ now()->setTimezone('Asia/Kolkata')->format('Y-m-d\TH:i') }}" @endif>
                     </td>
 
                     <td>
@@ -158,24 +172,25 @@ use Illuminate\Support\Facades\Session;
                             style="width: 100%;">
                             @foreach ($workingDoctors as $doctor)
                                 <?php $doctorName = str_replace('<br>', ' ', $doctor->user->name); ?>
-                                <option value="{{ $doctor->user_id }}"
+                                {{-- <option value="{{ $doctor->user_id }}"
                                     @if ($doctor->user_id == $appointment->doctor_id) selected @endif>
+                                    {{ $doctorName }}
+                                </option> --}}
+                                <option value="{{ $doctor->user_id }}"
+                                    @if (isset($latestFollowup) && $latestFollowup->doctor_id == $doctor->user_id) selected
+                                        @elseif (!isset($latestFollowup) && $doctor->user_id == $appointment->doctor_id) selected @endif>
                                     {{ $doctorName }}
                                 </option>
                             @endforeach
                         </select>
                     </td>
 
+
                     <td>
-                        <select class="form-select" id="apptype" name="apptype">
-                            @foreach ($appointmentTypes as $appointmentType)
-                                <option value="{{ $appointmentType->id }}">
-                                    {{ $appointmentType->type }}</option>
-                            @endforeach
-                        </select>
-                    </td>
-                    <td>
+                        {{-- <input type="text" class="form-control" id="remarks_followup" name="remarks_followup"
+                            placeholder="remarks"> --}}
                         <input type="text" class="form-control" id="remarks_followup" name="remarks_followup"
+                            @if (isset($latestFollowup)) value="{{ $latestFollowup->remarks }}" @endif
                             placeholder="remarks">
                     </td>
                     <!-- <td>
@@ -185,12 +200,12 @@ use Illuminate\Support\Facades\Session;
                 </tr>
             </tbody>
         </table>
-        <div class="row">
+        <div class="row mt-2">
             <div style="display:none" id="existingAppointmentsError">
                 <span class="text-danger">Already exists appointment for the selected time!</span>
             </div>
         </div>
-        <div class="row">
+        <div class="row mt-2" style="display:none" id="existAppContainer">
             <div style="display:none" id="existingAppointments">
             </div>
         </div>
@@ -203,9 +218,19 @@ use Illuminate\Support\Facades\Session;
     </h5>
     <input type="checkbox" id="presc_checkbox" name="presc_checkbox" class="filled-in chk-col-success" />
     <label for="presc_checkbox"></label>
+    {{-- <input type="checkbox" id="presc_checkbox" name="presc_checkbox" class="filled-in chk-col-success"
+        @if (isset($patientPrescriptions) && $patientPrescriptions->isNotEmpty()) checked @endif /> --}}
 </div>
 <hr class="my-15 ">
 <script>
+    $(function() {
+
+        let presc = {{ count($patientPrescriptions) }};
+        if (presc >= 1) {
+            $("#presc_checkbox").prop('checked', true).trigger('change');
+        }
+
+    });
     $(document).on('click', '.btn-treat-view', function() {
         var teethName = $(this).data('id');
         var appId = '<?= Session::get('appId') ?>';
@@ -279,6 +304,16 @@ use Illuminate\Support\Facades\Session;
                         return false; // Exit the loop once found
                     }
                 });
+                var treatment_plan_id = examination.treatment_plan_id;
+                $('#treatment_plan_id').val(treatment_plan_id);
+
+                // Loop through options to find the corresponding text and select it
+                $('#treatment_plan_id option').each(function() {
+                    if ($(this).val() == treatment_plan_id) {
+                        $(this).prop('selected', true);
+                        return false; // Exit the loop once found
+                    }
+                });
 
                 var treatment_status = examination.treatment_status;
                 $('#treatment_status').val(treatment_status);
@@ -296,8 +331,7 @@ use Illuminate\Support\Facades\Session;
 
                 if (palatal_condn !== null) {
                     $("#Palatal").show();
-                    var dpartId = '#' + $('.dparts[title="Palatal"]').attr(
-                        'id');
+                    var dpartId = $('.dparts[title="Palatal"]');
                     $(dpartId).css({
                         'background-color': 'red',
                     });
@@ -316,8 +350,7 @@ use Illuminate\Support\Facades\Session;
                 $('#mesial_condn').val(mesial_condn);
                 if (mesial_condn !== null) {
                     $("#Mesial").show();
-                    var dpartId = '#' + $('.dparts[title="Mesial"]').attr(
-                        'id');
+                    var dpartId = $('.dparts[title="Mesial"]');
                     $(dpartId).css({
                         'background-color': 'red',
                     });
@@ -337,8 +370,7 @@ use Illuminate\Support\Facades\Session;
 
                 if (distal_condn !== null) {
                     $("#Distal").show();
-                    var dpartId = '#' + $('.dparts[title="Distal"]').attr(
-                        'id');
+                    var dpartId = $('.dparts[title="Distal"]');
                     $(dpartId).css({
                         'background-color': 'red',
                     });
@@ -358,8 +390,7 @@ use Illuminate\Support\Facades\Session;
 
                 if (buccal_condn !== null) {
                     $("#Buccal").show();
-                    var dpartId = '#' + $('.dparts[title="Buccal"]').attr(
-                        'id');
+                    var dpartId = $('.dparts[title="Buccal"]');
                     $(dpartId).css({
                         'background-color': 'red',
                     });
@@ -418,23 +449,24 @@ use Illuminate\Support\Facades\Session;
                     }
                 });
 
-                var xrays = response.xrays;
-                if (Array.isArray(xrays) && xrays.length > 0) {
-                    // Show the link
-                    $('#uploadedXrays').show();
-                } else {
-                    // Hide the link if no xrays or not an array
-                    $('#uploadedXrays').hide();
-                }
+                // var xrays = response.xrays;
+                // if (Array.isArray(xrays) && xrays.length > 0) {
+                //     // Show the link
+                //     $('#uploadedXrays').show();
+                //$('#uploadedXrays').attr('data-id', examination.id);
+                //$('#xtooth_exam_id').val(examination.id);
+                // } else {
+                //     // Hide the link if no xrays or not an array
+                //     $('#uploadedXrays').hide();
+                // }
+                $('#teethXrayDiv').hide();
             },
 
         });
         $('#newTreatmentBtn').hide();
-        $('#editTreatmentBtn').hide();
         $('#modal-teeth').modal('show');
-
-
     });
+
     $(document).on('click', '.btn-treat-edit', function() {
         var teethName = $(this).data('id');
         var appId = '<?= Session::get('appId') ?>';
@@ -508,7 +540,18 @@ use Illuminate\Support\Facades\Session;
                         return false; // Exit the loop once found
                     }
                 });
+               
+                var treatment_plan_id = examination.treatment_plan_id;
+                $('#treatment_plan_id').val(treatment_plan_id);
 
+                // Loop through options to find the corresponding text and select it
+                $('#treatment_plan_id option').each(function() {
+                    if ($(this).val() == treatment_plan_id) {
+                        $(this).prop('selected', true);
+                        return false; // Exit the loop once found
+                    }
+                });
+                
                 var treatment_status = examination.treatment_status;
                 $('#treatment_status').val(treatment_status);
 
@@ -525,8 +568,7 @@ use Illuminate\Support\Facades\Session;
 
                 if (palatal_condn !== null) {
                     $("#Palatal").show();
-                    var dpartId = '#' + $('.dparts[title="Palatal"]').attr(
-                        'id');
+                    var dpartId = $('.dparts[title="Palatal"]');
                     $(dpartId).css({
                         'background-color': 'red',
                     });
@@ -545,8 +587,7 @@ use Illuminate\Support\Facades\Session;
                 $('#mesial_condn').val(mesial_condn);
                 if (mesial_condn !== null) {
                     $("#Mesial").show();
-                    var dpartId = '#' + $('.dparts[title="Mesial"]').attr(
-                        'id');
+                    var dpartId = $('.dparts[title="Mesial"]');
                     $(dpartId).css({
                         'background-color': 'red',
                     });
@@ -566,8 +607,7 @@ use Illuminate\Support\Facades\Session;
 
                 if (distal_condn !== null) {
                     $("#Distal").show();
-                    var dpartId = '#' + $('.dparts[title="Distal"]').attr(
-                        'id');
+                    var dpartId =  $('.dparts[title="Distal"]');
                     $(dpartId).css({
                         'background-color': 'red',
                     });
@@ -587,8 +627,7 @@ use Illuminate\Support\Facades\Session;
 
                 if (buccal_condn !== null) {
                     $("#Buccal").show();
-                    var dpartId = '#' + $('.dparts[title="Buccal"]').attr(
-                        'id');
+                    var dpartId = $('.dparts[title="Buccal"]');
                     $(dpartId).css({
                         'background-color': 'red',
                     });
@@ -651,6 +690,8 @@ use Illuminate\Support\Facades\Session;
                 if (Array.isArray(xrays) && xrays.length > 0) {
                     // Show the link
                     $('#uploadedXrays').show();
+                    $('#uploadedXrays').attr('data-id', examination.id);
+                    $('#xtooth_exam_id').val(examination.id);
                 } else {
                     // Hide the link if no xrays or not an array
                     $('#uploadedXrays').hide();
@@ -660,9 +701,8 @@ use Illuminate\Support\Facades\Session;
         });
         $('#newTreatmentBtn').show();
         $('#modal-teeth').modal('show');
-
-
     });
+
 
     $('#clinic_branch_id, #appdate').change(function() {
         var branchId = $('#clinic_branch_id').val();
@@ -708,6 +748,18 @@ use Illuminate\Support\Facades\Session;
 
     });
 
+    function convertTo12HourFormat(railwayTime) {
+        var timeArray = railwayTime.split(':');
+        var hours = parseInt(timeArray[0]);
+        var minutes = timeArray[1];
+
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        var formattedTime = hours + ':' + minutes + ' ' + ampm;
+        return formattedTime;
+    }
+
     function showExistingAppointments(branchId, appDate, doctorId) {
         if (branchId && appDate && doctorId) {
 
@@ -729,29 +781,30 @@ use Illuminate\Support\Facades\Session;
                     if (data.existingAppointments.length > 0) {
 
                         // Clear existing content
-
+                        $('#existAppContainer').hide();
                         $('#existingAppointments').empty();
                         // Create a table element
-                        var table = $('<table class="table table-striped">').addClass('appointment-table');
+                        // var table = $('<table class="table table-striped">').addClass('appointment-table');
+                        var table = $('<table class="table table-striped mb-0">').addClass(
+                            'appointment-table').css({
+                            'border-collapse': 'separate',
+                            'border-spacing': '0.5rem'
+                        });
 
-                        // Create header row
-                        var headerRow = $('<tr>');
-                        headerRow.append($('<th>').text('Scheduled Appointments'));
-                        table.append(headerRow);
+                        var numRows = Math.ceil(data.existingAppointments.length / 10);
 
-                        // Calculate number of rows needed
-                        var numRows = Math.ceil(data.existingAppointments.length / 3);
-
-                        // Loop to create rows and populate cells
                         for (var i = 0; i < numRows; i++) {
                             var row = $('<tr>');
 
-                            // Create 3 cells for each row
-                            for (var j = 0; j < 3; j++) {
-                                var dataIndex = i * 3 + j;
+                            for (var j = 0; j < 10; j++) {
+                                var dataIndex = i * 10 + j;
                                 if (dataIndex < data.existingAppointments.length) {
-                                    var cell = $('<td>').text(data.existingAppointments[dataIndex]
-                                        .app_time);
+                                    var app_time = data
+                                        .existingAppointments[
+                                            dataIndex]
+                                        .app_time;
+                                    var formattedTime = convertTo12HourFormat(app_time);
+                                    var cell = $('<td class="b-1 w-100 text-center">').text(formattedTime);
                                     row.append(cell);
                                 } else {
                                     var cell = $('<td>'); // Create empty cell if no more data
@@ -761,14 +814,17 @@ use Illuminate\Support\Facades\Session;
 
                             table.append(row);
                         }
+                        $('#existingAppointments').append($('<h6 class="text-warning mb-1">').text(
+                            'Scheduled Appointments'));
                         // Append table to existingAppointments div
                         $('#existingAppointments').append(table);
-
+                        $('#existAppContainer').show();
                         // Show the div
                         $('#existingAppointments').show();
 
                     } else {
                         $('#existingAppointments').html('No existing appointments found.');
+                        $('#existAppContainer').show();
                         $('#existingAppointments').show();
 
                     }
@@ -778,12 +834,14 @@ use Illuminate\Support\Facades\Session;
                     console.error('Error fetching existing appointments:', error);
                     $('#existingAppointments').html(
                         'Error fetching existing appointments. Please try again later.');
+                    $('#existAppContainer').show();
                     $('#existingAppointments').show();
 
                 }
             });
         } else {
             $('#existingAppointments').html('No existing appointments found.');
+            $('#existAppContainer').show();
             $('#existingAppointments').show();
         }
     }
@@ -791,9 +849,12 @@ use Illuminate\Support\Facades\Session;
         var appointmentId = $(this).data('appointment-id');
         var teethName = $(this).data('teeth-name');
         var patientId = $(this).data('patient-id');
+        var toothExamId = $(this).data('id');
+
 
         $('#xapp_id').val(appointmentId);
         $('#xpatient_id').val(patientId);
         $('#xteeth_id').val(teethName);
+        $('#xtooth_exam_id').val(toothExamId);
     });
 </script>

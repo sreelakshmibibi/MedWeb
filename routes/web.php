@@ -4,6 +4,7 @@ use App\Http\Controllers\Appointment\AppointmentController;
 use App\Http\Controllers\Appointment\TreatmentController;
 use App\Http\Controllers\Auth\StaffVerificationController;
 use App\Http\Controllers\HelperController;
+use App\Http\Controllers\Settings\InsuranceController;
 use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
 use App\Http\Controllers\Settings\ClinicBranchController;
@@ -12,13 +13,14 @@ use App\Http\Controllers\Settings\DepartmentController;
 use App\Http\Controllers\Settings\DiseaseController;
 use App\Http\Controllers\Settings\MedicineController;
 use App\Http\Controllers\Settings\TreatmentCostController;
+use App\Http\Controllers\Settings\TreatmentPlanController;
 use App\Http\Controllers\Staff\StaffListController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('auth.login');
-});
+})->middleware('guest');
 
 Route::get('/formclinic', function () {
     return view('forms.clinic_form');
@@ -41,6 +43,8 @@ Route::get('/session-data', [HelperController::class, 'getSessionData']);
 Route::get('/fetch-doctors/{branchId}', [PatientListController::class, 'fetchDoctors'])->name('get.doctors');
 Route::get('/fetch-existingAppoinmtents/{branchId}', [PatientListController::class, 'fetchExistingAppointments'])->name('get.exisitingAppointments');
 Route::get('/fetch-ExistingExamination/{toothId}/{appId}/{patientId}', [TreatmentController::class, 'fetchExistingExamination'])->name('get.toothExamination');
+Route::post('/generate-pdf', [HelperController::class, 'generatePdf'])->name('generate.pdf');
+Route::get('/fetch-teeth-details/{patientId}', [HelperController::class, 'fetchTeethDetails'])->name('fetch.teeth.details');
 
 Route::get('/clinic', [ClinicBranchController::class, 'index'])->name('settings.clinic');
 Route::post('/clinic/create', [ClinicBranchController::class, 'create'])->name('settings.clinic.create');
@@ -63,6 +67,19 @@ Route::group(['middleware' => ['permission:departments']], function () {
     Route::post('/department/update', [DepartmentController::class, 'update'])->name('settings.department.update');
     Route::delete('/department/{department}', [DepartmentController::class, 'destroy'])->name('settings.departments.destroy');
 });
+
+Route::get('/insurance', [InsuranceController::class, 'index'])->name('settings.insurance');
+Route::post('/insurance/store', [InsuranceController::class, 'store'])->name('settings.insurance.store');
+Route::get('/insurance/{insurance}/edit', [InsuranceController::class, 'edit'])->name('settings.insurance.edit');
+Route::post('/insurance/update', [InsuranceController::class, 'update'])->name('settings.insurance.update');
+Route::delete('/insurance/{insurance}', [InsuranceController::class, 'destroy'])->name('settings.insurance.destroy');
+
+Route::get('/treatment_plan', [TreatmentPlanController::class, 'index'])->name('settings.treatment_plan');
+Route::post('/treatment_plan/store', [TreatmentPlanController::class, 'store'])->name('settings.treatment_plan.store');
+Route::get('/treatment_plan/{treatment_plan}/edit', [TreatmentPlanController::class, 'edit'])->name('settings.treatment_plan.edit');
+Route::post('/treatment_plan/update', [TreatmentPlanController::class, 'update'])->name('settings.treatment_plan.update');
+Route::delete('/treatment_plan/{treatment_plan}', [TreatmentPlanController::class, 'destroy'])->name('settings.treatment_plan.destroy');
+
 Route::get('/treatment_cost', [TreatmentCostController::class, 'index'])->name('settings.treatment_cost');
 Route::post('/treatment_cost/store', [TreatmentCostController::class, 'store'])->name('settings.treatment_cost.store');
 Route::get('/treatment_cost/{department}/edit', [TreatmentCostController::class, 'edit'])->name('settings.treatment_cost.edit');
@@ -84,6 +101,7 @@ Route::delete('/patient_list/{patientId}', [PatientListController::class, 'destr
 Route::post('/patient_list/{patientId}', [PatientListController::class, 'changeStatus'])->name('patient.patient_list.changeStatus');
 Route::post('/patient_list/appointment/store', [PatientListController::class, 'appointmentBooking'])->name('patient.patient_list.booking');
 Route::get('/patient_list/{patientId}/appointment', [PatientListController::class, 'appointmentDetails'])->name('patient.patient_list.appointment');
+Route::get('/patient_list/{patientId}/view', [PatientListController::class, 'show'])->name('patient.patient_list.view');
 
 Route::get('/today', [TodayController::class, 'index'])->name('patient.today');
 Route::post('/today/store', [TodayController::class, 'store'])->name('patient.today.store');
@@ -120,8 +138,10 @@ Route::delete('/combo_offer/{offer}', [ComboOfferController::class, 'destroy'])-
 Route::get('/appointment/{appointment}/treatment', [TreatmentController::class, 'index'])->name('treatment');
 Route::post('/treatment/store', [TreatmentController::class, 'store'])->name('treatment.store');
 
-Route::get('/images/{patientId}/{toothId}', [TreatmentController::class, 'getImages'])->name('images.index');
+Route::get('/images/{dataId}', [TreatmentController::class, 'getImages'])->name('images.index');
 Route::delete('/delete-image', [TreatmentController::class, 'deleteImage'])->name('delete.image');
 
 Route::get('/appointment/fetchtreatment/{appointment}', [TreatmentController::class, 'show'])->name('treatment.show');
+Route::get('/appointment/fetchTreatmentCharge/{appointment}', [TreatmentController::class, 'showCharge'])->name('treatment.showCharge');
 Route::delete('/treatment/{toothExamId}', [TreatmentController::class, 'destroy'])->name('treatment.destroy');
+Route::post('/treatment/details/store', [TreatmentController::class, 'storeDetails'])->name('treatment.details.store');

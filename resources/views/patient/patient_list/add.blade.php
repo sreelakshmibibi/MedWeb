@@ -31,7 +31,7 @@
 
             <section class="content">
                 <div class="box">
-                    <div class="box-body wizard-content">
+                    <div class="box-body wizard-content px-2 pb-0">
                         <form method="post" class="validation-wizard wizard-circle" id="patientform"
                             action="{{ route('patient.patient_list.store') }}" enctype="multipart/form-data">
                             @csrf
@@ -63,26 +63,15 @@
     <script>
         $(document).ready(function() {
 
-            // $("#patientform").steps({
-            //     headerTag: "h6.tabHeading",
-            //     bodyTag: "section.tabSection",
-            //     transitionEffect: "none",
-            //     titleTemplate: "#title#",
-            //     labels: {
-            //         finish: '<span><i class="fa fa-save"></i> Save</span>',
-            //     },
-            //     onFinished: function(event, currentIndex) {
-            //         swal(
-            //             "Your Order Submitted!",
-            //             "Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor."
-            //         );
-            //     },
-            // }); please check steps_patient
-
-
             $("#patientform .actions ul li:last-child a").addClass("bg-success btn btn-success");
 
+            var today = new Date().toISOString().split('T')[0];
+            document.getElementById('regdate').setAttribute('min', today);
 
+            var now = new Date().toISOString().slice(0, 16);
+            document.getElementById('appdate').setAttribute('min', now);
+
+            $('#pregnant').hide();
 
             var initialCountryId = $('#country_id').val(); // Assuming India is selected initially
             loadStates(initialCountryId);
@@ -157,6 +146,18 @@
                 loadDoctors(branchId, appDate);
             });
 
+            $('#clinic_branch_id0, #appdate, #doctor2').change(function() {
+                var branchId = $('#clinic_branch_id0').val();
+                var appDate = $('#appdate').val();
+                var doctorId = $('#doctor2').val();
+                var patientId = '';
+                $('#existingAppointmentsError').hide();
+                $('#existAppContainer').hide();
+                $('#existingAppointments').empty();
+                showExistingAppointments(branchId, appDate, doctorId, patientId, 'store');
+
+            });
+
 
             // Function to load doctors based on branch ID
             function loadDoctors(branchId, appDate) {
@@ -221,10 +222,10 @@
         function addMedicalCondition() {
             const wrapper = document.getElementById('medical-conditions-wrapper');
             const div = document.createElement('div');
-            div.className = 'input-group mb-3';
+            div.className = 'input-group mb-0';
             div.innerHTML = `
                 <input type="text" class="form-control" name="medical_conditions[]" placeholder="Medical Condition">
-                <button class="btn btn-danger" type="button" onclick="removeMedicalCondition(this)">-</button>
+                <button class="btn-sm btn-danger" type="button" onclick="removeMedicalCondition(this)">-</button>
             `;
             wrapper.appendChild(div);
         }
@@ -240,7 +241,9 @@
             genderSelect.addEventListener('change', function() {
                 if (genderSelect.value === 'F') {
                     pregnantContainer.style.display = 'block';
+                    $('#pregnant').show();
                 } else {
+                    $('#pregnant').hide();
                     pregnantContainer.style.display = 'none';
                     document.getElementById('pregnant').value = '';
                 }
@@ -249,5 +252,104 @@
             // Trigger change event to set initial state
             genderSelect.dispatchEvent(new Event('change'));
         });
+
+
+
+        function convertTo12HourFormat(railwayTime) {
+            var timeArray = railwayTime.split(':');
+            var hours = parseInt(timeArray[0]);
+            var minutes = timeArray[1];
+
+            var ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            var formattedTime = hours + ':' + minutes + ' ' + ampm;
+            return formattedTime;
+        }
+
+        function showExistingAppointments(branchId, appDate, doctorId, patientId, methodType) {
+            if (branchId && appDate && doctorId) {
+                $.ajax({
+                    url: '{{ route('get.exisitingAppointments', '') }}' + '/' + branchId,
+                    type: "GET",
+                    data: {
+                        appdate: appDate,
+                        doctorId: doctorId,
+                        patientId: patientId,
+                    },
+                    dataType: "json",
+                    success: function(data) {
+                        // Show/hide the 'alreadyExistsPatient' div based on 'checkAppointmentDate'
+
+
+                        // Show/hide the 'existingAppointmentsError' div based on 'checkAllocated'
+                        if (data.checkAllocated.length > 0) {
+                            $('#existingAppointmentsError').show();
+                        } else {
+                            $('#existingAppointmentsError').hide();
+                        }
+
+                        // Handle existing appointments display
+                        if (data.existingAppointments.length > 0) {
+                            $('#existAppContainer').hide();
+                            $('#existingAppointments').empty();
+                            $('#rescheduleExistingAppointments').empty();
+
+                            var table = $('<table class="table table-striped mb-0">').addClass(
+                                'appointment-table').css({
+                                'border-collapse': 'separate',
+                                'border-spacing': '0.5rem'
+                            });
+
+                            var numRows = Math.ceil(data.existingAppointments.length / 5);
+
+                            for (var i = 0; i < numRows; i++) {
+                                var row = $('<tr>');
+                                for (var j = 0; j < 5; j++) {
+                                    var dataIndex = i * 5 + j;
+                                    if (dataIndex < data.existingAppointments.length) {
+                                        var app_time = data.existingAppointments[dataIndex].app_time;
+                                        var formattedTime = convertTo12HourFormat(app_time);
+                                        var cell = $('<td class="b-1 w-100 text-center">').text(formattedTime);
+                                        row.append(cell);
+                                    } else {
+                                        var cell = $('<td>'); // Empty cell
+                                        row.append(cell);
+                                    }
+                                }
+                                table.append(row);
+                            }
+
+                            if (methodType === 'store') {
+                                $('#existingAppointments').append($('<h6 class="text-warning mb-1">').text(
+                                    'Scheduled Appointments'));
+                                $('#existingAppointments').append(table);
+                                $('#existAppContainer').show();
+                                $('#existingAppointments').show();
+                            } else if (methodType === 'edit') {
+                                $('#rescheduleExistingAppointments').append($('<h6 class="text-warning mb-1">')
+                                    .text('Scheduled Appointments'));
+                                $('#rescheduleExistingAppointments').append(table);
+                                $('#rescheduleExistingAppointments').show();
+                            }
+
+                        } else {
+                            $('#existAppContainer').show();
+                            $('#existingAppointments').html('No existing appointments found.');
+                            $('#existingAppointments').show();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching existing appointments:', error);
+                        $('#existingAppointments').html(
+                            'Error fetching existing appointments. Please try again later.');
+                        $('#existAppContainer').show();
+                        $('#existingAppointments').show();
+                    }
+                });
+            } else {
+                console.log('Missing required parameters for fetching existing appointments.');
+            }
+        }
     </script>
 @endsection

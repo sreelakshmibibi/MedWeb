@@ -78,7 +78,7 @@ class DoctorAvaialbilityService
         return $availableBranches;
     }
 
-    public function getTodayWorkingDoctors($branchId, $weekday)
+    public function getTodayWorkingDoctors($branchId = null, $weekday)
     {
 
         $query = DoctorWorkingHour::where('week_day', $weekday)
@@ -133,4 +133,28 @@ class DoctorAvaialbilityService
         return $appointments;
     }
 
+    public function checkAppointmentDate($branchId, $appDate, $doctorId, $patientId)
+    {
+        $query = Appointment::where('status', 'Y')
+        ->where('app_status', AppointmentStatus::SCHEDULED);
+
+        // Apply optional filters based on parameters
+        if ($branchId) {
+        $query->where('app_branch', $branchId);
+        }
+        if ($doctorId) {
+        $query->where('doctor_id', $doctorId);
+        }
+        if ($appDate) {
+        $query->whereDate('app_date', $appDate); // Assuming app_date is a date field
+        }
+        if ($patientId) {
+            $query->whereDate('patient_id', $patientId); // Assuming app_date is a date field
+            }
+        // Execute the query and return the result
+        $appointments = $query->exists(); // Use exists() for a boolean check
+
+        return $appointments ? 1 : 0;
+        
+    }
 }

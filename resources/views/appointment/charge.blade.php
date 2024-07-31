@@ -1,4 +1,4 @@
-<section id="finalStepContent" class="tabHideSection">
+<!-- <section id="finalStepContent" class="tabHideSection" @if (Auth::user()->isAdmin !=1)  style="display:none" @endif> -->
     <div class="d-flex align-items-center justify-content-between">
         <h5 class="box-title text-info mb-0 mt-2 "><i class="fa-solid fa-indian-rupee-sign me-15"></i>
             Charge
@@ -16,7 +16,8 @@
             <thead>
                 <tr class="bg-primary-light">
                     <th>No</th>
-                    <th>Treatment</th>
+                    <th>Treatment (Cost)</th>
+                    <th>Discount %(if any)</th>
                     <th class="w-200">Rate</th>
                     <!-- <th style="width:80px;">Action</th> -->
                 </tr>
@@ -29,4 +30,4 @@
             </tbody>
         </table>
     </div>
-</section>
+<!-- </section> -->

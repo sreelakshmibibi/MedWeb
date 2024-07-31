@@ -5,8 +5,9 @@ $commonService = new CommonService();
 
 ?>
 <input type="hidden" id="visitcount" name="visitcount" value="{{ $appointment->patient->visit_count }}">
-<div class="row ">
-    <div class="col-xl-8 col-12">
+<input type="hidden" id="isAdmin" name="isAdmin" value="{{ Auth::user()->is_admin }}">
+<div class="row px-2">
+    <div class="col-xl-8 col-12 ps-0">
         <div class="box flex-grow-1 mb-3" style="border-radius: 0px; /*height: 364px;*/">
             <div class="box-body bb-1" style="border-radius: 0px; ">
                 <div class="d-flex align-items-center">
@@ -76,7 +77,7 @@ $commonService = new CommonService();
             </div>
 
             <div class="row">
-                <div class="col be-1">
+                <div class="col be-1 pe-0">
                     <div class="box flex-grow-1 mb-0 no-border" style="border-radius: 0px; /*height: 195px;*/">
                         <div class="box-body ">
                             <li class="nav-item d-flex justify-start align-items-center">
@@ -163,7 +164,7 @@ $commonService = new CommonService();
                         </div>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col ps-0">
                     <div class="box flex-grow-1 mb-0 no-border" style="border-radius: 0px; /*height: 195px;*/">
                         <div class="box-body ">
                             <div class="media-list  px-0">
@@ -174,10 +175,10 @@ $commonService = new CommonService();
 
                                         <h6 class="ps-2 mt-2">
                                             @php
-                                                if ($appointment->patient->allergies == '') {
+                                                if ($appointment->allergies == '') {
                                                     echo '-';
                                                 } else {
-                                                    echo $appointment->patient->allergies;
+                                                    echo $appointment->allergies;
                                                 }
                                             @endphp
                                         </h6>
@@ -338,10 +339,10 @@ $commonService = new CommonService();
                                             <div class="media-body">
                                                 <h6>
                                                     @php
-                                                        if ($appointment->patient->smoking_status == '') {
+                                                        if ($appointment->smoking_status == '') {
                                                             echo '-';
                                                         } else {
-                                                            echo $appointment->patient->smoking_status;
+                                                            echo $appointment->smoking_status;
                                                         }
                                                     @endphp
                                                 </h6>
@@ -360,10 +361,10 @@ $commonService = new CommonService();
                                             <div class="media-body">
                                                 <h6>
                                                     @php
-                                                        if ($appointment->patient->alcoholic_status == '') {
+                                                        if ($appointment->alcoholic_status == '') {
                                                             echo '-';
                                                         } else {
-                                                            echo $appointment->patient->alcoholic_status;
+                                                            echo $appointment->alcoholic_status;
                                                         }
                                                     @endphp
                                                 </h6>
@@ -383,10 +384,10 @@ $commonService = new CommonService();
                                             <div class="media-body">
                                                 <h6>
                                                     @php
-                                                        if ($appointment->patient->diet == '') {
+                                                        if ($appointment->diet == '') {
                                                             echo '-';
                                                         } else {
-                                                            echo $appointment->patient->diet;
+                                                            echo $appointment->diet;
                                                         }
                                                     @endphp
                                                 </h6>
