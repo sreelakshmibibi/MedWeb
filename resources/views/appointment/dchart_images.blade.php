@@ -82,7 +82,7 @@ $lower_teethImages = [
                             @foreach ($row as $tooth)
                                 <div class="tooth px-2 pt-2 {{ $tooth['class'] }} 
                                 @php echo ($tooth['teeth_name']=='51') ? 'be-1' : ''; @endphp"
-                                    id="div{{ $tooth['teeth_name'] }}" style="border:none;">
+                                    id="div{{ $tooth['teeth_name'] }}">
                                     <img id="{{ $tooth['teeth_name'] }}" class="teeth_image"
                                         src="{{ asset($tooth['image']) }}" alt=""
                                         title="T{{ $tooth['teeth_name'] }}">
@@ -104,7 +104,7 @@ $lower_teethImages = [
                             @foreach ($row as $tooth)
                                 <div class="tooth px-2 pt-2 pb-1 {{ $tooth['class'] }}  
                                 @php echo ($tooth['teeth_name']=='11') ? 'be-1' : ''; @endphp"
-                                    id="div{{ $tooth['teeth_name'] }}" style="border:none;">
+                                    id="div{{ $tooth['teeth_name'] }}">
                                     <img id="{{ $tooth['teeth_name'] }}" class="teeth_image"
                                         src="{{ asset($tooth['image']) }}" alt=""
                                         title="T{{ $tooth['teeth_name'] }}">
@@ -133,7 +133,7 @@ $lower_teethImages = [
                             @foreach ($row as $tooth)
                                 <div class="tooth px-2 pt-1 {{ $tooth['class'] }}  
                                 @php echo ($tooth['teeth_name']=='41') ? 'be-1' : ''; @endphp"
-                                    id="div{{ $tooth['teeth_name'] }}" style="direction: rtl; border:none;">
+                                    id="div{{ $tooth['teeth_name'] }}" style="direction: rtl;">
                                     <p class="image-text mb-0">{{ $tooth['teeth_name'] }}</p>
                                     <img id="{{ $tooth['teeth_name'] }}" class="teeth_image"
                                         src="{{ asset($tooth['image']) }}" alt=""
@@ -155,7 +155,7 @@ $lower_teethImages = [
                             @foreach ($row as $tooth)
                                 <div class="tooth px-2 py-2 {{ $tooth['class'] }} 
                                 @php echo ($tooth['teeth_name']=='81') ? 'be-1' : ''; @endphp"
-                                    id="div{{ $tooth['teeth_name'] }}" style="direction: rtl; border:none;">
+                                    id="div{{ $tooth['teeth_name'] }}" style="direction: rtl;">
                                     <p class="image-text mb-0">{{ $tooth['teeth_name'] }}</p>
                                     <img id="{{ $tooth['teeth_name'] }}" class="teeth_image"
                                         src="{{ asset($tooth['image']) }}" alt=""
@@ -258,13 +258,16 @@ $lower_teethImages = [
         toothData.forEach(function(tooth) {
             var toothId = tooth.tooth_id;
             var anatomyImage = tooth.anatomy_image;
+            var treatStatus = tooth.treatment_status;
 
             var divId = '#div' + toothId;
-            $(divId).css({
-                'border': '1px solid yellowgreen',
-                'border-radius': '5px'
-            });
-            $(divId).addClass('treatment');
+            if (treatStatus == 1) {
+                $(divId).addClass('treatment');
+            } else {
+                $(divId).addClass('follow');
+            }
+            // $(divId).addClass('treatment');
+
             var teethId = '#' + toothId;
             // var imgSrc = "{{ asset('') }}" + anatomyImage;
             // Replace the file extension from .png to .svg
@@ -278,17 +281,11 @@ $lower_teethImages = [
             img.addEventListener('click', function() {
                 var teethName = this.id;
                 $('.exam_chiefComplaint').hide();
-                // console.log('Hover in T' + teethName);
                 var divId = '#div' + teethName;
-                $(divId).css({
-                    'border': '2px solid blue',
-                    'border-radius': '5px',
-                });
-
+                $(divId).addClass('blue');
                 // $(this).toggleClass('selected');
                 $('#tooth_id').val(teethName);
                 $('#xteeth_id').val(teethName);
-                // teethId = $('#xteeth_id').val();
 
                 if ($(divId).hasClass('molar')) {
                     $('#premolars_molars').show();
@@ -351,7 +348,7 @@ $lower_teethImages = [
                                     return false; // Exit the loop once found
                                 }
                             });
-                             var treatment_plan_id = examination.treatment_plan_id;
+                            var treatment_plan_id = examination.treatment_plan_id;
                             $('#treatment_plan_id').val(treatment_plan_id);
 
                             // Loop through options to find the corresponding text and select it
@@ -508,7 +505,87 @@ $lower_teethImages = [
                                     return false; // Exit the loop once found
                                 }
                             });
+                        } else {
+                            toothData.forEach(function(tooth) {
+                                var toothId = tooth.tooth_id;
+                                if (toothId == teethName) {
+                                    var palatal_condn = tooth.palatal_condn;
+                                    $('#palatal_condn').val(palatal_condn);
+
+                                    if (palatal_condn !== null) {
+                                        $("#Palatal").show();
+                                        var dpartId = $(
+                                            '.dparts[title="Palatal"]');
+                                        $(dpartId).css({
+                                            'background-color': 'red',
+                                        });
+                                        $(dpartId).addClass('red');
+                                    }
+
+                                    var mesial_condn = tooth.mesial_condn;
+                                    $('#mesial_condn').val(mesial_condn);
+                                    if (mesial_condn !== null) {
+                                        $("#Mesial").show();
+                                        var dpartId = $(
+                                            '.dparts[title="Mesial"]');
+                                        $(dpartId).css({
+                                            'background-color': 'red',
+                                        });
+                                        $(dpartId).addClass('red');
+                                    }
+
+                                    var distal_condn = tooth.distal_condn;
+                                    $('#distal_condn').val(distal_condn);
+
+                                    if (distal_condn !== null) {
+                                        $("#Distal").show();
+                                        var dpartId = $(
+                                            '.dparts[title="Distal"]');
+                                        $(dpartId).css({
+                                            'background-color': 'red',
+                                        });
+                                        $(dpartId).addClass('red');
+                                    }
+
+                                    var buccal_condn = tooth.buccal_condn;
+                                    $('#buccal_condn').val(buccal_condn);
+
+                                    if (buccal_condn !== null) {
+                                        $("#Buccal").show();
+                                        var dpartId = $(
+                                            '.dparts[title="Buccal"]');
+                                        $(dpartId).css({
+                                            'background-color': 'red',
+                                        });
+                                        $(dpartId).addClass('red');
+                                    }
+
+                                    var occulusal_condn = tooth
+                                        .occulusal_condn;
+                                    $('#occulusal_condn').val(
+                                        occulusal_condn);
+
+                                    if (occulusal_condn !== null) {
+                                        $("#Occulusal").show();
+                                        var dpartId = $(
+                                            '.dparts[title="Occulusal"]'
+                                        );
+                                        $(dpartId).css({
+                                            'background-color': 'red',
+                                        });
+                                        $(dpartId).addClass('red');
+                                    }
+
+                                    var labial_condn = tooth.labial_condn;
+                                    $('#labial_condn').val(labial_condn);
+
+                                    var lingual_condn = tooth.lingual_condn;
+                                    $('#lingual_condn').val(lingual_condn);
+                                }
+                            });
+
                         }
+
                         var xrays = response.xrays;
                         if (Array.isArray(xrays) && xrays.length > 0) {
                             // Show the link
@@ -530,8 +607,6 @@ $lower_teethImages = [
             });
 
             $('#uploadedXrays').click(function() {
-
-
                 $('#modal-documents').modal('show');
             });
 

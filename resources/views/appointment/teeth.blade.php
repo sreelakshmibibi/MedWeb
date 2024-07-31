@@ -407,9 +407,6 @@ use App\Models\Appointment;
                 dataType: 'json',
                 success: function(response) {
                     toothdivid = '#div' + $('#tooth_id').val();
-                    $(toothdivid).css({
-                        'border': '1px solid red',
-                    });
                     $(toothdivid).addClass('completed');
                     // If successful, hide modal and show success message
                     $('#modal-teeth').modal('hide');
@@ -444,18 +441,11 @@ use App\Models\Appointment;
             $('.dparts').removeClass('red');
 
             toothdivid = '#div' + $('#tooth_id').val();
-            if (!$(toothdivid).hasClass('completed')) {
-                $(toothdivid).css({
-                    'border': 'none',
-                });
+            if ($(toothdivid).hasClass('completed')) {
+                $(toothdivid).addClass('red');
             } else {
-                $(toothdivid).css({
-                    'border': '1px solid red',
-                });
+                $(toothdivid).removeClass('blue');
             }
-            // $('.tooth').css({
-            //     'border': 'none',
-            // });
 
             if ($('#checkbox_all').is(':checked')) {
                 $('#checkbox_all').prop('checked', false);

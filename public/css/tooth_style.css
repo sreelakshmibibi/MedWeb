@@ -30,6 +30,7 @@
     align-items: center;
     overflow: hidden;
     flex-direction: column;
+    border: none;
 }
 .tooth img {
     max-width: 100%;
@@ -67,6 +68,26 @@
 
 .rowbordered {
     border: 1px solid green;
+}
+
+.treatment {
+    border: 2px solid green;
+    border-radius: 5px;
+}
+
+.follow {
+    border: 2px solid yellow;
+    border-radius: 5px;
+}
+
+.blue {
+    border: 2px solid blue;
+    border-radius: 5px;
+}
+
+.red {
+    border: 1px solid red;
+    border-radius: 5px;
 }
 
 .molar {
