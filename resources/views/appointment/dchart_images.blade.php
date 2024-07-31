@@ -232,6 +232,7 @@ $lower_teethImages = [
 
         toothData.forEach(function(tooth) {
             var toothId = tooth.tooth_id;
+            if (toothId != null) {
             var anatomyImage = tooth.anatomy_image;
             var treatStatus = tooth.treatment_status;
 
@@ -249,6 +250,7 @@ $lower_teethImages = [
             var svgImage = anatomyImage.replace(/\.png$/, '.svg');
             var imgSrc = "{{ asset('') }}" + svgImage;
             $(teethId).attr('src', imgSrc);
+            }
         });
 
         images.forEach(function(img) {
