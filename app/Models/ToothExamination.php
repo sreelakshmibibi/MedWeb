@@ -51,6 +51,7 @@ class ToothExamination extends Model
     {
         return $this->belongsTo(TreatmentType::class, 'treatment_id', 'id');
     }
+
     public function treatmentPlan()
     {
         return $this->belongsTo(TreatmentPlan::class, 'treatment_plan_id', 'id');
@@ -75,5 +76,40 @@ class ToothExamination extends Model
     {
         return $this->hasMany(XRayImage::class)
             ->where('status', 'Y');
+    }
+
+    public function lingualCondition()
+    {
+        return $this->belongsTo(SurfaceCondition::class, 'lingual_condn', 'id');
+    }
+
+    public function labialCondition()
+    {
+        return $this->belongsTo(SurfaceCondition::class, 'labial_condn', 'id');
+    }
+
+    public function occulusalCondition()
+    {
+        return $this->belongsTo(SurfaceCondition::class, 'occulusal_condn', 'id');
+    }
+
+    public function distalCondition()
+    {
+        return $this->belongsTo(SurfaceCondition::class, 'distal_condn', 'id');
+    }
+
+    public function mesialCondition()
+    {
+        return $this->belongsTo(SurfaceCondition::class, 'mesial_condn', 'id');
+    }
+
+    public function palatalCondition()
+    {
+        return $this->belongsTo(SurfaceCondition::class, 'palatal_condn', 'id');
+    }
+
+    public function buccalCondition()
+    {
+        return $this->belongsTo(SurfaceCondition::class, 'buccal_condn', 'id');
     }
 }

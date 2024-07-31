@@ -43,6 +43,8 @@ Route::get('/session-data', [HelperController::class, 'getSessionData']);
 Route::get('/fetch-doctors/{branchId}', [PatientListController::class, 'fetchDoctors'])->name('get.doctors');
 Route::get('/fetch-existingAppoinmtents/{branchId}', [PatientListController::class, 'fetchExistingAppointments'])->name('get.exisitingAppointments');
 Route::get('/fetch-ExistingExamination/{toothId}/{appId}/{patientId}', [TreatmentController::class, 'fetchExistingExamination'])->name('get.toothExamination');
+Route::post('/generate-pdf', [HelperController::class, 'generatePdf'])->name('generate.pdf');
+Route::get('/fetch-teeth-details/{patientId}', [HelperController::class, 'fetchTeethDetails'])->name('fetch.teeth.details');
 
 Route::get('/clinic', [ClinicBranchController::class, 'index'])->name('settings.clinic');
 Route::post('/clinic/create', [ClinicBranchController::class, 'create'])->name('settings.clinic.create');

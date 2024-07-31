@@ -12,8 +12,8 @@
                 <th>Consulted Doctor</th>
                 <th>Branch</th>
                 <th>Status</th>
-                <th>Remarks</th>
-                {{-- <th width="150px">Action</th> --}}
+                {{-- <th>Remarks</th> --}}
+                <th width="150px">Action</th>
             </tr>
         </thead>
         <tbody>
@@ -75,12 +75,23 @@
                     orderable: false,
                     searchable: true
                 },
+                // {
+                //     data: 'remarks',
+                //     name: 'remarks',
+                // },
                 {
-                    data: 'remarks',
-                    name: 'remarks',
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: true
                 }
             ]
         });
 
+    });
+    $('#modal-download').on('hidden.bs.modal', function() {
+        $('#pdfRequestForm')[0].reset(); // Reset form fields
+        $('#toothSelection').addClass('d-none'); // Hide tooth selection
+        $('#toothIdSelect').empty(); // Clear tooth options
     });
 </script>

@@ -104,6 +104,7 @@ use Illuminate\Support\Facades\Session;
     <script>
         var treatmentShowRoute = "{{ route('treatment.show', ['appointment' => ':appId']) }}";
         var treatmentShowChargeRoute = "{{ route('treatment.showCharge', ['appointment' => ':appId']) }}";
+        var pdfTeethRoute = "{{ route('fetch.teeth.details', ['patientId' => ':patientId']) }}";
         var appAction = "{{ $appAction }}";
 
         var teethId;
@@ -482,9 +483,39 @@ use Illuminate\Support\Facades\Session;
             $('#delete_tooth_exam_id').val(tootExamId); // Set patient ID in the hidden input
             $('#modal-delete').modal('show');
         });
+
+
+        $(document).on('click', '.btn-pdf-generate', function() {
+            var appId = $(this).data('app-id');
+            var parentId = $(this).data('parent-id');
+            var toothNames = $(this).data('tooth-id'); // This is expected to be a comma-separated string
+            var patientId = $(this).data('patient-id');
+
+            $('#pdf_appointment_id').val(appId);
+            $('#pdf_patient_id').val(patientId);
+            $('#pdf_app_parent_id').val(parentId);
+            $('#pdfType').val('appointment'); // Default to 'appointment'
+
+            var toothSelect = $('#toothIdSelect');
+            toothSelect.empty(); // Clear previous options
+            toothSelect.append(new Option('Select a tooth', ''));
+
+            // If toothNames is a string, split it into an array
+            if (toothNames) {
+                toothNames.split(', ').forEach(function(tooth) {
+                    toothSelect.append(new Option(tooth, tooth));
+                });
+            }
+
+            // Ensure the tooth selection is hidden if the type is not 'tooth'
+            $('#toothSelection').addClass('d-none'); // Hide tooth selection by default
+
+            $('#modal-download').modal('show'); // Show the modal
+        });
     </script>
 
     @include('appointment.teeth')
     @include('appointment.documents')
     @include('appointment.teeth_delete')
+    @include('appointment.pdf_option')
 @endsection

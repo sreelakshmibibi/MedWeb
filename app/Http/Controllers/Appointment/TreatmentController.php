@@ -159,6 +159,7 @@ class TreatmentController extends Controller
                 })
 
                 ->addColumn('teeth', function ($row) {
+                    $teethName = '';
                     if ($row->toothExamination->isEmpty()) {
                         return '';
                     }
@@ -194,8 +195,24 @@ class TreatmentController extends Controller
                         return $examination->treatment ? $examination->treatment->treat_name : '';
                     })->implode(', ') : '';
                 })
+                ->addColumn('action', function ($row) use ($patientName) {
 
-                ->rawColumns(['status', 'teeth'])
+                    $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
+                    $teethNames = $row->toothExamination->map(function ($examination) {
+                        return $examination->teeth ? $examination->teeth->teeth_name : '';
+                    })->filter()->implode(', ');
+
+                    $buttons = [];
+                    // Check if the appointment date is less than the selected date
+                    if ($row->app_status == AppointmentStatus::COMPLETED) {
+                        $buttons[] = "<a href='".route('treatment', $row->id)."' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='".e($row->id)."' data-parent-id='".e($parent_id)."' data-patient-id='".e($row->patient_id)."' data-patient-name='".e($patientName)."' target='_blank'><i class='fa-solid fa-eye'></i></a>";
+                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-pdf-generate btn-xs me-1' title='follow up' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}' data-tooth-id='{$teethNames}' data-patient-id='{$row->patient_id}' data-patient-name='".e($patientName)."' data-bs-target='#modal-download'><i class='fa fa-download'></i></button>";
+                    }
+
+                    return implode('', $buttons);
+                })
+
+                ->rawColumns(['status', 'teeth', 'action'])
                 ->make(true);
         }
 
