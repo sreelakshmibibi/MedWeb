@@ -443,9 +443,7 @@ use App\Models\Appointment;
                 error: function(xhr) {
                     // Handle specific error messages from backend if needed
                     console.log(xhr.responseText);
-                    alert(
-                        'Error saving treatment. Please try again.'
-                    ); // You can customize this as per your UI needs
+                    
                 }
             });
         });
