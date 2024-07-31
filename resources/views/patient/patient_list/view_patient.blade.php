@@ -35,13 +35,10 @@ $commonService = new CommonService();
             </div>
 
             <section class="content">
-                <div class="box">
 
-
-                </div>
                 <div class="row ">
                     <div class="col-xl-8 col-12">
-                        <div class="box flex-grow-1 mb-3" style="border-radius: 0px;">
+                        <div class="box">
                             <div class="box-body bb-1" style="border-radius: 0px;">
                                 <div class="d-flex align-items-center">
                                     <img src="{{ asset('images/svg-icon/user.svg') }}" alt="photo"
@@ -105,7 +102,7 @@ $commonService = new CommonService();
 
                             <div class="row">
                                 <div class="col be-1">
-                                    <div class="box flex-grow-1 mb-0 no-border" style="border-radius: 0px;">
+                                    <div class="box flex-grow-1 mb-0 no-border">
                                         <div class="box-body">
                                             <li class="nav-item d-flex justify-start align-items-center">
                                                 <div class="min-w-120 text-muted">
@@ -186,7 +183,7 @@ $commonService = new CommonService();
                                     </div>
                                 </div>
                                 <div class="col">
-                                    <div class="box flex-grow-1 mb-0 no-border" style="border-radius: 0px;">
+                                    <div class="box flex-grow-1 mb-0 no-border">
                                         <div class="box-body">
                                             <div class="media-list px-0">
                                                 <div class="media media-single pt-0 px-0 pb-3 bb-1">
@@ -238,8 +235,8 @@ $commonService = new CommonService();
                         </div>
                     </div>
 
-                    <div class="col-xl-4 col-12 g-0">
-                        <div class="box mb-0 " style="border-radius: 0px;">
+                    <div class="col-xl-4 col-12 g-0 pe-3">
+                        <div class="box mb-0 ">
                             <div class="box-body py-2 ">
                                 <div class="row">
                                     <div class="col-12">

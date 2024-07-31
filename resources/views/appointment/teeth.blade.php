@@ -413,8 +413,11 @@ use App\Models\Appointment;
                     $('#successMessage').text(response.success);
                     $('#successMessage').fadeIn().delay(3000)
                         .fadeOut();
-
-
+                    if (historyStepAdded == true) {
+                        getDentalTable(3);
+                    } else {
+                        getDentalTable(2);
+                    }
                 },
                 error: function(xhr) {
                     // Handle specific error messages from backend if needed

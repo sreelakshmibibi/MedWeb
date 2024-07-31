@@ -690,9 +690,6 @@ use Illuminate\Support\Facades\Session;
         $('#modal-teeth').modal('show');
     });
 
-    //     $('.newTreatmentBtn').click(function() {
-    // $('#dentalTable').ajax.reload();
-    //     });
 
     $('#clinic_branch_id, #appdate').change(function() {
         var branchId = $('#clinic_branch_id').val();

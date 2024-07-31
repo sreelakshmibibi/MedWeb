@@ -77,7 +77,7 @@ $commonService = new CommonService();
             </div>
 
             <div class="row">
-                <div class="col be-1">
+                <div class="col be-1 pe-0">
                     <div class="box flex-grow-1 mb-0 no-border" style="border-radius: 0px; /*height: 195px;*/">
                         <div class="box-body ">
                             <li class="nav-item d-flex justify-start align-items-center">
@@ -164,7 +164,7 @@ $commonService = new CommonService();
                         </div>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col ps-0">
                     <div class="box flex-grow-1 mb-0 no-border" style="border-radius: 0px; /*height: 195px;*/">
                         <div class="box-body ">
                             <div class="media-list  px-0">
