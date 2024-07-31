@@ -304,6 +304,16 @@ use Illuminate\Support\Facades\Session;
                         return false; // Exit the loop once found
                     }
                 });
+                var treatment_plan_id = examination.treatment_plan_id;
+                $('#treatment_plan_id').val(treatment_plan_id);
+
+                // Loop through options to find the corresponding text and select it
+                $('#treatment_plan_id option').each(function() {
+                    if ($(this).val() == treatment_plan_id) {
+                        $(this).prop('selected', true);
+                        return false; // Exit the loop once found
+                    }
+                });
 
                 var treatment_status = examination.treatment_status;
                 $('#treatment_status').val(treatment_status);
@@ -321,8 +331,7 @@ use Illuminate\Support\Facades\Session;
 
                 if (palatal_condn !== null) {
                     $("#Palatal").show();
-                    var dpartId = '#' + $('.dparts[title="Palatal"]').attr(
-                        'id');
+                    var dpartId = $('.dparts[title="Palatal"]');
                     $(dpartId).css({
                         'background-color': 'red',
                     });
@@ -341,8 +350,7 @@ use Illuminate\Support\Facades\Session;
                 $('#mesial_condn').val(mesial_condn);
                 if (mesial_condn !== null) {
                     $("#Mesial").show();
-                    var dpartId = '#' + $('.dparts[title="Mesial"]').attr(
-                        'id');
+                    var dpartId = $('.dparts[title="Mesial"]');
                     $(dpartId).css({
                         'background-color': 'red',
                     });
@@ -362,8 +370,7 @@ use Illuminate\Support\Facades\Session;
 
                 if (distal_condn !== null) {
                     $("#Distal").show();
-                    var dpartId = '#' + $('.dparts[title="Distal"]').attr(
-                        'id');
+                    var dpartId = $('.dparts[title="Distal"]');
                     $(dpartId).css({
                         'background-color': 'red',
                     });
@@ -383,8 +390,7 @@ use Illuminate\Support\Facades\Session;
 
                 if (buccal_condn !== null) {
                     $("#Buccal").show();
-                    var dpartId = '#' + $('.dparts[title="Buccal"]').attr(
-                        'id');
+                    var dpartId = $('.dparts[title="Buccal"]');
                     $(dpartId).css({
                         'background-color': 'red',
                     });
@@ -534,7 +540,18 @@ use Illuminate\Support\Facades\Session;
                         return false; // Exit the loop once found
                     }
                 });
+               
+                var treatment_plan_id = examination.treatment_plan_id;
+                $('#treatment_plan_id').val(treatment_plan_id);
 
+                // Loop through options to find the corresponding text and select it
+                $('#treatment_plan_id option').each(function() {
+                    if ($(this).val() == treatment_plan_id) {
+                        $(this).prop('selected', true);
+                        return false; // Exit the loop once found
+                    }
+                });
+                
                 var treatment_status = examination.treatment_status;
                 $('#treatment_status').val(treatment_status);
 
@@ -551,8 +568,7 @@ use Illuminate\Support\Facades\Session;
 
                 if (palatal_condn !== null) {
                     $("#Palatal").show();
-                    var dpartId = '#' + $('.dparts[title="Palatal"]').attr(
-                        'id');
+                    var dpartId = $('.dparts[title="Palatal"]');
                     $(dpartId).css({
                         'background-color': 'red',
                     });
@@ -571,8 +587,7 @@ use Illuminate\Support\Facades\Session;
                 $('#mesial_condn').val(mesial_condn);
                 if (mesial_condn !== null) {
                     $("#Mesial").show();
-                    var dpartId = '#' + $('.dparts[title="Mesial"]').attr(
-                        'id');
+                    var dpartId = $('.dparts[title="Mesial"]');
                     $(dpartId).css({
                         'background-color': 'red',
                     });
@@ -592,8 +607,7 @@ use Illuminate\Support\Facades\Session;
 
                 if (distal_condn !== null) {
                     $("#Distal").show();
-                    var dpartId = '#' + $('.dparts[title="Distal"]').attr(
-                        'id');
+                    var dpartId =  $('.dparts[title="Distal"]');
                     $(dpartId).css({
                         'background-color': 'red',
                     });
@@ -613,8 +627,7 @@ use Illuminate\Support\Facades\Session;
 
                 if (buccal_condn !== null) {
                     $("#Buccal").show();
-                    var dpartId = '#' + $('.dparts[title="Buccal"]').attr(
-                        'id');
+                    var dpartId = $('.dparts[title="Buccal"]');
                     $(dpartId).css({
                         'background-color': 'red',
                     });

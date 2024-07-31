@@ -30,6 +30,7 @@ use App\Services\DoctorAvaialbilityService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
@@ -44,6 +45,7 @@ class TreatmentController extends Controller
     public function index($id, Request $request)
     {
 
+        $id = base64_decode(Crypt::decrypt($id));
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])->find($id);
         abort_if(!$appointment, 404);
 

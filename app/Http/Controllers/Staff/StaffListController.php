@@ -25,6 +25,7 @@ use Yajra\DataTables\DataTables;
 use Illuminate\Support\Str;
 use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
+use Illuminate\Support\Facades\Crypt;
 
 class StaffListController extends Controller
 {
@@ -69,9 +70,12 @@ class StaffListController extends Controller
                     }
                     return $btn1;
                 })
+
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . route('staff.staff_list.view', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
-                    $btn .= '<a href="' . route('staff.staff_list.edit', $row->id) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
+                    $base64Id = base64_encode($row->id);
+                    $idEncrypted = Crypt::encrypt($base64Id);
+                    $btn = '<a href="' . route('staff.staff_list.view', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
+                    $btn .= '<a href="' . route('staff.staff_list.edit', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
                     $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
                     $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete"><i class="fa-solid fa-trash"></i></button>';
                     return $btn;
@@ -245,6 +249,7 @@ class StaffListController extends Controller
      */
     public function edit(string $id)
     {
+        $id = base64_decode(Crypt::decrypt($id));
         $staffProfile = StaffProfile::with('user')->find($id);
         abort_if(!$staffProfile, 404);
 
@@ -290,6 +295,7 @@ class StaffListController extends Controller
 
     public function view(string $id, Request $request)
     {
+        $id = base64_decode(Crypt::decrypt($id));
         $staffProfile = StaffProfile::with('user')->find($id);
         abort_if(!$staffProfile, 404);
 
