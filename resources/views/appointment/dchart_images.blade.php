@@ -78,7 +78,7 @@ $lower_teethImages = [
             <div class="tooth_body">
                 <div class="dental-chart ">
                     @foreach ($upper_ped_teethImages as $row)
-                        <div class="row" id="trow1">
+                        <div class="row teethrow" id="trow1">
                             @foreach ($row as $tooth)
                                 <div class="tooth px-2 pt-2 {{ $tooth['class'] }} 
                                 @php echo ($tooth['teeth_name']=='51') ? 'be-1' : ''; @endphp"
@@ -100,7 +100,7 @@ $lower_teethImages = [
                     @endforeach
 
                     @foreach ($upper_teethImages as $row)
-                        <div class="row bb-1" id="trow2">
+                        <div class="row bb-1 teethrow" id="trow2">
                             @foreach ($row as $tooth)
                                 <div class="tooth px-2 pt-2 pb-1 {{ $tooth['class'] }}  
                                 @php echo ($tooth['teeth_name']=='11') ? 'be-1' : ''; @endphp"
@@ -129,9 +129,9 @@ $lower_teethImages = [
                                 </div>
                             @endforeach
                         </div> --}}
-                        <div class="row " id="trow3">
+                        <div class="row teethrow" id="trow3">
                             @foreach ($row as $tooth)
-                                <div class="tooth px-2 pt-1 {{ $tooth['class'] }}  
+                                <div class="tooth px-2 pt-1 pb-2 {{ $tooth['class'] }}  
                                 @php echo ($tooth['teeth_name']=='41') ? 'be-1' : ''; @endphp"
                                     id="div{{ $tooth['teeth_name'] }}" style="direction: rtl;">
                                     <p class="image-text mb-0">{{ $tooth['teeth_name'] }}</p>
@@ -151,9 +151,9 @@ $lower_teethImages = [
                                 </div>
                             @endforeach
                         </div> --}}
-                        <div class="row" id="trow4">
+                        <div class="row teethrow" id="trow4">
                             @foreach ($row as $tooth)
-                                <div class="tooth px-2 py-2 {{ $tooth['class'] }} 
+                                <div class="tooth px-2 pt-1 pb-2 {{ $tooth['class'] }} 
                                 @php echo ($tooth['teeth_name']=='81') ? 'be-1' : ''; @endphp"
                                     id="div{{ $tooth['teeth_name'] }}" style="direction: rtl;">
                                     <p class="image-text mb-0">{{ $tooth['teeth_name'] }}</p>
@@ -232,9 +232,10 @@ $lower_teethImages = [
 
         toothData.forEach(function(tooth) {
             var toothId = tooth.tooth_id;
+            var rowId = tooth.row_id;
+            var treatStatus = tooth.treatment_status;
             if (toothId != null) {
                 var anatomyImage = tooth.anatomy_image;
-                var treatStatus = tooth.treatment_status;
 
                 var divId = '#div' + toothId;
                 if (treatStatus == 1) {
@@ -250,6 +251,14 @@ $lower_teethImages = [
                 var svgImage = anatomyImage.replace(/\.png$/, '.svg');
                 var imgSrc = "{{ asset('') }}" + svgImage;
                 $(teethId).attr('src', imgSrc);
+            }
+            if (rowId != null) {
+                var rowId = '#trow' + rowId;
+                if (treatStatus == 1) {
+                    $(rowId).addClass('treatment');
+                } else {
+                    $(rowId).addClass('follow');
+                }
             }
         });
 
@@ -280,7 +289,7 @@ $lower_teethImages = [
                     dataType: "json",
 
                     success: function(response) {
-                    console.log(response,'response');                                                                                                           
+                        console.log(response, 'response');
                         var examination = response
                             .examination; // Assuming there's only one item in the array
 
@@ -763,7 +772,7 @@ $lower_teethImages = [
                             }
                         });
                         $('#tooth_score_id').trigger('change');
-                         $('#chief_complaint').val(examination.chief_complaint);
+                        $('#chief_complaint').val(examination.chief_complaint);
                         //$('#chief_complaint1').val(examination.chief_complaint);
                         $('#hpi').val(examination.hpi);
                         $('#diagnosis').val(examination.diagnosis);

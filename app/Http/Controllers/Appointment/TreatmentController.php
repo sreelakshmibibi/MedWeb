@@ -119,9 +119,9 @@ class TreatmentController extends Controller
 
         $plans = TreatmentPlan::orderBy('plan', 'asc')->get();
         $toothIds = ToothExamination::where('patient_id', $appointment->patient->patient_id)
-        ->where('app_id','<=', $id)
-        ->where('status', 'Y')
-            ->select('app_id','tooth_id', 'anatomy_image', 'treatment_status', 'lingual_condn', 'labial_condn', 'occulusal_condn', 'distal_condn', 'mesial_condn', 'palatal_condn', 'buccal_condn')
+            ->where('app_id', '<=', $id)
+            ->where('status', 'Y')
+            ->select('app_id', 'tooth_id', 'row_id', 'anatomy_image', 'treatment_status', 'lingual_condn', 'labial_condn', 'occulusal_condn', 'distal_condn', 'mesial_condn', 'palatal_condn', 'buccal_condn')
             ->get();
         if ($request->ajax()) {
             return DataTables::of($previousAppointments)
@@ -205,8 +205,8 @@ class TreatmentController extends Controller
                     $buttons = [];
                     // Check if the appointment date is less than the selected date
                     if ($row->app_status == AppointmentStatus::COMPLETED) {
-                        $buttons[] = "<a href='".route('treatment', $row->id)."' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='".e($row->id)."' data-parent-id='".e($parent_id)."' data-patient-id='".e($row->patient_id)."' data-patient-name='".e($patientName)."' target='_blank'><i class='fa-solid fa-eye'></i></a>";
-                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-pdf-generate btn-xs me-1' title='follow up' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}' data-tooth-id='{$teethNames}' data-patient-id='{$row->patient_id}' data-patient-name='".e($patientName)."' data-bs-target='#modal-download'><i class='fa fa-download'></i></button>";
+                        $buttons[] = "<a href='" . route('treatment', $row->id) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='" . e($row->id) . "' data-parent-id='" . e($parent_id) . "' data-patient-id='" . e($row->patient_id) . "' data-patient-name='" . e($patientName) . "' target='_blank'><i class='fa-solid fa-eye'></i></a>";
+                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-pdf-generate btn-xs me-1' title='follow up' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}' data-tooth-id='{$teethNames}' data-patient-id='{$row->patient_id}' data-patient-name='" . e($patientName) . "' data-bs-target='#modal-download'><i class='fa fa-download'></i></button>";
                     }
 
                     return implode('', $buttons);

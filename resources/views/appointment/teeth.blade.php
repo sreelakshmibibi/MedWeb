@@ -427,6 +427,14 @@ use App\Models\Appointment;
                 success: function(response) {
                     toothdivid = '#div' + $('#tooth_id').val();
                     $(toothdivid).addClass('completed');
+
+                    var $rows = $('.teethrow');
+                    $rows.each(function() {
+                        if ($(this).hasClass('rowbordered')) {
+                            $(this).addClass('completed');
+                        }
+                    });
+
                     // If successful, hide modal and show success message
                     $('#modal-teeth').modal('hide');
                     $('#successMessage').text(response.success);
@@ -441,7 +449,7 @@ use App\Models\Appointment;
                 error: function(xhr) {
                     // Handle specific error messages from backend if needed
                     console.log(xhr.responseText);
-                    
+
                 }
             });
         });
@@ -467,6 +475,15 @@ use App\Models\Appointment;
                 $(toothdivid).removeClass('blue');
             }
 
+            var $rows = $('.teethrow');
+            $rows.each(function() {
+                if ($(this).hasClass('completed')) {
+                    $(this).addClass('red');
+                } else {
+                    $(this).removeClass('rowbordered')
+                }
+            });
+
             if ($('#checkbox_all').is(':checked')) {
                 $('#checkbox_all').prop('checked', false);
                 $('.exam_chiefComplaint').hide();
@@ -475,22 +492,22 @@ use App\Models\Appointment;
                 $('#checkbox_row1').prop('checked', false);
                 $('.exam_chiefComplaint').hide();
                 $('.exam_toothdiv').show();
-                $('#trow1').removeClass('rowbordered');
+                // $('#trow1').removeClass('rowbordered');
             } else if ($('#checkbox_row2').is(':checked')) {
                 $('#checkbox_row2').prop('checked', false);
                 $('.exam_chiefComplaint').hide();
                 $('.exam_toothdiv').show();
-                $('#trow2').removeClass('rowbordered');
+                // $('#trow2').removeClass('rowbordered');
             } else if ($('#checkbox_row3').is(':checked')) {
                 $('#checkbox_row3').prop('checked', false);
                 $('.exam_chiefComplaint').hide();
                 $('.exam_toothdiv').show();
-                $('#trow3').removeClass('rowbordered');
+                // $('#trow3').removeClass('rowbordered');
             } else if ($('#checkbox_row4').is(':checked')) {
                 $('#checkbox_row4').prop('checked', false);
                 $('.exam_chiefComplaint').hide();
                 $('.exam_toothdiv').show();
-                $('#trow4').removeClass('rowbordered');
+                // $('#trow4').removeClass('rowbordered');
             } else {
                 $('.exam_chiefComplaint').show();
             }
@@ -502,6 +519,8 @@ use App\Models\Appointment;
             $('#newTreatmentBtn').show();
             $('#uploadedXrays').hide();
             $('#teethXrayDiv').show();
+
+            $('#xray').val('');
 
         });
         $('.form-control, .form-select').on('input', function() {
