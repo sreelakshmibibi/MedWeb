@@ -62,13 +62,11 @@ use App\Models\Appointment;
                                         </div>
                                     </div>
                                     <div class="col-md-12 ">
-                                        <div class="form-group">
-                                            <label class="form-label" for="chief_complaint">Chief Complaint <span
-                                                    class="text-danger">
+                                        <div class="form-group  chief_tooth">
+                                            <label class="form-label" for="chief_complaint">Chief Complaint
+                                                <span class="text-danger">
                                                     *</span></label>
-                                            <input type="text" class="form-control" id="chief_complaint"
-                                                name="chief_complaint" placeholder="Chief Complaint">
-                                            <div id="complaintError" class="invalid-feedback"></div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -76,26 +74,15 @@ use App\Models\Appointment;
                         </div>
                         <div class="row exam_chiefComplaint">
                             <div class="col-md-12 ">
-                                <div class="form-group">
+                                <div class="form-group  chief_exam">
                                     <label class="form-label" for="chief_complaint1">Chief Complaint <span
                                             class="text-danger">
                                             *</span></label>
-                                    <input type="text" class="form-control" id="chief_complaint1"
-                                        name="chief_complaint1" placeholder="Chief Complaint">
-                                    <div id="complaintError" class="invalid-feedback"></div>
+
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-
-                            {{-- <div class="col-md-6 ">
-                                <div class="form-group">
-                                    <label class="form-label" for="complaint">Chief Complaint <span class="text-danger">
-                                            *</span></label>
-                                    <input type="text" class="form-control" id="complaint" name="complaint"
-                                        placeholder="Chief Complaint">
-                                </div>
-                            </div> --}}
                             <div class="col-md-6 ">
                                 <div class="form-group">
                                     <label class="form-label" for="disease_id">Disease <span class="text-danger">
@@ -336,6 +323,40 @@ use App\Models\Appointment;
 
 <script>
     $(function() {
+
+        function addChiefComplaintInput(classname) {
+            var input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'form-control';
+            input.id = 'chief_complaint';
+            input.name = 'chief_complaint';
+            input.placeholder = 'Chief Complaint';
+
+            var errorDiv = document.createElement('div');
+            errorDiv.id = 'complaintError';
+            errorDiv.className = 'invalid-feedback';
+            input.appendChild(errorDiv);
+
+            var divFormLabel = document.querySelector(classname);
+            divFormLabel.appendChild(input);
+        }
+
+        function removeChiefComplaintInput() {
+            var chiefComplaintInput = document.getElementById('chief_complaint');
+            if (chiefComplaintInput) {
+                chiefComplaintInput.parentNode.removeChild(chiefComplaintInput);
+            }
+        }
+
+        $('#modal-teeth').on('shown.bs.modal', function(e) {
+            if ($('.exam_toothdiv').is(':hidden')) {
+                removeChiefComplaintInput();
+                addChiefComplaintInput('.chief_exam');
+            } else {
+                removeChiefComplaintInput();
+                addChiefComplaintInput('.chief_tooth');
+            }
+        });
 
         // Handle Save button click
         $('#newTreatmentBtn').click(function() {
