@@ -46,6 +46,7 @@ class TreatmentController extends Controller
     {
 
         $id = base64_decode(Crypt::decrypt($id));
+
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])->find($id);
         abort_if(!$appointment, 404);
 
@@ -118,9 +119,10 @@ class TreatmentController extends Controller
 
         $plans = TreatmentPlan::orderBy('plan', 'asc')->get();
         $toothIds = ToothExamination::where('patient_id', $appointment->patient->patient_id)
-            ->select('tooth_id', 'anatomy_image', 'treatment_status', 'lingual_condn', 'labial_condn', 'occulusal_condn', 'distal_condn', 'mesial_condn', 'palatal_condn', 'buccal_condn')
+        ->where('app_id','<=', $id)
+        ->where('status', 'Y')
+            ->select('app_id','tooth_id', 'anatomy_image', 'treatment_status', 'lingual_condn', 'labial_condn', 'occulusal_condn', 'distal_condn', 'mesial_condn', 'palatal_condn', 'buccal_condn')
             ->get();
-
         if ($request->ajax()) {
             return DataTables::of($previousAppointments)
                 ->addIndexColumn()
