@@ -76,7 +76,16 @@ function getDentalTable(stepIndex) {
                 </button>
             `;
                                 }
-
+                                if (appAction != "Show") {
+                                    actionButtons = `<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-treat-view btn-xs me-1' title='View' data-bs-toggle='modal' data-id='${teethName}' data-bs-target='#modal-teeth'><i class='fa fa-eye'></i></button>
+                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-treat-edit btn-xs me-1' title='Edit' data-bs-toggle='modal' data-id='${teethName}' data-bs-target='#modal-teeth'><i class='fa fa-pencil'></i></button>
+                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-treat-delete btn-xs me-1' title='Delete' data-bs-toggle='modal' data-id='${
+                                        exam.id
+                                    }' data-bs-target='#modal-delete'><i class='fa-solid fa-trash'></i></button>
+                                    `;
+                                } else {
+                                    actionButtons = `<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-treat-view btn-xs me-1' title='View' data-bs-toggle='modal' data-id='${teethName}' data-bs-target='#modal-teeth'><i class='fa fa-eye'></i></button>`;
+                                }
                                 var row = `
                                 <tr>
                                     <td>${index + 1}</td>
@@ -90,13 +99,7 @@ function getDentalTable(stepIndex) {
                                     <td>${exam.diagnosis}</td>
                                     <td>${viewDocumentsButton}</td>
                                     <td>${exam.treatment.treat_name}</td>
-                                    <td><button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-treat-view btn-xs me-1' title='View' data-bs-toggle='modal' data-id='${teethName}' data-bs-target='#modal-teeth'><i class='fa fa-eye'></i></button>
-                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-treat-edit btn-xs me-1' title='Edit' data-bs-toggle='modal' data-id='${teethName}' data-bs-target='#modal-teeth'><i class='fa fa-pencil'></i></button>
-                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-treat-delete btn-xs me-1' title='Delete' data-bs-toggle='modal' data-id='${
-                                        exam.id
-                                    }' data-bs-target='#modal-delete'><i class='fa-solid fa-trash'></i></button>
-                                    
-                                    </td>
+                                    <td>${actionButtons}</td>
                                 </tr>
                             `;
                                 tableBody.append(row);
