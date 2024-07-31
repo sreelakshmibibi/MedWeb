@@ -20,6 +20,7 @@ use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\DataTables as DataTables;
@@ -96,11 +97,13 @@ class PatientListController extends Controller
                 // })
                 ->addColumn('action', function ($row) {
                     $parent_id = '';
+                    $base64Id = base64_encode($row->id);
+                    $idEncrypted = Crypt::encrypt($base64Id);
                     $btn = "<button type='button' class='waves-effect waves-light btn btn-circle btn-primary btn-add btn-xs me-1' title='New Booking' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->first_name.' '.$row->last_name)."' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>";
-                    $btn .= '<a href="'.route('patient.patient_list.view', $row->id).'" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
+                    $btn .= '<a href="'.route('patient.patient_list.view', $idEncrypted).'" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
                     $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="'.$row->id.'" title="change status"><i class="fa-solid fa-sliders"></i></button>';
                     if (auth()->user()->hasRole('Admin')) {
-                        $btn .= '<a href="'.route('patient.patient_list.edit', $row->id).'" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
+                        $btn .= '<a href="'.route('patient.patient_list.edit', $idEncrypted).'" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
                         $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="'.$row->id.'" title="Delete"><i class="fa-solid fa-trash"></i></button>';
                     }
 
@@ -346,6 +349,7 @@ class PatientListController extends Controller
      */
     public function show(string $id)
     {
+        $id = base64_decode(Crypt::decrypt($id));
         // Find the PatientProfile by its ID
         $patientProfile = PatientProfile::with(['lastAppointment.doctor', 'lastAppointment.branch', 'history'])->find($id);
 
@@ -365,6 +369,7 @@ class PatientListController extends Controller
      */
     public function edit(string $id)
     {
+        $id = base64_decode(Crypt::decrypt($id));
         //$patientProfile = PatientProfile::with(['lastAppointment'])->find($id);
         $patientProfile = PatientProfile::with(['lastAppointment', 'history'])->find($id);
         abort_if(! $patientProfile, 404);
