@@ -233,23 +233,23 @@ $lower_teethImages = [
         toothData.forEach(function(tooth) {
             var toothId = tooth.tooth_id;
             if (toothId != null) {
-            var anatomyImage = tooth.anatomy_image;
-            var treatStatus = tooth.treatment_status;
+                var anatomyImage = tooth.anatomy_image;
+                var treatStatus = tooth.treatment_status;
 
-            var divId = '#div' + toothId;
-            if (treatStatus == 1) {
-                $(divId).addClass('treatment');
-            } else {
-                $(divId).addClass('follow');
-            }
-            // $(divId).addClass('treatment');
+                var divId = '#div' + toothId;
+                if (treatStatus == 1) {
+                    $(divId).addClass('treatment');
+                } else {
+                    $(divId).addClass('follow');
+                }
+                // $(divId).addClass('treatment');
 
-            var teethId = '#' + toothId;
-            // var imgSrc = "{{ asset('') }}" + anatomyImage;
-            // Replace the file extension from .png to .svg
-            var svgImage = anatomyImage.replace(/\.png$/, '.svg');
-            var imgSrc = "{{ asset('') }}" + svgImage;
-            $(teethId).attr('src', imgSrc);
+                var teethId = '#' + toothId;
+                // var imgSrc = "{{ asset('') }}" + anatomyImage;
+                // Replace the file extension from .png to .svg
+                var svgImage = anatomyImage.replace(/\.png$/, '.svg');
+                var imgSrc = "{{ asset('') }}" + svgImage;
+                $(teethId).attr('src', imgSrc);
             }
         });
 
