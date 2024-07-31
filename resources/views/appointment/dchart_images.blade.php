@@ -206,39 +206,14 @@ $lower_teethImages = [
                     <label for="checkbox_all">Select All</label>
                 </div>
             </div> -->
-            {{-- <div class="select-chart position-absolute">
-                <div class="row">
-                    <div class="select-div">
-                        <input type="checkbox" id="checkbox_row1" name="rowChecked" class="filled-in chk-col-primary"
-                            value="<?= TeethRow::Row1 ?>">
-                        <label for="checkbox_row1">Select Row</label>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="select-div">
-                        <input type="checkbox" id="checkbox_row2" name="rowChecked" class="filled-in chk-col-primary"
-                            value="<?= TeethRow::Row2 ?>">
-                        <label for="checkbox_row2">Select Row</label>
-                    </div>
-                </div>
-
-                <div class="row mt-3">
-                    <div class="select-div">
-                        <input type="checkbox" id="checkbox_row3" name="rowChecked" class="filled-in chk-col-primary"
-                            value="<?= TeethRow::Row3 ?>">
-                        <label for="checkbox_row3">Select Row</label>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="select-div">
-                        <input type="checkbox" id="checkbox_row4" name="rowChecked"
-                            class="filled-in chk-col-primary" value="<?= TeethRow::Row4 ?>">
-                        <label for="checkbox_row4">Select Row</label>
-                    </div>
-                </div>
-            </div> --}}
+            <div>
+                <ul class="list-style-none ps-0">
+                    <li><span class="badge badge-dot badge-danger"></span>&nbsp; Treatment ongoing</li>
+                    <li><span class="badge badge-dot badge-success"></span>&nbsp; Treatment completed before</li>
+                    <li><span class="badge badge-dot" style="background-color:yellow"></span>&nbsp; Treatment Follow up
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
