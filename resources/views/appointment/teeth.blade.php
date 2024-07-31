@@ -75,7 +75,7 @@ use App\Models\Appointment;
                         <div class="row exam_chiefComplaint">
                             <div class="col-md-12 ">
                                 <div class="form-group  chief_exam">
-                                    <label class="form-label" for="chief_complaint1">Chief Complaint <span
+                                    <label class="form-label" for="chief_complaint">Chief Complaint <span
                                             class="text-danger">
                                             *</span></label>
 
@@ -366,7 +366,6 @@ use App\Models\Appointment;
             // Validate form inputs
             var toothScore = $('#tooth_score_id').val();
             var complaint = $('#chief_complaint').val();
-            var complaint = $('#chief_complaint1').val();
             var disease = $('#disease_id').val();
             var hpi = $('#hpi').val();
             var dexam = $('#dental_examination').val();
@@ -383,7 +382,6 @@ use App\Models\Appointment;
 
             if (!complaint) {
                 $('#chief_complaint').addClass('is-invalid');
-                $('#chief_complaint1').addClass('is-invalid');
                 $('#complaintError').text('Chief Complaint is required.');
             }
 

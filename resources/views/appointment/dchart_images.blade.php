@@ -270,7 +270,7 @@ $lower_teethImages = [
                     $('#premolars_molars').hide();
                 }
                 $.ajax({
-                    url: '{{ route('get.toothExamination', ['toothId' => ':toothId', 'appId' => ':appId', 'patientId' => ':patientId']) }}'
+                    url: "{{ route('get.toothExamination', ['toothId' => ':toothId', 'appId' => ':appId', 'patientId' => ':patientId']) }}"
                         .replace(':toothId', teethName)
                         .replace(':appId', appId)
                         .replace(':patientId', patientId),
@@ -278,6 +278,7 @@ $lower_teethImages = [
                     dataType: "json",
 
                     success: function(response) {
+                    console.log(response,'response');                                                                                                           
                         var examination = response
                             .examination; // Assuming there's only one item in the array
 
@@ -760,8 +761,8 @@ $lower_teethImages = [
                             }
                         });
                         $('#tooth_score_id').trigger('change');
-                        // $('#chief_complaint').val(examination.chief_complaint);
-                        $('#chief_complaint1').val(examination.chief_complaint);
+                         $('#chief_complaint').val(examination.chief_complaint);
+                        //$('#chief_complaint1').val(examination.chief_complaint);
                         $('#hpi').val(examination.hpi);
                         $('#diagnosis').val(examination.diagnosis);
                         $('#dental_examination').val(examination
