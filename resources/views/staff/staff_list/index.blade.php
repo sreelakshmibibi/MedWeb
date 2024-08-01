@@ -170,7 +170,6 @@
             });
             $(document).on('click', '.btn-warning', function() {
                 var staffId = $(this).data('id');
-                console.log(staffId);
                 $('#staff_id').val(staffId); // Set staff ID in the hidden input
                 $('#modal-status').modal('show');
             });

@@ -1,0 +1,195 @@
+/*.tooth_body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* height: 100vh; */
+/* margin: 0;
+    background-color: #f0f0f0;
+    background-color: darkgrey;
+}
+.dental-chart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* Adjust the gap between rows */
+/*}
+.tooth {
+    width: 50px; /* Adjust width and height as needed */
+/*   height: 50px;
+    border: 1px solid #000;
+    background-color: #fff;
+}
+
+.normal {
+    background-color: #e8e8e8; /* Color for normal adult teeth */
+/*}
+
+.pediatric {
+    background-color: #b3d7ff; /* Color for pediatric teeth */
+/*}
+*/
+
+.tooth_body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* height: 100vh; */
+    /* height: 50vh; */
+    margin: 0;
+    /* background-color: #f0f0f0; */
+    background-color: #fff;
+}
+
+.dental-chart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px; /* Adjust the gap between rows */
+    gap: 0;
+    object-fit: contain;
+}
+
+.row {
+    display: flex;
+    gap: 5px; /* Adjust the gap between teeth */
+    gap: 0;
+}
+
+.tooth {
+    width: 50px; /* Adjust width and height as needed */
+    height: 50px;
+    border: 1px solid #000;
+    /* background-color: #fff; */
+    background-color: white;
+    background-color: transparent;
+    border: 1px solid white;
+    background-color: #fff;
+}
+
+.tooth {
+    /* width: 100px; /* Adjust the width of the div */
+    /* height: 100px; /* Adjust the height of the div */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Ensures the image does not overflow */
+    flex-direction: column;
+}
+.tooth img {
+    max-width: 100%; /* Ensure the image doesn't exceed the div width */
+    height: auto; /* Maintain aspect ratio */
+}
+
+.tooth {
+    /*  width: 100px; /* Adjust the width of the div */
+    /*   height: 100px; /* Adjust the height of the div */
+    overflow: hidden; /* Ensures the image does not overflow */
+}
+.tooth img {
+    display: block; /* Ensures image behaves like a block element */
+    width: auto; /* Ensures image width is auto-scaled */
+    height: 100%; /* Ensures image height is 100% of parent */
+    object-fit: contain; /* Ensures image fits inside container */
+    border: 1px solid red;
+}
+/*.tooth .image-text {
+    display: block; /* Ensures image behaves like a block element */
+/*  width: auto; /* Ensures image width is auto-scaled */
+/* object-fit: contain; /* Ensures image fits inside container */
+/*   border: 1px solid yellow;
+}*/
+
+.molar {
+    background-color: #e8e8e8; /* Color for normal adult teeth */
+    background-color: white;
+    background-color: transparent;
+    background-color: #fff;
+}
+
+.inccan {
+    background-color: #b3d7ff;
+    background-color: transparent;
+    background-color: #fff;
+}
+
+.normal {
+    background-color: #f7e9e9;
+    background-color: transparent;
+    background-color: #fff;
+}
+
+.pediatric {
+    background-color: #b3d7ff; /* Color for pediatric teeth */
+    background-color: transparent;
+    background-color: #fff;
+}
+
+.t_img {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    /* width: 150px;
+    width: 50px; */
+    height: 80px;
+}
+
+.t_img:hover {
+    box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+}
+
+/*
+.upper-dental-chart {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr); /* 10 columns */
+/* gap: 5px; /* Adjust the gap between teeth */
+/*}
+
+.upper-dental-chart .row {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr); /* 10 columns */
+/*   gap: 5px; /* Adjust the gap between teeth */
+/*}
+
+.upper-dental-chart .tooth {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #000;
+    background-color: #fff;
+}
+
+.upper-dental-chart .empty {
+    background-color: #e8e8e8; /* Color for empty/toothless area */
+/*}
+
+.upper-dental-chart .filled {
+    background-color: #b3d7ff; /* Color for filled tooth area */
+/*}
+
+.lower-dental-chart {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr); /* 10 columns */
+/* gap: 5px; /* Adjust the gap between teeth */
+/*}
+
+.lower-dental-chart .row {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr); /* 10 columns */
+/*    gap: 5px; /* Adjust the gap between teeth */
+/*}
+
+.lower-dental-chart .tooth {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #000;
+    background-color: #fff;
+}
+
+.lower-dental-chart .empty {
+    background-color: #e8e8e8; /* Color for empty/toothless area */
+/*}
+
+.lower-dental-chart .filled {
+    background-color: #b3d7ff; /* Color for filled tooth area */
+/*}*/

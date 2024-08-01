@@ -1,0 +1,364 @@
+<div class="row">
+    <div class="col-xl-8 col-12">
+        <div class="box">
+            <div class="box-body d-flex align-items-center">
+                <img src="{{ asset('images/avatar/avatar-1.png') }}" alt=""
+                    class="bg-success-light rounded10 me-20 align-self-end h-100">
+                <div class="d-flex flex-column flex-grow-1">
+                    <a href="#" class="box-title text-muted fw-600 fs-18 mb-2 hover-primary"><?php echo str_replace('<br>', ' ', $userDetails->name); ?></a>
+                    <span class="fw-500 text-fade">{{ $staffProfile->qualification }}</span>
+                    <span class="fw-500 text-fade">{{ $staffProfile->years_of_experience }}</span>
+
+                    {{-- <span class="fw-500 text-fade">16 years of Experience</span> --}}
+                </div>
+
+                <div
+                    class="rounded10 p-15 fs-18 d-inline min-h-50 @php echo ($staffProfile->status == 'Y') ? 'bg-success' : 'bg-danger'; @endphp">
+
+                    <?php if ($userDetails->is_doctor) { ?>
+                    <i class="fa fa-stethoscope"></i>
+                    {{-- <i class="fa-solid fa-user-doctor"></i> --}}
+                    <?php } else if ($userDetails->is_nurse) { ?>
+                    <i class="fa-solid fa-user-nurse"></i>
+                    <?php } else if ($userDetails->is_reception) { ?>
+                    <i class="fa-solid fa-user"></i>
+                    <?php } else { ?>
+                    <i class="fa-solid fa-user-tie"></i>
+                    <?php } ?>
+                    {{ $staffProfile->designation }}
+                </div>
+            </div>
+            <div class="box-body">
+                <h4>About</h4>
+                {{-- <p>Dr. John Smith is an experienced dentist specializing in family and cosmetic dentistry, with over 15
+                    years of practice. He earned his DDS from [University Name] and is dedicated to providing
+                    compassionate care and achieving optimal oral health outcomes for his patients.</p> --}}
+                {{-- <p>Dr. John Smith is an experienced dentist specializing in family and cosmetic dentistry, with over 15
+                    years of practice. He earned his DDS from [University Name] and is dedicated to providing
+                    compassionate care and achieving optimal oral health outcomes for his patients. Dr. Smith stays
+                    updated with the latest advancements in dentistry to ensure his patients receive the highest quality
+                    of care possible.</p> --}}
+                <p><?php echo str_replace('<br>', ' ', $userDetails->name); ?> is an experienced dentist specializing in {{ $staffProfile->specialization }},
+                    with over 15
+                    years of practice in {{ $staffProfile->years_of_experience }}. He qualified
+                    {{ $staffProfile->qualification }} and is dedicated to providing
+                    compassionate care and achieving optimal oral health outcomes for his patients. <?php echo str_replace('<br>', ' ', $userDetails->name); ?>
+                    stays
+                    updated with the latest advancements in dentistry to ensure his patients receive the highest quality
+                    of care possible.</p>
+                <ul class="flexbox flex-justified text-center p-20">
+                    <li>
+                        <span class="text-muted">Specialized in</span><br>
+                        <span class="fs-20">{{ $staffProfile->specialization }}</span>
+                    </li>
+                    <li class="be-1 bs-1 border-light">
+                        <span class="text-muted">Department</span><br>
+                        <span class="fs-20">Dental Medicine</span>
+                    </li>
+                    <li>
+                        <span class="text-muted">Subspeciality</span><br>
+                        <span class="fs-20">{{ $staffProfile->subspecialty }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h4 class="mb-0">Other Information</h4>
+                    </div>
+                    <div class="box-body">
+                        <div class="inner-user-div5">
+                            {{-- <ul class="nav d-block nav-stacked py-10 bb-dashed border-bottom"> --}}
+                            <ul class="nav d-block nav-stacked py-10 ">
+                                <li class="nav-item d-flex justify-start align-items-center">
+                                    <div class="min-w-120 text-muted">
+                                        Role
+                                    </div>
+                                    <div>
+                                        <?php
+                                        // $roletitle = [];
+                                        $roletitle = '';
+                                        if ($userDetails->is_admin) {
+                                            // $roletitle . push('Admin');
+                                            $roletitle .= 'Admin';
+                                        } ?> <?php if ($userDetails->is_doctor) {
+                                            // $roletitle . push('Doctor');
+                                            $roletitle .= ' Doctor';
+                                        } ?> <?php if ($userDetails->is_nurse) {
+                                            // $roletitle . push('Nurse');
+                                            $roletitle .= ' Nurse';
+                                        } ?>
+                                        <?php if ($userDetails->is_reception) {
+                                            // $roletitle . push('Receptionist');
+                                            $roletitle .= ' Receptionist';
+                                        }
+                                        echo str_replace(' ', ', ', $roletitle);
+                                        ?>
+                                    </div>
+                                </li>
+                                <li class="nav-item d-flex justify-start align-items-center">
+                                    <div class="min-w-120 text-muted">
+                                        Date of Joining
+                                    </div>
+                                    <div>{{ $staffProfile->date_of_joining }}</div>
+                                </li>
+                                <li class="nav-item d-flex justify-start align-items-center">
+                                    <div class="min-w-120 text-muted">
+                                        Gender
+                                    </div>
+                                    <div>
+                                        Male
+                                    </div>
+                                </li>
+                                <li class="nav-item d-flex justify-start align-items-center">
+                                    <div class="min-w-120 text-muted">
+                                        Date of Birth
+                                    </div>
+                                    <div>
+                                        12-01-1996
+                                    </div>
+                                </li>
+                                <li class="nav-item d-flex justify-start align-items-center">
+                                    <div class="min-w-120 text-muted">
+                                        Aadhaar no
+                                    </div>
+                                    <div>
+                                        120456789123
+                                    </div>
+                                </li>
+                                <li class="nav-item d-flex justify-start align-items-center">
+                                    <div class="min-w-120 text-muted">
+                                        License No.
+                                    </div>
+                                    <div>
+                                        1234567890
+                                    </div>
+                                </li>
+                                <li class="nav-item d-flex justify-start align-items-center">
+                                    <div class="min-w-120 text-muted">
+                                        Res. Address
+                                    </div>
+                                    <div>
+                                        add1, add2, Thiruvanathapuram
+                                    </div>
+                                </li>
+                            </ul>
+                            <p class="hover-primary text-fade my-1 fs-16 text-decoration-underline">Uploaded Documents
+                            </p>
+                            <ul class="nav d-block nav-stacked py-10 ">
+
+                                <li class="nav-item d-flex justify-start align-items-center bb-dashed border-bottom">
+                                    <div class="min-w-120">
+                                        Photo
+                                    </div>
+                                    <div class="min-w-200 text-muted">{{ $staffProfile->date_of_joining }}</div>
+                                    <a class="btn "><i class="fa fa-download"></i></a>
+                                </li>
+
+                                <li class="nav-item d-flex justify-start align-items-center bb-dashed border-bottom">
+                                    <div class="min-w-120">
+                                        Passport
+                                    </div>
+                                    <div class="min-w-200 text-muted">{{ $staffProfile->date_of_joining }}</div>
+                                    <a class="btn "><i class="fa fa-download"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-12">
+                <div class="box">
+                    <div class="box-body px-0 text-center">
+                        <div style="min-height: 156px;">
+                            <div id="chart124"></div>
+                        </div>
+                        <div class="mt-15 d-inline-block">
+                            <div class="text-start mb-10">
+                                <span class="badge badge-xl badge-dot badge-primary me-15"></span> Woman
+                                44%
+                            </div>
+                            <div class="text-start">
+                                <span class="badge badge-xl badge-dot badge-primary-light me-15"></span>
+                                Man
+                                55%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-12">
+                <div class="box">
+                    <div class="box-body">
+                        <h4>Patients</h4>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h2 class="fs-40 my-0">67</h2>
+                            <div>
+                                <span class="badge badge-pill badge-success-light"><i class="fa fa-angle-up me-10"></i>
+                                    39%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="box-body">
+                        <h4>Surgeries</h4>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h2 class="fs-40 my-0">27</h2>
+                            <div>
+                                <span class="badge badge-pill badge-danger-light"><i
+                                        class="fa fa-angle-down me-10"></i>04%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4 col-12">
+        <div class="box">
+            <div class="box-body box-profile">
+                <div class="row">
+                    <div class="col-12">
+                        <div>
+                            <p><i class="fa-solid fa-envelope text-muted"> </i> <span
+                                    class="text-gray ps-10">{{ $userDetails->email }}</span> </p>
+                            <p><i class="fa-solid fa-phone text-muted"></i> <span
+                                    class="text-gray ps-10">{{ $staffProfile->phone }}</span></p>
+                            <p><i class="fa-solid fa-location-dot text-muted"></i> <span class="text-gray ps-10">
+                                    {{ $staffProfile->address1 . ', ' . $staffProfile->address2 . ', ' }}
+                                    @php
+                                        $countryName =
+                                            $countries->firstWhere('id', $staffProfile->country_id)->country ?? '';
+                                        $stateName = $states->firstWhere('id', $staffProfile->state_id)->state ?? '';
+                                        $cityName = $cities->firstWhere('id', $staffProfile->city_id)->city ?? '';
+                                        $address = $cityName . ', ' . $stateName . ', ' . $countryName;
+                                        echo $address;
+                                    @endphp
+                                    {{ '- ' . $staffProfile->pincode }}
+                                </span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-body -->
+        </div>
+
+        <div class="box">
+            <div class="box-header d-flex justify-content-between align-items-center">
+                <h4 class="box-title"><i class="fa fa-clock text-muted"></i> Availability</h4>
+                <div style="width: 40%;">
+                    <select class="select2" id="clinic_branch_id1" name="clinic_branch_id1" required
+                        data-placeholder="Select a Branch" style="width: 100%;">
+                        @foreach ($clinicBranches as $clinicBranch)
+                            <?php
+                            $clinicAddress = $clinicBranch->clinic_address;
+                            $clinicAddress = explode('<br>', $clinicAddress);
+                            $clinicAddress = implode(', ', $clinicAddress);
+                            $branchName = $clinicAddress . ', ' . $clinicBranch->city->city . ', ' . $clinicBranch->state->state;
+                            ?>
+                            @foreach ($availableBranches as $branch)
+                                @if ($clinicBranch->id == $branch['clinic_branch_id'])
+                                    <option value="{{ $clinicBranch->id }}">
+                                        {{ $branchName }}</option>
+                                @endif
+                            @endforeach
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div class="box-body">
+                <div class="media-list media-list-divided media-list-hover" id="availability-list">
+
+                </div>
+                {{-- <div class="media-list media-list-divided media-list-hover">
+
+                    <div class="media align-items-center justify">
+                        <div class="media-body d-flex justify-content-between">
+                            <h6 class="text-muted">Sunday</h6>
+                            <div class="fw-600 min-w-120 text-center">
+                                {{-- 10:30 AM - 12:00 PM --}}
+                {{-- {{ $branch['timings']['sunday_from'] ?? '' }} - --}}
+                {{-- {{ $branch['timings']['sunday_to'] ?? '' }} --}}
+                {{-- }}  </div>
+                        </div>
+                    </div>
+
+                    <div class="media align-items-center justify">
+                        <div class="media-body d-flex justify-content-between">
+                            <h6 class="text-muted">Monday</h6>
+                            <div class="fw-600 min-w-120 text-center">
+                                {{-- 10:30 AM - 12:00 PM --}}
+                {{-- {{ $branch['timings']['monday_from'] ?? '' }} - --}}
+                {{-- {{ $branch['timings']['monday_to'] ?? '' }} --}}
+                {{-- }}   </div>
+                        </div>
+                    </div>
+
+                    <div class="media align-items-center justify">
+                        <div class="media-body d-flex justify-content-between">
+                            <h6 class="text-muted">Tuesday</h6>
+                            <div class="fw-600 min-w-120 text-center">
+                                {{-- 10:30 AM - 12:00 PM --}}
+                {{-- {{ $branch['timings']['tuesday_from'] ?? '' }} - --}}
+                {{-- {{ $branch['timings']['tuesday_to'] ?? '' }} --}}
+                {{-- }}   </div>
+                        </div>
+                    </div>
+
+                    <div class="media align-items-center justify">
+                        <div class="media-body d-flex justify-content-between">
+                            <h6 class="text-muted">Wednesday</h6>
+                            <div class="fw-600 min-w-120 text-center">
+                                {{-- 10:30 AM - 12:00 PM --}}
+                {{-- {{ $branch['timings']['wednesday_from'] ?? '' }} - --}}
+                {{-- {{ $branch['timings']['wednesday_to'] ?? '' }} --}}
+                {{-- }}   </div>
+                        </div>
+                    </div>
+
+                    <div class="media align-items-center justify">
+                        <div class="media-body d-flex justify-content-between">
+                            <h6 class="text-muted">Thursday</h6>
+                            <div class="fw-600 min-w-120 text-center">
+                                {{-- 10:30 AM - 12:00 PM --}}
+                {{-- {{ $branch['timings']['thursday_from'] ?? '' }} - --}}
+                {{-- {{ $branch['timings']['thursday_to'] ?? '' }} --}}
+                {{-- }}     </div>
+                        </div>
+                    </div>
+
+                    <div class="media align-items-center justify">
+                        <div class="media-body d-flex justify-content-between">
+                            <h6 class="text-muted">Friday</h6>
+                            <div class="fw-600 min-w-120 text-center">
+                                {{-- 10:30 AM - 12:00 PM --}}
+                {{-- {{ $branch['timings']['friday_from'] ?? '' }} - --}}
+                {{-- {{ $branch['timings']['friday_to'] ?? '' }} --}}
+                {{-- }}    </div>
+                        </div>
+                    </div>
+
+                    <div class="media align-items-center justify">
+                        <div class="media-body d-flex justify-content-between">
+                            <h6 class="text-muted">Saturday</h6>
+                            <div class="fw-600 min-w-120 text-center">
+                                {{-- 10:30 AM - 12:00 PM --}}
+                {{-- {{ $branch['timings']['satday_from'] ?? '' }} - --}}
+                {{-- {{ $branch['timings']['satday_to'] ?? '' }} --}}
+                {{-- }}    </div>
+                        </div>
+                    </div>
+                </div> --}}
+            </div>
+        </div>
+        <button class="btn btn-success btn-file w-p100 mb-2" type="button" alt="default"><i
+                class="fa-solid fa-upload"></i>
+            Upload Documents
+            <input type="file" name="document" multiple></button>
+    </div>
+</div>
+</div>

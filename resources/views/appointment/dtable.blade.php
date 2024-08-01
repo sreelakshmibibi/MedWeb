@@ -235,7 +235,6 @@ use Illuminate\Support\Facades\Session;
         var teethName = $(this).data('id');
         var appId = '<?= Session::get('appId') ?>';
         var patientId = '<?= Session::get('patientId') ?>';
-        // console.log('Hover in T' + teethName);
         var divId = '#div' + teethName;
         $(divId).css({
             'border': '2px solid blue',
@@ -471,7 +470,6 @@ use Illuminate\Support\Facades\Session;
         var teethName = $(this).data('id');
         var appId = '<?= Session::get('appId') ?>';
         var patientId = '<?= Session::get('patientId') ?>';
-        // console.log('Hover in T' + teethName);
         var divId = '#div' + teethName;
         $(divId).css({
             'border': '2px solid blue',

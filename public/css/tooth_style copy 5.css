@@ -1,0 +1,342 @@
+.tooth_body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    background-color: transparent;
+}
+
+.dental-chart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px; /* Adjust the gap between rows */
+    gap: 0;
+    object-fit: contain;
+    /* transform: scale(0.9); */
+}
+
+.row {
+    display: flex;
+    gap: 0;
+}
+
+.tooth {
+    width: 50px;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    flex-direction: column;
+}
+.tooth img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    width: auto;
+    height: 100%;
+    object-fit: contain;
+}
+
+.select-chart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    object-fit: contain;
+    right: 2rem;
+    top: 1rem;
+}
+.select-div {
+    /* width: 100px; */
+    height: 100px;
+    justify-content: center;
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+    height: 60px;
+}
+
+.teeth_image:hover {
+    cursor: pointer;
+}
+
+.rowbordered {
+    border: 1px solid green;
+}
+
+.molar {
+    background-color: transparent;
+}
+
+.inccan {
+    background-color: transparent;
+}
+
+.normal {
+    background-color: transparent;
+}
+
+.pediatric {
+    background-color: transparent;
+}
+
+.t_img {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    /* width: 150px;
+    width: 50px; */
+    height: 80px;
+}
+
+.t_img:hover {
+    box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+}
+
+.img-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* height: 100vh; */
+    background-color: #f0f0f0;
+}
+
+.dparts-wrapper {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    background-color: #fff;
+    border: 2px solid #ccc;
+    display: flex;
+    background-color: black;
+    border: 2px solid black;
+    width: 100px;
+    height: 100px;
+}
+
+.dparts {
+    position: absolute;
+    /* outline: 5px solid red; */
+}
+
+.part-left {
+    clip-path: polygon(0% 0%, 0% 100%, 33% 50%);
+    background-color: red;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}
+
+.part-top {
+    clip-path: polygon(1% 0%, 99% 0%, 65% 50%, 34% 50%);
+    background-color: blue;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}
+
+.part-right {
+    clip-path: polygon(100% 0%, 100% 100%, 66% 50%);
+    background-color: yellow;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}
+
+.part-bottom {
+    clip-path: polygon(34% 51%, 65% 51%, 99% 100%, 1% 100%);
+    background-color: yellowgreen;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}
+
+.dpart-left {
+    clip-path: polygon(0 1%, 34% 35%, 34% 65%, 0 99%);
+    background-color: red;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}
+
+.dpart-top {
+    clip-path: polygon(1% 0, 99% 0, 65% 34%, 36% 34%);
+    background-color: blue;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    clip-path: polygon(0% 0, 100% 0, 65% 34%, 35% 34%);
+    clip-path: polygon(0% 0, 100% 0, 66% 34%, 34% 34%);
+}
+
+.dpart-right {
+    clip-path: polygon(66% 36%, 100% 1%, 100% 99%, 66% 64%);
+    background-color: yellow;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    clip-path: polygon(66% 35%, 100% 1%, 100% 99%, 66% 65%);
+}
+
+.dpart-bottom {
+    clip-path: polygon(36% 66%, 65% 66%, 99% 100%, 1% 100%);
+    background-color: yellowgreen;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    clip-path: polygon(34% 66%, 66% 66%, 100% 100%, 0% 100%);
+}
+
+.dpart-center {
+    /* clip-path: polygon(36% 36%, 64% 36%, 64% 64%, 36% 36%); */
+    background-color: white;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* clip-path: polygon(28% 33%, 80% 35%, 78% 67%, 29% 67%); */
+    clip-path: polygon(36% 36%, 64% 36%, 64% 64%, 36% 64%);
+    /* clip-path: polygon(0% 0%, 0% 100%, 25% 100%, 25% 25%, 75% 25%, 75% 75%, 25% 75%, 25% 100%, 100% 100%, 100% 0%); */
+    clip-path: polygon(35% 35%, 65% 35%, 65% 65%, 35% 65%);
+}
+
+@media (max-width: 1200px) {
+    .select-chart {
+        border: 1px solid red;
+        right: 0;
+        top: 1.2rem;
+        gap: 0.75rem;
+        padding-right: 0;
+    }
+    .tooth-boxbody {
+        padding: 1rem 0;
+    }
+}
+@media all and (max-width: 992px) {
+    .dental-chart {
+        transform: scale(0.9);
+    }
+    .tooth_body {
+        justify-content: flex-start;
+        padding-right: 0;
+    }
+    .tooth {
+        width: 48px;
+    }
+    .select-chart {
+        right: 0;
+        top: 1.2rem;
+        padding-right: 0;
+        gap: 0;
+    }
+    .select-div {
+        height: 68px;
+    }
+}
+@media all and (max-width: 768px) {
+    .dental-chart {
+        transform: scale(0.8);
+    }
+}
+@media all and (max-width: 576px) {
+    .dental-chart {
+        transform: scale(0.7);
+    }
+}
+
+@media (max-width: 1165px) {
+    .tooth_body {
+        justify-content: flex-start;
+        padding-left: 1rem;
+    }
+
+    .select-chart {
+        border: 1px solid red;
+        right: 0;
+        top: 1.2rem;
+        gap: 0.75rem;
+    }
+
+    .tooth-boxbody {
+        padding: 1rem 0;
+    }
+}
+
+@media (max-width: 992px) and (max-width: 1010px) {
+    .tooth_body {
+        justify-content: flex-start;
+        padding-right: 0;
+    }
+    .tooth {
+        width: 48px;
+    }
+    .select-chart {
+        right: 0;
+        top: 1.2rem;
+        padding-right: 0;
+    }
+    .select-div {
+        height: 68px;
+    }
+}
+
+@media (max-width: 985px) {
+    .tooth_body {
+        justify-content: flex-start;
+        padding-right: 0;
+    }
+    .tooth {
+        width: 42px;
+    }
+    .select-chart {
+        right: 0;
+        top: 1.2rem;
+        padding-right: 0;
+    }
+    .select-div {
+        height: 68px;
+    }
+}
+
+/* @media all and (max-width: 992px) {
+    .dental-chart {
+        transform: scale(0.9);
+    }
+    .tooth_body {
+        justify-content: flex-start;
+    }
+    .tooth {
+        width: 40px;
+    }
+    .select-chart {
+        border: 1px solid red;
+        right: 0;
+        top: 1.2rem;
+        gap: 0;
+    }
+    .select-div {
+        height: 55px;
+    }
+    .tooth-boxbody {
+        padding: 1rem 0;
+    }
+} */

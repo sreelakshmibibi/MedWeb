@@ -92,6 +92,7 @@
                 cache: false,
                 success: function(response) {
                     console.log('Response from server:', response); // Debug response
+                    //$('#imageSlides').empty();
                     var images = response.images;
 
                     if (images.length === 0) {
@@ -165,6 +166,17 @@
                 success: function(response) {
                     destroySlider();
                     loadSlider();
+                    // Optionally, remove the deleted image from the UI
+                    var successMessage =
+                        `<li class="success-message">Image ${imageName} deleted successfully.</li>`;
+                    $('.flex-caption' + imageName).append(response.message);
+
+                    // Remove the success message after a delay (optional)
+                    setTimeout(function() {
+                        $('.flex-caption' + imageName).remove();
+                    }, 3000); // Remove after 3 seconds
+                    // Reload images or update UI as needed
+                    reloadImages();
                 },
                 error: function(xhr, status, error) {
                     console.error('Error deleting image:', error);
