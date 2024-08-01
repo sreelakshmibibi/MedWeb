@@ -78,6 +78,7 @@ $("#patientform").steps({
             storeRoute = $("#updateRoute").data("url");
         }
 
+        console.log("stepjs :" + formDataPatient);
         $.ajax({
             url: storeRoute,
             type: "POST",
@@ -106,6 +107,7 @@ $("#patientform").steps({
             error: function (xhr) {
                 if (xhr.responseJSON && xhr.responseJSON.errors) {
                     // Validation error occurred
+                    console.log(xhr.responseJSON.errors); // Log the validation errors to console
                     var errorMessage = "<ul>"; // Start an unordered list for error messages
 
                     // Loop through the errors and concatenate them into list items
@@ -119,7 +121,8 @@ $("#patientform").steps({
                     $("#error-message").show();
                 } else if (xhr.responseJSON && xhr.responseJSON.error) {
                     // Other server-side error occurred
-                    
+                    console.log(xhr.responseJSON.error); // Log the server error message to console
+
                     // Display error message on the page
                     $("#error-message").text(xhr.responseJSON.error);
                     $("#error-message").show(); // Show the error message element

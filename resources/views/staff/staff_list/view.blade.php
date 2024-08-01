@@ -118,6 +118,7 @@
 
             $(document).on('click', '.btn-warning', function() {
                 var staffId = $(this).data('id');
+                console.log(staffId);
                 $('#modal-status').modal('show');
             });
             $('#btn-confirm-status').click(function() {

@@ -4,13 +4,13 @@ use App\Http\Controllers\Appointment\AppointmentController;
 use App\Http\Controllers\Appointment\TreatmentController;
 use App\Http\Controllers\Auth\StaffVerificationController;
 use App\Http\Controllers\HelperController;
+use App\Http\Controllers\Settings\InsuranceController;
 use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
 use App\Http\Controllers\Settings\ClinicBranchController;
 use App\Http\Controllers\Settings\ComboOfferController;
 use App\Http\Controllers\Settings\DepartmentController;
 use App\Http\Controllers\Settings\DiseaseController;
-use App\Http\Controllers\Settings\InsuranceController;
 use App\Http\Controllers\Settings\MedicineController;
 use App\Http\Controllers\Settings\TreatmentCostController;
 use App\Http\Controllers\Settings\TreatmentPlanController;
@@ -44,7 +44,7 @@ Route::get('/fetch-doctors/{branchId}', [PatientListController::class, 'fetchDoc
 Route::get('/fetch-existingAppoinmtents/{branchId}', [PatientListController::class, 'fetchExistingAppointments'])->name('get.exisitingAppointments');
 Route::get('/fetch-ExistingExamination/{toothId}/{appId}/{patientId}', [TreatmentController::class, 'fetchExistingExamination'])->name('get.toothExamination');
 Route::post('/generate-pdf', [HelperController::class, 'generatePdf'])->name('generate.pdf');
-Route::get('/fetch-teeth-details/{patientId}/{appId}', [HelperController::class, 'fetchTeethDetails'])->name('fetch.teeth.details');
+Route::get('/fetch-teeth-details/{patientId}', [HelperController::class, 'fetchTeethDetails'])->name('fetch.teeth.details');
 
 Route::get('/clinic', [ClinicBranchController::class, 'index'])->name('settings.clinic');
 Route::post('/clinic/create', [ClinicBranchController::class, 'create'])->name('settings.clinic.create');
