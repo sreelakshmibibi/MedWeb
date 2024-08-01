@@ -31,7 +31,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-success" id="treatmentDownloadBtn">Generate PDF</button>
+                    <button type="submit" class="btn btn-success">Generate PDF</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </form>
@@ -39,26 +39,21 @@
     </div>
 </div>
 <script>
-    var pdfTeethRoute = "{{ route('fetch.teeth.details', ['patientId' => ':patientId', 'appId' => ':appId']) }}";
     // Show or hide the tooth selection based on the PDF type
     document.getElementById('pdfType').addEventListener('change', function() {
         var toothSelection = document.getElementById('toothSelection');
         if (this.value === 'tooth') {
             toothSelection.classList.remove('d-none');
-            var patientId = document.getElementById('pdf_patient_id').value;
-            var appId = document.getElementById('pdf_appointment_id').value;
-
-            fetchTeethDetails(patientId, appId);
+            //fetchTeethDetails(document.getElementById('pdf_patient_id').value);
         } else {
             toothSelection.classList.add('d-none');
         }
     });
 
     // Function to fetch teeth details
-    function fetchTeethDetails(patientId, appId) {
-
+    function fetchTeethDetails(patientId) {
         $.ajax({
-            url: pdfTeethRoute.replace(':patientId', patientId).replace(':appId', appId),
+            url: pdfTeethRoute.replace(":patientId", patientId),
             type: "GET",
             dataType: "json",
             success: function(response) {

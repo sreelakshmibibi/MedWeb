@@ -55,29 +55,19 @@ function getDentalTable(stepIndex) {
                         if (toothExaminations && toothExaminations.length > 0) {
                             toothExaminations.forEach(function (exam, index) {
                                 var viewDocumentsButton = "";
-                                var rowName = null;
-                                if (exam.row_id != null) {
-                                    if (exam.row_id == 1) {
-                                        rowName = row1;
-                                    } else if (exam.row_id == 2) {
-                                        rowName = row2;
-                                    } else if (exam.row_id == 3) {
-                                        rowName = row3;
-                                    } else if (exam.row_id == 4) {
-                                        rowName = row4;
-                                    }
-                                }
                                 teethName = exam.tooth_id
                                     ? exam.teeth.teeth_name
-                                    : rowName;
+                                    : exam.row_id;
                                 teethNameDisplay = exam.tooth_id
                                     ? exam.teeth.teeth_name
-                                    : "Row : " + rowName;
+                                    : "Row " + exam.row_id;
+                                console.log(appId, teethName, patientId);
                                 // Check if there are x-ray images
                                 if (
                                     exam.x_ray_images &&
                                     exam.x_ray_images.length > 0
                                 ) {
+                                    console.log(appId, teethName, patientId);
                                     viewDocumentsButton = `
                 <button type="button" id="xraybtn" class="waves-effect waves-light btn btn-circle btn-info btn-xs"
                     data-bs-toggle="modal" data-bs-target="#modal-documents" data-id="${exam.id}" data-appointment-id="${appId}"
@@ -266,6 +256,8 @@ function getTreatmentTable(stepIndex) {
                 },
                 dataType: "json",
                 success: function (response) {
+                    console.log("Success response:", response);
+
                     var tableBody = $("#chargetablebody");
                     tableBody.empty(); // Clear any existing rows
 
@@ -511,6 +503,7 @@ $("#treatmentform").steps({
             storeRoute = $("#updateRoute").data("url");
         }
 
+        console.log("stepjs :" + formDataTreatment);
         $.ajax({
             url: "/treatment/details/store",
             type: "POST",
@@ -541,6 +534,7 @@ $("#treatmentform").steps({
             error: function (xhr) {
                 if (xhr.responseJSON && xhr.responseJSON.errors) {
                     // Validation error occurred
+                    console.log(xhr.responseJSON.errors); // Log the validation errors to console
                     var errorMessage = "<ul>"; // Start an unordered list for error messages
 
                     // Loop through the errors and concatenate them into list items
@@ -554,7 +548,9 @@ $("#treatmentform").steps({
                     $("#error-message").show();
                 } else if (xhr.responseJSON && xhr.responseJSON.error) {
                     // Other server-side error occurred
-                    
+                    console.log(xhr.responseJSON.error); // Log the server error message to console
+
+                    // Display error message on the page
                     $("#error-message").text(xhr.responseJSON.error);
                     $("#error-message").show(); // Show the error message element
                 } else {

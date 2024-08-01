@@ -289,6 +289,7 @@ $lower_teethImages = [
                     dataType: "json",
 
                     success: function(response) {
+                        console.log(response, 'response');
                         var examination = response
                             .examination; // Assuming there's only one item in the array
 
