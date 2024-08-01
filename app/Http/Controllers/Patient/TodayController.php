@@ -15,6 +15,7 @@ use DateTime;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Yajra\DataTables\DataTables as DataTables;
 
@@ -86,8 +87,10 @@ class TodayController extends Controller
                 
                 ->addColumn('action', function ($row) {
                     $btn = null;
+                    $base64Id = base64_encode($row->id);
+                    $idEncrypted = Crypt::encrypt($base64Id);
                     if ($row->app_status != AppointmentStatus::RESCHEDULED && $row->app_status != AppointmentStatus::CANCELLED) {
-                        $btn = "<a href='" . route('treatment', $row->id) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='{$row->id}' ><i class='fa-solid fa-eye'></i></a>";
+                        $btn = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='{$row->id}' ><i class='fa-solid fa-eye'></i></a>";
                     } else {
                         $btn = "";
                     }
