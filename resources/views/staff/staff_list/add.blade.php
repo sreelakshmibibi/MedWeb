@@ -200,7 +200,6 @@
 
             // Validation for 'from' and 'to' time fields
             $(document).on('focusout', '.fromTime, .toTime', function() {
-                console.log('hi');
                 let index = $(this).attr('id').match(/\d+/)[0];
                 let day = $(this).closest('td').prevAll().length; // Determine the column index
                 switch (day) {

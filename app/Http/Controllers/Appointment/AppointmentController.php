@@ -34,18 +34,22 @@ class AppointmentController extends Controller
             $appointments = Appointment::whereDate('app_date', $selectedDate)
                 ->with(['patient', 'doctor', 'branch'])
                 ->get();
-
+            
             return DataTables::of($appointments)
                 ->addIndexColumn()
                 ->addColumn('patient_id', function ($row) {
                     $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
-                    $name1 = "<a href='" . route('treatment', $row->id) . "' class='waves-effect waves-light' title='open treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name) . "' >" . $row->patient->patient_id . "</i></a>";
+                    $base64Id = base64_encode($parent_id);
+                    $idEncrypted = Crypt::encrypt($base64Id);
+                    $name1 = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light' title='open treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name) . "' >" . $row->patient->patient_id . "</i></a>";
                     return $name1;
                 })
                 ->addColumn('name', function ($row) {
                     $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
+                    $base64Id = base64_encode($parent_id);
+                    $idEncrypted = Crypt::encrypt($base64Id);
                     $name = str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name);
-                    $name1 = "<a href='" . route('treatment', $row->id) . "' class='waves-effect waves-light' title='open treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name) . "' >" . $name . "</i></a>";
+                    $name1 = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light' title='open treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name) . "' >" . $name . "</i></a>";
                     return $name1;
                 })
                 ->addColumn('doctor', function ($row) {

@@ -60,7 +60,6 @@
                 method: 'GET',
                 dataType: 'json',
                 success: function(response) {
-                    //console.log(response);
                     //$('#imageSlides').empty();
                     var images = response.images;
                     // Iterate over each image and add it to the modal
@@ -152,7 +151,6 @@
                 },
                 success: function(response) {
                     // Optionally, remove the deleted image from the UI
-                    console.log('Image deleted successfully:', response);
                     var successMessage = `<li class="success-message">Image ${imageName} deleted successfully.</li>`;
                     $('.flex-caption'+imageName).append(response.message);
 
