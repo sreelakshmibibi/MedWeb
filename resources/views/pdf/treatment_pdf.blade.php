@@ -3,6 +3,8 @@
 use App\Services\CommonService;
 $commonService = new CommonService();
 
+use App\Models\TeethRow;
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -210,7 +212,7 @@ $commonService = new CommonService();
                             <th>Remarks</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    {{-- <tbody>
                         @foreach ($toothExamDetails as $examination)
                             <tr>
                                 <td>{{ $examination->teeth->teeth_name ?? '' }}</td>
@@ -253,7 +255,78 @@ $commonService = new CommonService();
                                 <td class="text-wrap">{{ $examination->remarks ?? '' }}</td>
                             </tr>
                         @endforeach
+                    </tbody> --}}
+                    <tbody>
+                        @foreach ($toothExamDetails as $examination)
+                            <tr>
+                                <td>
+                                    @if ($examination->teeth)
+                                        {{ $examination->teeth->teeth_name ?? '' }}
+                                    @elseif ($examination->row_id)
+                                        {{-- Here we need to use your existing mapping or description logic --}}
+                                        @switch($examination->row_id)
+                                            @case(TeethRow::Row1)
+                                                Row: {{ TeethRow::Row_1_Desc }}
+                                            @break
+
+                                            @case(TeethRow::Row2)
+                                                Row: {{ TeethRow::Row_2_Desc }}
+                                            @break
+
+                                            @case(TeethRow::Row3)
+                                                Row: {{ TeethRow::Row_3_Desc }}
+                                            @break
+
+                                            @case(TeethRow::Row4)
+                                                Row: {{ TeethRow::Row_4_Desc }}
+                                            @break
+
+                                            @default
+                                                Unknown Row
+                                        @endswitch
+                                    @endif
+                                </td>
+                                <td>{{ $examination->chief_complaint ?? '' }}</td>
+                                <td class="text-wrap">{{ $examination->dental_examination ?? '' }}</td>
+                                <td>{{ $examination->diagnosis ?? '' }}</td>
+                                <td>{{ $examination->disease->name ?? '' }}</td>
+                                <td>{{ $examination->treatment->treat_name ?? '' }}</td>
+                                <td>
+                                    @if ($examination->lingualCondition)
+                                        <div><strong>Lingual:</strong>
+                                            {{ $examination->lingualCondition->condition ?? 'N/A' }}</div>
+                                    @endif
+                                    @if ($examination->labialCondition)
+                                        <div><strong>Labial:</strong>
+                                            {{ $examination->labialCondition->condition ?? 'N/A' }}</div>
+                                    @endif
+                                    @if ($examination->occlusalCondition)
+                                        <div><strong>Occlusal:</strong>
+                                            {{ $examination->occlusalCondition->condition ?? 'N/A' }}</div>
+                                    @endif
+                                    @if ($examination->distalCondition)
+                                        <div><strong>Distal:</strong>
+                                            {{ $examination->distalCondition->condition ?? 'N/A' }}</div>
+                                    @endif
+                                    @if ($examination->mesialCondition)
+                                        <div><strong>Mesial:</strong>
+                                            {{ $examination->mesialCondition->condition ?? 'N/A' }}</div>
+                                    @endif
+                                    @if ($examination->palatalCondition)
+                                        <div><strong>Palatal:</strong>
+                                            {{ $examination->palatalCondition->condition ?? 'N/A' }}</div>
+                                    @endif
+                                    @if ($examination->buccalCondition)
+                                        <div><strong>Buccal:</strong>
+                                            {{ $examination->buccalCondition->condition ?? 'N/A' }}</div>
+                                    @endif
+                                </td>
+                                <td>{{ $examination->treatmentStatus->status ?? '' }}</td>
+                                <td class="text-wrap">{{ $examination->remarks ?? '' }}</td>
+                            </tr>
+                        @endforeach
                     </tbody>
+
                 </table>
             @else
                 <p>No tooth examination details available.</p>
