@@ -2,10 +2,20 @@
     <h5 class="box-title text-info mb-0 mt-2"><i class="fa-solid fa-prescription me-15"></i>
         Prescription
     </h5>
-    <button id="medicineAddRow" type="button" class="waves-effect waves-light btn btn-sm btn-outline-primary">
-        <i class="fa fa-add"></i>
-        Add
-    </button>
+    <div>
+        {{-- <button id="medicineAddRow" type="button" class="waves-effect waves-light btn btn-sm btn-outline-primary">
+            <i class="fa fa-add"></i>
+            Add
+        </button> --}}
+        <button type='button' class='waves-effect waves-light btn btn-circle btn-info btn-pdf-generate btn-xs me-1'
+            title='Download' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}'
+            data-patient-id='{$row->patient->patient_id}' data-bs-target='#modal-download'><i
+                class='fa fa-download'></i></button>
+        <button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-pdf-generate btn-xs me-1'
+            title='Print' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}'
+            data-patient-id='{$row->patient->patient_id}' data-bs-target='#modal-download'><i
+                class='fa fa-print'></i></button>
+    </div>
 </div>
 <hr class="my-15">
 
@@ -20,7 +30,10 @@
                 <th style="width:200px;">Duration</th>
                 <th>Advice</th>
                 <th>Remarks</th>
-                <th>Action</th>
+                <th> <button id="medicineAddRow" type="button" class="waves-effect waves-light btn btn-sm btn-primary">
+                        <i class="fa fa-add"></i>
+                        Add Row
+                    </button></th>
             </tr>
         </thead>
         {{-- <tbody id="presctablebody">
@@ -143,7 +156,7 @@
                     </td>
                     <td>
                         <div class="input-group">
-                            <input type="number" class="form-control" id="duration{{ $index + 1 }}"
+                            <input type="number" class="form-control text-center" id="duration{{ $index + 1 }}"
                                 name="prescriptions[{{ $index + 1 }}][duration]" aria-describedby="basic-addon2"
                                 value="{{ $prescription->duration ?? '' }}" required>
                             <div class="input-group-append">

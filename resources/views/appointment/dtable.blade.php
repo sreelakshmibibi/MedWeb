@@ -7,9 +7,13 @@ use Illuminate\Support\Facades\Session;
         Treatment Chart
     </h5>
 
-    <button type="button" class="waves-effect waves-light btn btn-sm btn-outline-primary" id="table_info_btn">
+    {{-- <button type="button" class="waves-effect waves-light btn btn-sm btn-outline-primary" id="table_info_btn">
         <i class="fa fa-table"></i>
-        Info</button>
+        Info</button> --}}
+    <button type='button' class='waves-effect waves-light btn btn-circle btn-info btn-pdf-generate btn-xs me-1'
+        title='Download' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}'
+        data-patient-id='{$row->patient->patient_id}' data-bs-target='#modal-download'><i
+            class='fa fa-download'></i></button>
 </div>
 <hr class="my-15 ">
 
@@ -235,7 +239,6 @@ use Illuminate\Support\Facades\Session;
         var teethName = $(this).data('id');
         var appId = '<?= Session::get('appId') ?>';
         var patientId = '<?= Session::get('patientId') ?>';
-        // console.log('Hover in T' + teethName);
         var divId = '#div' + teethName;
         $(divId).css({
             'border': '2px solid blue',
@@ -471,7 +474,6 @@ use Illuminate\Support\Facades\Session;
         var teethName = $(this).data('id');
         var appId = '<?= Session::get('appId') ?>';
         var patientId = '<?= Session::get('patientId') ?>';
-        // console.log('Hover in T' + teethName);
         var divId = '#div' + teethName;
         $(divId).css({
             'border': '2px solid blue',
@@ -540,7 +542,7 @@ use Illuminate\Support\Facades\Session;
                         return false; // Exit the loop once found
                     }
                 });
-               
+
                 var treatment_plan_id = examination.treatment_plan_id;
                 $('#treatment_plan_id').val(treatment_plan_id);
 
@@ -551,7 +553,7 @@ use Illuminate\Support\Facades\Session;
                         return false; // Exit the loop once found
                     }
                 });
-                
+
                 var treatment_status = examination.treatment_status;
                 $('#treatment_status').val(treatment_status);
 
@@ -607,7 +609,7 @@ use Illuminate\Support\Facades\Session;
 
                 if (distal_condn !== null) {
                     $("#Distal").show();
-                    var dpartId =  $('.dparts[title="Distal"]');
+                    var dpartId = $('.dparts[title="Distal"]');
                     $(dpartId).css({
                         'background-color': 'red',
                     });
