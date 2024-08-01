@@ -106,6 +106,11 @@ use Illuminate\Support\Facades\Session;
         var treatmentShowChargeRoute = "{{ route('treatment.showCharge', ['appointment' => ':appId']) }}";
         var pdfTeethRoute = "{{ route('fetch.teeth.details', ['patientId' => ':patientId']) }}";
         var appAction = "{{ $appAction }}";
+        
+        var row1 = "{{ \App\Models\TeethRow::Row_1_Desc }}";
+        var row2 = "{{ \App\Models\TeethRow::Row_2_Desc }}";
+        var row3 = "{{ \App\Models\TeethRow::Row_3_Desc }}";
+        var row4 = "{{ \App\Models\TeethRow::Row_4_Desc }}";
 
         var teethId;
         let isAdmin = $("#isAdmin").val();

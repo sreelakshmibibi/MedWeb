@@ -55,12 +55,24 @@ function getDentalTable(stepIndex) {
                         if (toothExaminations && toothExaminations.length > 0) {
                             toothExaminations.forEach(function (exam, index) {
                                 var viewDocumentsButton = "";
+                                var rowName = null;
+                                if (exam.row_id != null) {
+                                    if (exam.row_id != 1) {
+                                        rowName = row1;
+                                    } else if (exam.row_id != 2) {
+                                        rowName = row2;
+                                    } else if (exam.row_id != 3) {
+                                        rowName = row3;
+                                    } else if (exam.row_id != 4) {
+                                        rowName = row4;
+                                    }
+                                }
                                 teethName = exam.tooth_id
                                     ? exam.teeth.teeth_name
-                                    : exam.row_id;
+                                    : rowName;
                                 teethNameDisplay = exam.tooth_id
                                     ? exam.teeth.teeth_name
-                                    : "Row " + exam.row_id;
+                                    : "Row : " + rowName;
                                 console.log(appId, teethName, patientId);
                                 // Check if there are x-ray images
                                 if (
