@@ -57,13 +57,13 @@ function getDentalTable(stepIndex) {
                                 var viewDocumentsButton = "";
                                 var rowName = null;
                                 if (exam.row_id != null) {
-                                    if (exam.row_id != 1) {
+                                    if (exam.row_id == 1) {
                                         rowName = row1;
-                                    } else if (exam.row_id != 2) {
+                                    } else if (exam.row_id == 2) {
                                         rowName = row2;
-                                    } else if (exam.row_id != 3) {
+                                    } else if (exam.row_id == 3) {
                                         rowName = row3;
-                                    } else if (exam.row_id != 4) {
+                                    } else if (exam.row_id == 4) {
                                         rowName = row4;
                                     }
                                 }
