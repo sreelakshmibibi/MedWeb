@@ -167,7 +167,7 @@ $lower_teethImages = [
                 </div>
                 <div class="select-chart position-absolute">
                     <div class="row">
-                        <div class="select-div">
+                        <div class="select-div" title="Primary Maxilliary Definition">
                             <input type="checkbox" id="checkbox_row1" name="rowChecked"
                                 class="filled-in chk-col-primary" value="<?= TeethRow::Row1 ?>">
                             <label for="checkbox_row1">Select Row</label>
@@ -175,7 +175,7 @@ $lower_teethImages = [
                     </div>
 
                     <div class="row">
-                        <div class="select-div">
+                        <div class="select-div" title="Permanent Maxilliary Definition">
                             <input type="checkbox" id="checkbox_row2" name="rowChecked"
                                 class="filled-in chk-col-primary" value="<?= TeethRow::Row2 ?>">
                             <label for="checkbox_row2">Select Row</label>
@@ -183,7 +183,7 @@ $lower_teethImages = [
                     </div>
 
                     <div class="row mt-3">
-                        <div class="select-div">
+                        <div class="select-div" title="Permanent Mandibular Definition">
                             <input type="checkbox" id="checkbox_row3" name="rowChecked"
                                 class="filled-in chk-col-primary" value="<?= TeethRow::Row3 ?>">
                             <label for="checkbox_row3">Select Row</label>
@@ -191,7 +191,7 @@ $lower_teethImages = [
                     </div>
 
                     <div class="row">
-                        <div class="select-div">
+                        <div class="select-div" title="Primary Mandibular Definition">
                             <input type="checkbox" id="checkbox_row4" name="rowChecked"
                                 class="filled-in chk-col-primary" value="<?= TeethRow::Row4 ?>">
                             <label for="checkbox_row4">Select Row</label>
@@ -289,7 +289,6 @@ $lower_teethImages = [
                     dataType: "json",
 
                     success: function(response) {
-                        console.log(response, 'response');
                         var examination = response
                             .examination; // Assuming there's only one item in the array
 

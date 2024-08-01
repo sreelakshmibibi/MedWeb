@@ -16,13 +16,14 @@ use App\Models\PatientProfile;
 use App\Models\Prescription;
 use App\Models\SurfaceCondition;
 use App\Models\Teeth;
+use App\Models\TeethRow;
 use App\Models\ToothExamination;
 use App\Models\ToothScore;
 use App\Models\TreatmentComboOffer;
+use App\Models\TreatmentPlan;
 use App\Models\TreatmentStatus;
 use App\Models\TreatmentType;
 use App\Models\XRayImage;
-use App\Models\TreatmentPlan;
 use App\Services\AnatomyService;
 use App\Services\AppointmentService;
 use App\Services\CommonService;
@@ -163,29 +164,49 @@ class TreatmentController extends Controller
                     if ($row->toothExamination->isEmpty()) {
                         return '';
                     }
-
                     $teethData = $row->toothExamination->map(function ($examination) {
                         if ($examination->teeth) {
                             $teethName = $examination->teeth->teeth_name;
                             $teethImage = $examination->teeth->teeth_image;
 
+                            return $teethName;
                             //return '<div>'.$teethName.'<br><img src="'.asset($teethImage).'" alt="'.$teethName.'" width="50" height="50"></div>';
+                        } elseif ($examination->tooth_id == null && $examination->row_id != null) {
+                            // Use TeethRow constants for descriptions
+                            switch ($examination->row_id) {
+                                case TeethRow::Row1:
+                                    $teethName = 'Row : ' . TeethRow::Row_1_Desc;
+                                    break;
+                                case TeethRow::Row2:
+                                    $teethName = 'Row : ' . TeethRow::Row_2_Desc;
+                                    break;
+                                case TeethRow::Row3:
+                                    $teethName = 'Row : ' . TeethRow::Row_3_Desc;
+                                    break;
+                                case TeethRow::Row4:
+                                    $teethName = 'Row : ' . TeethRow::Row_4_Desc;
+                                    break;
+                                default:
+                                    $teethName = '';
+                                    break;
+                            }
+
                             return $teethName;
                         }
 
                         return '';
-                    })->implode('<br>');
+                    })->implode(',<br>');
 
                     return $teethData;
                 })
                 ->addColumn('problem', function ($row) {
-                    return $row->toothExamination ? $row->toothExamination->pluck('chief_complaint')->implode(', ') : '';
+                    return $row->toothExamination ? $row->toothExamination->pluck('chief_complaint')->implode(',') : '';
                 })
                 ->addColumn('disease', function ($row) {
-                    // Ensure $row->toothExamination is not null and properly loaded
-                    return $row->toothExamination->isNotEmpty()
-                        ? $row->toothExamination->first()->disease->name ?? 'No Disease'
-                        : 'No Disease';
+
+                    return $row->toothExamination ? $row->toothExamination->map(function ($examination) {
+                        return $examination->disease ? $examination->disease->name : 'No Disease';
+                    })->implode(', ') : '';
                 })
                 ->addColumn('remarks', function ($row) {
                     return $row->toothExamination ? $row->toothExamination->pluck('remarks')->implode(', ') : '';
@@ -193,22 +214,19 @@ class TreatmentController extends Controller
                 ->addColumn('treatment', function ($row) {
                     return $row->toothExamination ? $row->toothExamination->map(function ($examination) {
                         return $examination->treatment ? $examination->treatment->treat_name : '';
-                    })->implode(', ') : '';
+                    })->filter()->implode(', ') // Use comma and <br> to separate treatments
+                        : '';
                 })
                 ->addColumn('action', function ($row) use ($patientName) {
 
                     $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
-                    $teethNames = $row->toothExamination->map(function ($examination) {
-                        return $examination->teeth ? $examination->teeth->teeth_name : '';
-                    })->filter()->implode(', ');
-
                     $buttons = [];
                     // Check if the appointment date is less than the selected date
                     if ($row->app_status == AppointmentStatus::COMPLETED) {
                         $base64Id = base64_encode($row->id);
                         $idEncrypted = Crypt::encrypt($base64Id);
                         $buttons[] = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='" . e($row->id) . "' data-parent-id='" . e($parent_id) . "' data-patient-id='" . e($row->patient_id) . "' data-patient-name='" . e($patientName) . "' target='_blank'><i class='fa-solid fa-eye'></i></a>";
-                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-pdf-generate btn-xs me-1' title='follow up' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}' data-tooth-id='{$teethNames}' data-patient-id='{$row->patient_id}' data-patient-name='" . e($patientName) . "' data-bs-target='#modal-download'><i class='fa fa-download'></i></button>";
+                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-info btn-pdf-generate btn-xs me-1' title='Download' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient_id}'  data-bs-target='#modal-download'><i class='fa fa-download'></i></button>";
                     }
 
                     return implode('', $buttons);
