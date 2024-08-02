@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('patient_prescription_billings', function (Blueprint $table) {
+        Schema::create('patient_detail_billings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('billing_id')->constrained('patient_treatment_billings');
-            $table->foreignId('medicine_id')->constrained('medicines');
+            $table->foreignId('treatment_id')->constrained('treatment_types');
             $table->integer('cost');
-            $table->integer('quantity');
             $table->integer('discount');
             $table->integer('amount');
             $table->foreignId('created_by')->constrained('users');
@@ -31,10 +30,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('patient_prescription_billings', function (Blueprint $table) {
+        Schema::table('patient_detail_billings', function (Blueprint $table) {
             $table->dropForeign(['billing_id']);
-            $table->dropForeign(['medicine_id']);
+            $table->dropForeign(['treatment_id']);
         });
-        Schema::dropIfExists('patient_prescription_billings');
+        Schema::dropIfExists('patient_detail_billings');
     }
 };

@@ -107,16 +107,16 @@ class MenuItemsSeeder extends Seeder
 
         $reports = MenuItem::create([
             'name' => 'Reports',
-            'url' => '#',
-            'route_name' => '#',
+            'url' => '',
+            'route_name' => '',
             'icon' => 'fa-solid fa-file-lines',
             'order_no' => 5,
         ]);
 
         $billing = MenuItem::create([
             'name' => 'Billing',
-            'url' => '#',
-            'route_name' => '#',
+            'url' => '/billing',
+            'route_name' => 'billing',
             'icon' => 'icon-Settings-1',
             'order_no' => 6,
         ]);

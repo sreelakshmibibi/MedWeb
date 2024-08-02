@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
-class PatientPrescriptionBilling extends Model
+class PatientDetailBilling extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    protected $fillable = [ 'billing_id', 'medicine_id', 'cost', 'quantity', 'discount', 'amount','created_by', 'updated_by' ];
+    protected $fillable = [ 'billing_id', 'treatment_id', 'cost', 'discount', 'amount', 'created_by', 'updated_by' ];
 
     protected $dates = ['deleted_at'];
 
@@ -28,4 +28,5 @@ class PatientPrescriptionBilling extends Model
             $bill->updated_by = Auth::id(); // Set updated_by to current user's ID
         });
     }
+
 }
