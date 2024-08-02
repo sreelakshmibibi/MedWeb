@@ -54,6 +54,24 @@ $commonService = new CommonService();
             border-bottom: 2px solid #333;
             /* Darker border for header cells */
         }
+
+        @media print {
+            @page {
+                size: A5;
+                /* Set paper size to A5 */
+                margin: 20mm;
+                /* Adjust margins if necessary */
+            }
+
+            body {
+                margin: 0;
+                /* Remove margins if using @page size settings */
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
     </style>
 </head>
 

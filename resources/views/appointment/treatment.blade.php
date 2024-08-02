@@ -502,7 +502,6 @@ use Illuminate\Support\Facades\Session;
             $('#modal-delete').modal('show');
         });
 
-
         $(document).on('click', '.btn-treatment-pdf-generate', function() {
             var appId = $(this).data('app-id');
             var parentId = $(this).data('parent-id');
@@ -515,6 +514,58 @@ use Illuminate\Support\Facades\Session;
             $('#toothSelection').addClass('d-none'); // Hide tooth selection by default
             $('#modal-download').modal('show'); // Show the modal
         });
+
+        $(document).on('click', '.btn-prescription-pdf-generate', function() {
+            var appId = $(this).data('app-id');
+            var patientId = $(this).data('patient-id');
+
+            const url = '{{ route('download.prescription') }}';
+
+            // Make the AJAX request
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {
+                    app_id: appId,
+                    patient_id: patientId,
+                    _token: '{{ csrf_token() }}' // Include CSRF token for security
+                },
+                xhrFields: {
+                    responseType: 'blob' // Important for handling binary data like PDFs
+                },
+                success: function(response) {
+                    var blob = new Blob([response], {
+                        type: 'application/pdf'
+                    });
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = 'prescription.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    // For printing, open the PDF in a new window or iframe and call print
+                    var printWindow = window.open(link.href, '_blank');
+                    printWindow.onload = function() {
+                        printWindow.print();
+                    };
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+
+        // $(document).on('click', '.btn-prescription-print', function() {
+        //     var appId = $(this).data('app-id');
+        //     var patientId = $(this).data('patient-id');
+
+        //     // Define the URL for the print view
+        //     const url = `{{ route('print.prescription') }}?app_id=${appId}&patient_id=${patientId}`;
+
+        //     // Open the print view in a new window
+        //     window.open(url, '_blank');
+        // });
     </script>
 
     @include('appointment.teeth')

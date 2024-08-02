@@ -47,6 +47,7 @@ Route::get('/fetch-ExistingExamination/{toothId}/{appId}/{patientId}', [Treatmen
 Route::post('/generate-pdf', [HelperController::class, 'generateTreatmentPdf'])->name('generate.pdf');
 Route::get('/fetch-teeth-details/{patientId}/{appId}', [HelperController::class, 'fetchTeethDetails'])->name('fetch.teeth.details');
 Route::post('/download-prescription', [HelperController::class, 'generatePrescriptionPdf'])->name('download.prescription');
+Route::get('/print-prescription', [HelperController::class, 'printPrescription'])->name('print.prescription');
 
 Route::get('/clinic', [ClinicBranchController::class, 'index'])->name('settings.clinic');
 Route::post('/clinic/create', [ClinicBranchController::class, 'create'])->name('settings.clinic.create');

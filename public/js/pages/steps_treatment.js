@@ -69,10 +69,13 @@ function getDentalTable(stepIndex) {
                                 }
                                 teethName = exam.tooth_id
                                     ? exam.teeth.teeth_name
-                                    : rowName;
+                                    : exam.row_id;
                                 teethNameDisplay = exam.tooth_id
                                     ? exam.teeth.teeth_name
                                     : "Row : " + rowName;
+                                teethType = exam.tooth_id
+                                    ? 'Teeth'
+                                    : 'Row';
                                 // Check if there are x-ray images
                                 if (
                                     exam.x_ray_images &&
@@ -81,26 +84,25 @@ function getDentalTable(stepIndex) {
                                     viewDocumentsButton = `
                 <button type="button" id="xraybtn" class="waves-effect waves-light btn btn-circle btn-info btn-xs"
                     data-bs-toggle="modal" data-bs-target="#modal-documents" data-id="${exam.id}" data-appointment-id="${appId}"
-                    data-teeth-name="${teethName}" data-patient-id="${patientId}" title="View documents">
+                    data-teeth-name="${teethName}" data-teeth-type="${teethType}" data-patient-id="${patientId}" title="View documents">
                     <i class="fa-solid fa-file-archive"></i>
                 </button>
             `;
                                 }
                                 if (appAction != "Show") {
-                                    actionButtons = `<button type='button' class='waves-effect waves-light btn btn-circle btn-primary btn-treat-view btn-xs me-1' title='View' data-bs-toggle='modal' data-id='${teethName}' data-bs-target='#modal-teeth'><i class='fa fa-eye'></i></button>
-                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-treat-edit btn-xs me-1' title='Edit' data-bs-toggle='modal' data-id='${teethName}' data-bs-target='#modal-teeth'><i class='fa fa-pencil'></i></button>
-                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-treat-delete btn-xs me-1' title='Delete' data-bs-toggle='modal' data-id='${exam.id}' data-bs-target='#modal-delete'><i class='fa-solid fa-trash'></i></button>
+                                    actionButtons = `<button type='button' class='waves-effect waves-light btn btn-circle btn-primary btn-treat-view btn-xs me-1' title='View' data-bs-toggle='modal' data-id='${teethName}' data-teeth-type="${teethType}" data-bs-target='#modal-teeth'><i class='fa fa-eye'></i></button>
+                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-treat-edit btn-xs me-1' title='Edit' data-bs-toggle='modal' data-id='${teethName}' data-teeth-type="${teethType}" data-bs-target='#modal-teeth'><i class='fa fa-pencil'></i></button>
+                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-treat-delete btn-xs me-1' title='Delete' data-bs-toggle='modal' data-id='${exam.id}'  data-bs-target='#modal-delete'><i class='fa-solid fa-trash'></i></button>
                                     `;
                                 } else {
-                                    actionButtons = `<button type='button' class='waves-effect waves-light btn btn-circle btn-primary btn-treat-view btn-xs me-1' title='View' data-bs-toggle='modal' data-id='${teethName}' data-bs-target='#modal-teeth'><i class='fa fa-eye'></i></button>`;
+                                    actionButtons = `<button type='button' class='waves-effect waves-light btn btn-circle btn-primary btn-treat-view btn-xs me-1' title='View' data-bs-toggle='modal' data-id='${teethName}' data-teeth-type="${teethType}" data-bs-target='#modal-teeth'><i class='fa fa-eye'></i></button>`;
                                 }
                                 var row = `
                                 <tr>
                                     <td>${index + 1}</td>
                                     <td>${teethNameDisplay}</td>
                                     <td>${exam.chief_complaint}</td>
-                                    <td>${
-                                        exam.disease ? exam.disease.name : ""
+                                    <td>${exam.disease ? exam.disease.name : ""
                                     }</td>
                                     <td>${exam.hpi}</td>
                                     <td>${exam.dental_examination}</td>
@@ -292,14 +294,12 @@ function getTreatmentTable(stepIndex) {
                             var row = `
                                 <tr>
                                     <td>${index + 1}</td>
-                                    <td>${
-                                        exam.treatment.treat_name
-                                    } (${treatCost.toFixed(2)})</td>
-                                    <td>${
-                                        treatDiscount != null
-                                            ? treatDiscount
-                                            : 0
-                                    } %</td>
+                                    <td>${exam.treatment.treat_name
+                                } (${treatCost.toFixed(2)})</td>
+                                    <td>${treatDiscount != null
+                                    ? treatDiscount
+                                    : 0
+                                } %</td>
                                     <td>${discountCost.toFixed(2)}</td>
                                 </tr>
                             `;

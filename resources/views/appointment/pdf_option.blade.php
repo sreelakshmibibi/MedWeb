@@ -108,6 +108,19 @@
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
+                // var blob = new Blob([response], {
+                //     type: 'application/pdf'
+                // });
+                // var link = document.createElement('a');
+                // link.href = window.URL.createObjectURL(blob);
+                // link.download = 'treatment_summary.pdf';
+                // document.body.appendChild(link);
+                // link.click();
+                // document.body.removeChild(link);
+                // var printWindow = window.open(link.href, '_blank');
+                // printWindow.onload = function() {
+                //     printWindow.print();
+                // };
             },
             error: function(xhr) {
                 console.error('Error generating PDF:', xhr);

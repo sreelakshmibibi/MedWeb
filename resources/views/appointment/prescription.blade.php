@@ -7,14 +7,15 @@
             <i class="fa fa-add"></i>
             Add
         </button> --}}
-        <button type='button' class='waves-effect waves-light btn btn-circle btn-info btn-pdf-generate btn-xs me-1'
-            title='Download' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}'
-            data-patient-id='{$row->patient->patient_id}' data-bs-target='#modal-download'><i
-                class='fa fa-download'></i></button>
-        <button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-pdf-generate btn-xs me-1'
-            title='Print' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}'
-            data-patient-id='{$row->patient->patient_id}' data-bs-target='#modal-download'><i
-                class='fa fa-print'></i></button>
+
+        <a href='#'
+            class='waves-effect waves-light btn btn-circle btn-prescription-pdf-generate btn-info btn-xs me-1'
+            title='Download & Print Prescription' data-app-id='{{ session('appId') }}'
+            data-patient-id='{{ session('patientId') }}'><i class='fa fa-print'></i></a>
+        {{-- <a href='#' class='waves-effect waves-light btn btn-circle btn-prescription-print btn-success btn-xs me-1'
+            title='Print Prescription' data-app-id='{{ session('appId') }}'
+            data-patient-id='{{ session('patientId') }}'><i class='fa fa-print'></i></a> --}}
+
     </div>
 </div>
 <hr class="my-15">

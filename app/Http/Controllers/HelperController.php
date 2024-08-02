@@ -282,9 +282,54 @@ class HelperController extends Controller
             'appointment' => $appointment,
             'patient' => $patient,
             'clinicDetails' => $clinicDetails,
-        ]);
+        ])->setPaper('A5', 'portrait');
 
         // Download the generated PDF
         return $pdf->download('prescription.pdf');
     }
+
+    // public function printPrescription(Request $request)
+    // {
+    //     $appId = $request->input('app_id');
+    //     $patientId = $request->input('patient_id');
+
+    //     $clinicDetails = ClinicBasicDetail::first();
+    //     $prescriptions = Prescription::with([
+    //         'medicine',
+    //         'dosage',
+    //         'prescribedBy:id,name',
+    //         'route:id,route_name',
+    //     ])
+    //         ->where('patient_id', $patientId)
+    //         ->where('app_id', $appId)
+    //         ->where('status', 'Y')
+    //         ->get();
+
+    //     // Fetch appointment and patient details
+    //     $appointment = Appointment::with([
+    //         'doctor:id,name',
+    //         'branch:id,clinic_address,city_id,state_id,country_id,pincode,clinic_phone,clinic_email',
+    //         'branch.state:id,state',
+    //         'branch.city:id,city',
+    //         'branch.country:id,country',
+    //     ])
+    //         ->where('id', $appId)
+    //         ->first();
+
+    //     $patient = PatientProfile::with([
+    //         'country:id,country',
+    //         'state:id,state',
+    //         'city:id,city',
+    //     ])
+    //         ->where('patient_id', $patientId)
+    //         ->first();
+
+    //     // Pass data to the print view
+    //     return view('pdf.prescription_print', [
+    //         'prescriptions' => $prescriptions,
+    //         'appointment' => $appointment,
+    //         'patient' => $patient,
+    //         'clinicDetails' => $clinicDetails,
+    //     ]);
+    // }
 }

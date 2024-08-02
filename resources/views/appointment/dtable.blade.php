@@ -10,9 +10,10 @@ use Illuminate\Support\Facades\Session;
     {{-- <button type="button" class="waves-effect waves-light btn btn-sm btn-outline-primary" id="table_info_btn">
         <i class="fa fa-table"></i>
         Info</button> --}}
-    <button type='button' class='waves-effect waves-light btn btn-circle btn-info btn-pdf-generate btn-xs me-1'
-        title='Download' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}'
-        data-patient-id='{$row->patient->patient_id}' data-bs-target='#modal-download'><i
+
+    <button type='button' class='waves-effect waves-light btn btn-circle btn-info btn-treatment-pdf-generate btn-xs me-1'
+        title='Download & Print Treatment Summary' data-bs-toggle='modal' data-app-id='{{ session('appId') }}'
+        data-parent-id='{$parent_id}' data-patient-id='{{ session('patientId') }}' data-bs-target='#modal-download'><i
             class='fa fa-download'></i></button>
 </div>
 <hr class="my-15 ">
@@ -235,18 +236,24 @@ use Illuminate\Support\Facades\Session;
         }
 
     });
+
     $(document).on('click', '.btn-treat-view', function() {
         var teethName = $(this).data('id');
+        var teethType = $(this).data('teeth-type');
         var appId = '<?= Session::get('appId') ?>';
         var patientId = '<?= Session::get('patientId') ?>';
         var divId = '#div' + teethName;
-        $(divId).css({
-            'border': '2px solid blue',
-            'border-radius': '5px',
-        });
+        $(divId).addClass('blue'); //new
+        if (teethType == 'Row') {
+            $('.exam_chiefComplaint').show();
+            $('.exam_toothdiv').hide();
+        } else {
+            $('.exam_chiefComplaint').hide();
+            $('.exam_toothdiv').show();
+        }
 
-        // $(this).toggleClass('selected');
         $('#tooth_id').val(teethName);
+        $('#xteeth_id').val(teethName); //new
         $('#app_id').val(appId);
         $('#patient_id').val(patientId);
         if ($(divId).hasClass('molar')) {
@@ -267,201 +274,272 @@ use Illuminate\Support\Facades\Session;
             success: function(response) {
                 var examination = response
                     .examination; // Assuming there's only one item in the array
+                if (examination != null) {
+                    // Set the value of tooth_score_id field
+                    var toothScoreId = examination.tooth_score_id;
+                    $('#tooth_score_id').val(toothScoreId);
 
-                // Set the value of tooth_score_id field
-                var toothScoreId = examination.tooth_score_id;
-                $('#tooth_score_id').val(toothScoreId);
-
-                // Loop through options to find the corresponding text and select it
-                $('#tooth_score_id option').each(function() {
-                    if ($(this).val() == toothScoreId) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
-                $('#tooth_score_id').trigger('change');
-                $('#chief_complaint').val(examination.chief_complaint);
-                $('#hpi').val(examination.hpi);
-                $('#diagnosis').val(examination.diagnosis);
-                $('#dental_examination').val(examination
-                    .dental_examination);
-                $('#remarks').val(examination.remarks);
-                var disease_id = examination.disease_id;
-                $('#disease_id').val(disease_id);
-
-                // Loop through options to find the corresponding text and select it
-                $('#disease_id option').each(function() {
-                    if ($(this).val() == disease_id) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
-
-                var treatment_id = examination.treatment_id;
-                $('#treatment_id').val(treatment_id);
-
-                // Loop through options to find the corresponding text and select it
-                $('#treatment_id option').each(function() {
-                    if ($(this).val() == treatment_id) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
-                var treatment_plan_id = examination.treatment_plan_id;
-                $('#treatment_plan_id').val(treatment_plan_id);
-
-                // Loop through options to find the corresponding text and select it
-                $('#treatment_plan_id option').each(function() {
-                    if ($(this).val() == treatment_plan_id) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
-
-                var treatment_status = examination.treatment_status;
-                $('#treatment_status').val(treatment_status);
-
-                // Loop through options to find the corresponding text and select it
-                $('#treatment_status option').each(function() {
-                    if ($(this).val() == treatment_status) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
-
-                var palatal_condn = examination.palatal_condn;
-                $('#palatal_condn').val(palatal_condn);
-
-                if (palatal_condn !== null) {
-                    $("#Palatal").show();
-                    var dpartId = $('.dparts[title="Palatal"]');
-                    $(dpartId).css({
-                        'background-color': 'red',
+                    // Loop through options to find the corresponding text and select it
+                    $('#tooth_score_id option').each(function() {
+                        if ($(this).val() == toothScoreId) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
                     });
-                    $(dpartId).addClass('red');
+                    $('#tooth_score_id').trigger('change');
+                    $('#chief_complaint').val(examination.chief_complaint);
+                    $('#hpi').val(examination.hpi);
+                    $('#diagnosis').val(examination.diagnosis);
+                    $('#dental_examination').val(examination
+                        .dental_examination);
+                    $('#remarks').val(examination.remarks);
+                    var disease_id = examination.disease_id;
+                    $('#disease_id').val(disease_id);
+
+                    // Loop through options to find the corresponding text and select it
+                    $('#disease_id option').each(function() {
+                        if ($(this).val() == disease_id) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
+                    });
+
+                    var treatment_id = examination.treatment_id;
+                    $('#treatment_id').val(treatment_id);
+
+                    // Loop through options to find the corresponding text and select it
+                    $('#treatment_id option').each(function() {
+                        if ($(this).val() == treatment_id) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
+                    });
+                    var treatment_plan_id = examination.treatment_plan_id;
+                    $('#treatment_plan_id').val(treatment_plan_id);
+
+                    // Loop through options to find the corresponding text and select it
+                    $('#treatment_plan_id option').each(function() {
+                        if ($(this).val() == treatment_plan_id) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
+                    });
+
+                    var treatment_status = examination.treatment_status;
+                    $('#treatment_status').val(treatment_status);
+
+                    // Loop through options to find the corresponding text and select it
+                    $('#treatment_status option').each(function() {
+                        if ($(this).val() == treatment_status) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
+                    });
+
+                    var palatal_condn = examination.palatal_condn;
+                    $('#palatal_condn').val(palatal_condn);
+
+                    if (palatal_condn !== null) {
+                        $("#Palatal").show();
+                        var dpartId = $('.dparts[title="Palatal"]');
+                        $(dpartId).css({
+                            'background-color': 'red',
+                        });
+                        $(dpartId).addClass('red');
+                    }
+
+                    // Loop through options to find the corresponding text and select it
+                    $('#palatal_condn option').each(function() {
+                        if ($(this).val() == palatal_condn) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
+                    });
+
+                    var mesial_condn = examination.mesial_condn;
+                    $('#mesial_condn').val(mesial_condn);
+                    if (mesial_condn !== null) {
+                        $("#Mesial").show();
+                        var dpartId = $('.dparts[title="Mesial"]');
+                        $(dpartId).css({
+                            'background-color': 'red',
+                        });
+                        $(dpartId).addClass('red');
+                    }
+
+                    // Loop through options to find the corresponding text and select it
+                    $('#mesial_condn option').each(function() {
+                        if ($(this).val() == mesial_condn) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
+                    });
+
+                    var distal_condn = examination.distal_condn;
+                    $('#distal_condn').val(distal_condn);
+
+                    if (distal_condn !== null) {
+                        $("#Distal").show();
+                        var dpartId = $('.dparts[title="Distal"]');
+                        $(dpartId).css({
+                            'background-color': 'red',
+                        });
+                        $(dpartId).addClass('red');
+                    }
+
+                    // Loop through options to find the corresponding text and select it
+                    $('#distal_condn option').each(function() {
+                        if ($(this).val() == distal_condn) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
+                    });
+
+                    var buccal_condn = examination.buccal_condn;
+                    $('#buccal_condn').val(buccal_condn);
+
+                    if (buccal_condn !== null) {
+                        $("#Buccal").show();
+                        var dpartId = $('.dparts[title="Buccal"]');
+                        $(dpartId).css({
+                            'background-color': 'red',
+                        });
+                        $(dpartId).addClass('red');
+                    }
+
+                    // Loop through options to find the corresponding text and select it
+                    $('#buccal_condn option').each(function() {
+                        if ($(this).val() == buccal_condn) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
+                    });
+
+                    var occulusal_condn = examination.occulusal_condn;
+                    $('#occulusal_condn').val(occulusal_condn);
+
+                    if (occulusal_condn !== null) {
+                        $("#Occulusal").show();
+                        var dpartId = '#' + $('.dparts[title="Occulusal"]')
+                            .attr(
+                                'id');
+                        $(dpartId).css({
+                            'background-color': 'red',
+                        });
+                        $(dpartId).addClass('red');
+                    }
+
+                    // Loop through options to find the corresponding text and select it
+                    $('#occulusal_condn option').each(function() {
+                        if ($(this).val() == occulusal_condn) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
+                    });
+
+                    var labial_condn = examination.labial_condn;
+                    $('#labial_condn').val(labial_condn);
+
+                    // Loop through options to find the corresponding text and select it
+                    $('#labial_condn option').each(function() {
+                        if ($(this).val() == labial_condn) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
+                    });
+
+                    var lingual_condn = examination.lingual_condn;
+                    $('#lingual_condn').val(lingual_condn);
+
+                    // Loop through options to find the corresponding text and select it
+                    $('#lingual_condn option').each(function() {
+                        if ($(this).val() == lingual_condn) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
+                    });
+                } else {
+                    toothData.forEach(function(tooth) {
+                        var toothId = tooth.tooth_id;
+                        if (toothId == teethName) {
+                            var palatal_condn = tooth.palatal_condn;
+                            $('#palatal_condn').val(palatal_condn);
+
+                            if (palatal_condn !== null) {
+                                $("#Palatal").show();
+                                var dpartId = $(
+                                    '.dparts[title="Palatal"]');
+                                $(dpartId).css({
+                                    'background-color': 'red',
+                                });
+                                $(dpartId).addClass('red');
+                            }
+
+                            var mesial_condn = tooth.mesial_condn;
+                            $('#mesial_condn').val(mesial_condn);
+                            if (mesial_condn !== null) {
+                                $("#Mesial").show();
+                                var dpartId = $(
+                                    '.dparts[title="Mesial"]');
+                                $(dpartId).css({
+                                    'background-color': 'red',
+                                });
+                                $(dpartId).addClass('red');
+                            }
+
+                            var distal_condn = tooth.distal_condn;
+                            $('#distal_condn').val(distal_condn);
+
+                            if (distal_condn !== null) {
+                                $("#Distal").show();
+                                var dpartId = $(
+                                    '.dparts[title="Distal"]');
+                                $(dpartId).css({
+                                    'background-color': 'red',
+                                });
+                                $(dpartId).addClass('red');
+                            }
+
+                            var buccal_condn = tooth.buccal_condn;
+                            $('#buccal_condn').val(buccal_condn);
+
+                            if (buccal_condn !== null) {
+                                $("#Buccal").show();
+                                var dpartId = $(
+                                    '.dparts[title="Buccal"]');
+                                $(dpartId).css({
+                                    'background-color': 'red',
+                                });
+                                $(dpartId).addClass('red');
+                            }
+
+                            var occulusal_condn = tooth
+                                .occulusal_condn;
+                            $('#occulusal_condn').val(
+                                occulusal_condn);
+
+                            if (occulusal_condn !== null) {
+                                $("#Occulusal").show();
+                                var dpartId = $(
+                                    '.dparts[title="Occulusal"]'
+                                );
+                                $(dpartId).css({
+                                    'background-color': 'red',
+                                });
+                                $(dpartId).addClass('red');
+                            }
+
+                            var labial_condn = tooth.labial_condn;
+                            $('#labial_condn').val(labial_condn);
+
+                            var lingual_condn = tooth.lingual_condn;
+                            $('#lingual_condn').val(lingual_condn);
+                        }
+                    });
+
                 }
 
-                // Loop through options to find the corresponding text and select it
-                $('#palatal_condn option').each(function() {
-                    if ($(this).val() == palatal_condn) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
 
-                var mesial_condn = examination.mesial_condn;
-                $('#mesial_condn').val(mesial_condn);
-                if (mesial_condn !== null) {
-                    $("#Mesial").show();
-                    var dpartId = $('.dparts[title="Mesial"]');
-                    $(dpartId).css({
-                        'background-color': 'red',
-                    });
-                    $(dpartId).addClass('red');
-                }
-
-                // Loop through options to find the corresponding text and select it
-                $('#mesial_condn option').each(function() {
-                    if ($(this).val() == mesial_condn) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
-
-                var distal_condn = examination.distal_condn;
-                $('#distal_condn').val(distal_condn);
-
-                if (distal_condn !== null) {
-                    $("#Distal").show();
-                    var dpartId = $('.dparts[title="Distal"]');
-                    $(dpartId).css({
-                        'background-color': 'red',
-                    });
-                    $(dpartId).addClass('red');
-                }
-
-                // Loop through options to find the corresponding text and select it
-                $('#distal_condn option').each(function() {
-                    if ($(this).val() == distal_condn) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
-
-                var buccal_condn = examination.buccal_condn;
-                $('#buccal_condn').val(buccal_condn);
-
-                if (buccal_condn !== null) {
-                    $("#Buccal").show();
-                    var dpartId = $('.dparts[title="Buccal"]');
-                    $(dpartId).css({
-                        'background-color': 'red',
-                    });
-                    $(dpartId).addClass('red');
-                }
-
-                // Loop through options to find the corresponding text and select it
-                $('#buccal_condn option').each(function() {
-                    if ($(this).val() == buccal_condn) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
-
-                var occulusal_condn = examination.occulusal_condn;
-                $('#occulusal_condn').val(occulusal_condn);
-
-                if (occulusal_condn !== null) {
-                    $("#Occulusal").show();
-                    var dpartId = '#' + $('.dparts[title="Occulusal"]')
-                        .attr(
-                            'id');
-                    $(dpartId).css({
-                        'background-color': 'red',
-                    });
-                    $(dpartId).addClass('red');
-                }
-
-                // Loop through options to find the corresponding text and select it
-                $('#occulusal_condn option').each(function() {
-                    if ($(this).val() == occulusal_condn) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
-
-                var labial_condn = examination.labial_condn;
-                $('#labial_condn').val(labial_condn);
-
-                // Loop through options to find the corresponding text and select it
-                $('#labial_condn option').each(function() {
-                    if ($(this).val() == labial_condn) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
-
-                var lingual_condn = examination.lingual_condn;
-                $('#lingual_condn').val(lingual_condn);
-
-                // Loop through options to find the corresponding text and select it
-                $('#lingual_condn option').each(function() {
-                    if ($(this).val() == lingual_condn) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
-
-                // var xrays = response.xrays;
-                // if (Array.isArray(xrays) && xrays.length > 0) {
-                //     // Show the link
-                //     $('#uploadedXrays').show();
-                //$('#uploadedXrays').attr('data-id', examination.id);
-                //$('#xtooth_exam_id').val(examination.id);
-                // } else {
-                //     // Hide the link if no xrays or not an array
-                //     $('#uploadedXrays').hide();
-                // }
                 $('#teethXrayDiv').hide();
             },
 
@@ -471,17 +549,27 @@ use Illuminate\Support\Facades\Session;
     });
 
     $(document).on('click', '.btn-treat-edit', function() {
+
         var teethName = $(this).data('id');
+        var teethType = $(this).data('teeth-type');
         var appId = '<?= Session::get('appId') ?>';
         var patientId = '<?= Session::get('patientId') ?>';
         var divId = '#div' + teethName;
-        $(divId).css({
-            'border': '2px solid blue',
-            'border-radius': '5px',
-        });
+        $(divId).addClass('blue'); //new
+        if (teethType == 'Row') {
+            $('#row_id').val(teethName);
+            $('#tooth_id').val('');
+            $('.exam_chiefComplaint').show();
+            $('.exam_toothdiv').hide();
+        } else {
+            $('#tooth_id').val(teethName);
+            $('#xteeth_id').val(teethName);
+            $('#row_id').val('');
+            $('.exam_chiefComplaint').hide();
+            $('.exam_toothdiv').show();
+        }
 
-        // $(this).toggleClass('selected');
-        $('#tooth_id').val(teethName);
+        //new
         $('#app_id').val(appId);
         $('#patient_id').val(patientId);
         if ($(divId).hasClass('molar')) {
@@ -503,190 +591,270 @@ use Illuminate\Support\Facades\Session;
                 var examination = response
                     .examination; // Assuming there's only one item in the array
 
-                // Set the value of tooth_score_id field
-                var toothScoreId = examination.tooth_score_id;
-                $('#tooth_score_id').val(toothScoreId);
+                if (examination != null) {
+                    // Set the value of tooth_score_id field
+                    var toothScoreId = examination.tooth_score_id;
+                    $('#tooth_score_id').val(toothScoreId);
 
-                // Loop through options to find the corresponding text and select it
-                $('#tooth_score_id option').each(function() {
-                    if ($(this).val() == toothScoreId) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
-                $('#tooth_score_id').trigger('change');
-                $('#chief_complaint').val(examination.chief_complaint);
-                $('#hpi').val(examination.hpi);
-                $('#diagnosis').val(examination.diagnosis);
-                $('#dental_examination').val(examination
-                    .dental_examination);
-                $('#remarks').val(examination.remarks);
-                var disease_id = examination.disease_id;
-                $('#disease_id').val(disease_id);
-
-                // Loop through options to find the corresponding text and select it
-                $('#disease_id option').each(function() {
-                    if ($(this).val() == disease_id) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
-
-                var treatment_id = examination.treatment_id;
-                $('#treatment_id').val(treatment_id);
-
-                // Loop through options to find the corresponding text and select it
-                $('#treatment_id option').each(function() {
-                    if ($(this).val() == treatment_id) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
-
-                var treatment_plan_id = examination.treatment_plan_id;
-                $('#treatment_plan_id').val(treatment_plan_id);
-
-                // Loop through options to find the corresponding text and select it
-                $('#treatment_plan_id option').each(function() {
-                    if ($(this).val() == treatment_plan_id) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
-
-                var treatment_status = examination.treatment_status;
-                $('#treatment_status').val(treatment_status);
-
-                // Loop through options to find the corresponding text and select it
-                $('#treatment_status option').each(function() {
-                    if ($(this).val() == treatment_status) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
-
-                var palatal_condn = examination.palatal_condn;
-                $('#palatal_condn').val(palatal_condn);
-
-                if (palatal_condn !== null) {
-                    $("#Palatal").show();
-                    var dpartId = $('.dparts[title="Palatal"]');
-                    $(dpartId).css({
-                        'background-color': 'red',
+                    // Loop through options to find the corresponding text and select it
+                    $('#tooth_score_id option').each(function() {
+                        if ($(this).val() == toothScoreId) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
                     });
-                    $(dpartId).addClass('red');
-                }
+                    $('#tooth_score_id').trigger('change');
+                    $('#chief_complaint').val(examination.chief_complaint);
+                    $('#hpi').val(examination.hpi);
+                    $('#diagnosis').val(examination.diagnosis);
+                    $('#dental_examination').val(examination
+                        .dental_examination);
+                    $('#remarks').val(examination.remarks);
+                    var disease_id = examination.disease_id;
+                    $('#disease_id').val(disease_id);
 
-                // Loop through options to find the corresponding text and select it
-                $('#palatal_condn option').each(function() {
-                    if ($(this).val() == palatal_condn) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
-
-                var mesial_condn = examination.mesial_condn;
-                $('#mesial_condn').val(mesial_condn);
-                if (mesial_condn !== null) {
-                    $("#Mesial").show();
-                    var dpartId = $('.dparts[title="Mesial"]');
-                    $(dpartId).css({
-                        'background-color': 'red',
+                    // Loop through options to find the corresponding text and select it
+                    $('#disease_id option').each(function() {
+                        if ($(this).val() == disease_id) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
                     });
-                    $(dpartId).addClass('red');
-                }
 
-                // Loop through options to find the corresponding text and select it
-                $('#mesial_condn option').each(function() {
-                    if ($(this).val() == mesial_condn) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
+                    var treatment_id = examination.treatment_id;
+                    $('#treatment_id').val(treatment_id);
 
-                var distal_condn = examination.distal_condn;
-                $('#distal_condn').val(distal_condn);
-
-                if (distal_condn !== null) {
-                    $("#Distal").show();
-                    var dpartId = $('.dparts[title="Distal"]');
-                    $(dpartId).css({
-                        'background-color': 'red',
+                    // Loop through options to find the corresponding text and select it
+                    $('#treatment_id option').each(function() {
+                        if ($(this).val() == treatment_id) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
                     });
-                    $(dpartId).addClass('red');
-                }
+                    var treatment_plan_id = examination.treatment_plan_id;
+                    $('#treatment_plan_id').val(treatment_plan_id);
 
-                // Loop through options to find the corresponding text and select it
-                $('#distal_condn option').each(function() {
-                    if ($(this).val() == distal_condn) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
-
-                var buccal_condn = examination.buccal_condn;
-                $('#buccal_condn').val(buccal_condn);
-
-                if (buccal_condn !== null) {
-                    $("#Buccal").show();
-                    var dpartId = $('.dparts[title="Buccal"]');
-                    $(dpartId).css({
-                        'background-color': 'red',
+                    // Loop through options to find the corresponding text and select it
+                    $('#treatment_plan_id option').each(function() {
+                        if ($(this).val() == treatment_plan_id) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
                     });
-                    $(dpartId).addClass('red');
-                }
 
-                // Loop through options to find the corresponding text and select it
-                $('#buccal_condn option').each(function() {
-                    if ($(this).val() == buccal_condn) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
+                    var treatment_status = examination.treatment_status;
+                    $('#treatment_status').val(treatment_status);
 
-                var occulusal_condn = examination.occulusal_condn;
-                $('#occulusal_condn').val(occulusal_condn);
-
-                if (occulusal_condn !== null) {
-                    $("#Occulusal").show();
-                    var dpartId = '#' + $('.dparts[title="Occulusal"]')
-                        .attr(
-                            'id');
-                    $(dpartId).css({
-                        'background-color': 'red',
+                    // Loop through options to find the corresponding text and select it
+                    $('#treatment_status option').each(function() {
+                        if ($(this).val() == treatment_status) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
                     });
-                    $(dpartId).addClass('red');
+
+                    var palatal_condn = examination.palatal_condn;
+                    $('#palatal_condn').val(palatal_condn);
+
+                    if (palatal_condn !== null) {
+                        $("#Palatal").show();
+                        var dpartId = $('.dparts[title="Palatal"]');
+                        $(dpartId).css({
+                            'background-color': 'red',
+                        });
+                        $(dpartId).addClass('red');
+                    }
+
+                    // Loop through options to find the corresponding text and select it
+                    $('#palatal_condn option').each(function() {
+                        if ($(this).val() == palatal_condn) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
+                    });
+
+                    var mesial_condn = examination.mesial_condn;
+                    $('#mesial_condn').val(mesial_condn);
+                    if (mesial_condn !== null) {
+                        $("#Mesial").show();
+                        var dpartId = $('.dparts[title="Mesial"]');
+                        $(dpartId).css({
+                            'background-color': 'red',
+                        });
+                        $(dpartId).addClass('red');
+                    }
+
+                    // Loop through options to find the corresponding text and select it
+                    $('#mesial_condn option').each(function() {
+                        if ($(this).val() == mesial_condn) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
+                    });
+
+                    var distal_condn = examination.distal_condn;
+                    $('#distal_condn').val(distal_condn);
+
+                    if (distal_condn !== null) {
+                        $("#Distal").show();
+                        var dpartId = $('.dparts[title="Distal"]');
+                        $(dpartId).css({
+                            'background-color': 'red',
+                        });
+                        $(dpartId).addClass('red');
+                    }
+
+                    // Loop through options to find the corresponding text and select it
+                    $('#distal_condn option').each(function() {
+                        if ($(this).val() == distal_condn) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
+                    });
+
+                    var buccal_condn = examination.buccal_condn;
+                    $('#buccal_condn').val(buccal_condn);
+
+                    if (buccal_condn !== null) {
+                        $("#Buccal").show();
+                        var dpartId = $('.dparts[title="Buccal"]');
+                        $(dpartId).css({
+                            'background-color': 'red',
+                        });
+                        $(dpartId).addClass('red');
+                    }
+
+                    // Loop through options to find the corresponding text and select it
+                    $('#buccal_condn option').each(function() {
+                        if ($(this).val() == buccal_condn) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
+                    });
+
+                    var occulusal_condn = examination.occulusal_condn;
+                    $('#occulusal_condn').val(occulusal_condn);
+
+                    if (occulusal_condn !== null) {
+                        $("#Occulusal").show();
+                        var dpartId = '#' + $('.dparts[title="Occulusal"]')
+                            .attr(
+                                'id');
+                        $(dpartId).css({
+                            'background-color': 'red',
+                        });
+                        $(dpartId).addClass('red');
+                    }
+
+                    // Loop through options to find the corresponding text and select it
+                    $('#occulusal_condn option').each(function() {
+                        if ($(this).val() == occulusal_condn) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
+                    });
+
+                    var labial_condn = examination.labial_condn;
+                    $('#labial_condn').val(labial_condn);
+
+                    // Loop through options to find the corresponding text and select it
+                    $('#labial_condn option').each(function() {
+                        if ($(this).val() == labial_condn) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
+                    });
+
+                    var lingual_condn = examination.lingual_condn;
+                    $('#lingual_condn').val(lingual_condn);
+
+                    // Loop through options to find the corresponding text and select it
+                    $('#lingual_condn option').each(function() {
+                        if ($(this).val() == lingual_condn) {
+                            $(this).prop('selected', true);
+                            return false; // Exit the loop once found
+                        }
+                    });
+                } else {
+                    toothData.forEach(function(tooth) {
+                        var toothId = tooth.tooth_id;
+                        if (toothId == teethName) {
+                            var palatal_condn = tooth.palatal_condn;
+                            $('#palatal_condn').val(palatal_condn);
+
+                            if (palatal_condn !== null) {
+                                $("#Palatal").show();
+                                var dpartId = $(
+                                    '.dparts[title="Palatal"]');
+                                $(dpartId).css({
+                                    'background-color': 'red',
+                                });
+                                $(dpartId).addClass('red');
+                            }
+
+                            var mesial_condn = tooth.mesial_condn;
+                            $('#mesial_condn').val(mesial_condn);
+                            if (mesial_condn !== null) {
+                                $("#Mesial").show();
+                                var dpartId = $(
+                                    '.dparts[title="Mesial"]');
+                                $(dpartId).css({
+                                    'background-color': 'red',
+                                });
+                                $(dpartId).addClass('red');
+                            }
+
+                            var distal_condn = tooth.distal_condn;
+                            $('#distal_condn').val(distal_condn);
+
+                            if (distal_condn !== null) {
+                                $("#Distal").show();
+                                var dpartId = $(
+                                    '.dparts[title="Distal"]');
+                                $(dpartId).css({
+                                    'background-color': 'red',
+                                });
+                                $(dpartId).addClass('red');
+                            }
+
+                            var buccal_condn = tooth.buccal_condn;
+                            $('#buccal_condn').val(buccal_condn);
+
+                            if (buccal_condn !== null) {
+                                $("#Buccal").show();
+                                var dpartId = $(
+                                    '.dparts[title="Buccal"]');
+                                $(dpartId).css({
+                                    'background-color': 'red',
+                                });
+                                $(dpartId).addClass('red');
+                            }
+
+                            var occulusal_condn = tooth
+                                .occulusal_condn;
+                            $('#occulusal_condn').val(
+                                occulusal_condn);
+
+                            if (occulusal_condn !== null) {
+                                $("#Occulusal").show();
+                                var dpartId = $(
+                                    '.dparts[title="Occulusal"]'
+                                );
+                                $(dpartId).css({
+                                    'background-color': 'red',
+                                });
+                                $(dpartId).addClass('red');
+                            }
+
+                            var labial_condn = tooth.labial_condn;
+                            $('#labial_condn').val(labial_condn);
+
+                            var lingual_condn = tooth.lingual_condn;
+                            $('#lingual_condn').val(lingual_condn);
+                        }
+                    });
+
                 }
-
-                // Loop through options to find the corresponding text and select it
-                $('#occulusal_condn option').each(function() {
-                    if ($(this).val() == occulusal_condn) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
-
-                var labial_condn = examination.labial_condn;
-                $('#labial_condn').val(labial_condn);
-
-                // Loop through options to find the corresponding text and select it
-                $('#labial_condn option').each(function() {
-                    if ($(this).val() == labial_condn) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
-
-                var lingual_condn = examination.lingual_condn;
-                $('#lingual_condn').val(lingual_condn);
-
-                // Loop through options to find the corresponding text and select it
-                $('#lingual_condn option').each(function() {
-                    if ($(this).val() == lingual_condn) {
-                        $(this).prop('selected', true);
-                        return false; // Exit the loop once found
-                    }
-                });
 
                 var xrays = response.xrays;
                 if (Array.isArray(xrays) && xrays.length > 0) {
@@ -697,6 +865,8 @@ use Illuminate\Support\Facades\Session;
                 } else {
                     // Hide the link if no xrays or not an array
                     $('#uploadedXrays').hide();
+                    $('#uploadedXrays').attr('data-id', null);
+                    $('#xtooth_exam_id').val('');
                 }
             },
 
