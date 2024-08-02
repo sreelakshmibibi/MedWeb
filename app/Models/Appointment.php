@@ -13,6 +13,7 @@ class Appointment extends Model
     use SoftDeletes;
 
     const AppOngoing = 'Treatment';
+
     const AppCompleted = 'Show';
 
     protected $fillable = [
@@ -85,5 +86,10 @@ class Appointment extends Model
     public function branch()
     {
         return $this->belongsTo(ClinicBranch::class, 'app_branch', 'id');
+    }
+
+    public function prescriptions()
+    {
+        return $this->hasMany(Prescription::class, 'app_id', 'id');
     }
 }

@@ -63,6 +63,7 @@
     @include('appointment.booking')
     @include('appointment.reschedule')
     @include('appointment.cancel')
+    @include('appointment.pdf_option')
 
     {{-- </div> --}}
 
@@ -207,7 +208,7 @@
                 $('#reschedule_app_id').val(appId); // Set app ID in the hidden input
                 // Set app ID in the hidden input
                 $.ajax({
-                    url: '{{ url("appointment", "") }}' + "/" + appId + "/edit",
+                    url: '{{ url('appointment', '') }}' + "/" + appId + "/edit",
                     method: 'GET',
                     success: function(response) {
                         $('#edit_app_id').val(response.id);
@@ -251,7 +252,7 @@
             if (branchId && appDate) {
 
                 $.ajax({
-                    url: '{{ route("get.doctors", "") }}' + '/' + branchId,
+                    url: '{{ route('get.doctors', '') }}' + '/' + branchId,
                     type: "GET",
                     data: {
                         appdate: appDate
@@ -314,7 +315,7 @@
         //     if (branchId && appDate && doctorId) {
 
         //         $.ajax({
-        //             url: '{{ route("get.exisitingAppointments", "") }}' + '/' + branchId,
+        //             url: '{{ route('get.exisitingAppointments', '') }}' + '/' + branchId,
         //             type: "GET",
         //             data: {
         //                 appdate: appDate,
@@ -416,7 +417,7 @@
         function showExistingAppointments(branchId, appDate, doctorId, patientId, methodType) {
             if (branchId && appDate && doctorId) {
                 $.ajax({
-                    url: '{{ route("get.exisitingAppointments", "") }}' + '/' + branchId,
+                    url: '{{ route('get.exisitingAppointments', '') }}' + '/' + branchId,
                     type: "GET",
                     data: {
                         appdate: appDate,
@@ -431,7 +432,7 @@
                         } else {
                             $('#alreadyExistsPatient').hide();
                         }
-                        
+
                         // Show/hide the 'existingAppointmentsError' div based on 'checkAllocated'
                         if (data.checkAllocated.length > 0) {
                             $('#existingAppointmentsError').show();
@@ -444,12 +445,13 @@
                             $('#existAppContainer').hide();
                             $('#existingAppointments').empty();
                             $('#rescheduleExistingAppointments').empty();
-                            
-                            var table = $('<table class="table table-striped mb-0">').addClass('appointment-table').css({
+
+                            var table = $('<table class="table table-striped mb-0">').addClass(
+                                'appointment-table').css({
                                 'border-collapse': 'separate',
                                 'border-spacing': '0.5rem'
                             });
-                            
+
                             var numRows = Math.ceil(data.existingAppointments.length / 5);
 
                             for (var i = 0; i < numRows; i++) {
@@ -470,12 +472,14 @@
                             }
 
                             if (methodType === 'store') {
-                                $('#existingAppointments').append($('<h6 class="text-warning mb-1">').text('Scheduled Appointments'));
+                                $('#existingAppointments').append($('<h6 class="text-warning mb-1">').text(
+                                    'Scheduled Appointments'));
                                 $('#existingAppointments').append(table);
                                 $('#existAppContainer').show();
                                 $('#existingAppointments').show();
                             } else if (methodType === 'edit') {
-                                $('#rescheduleExistingAppointments').append($('<h6 class="text-warning mb-1">').text('Scheduled Appointments'));
+                                $('#rescheduleExistingAppointments').append($('<h6 class="text-warning mb-1">')
+                                    .text('Scheduled Appointments'));
                                 $('#rescheduleExistingAppointments').append(table);
                                 $('#rescheduleExistingAppointments').show();
                             }
@@ -488,7 +492,8 @@
                     },
                     error: function(xhr, status, error) {
                         console.error('Error fetching existing appointments:', error);
-                        $('#existingAppointments').html('Error fetching existing appointments. Please try again later.');
+                        $('#existingAppointments').html(
+                            'Error fetching existing appointments. Please try again later.');
                         $('#existAppContainer').show();
                         $('#existingAppointments').show();
                     }
@@ -498,7 +503,7 @@
             }
         }
 
-         $(document).on('click', '#btn-cancel', function() {
+        $(document).on('click', '#btn-cancel', function() {
             var appId = $(this).data('id');
             $('#delete_app_id').val(appId); // Set staff ID in the hidden input
             $('#modal-cancel').modal('show');
@@ -538,6 +543,54 @@
             });
         });
 
+        $(document).on('click', '.btn-treatment-pdf-generate', function() {
+            var appId = $(this).data('app-id');
+            var parentId = $(this).data('parent-id');
+            var patientId = $(this).data('patient-id');
+
+            $('#pdf_appointment_id').val(appId);
+            $('#pdf_patient_id').val(patientId);
+            $('#pdf_app_parent_id').val(parentId);
+            $('#pdfType').val('appointment'); // Default to 'appointment'
+            $('#toothSelection').addClass('d-none'); // Hide tooth selection by default
+
+            $('#modal-download').modal('show'); // Show the modal
+        });
+
+        $(document).on('click', '.btn-prescription-pdf-generate', function() {
+            var appId = $(this).data('app-id');
+            var patientId = $(this).data('patient-id');
+
+            const url = '{{ route('download.prescription') }}';
+
+            // Make the AJAX request
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {
+                    app_id: appId,
+                    patient_id: patientId,
+                    _token: '{{ csrf_token() }}' // Include CSRF token for security
+                },
+                xhrFields: {
+                    responseType: 'blob' // Important for handling binary data like PDFs
+                },
+                success: function(response) {
+                    var blob = new Blob([response], {
+                        type: 'application/pdf'
+                    });
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = 'prescription.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
 
         function reloadTableData() {
             table.ajax.reload();

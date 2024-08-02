@@ -16,10 +16,12 @@ class User extends Authenticatable
     use SoftDeletes;
 
     const IS_ADMIN = 2;
-    const IS_DOCTOR = 3;
-    const IS_NURSE = 4;
-    const IS_RECEPTION = 5;
 
+    const IS_DOCTOR = 3;
+
+    const IS_NURSE = 4;
+
+    const IS_RECEPTION = 5;
 
     /**
      * The attributes that are mass assignable.
@@ -87,5 +89,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(DoctorWorkingHour::class);
     }
-    
+
+    public function prescribedPrescriptions()
+    {
+        return $this->hasMany(Prescription::class, 'prescribed_by', 'id');
+    }
 }

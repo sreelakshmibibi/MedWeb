@@ -41,7 +41,7 @@ class AppointmentController extends Controller
                     $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
                     $base64Id = base64_encode($parent_id);
                     $idEncrypted = Crypt::encrypt($base64Id);
-                    $name1 = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light' title='open treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' >" . $row->patient->patient_id . '</i></a>';
+                    $name1 = "<a href='".route('treatment', $idEncrypted)."' class='waves-effect waves-light' title='open treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->patient->first_name.' '.$row->patient->last_name)."' >".$row->patient->patient_id.'</i></a>';
 
                     return $name1;
                 })
@@ -49,8 +49,8 @@ class AppointmentController extends Controller
                     $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
                     $base64Id = base64_encode($parent_id);
                     $idEncrypted = Crypt::encrypt($base64Id);
-                    $name = str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name);
-                    $name1 = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light' title='open treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' >" . $name . '</i></a>';
+                    $name = str_replace('<br>', ' ', $row->patient->first_name.' '.$row->patient->last_name);
+                    $name1 = "<a href='".route('treatment', $idEncrypted)."' class='waves-effect waves-light' title='open treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->patient->first_name.' '.$row->patient->last_name)."' >".$name.'</i></a>';
 
                     return $name1;
                 })
@@ -62,7 +62,7 @@ class AppointmentController extends Controller
                         ($row->app_type == AppointmentType::FOLLOWUP ? AppointmentType::FOLLOWUP_WORDS : '');
                 })
                 ->addColumn('branch', function ($row) {
-                    if (!$row->branch) {
+                    if (! $row->branch) {
                         return '';
                     }
                     $address = implode(', ', explode('<br>', $row->branch->clinic_address));
@@ -86,7 +86,7 @@ class AppointmentController extends Controller
                     ];
                     $btnClass = isset($statusMap[$row->app_status]) ? $statusMap[$row->app_status] : '';
 
-                    return "<span class='btn d-block btn-xs badge {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . '</span>';
+                    return "<span class='btn d-block btn-xs badge {$btnClass}'>".AppointmentStatus::statusToWords($row->app_status).'</span>';
                 })
                 ->addColumn('action', function ($row) {
                     if ($row->app_status == AppointmentStatus::CANCELLED || $row->app_status == AppointmentStatus::RESCHEDULED) {
@@ -99,21 +99,22 @@ class AppointmentController extends Controller
                     // Check if the appointment date is less than the selected date
                     if ($row->app_date < date('Y-m-d') && $row->app_status == AppointmentStatus::COMPLETED) {
                         // If appointment date is less than the selected date, show view icon
-                        $buttons[] = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa-solid fa-eye'></i></a>";
+                        $buttons[] = "<a href='".route('treatment', $idEncrypted)."' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->patient->first_name.' '.$row->patient->last_name)."' ><i class='fa-solid fa-eye'></i></a>";
                     } elseif ($row->app_date == date('Y-m-d')) {
                         // Otherwise, show treatment icon
-                        $buttons[] = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa-solid fa-stethoscope'></i></a>";
+                        $buttons[] = "<a href='".route('treatment', $idEncrypted)."' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->patient->first_name.' '.$row->patient->last_name)."' ><i class='fa-solid fa-stethoscope'></i></a>";
                     } else {
                         $buttons[] = '';
                     }
-                    $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1' title='follow up' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>";
+                    $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1' title='follow up' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->patient->first_name.' '.$row->patient->last_name)."' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>";
                     if ($row->app_status != AppointmentStatus::COMPLETED) {
 
-                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-reschedule btn-xs me-1' title='reschedule' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' data-bs-target='#modal-reschedule'><i class='fa-solid fa-calendar-days'></i></button>";
+                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-reschedule btn-xs me-1' title='reschedule' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->patient->first_name.' '.$row->patient->last_name)."' data-bs-target='#modal-reschedule'><i class='fa-solid fa-calendar-days'></i></button>";
                         $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-xs' id='btn-cancel' data-bs-toggle='modal' data-bs-target='#modal-cancel' data-id='{$row->id}' title='cancel'><i class='fa fa-times'></i></button>";
                     }
                     if ($row->app_status == AppointmentStatus::COMPLETED) {
-                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-secondary btn-pdf-generate btn-xs me-1' title='Download' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}'  data-bs-target='#modal-download'><i class='fa fa-download'></i></button>";
+                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-secondary btn-treatment-pdf-generate btn-xs me-1' title='Download Treatment Summary' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}'  data-bs-target='#modal-download'><i class='fa fa-download'></i></button>";
+                        $buttons[] = "<a href='#' class='waves-effect waves-light btn btn-circle btn-prescription-pdf-generate btn-outline-primary btn-xs me-1' title='Download Prescription' data-app-id='{$row->id}' data-patient-id='{$row->patient->patient_id}' ><i class='fa fa-medkit'></i></a>";
                     }
 
                     return implode('', $buttons);
@@ -191,7 +192,7 @@ class AppointmentController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
 
-            return redirect()->back()->with('error', 'Failed to create appointment: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to create appointment: '.$e->getMessage());
         }
     }
 
@@ -201,7 +202,7 @@ class AppointmentController extends Controller
     public function edit(string $id)
     {
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])->find($id);
-        abort_if(!$appointment, 404);
+        abort_if(! $appointment, 404);
         // Format clinic address
         $clinicAddress = implode(', ', [
             str_replace('<br>', ', ', $appointment->branch->clinic_address),
@@ -264,7 +265,7 @@ class AppointmentController extends Controller
             }
 
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to reschedule appointment: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to reschedule appointment: '.$e->getMessage());
         }
     }
 

@@ -104,12 +104,12 @@ use Illuminate\Support\Facades\Session;
     <script>
         var treatmentShowRoute = "{{ route('treatment.show', ['appointment' => ':appId']) }}";
         var treatmentShowChargeRoute = "{{ route('treatment.showCharge', ['appointment' => ':appId']) }}";
-        var pdfTeethRoute = "{{ route('fetch.teeth.details', ['patientId' => ':patientId']) }}";
+        var pdfTeethRoute = "{{ route('fetch.teeth.details', ['patientId' => ':patientId', 'appId' => ':appId']) }}";
         var appAction = "{{ $appAction }}";
-        var row1 = "{{ App\Models\TeethRow:: Row_1_Desc}}";
-        var row2 = "{{ App\Models\TeethRow:: Row_2_Desc}}";
-        var row3 = "{{ App\Models\TeethRow:: Row_3_Desc}}";
-        var row4 = "{{ App\Models\TeethRow:: Row_4_Desc}}";
+        var row1 = "{{ App\Models\TeethRow::Row_1_Desc }}";
+        var row2 = "{{ App\Models\TeethRow::Row_2_Desc }}";
+        var row3 = "{{ App\Models\TeethRow::Row_3_Desc }}";
+        var row4 = "{{ App\Models\TeethRow::Row_4_Desc }}";
         var teethId;
         let isAdmin = $("#isAdmin").val();
 
@@ -335,6 +335,9 @@ use Illuminate\Support\Facades\Session;
                         </select>
                     </td>
                     <td>
+                        <input type="text" class="form-control" id="dose${rowIndex}" name="prescriptions[${rowIndex}][dose]" placeholder="Dose" required>
+                    </td>
+                    <td>
                         <select class="form-control" id="dosage${rowIndex}" name="prescriptions[${rowIndex}][dosage_id]" required style="width: 100%;">
                             <option value=""> Select a Dosage </option>
                             @foreach ($dosages as $dosage)
@@ -354,6 +357,14 @@ use Illuminate\Support\Facades\Session;
                         <select class="form-control" id="advice${rowIndex}" name="prescriptions[${rowIndex}][advice]" required style="width: 100%;">
                             <option value="After food">After food</option>
                             <option value="Before food">Before food</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-control" id="route${rowIndex}" name="prescriptions[${rowIndex}][route_id]" required style="width: 100%;">
+                            <option value="">Select a Route</option>
+                            @foreach ($medicineRoutes as $route)
+                                <option value="{{ $route->id }}">{{ $route->route_name }}</option>
+                            @endforeach
                         </select>
                     </td>
                     <td>
@@ -409,6 +420,10 @@ use Illuminate\Support\Facades\Session;
                     });
                     $(`#advice${rowIndex}`).select2({
                         width: "100%",
+                    });
+                    $(`#route${rowIndex}`).select2({
+                        width: "100%",
+                        placeholder: "Select a Route",
                     });
                     rowIndex++;
                 });
@@ -488,31 +503,16 @@ use Illuminate\Support\Facades\Session;
         });
 
 
-        $(document).on('click', '.btn-pdf-generate', function() {
+        $(document).on('click', '.btn-treatment-pdf-generate', function() {
             var appId = $(this).data('app-id');
             var parentId = $(this).data('parent-id');
-            var toothNames = $(this).data('tooth-id'); // This is expected to be a comma-separated string
             var patientId = $(this).data('patient-id');
 
             $('#pdf_appointment_id').val(appId);
             $('#pdf_patient_id').val(patientId);
             $('#pdf_app_parent_id').val(parentId);
             $('#pdfType').val('appointment'); // Default to 'appointment'
-
-            var toothSelect = $('#toothIdSelect');
-            toothSelect.empty(); // Clear previous options
-            toothSelect.append(new Option('Select a tooth', ''));
-
-            // If toothNames is a string, split it into an array
-            if (toothNames) {
-                toothNames.split(', ').forEach(function(tooth) {
-                    toothSelect.append(new Option(tooth, tooth));
-                });
-            }
-
-            // Ensure the tooth selection is hidden if the type is not 'tooth'
             $('#toothSelection').addClass('d-none'); // Hide tooth selection by default
-
             $('#modal-download').modal('show'); // Show the modal
         });
     </script>

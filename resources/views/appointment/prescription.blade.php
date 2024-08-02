@@ -26,9 +26,11 @@
             <tr class="bg-primary-light">
                 <th>No</th>
                 <th>Medicine</th>
-                <th>Dosage</th>
+                <th>Dose</th>
+                <th>Frequency</th>
                 <th style="width:200px;">Duration</th>
                 <th>Advice</th>
+                <th>Route</th>
                 <th>Remarks</th>
                 <th> <button id="medicineAddRow" type="button" class="waves-effect waves-light btn btn-sm btn-primary">
                         <i class="fa fa-add"></i>
@@ -36,96 +38,7 @@
                     </button></th>
             </tr>
         </thead>
-        {{-- <tbody id="presctablebody">
-            <tr>
-                <td>1</td>
-                <td>
-                    <select class="form-control" id="medicine_id1" name="medicine_id1" style="width: 100%;" required>
-                        @foreach ($medicines as $medicine)
-                            <option value="{{ $medicine->id }}">{{ $medicine->med_name }}</option>
-                        @endforeach
-                    </select>
-                </td>
 
-                <td>
-                    <select class="form-control" id="dosage1" name="dosage1" required style="width: 100%;">
-                        <option value=""> Select a Dosage </option>
-                        @foreach ($dosages as $dosage)
-                            <option value="{{ $dosage->id }}"> {{ $dosage->dos_name }}</option>
-                        @endforeach
-
-                    </select>
-                </td>
-                <td>
-                    <div class="input-group">
-                        <input type="number" class="form-control" id="duration1" name="duration1"
-                            aria-describedby="basic-addon2" required>
-                        <div class="input-group-append">
-                            <span class="input-group-text" id="basic-addon2">days</span>
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <select class="form-control" id="advice1" name="advice1" required style="width: 100%;" required>
-                        <option value="After food">After food</option>
-                        <option value="Before food">Before food</option>
-                    </select>
-                </td>
-                <td>
-                    <input type="text" class="form-control" id="remarks1" name="remarks1" placeholder="remarks">
-                </td>
-                <td>
-                    <!-- <button type="button" id="btnDelete" title="delete row" class="waves-effect waves-light btn btn-danger btn-sm"> <i class="fa fa-trash"></i></button> -->
-                </td>
-            </tr>
-        </tbody> --}}
-        {{-- <tbody id="presctablebody">
-            <!-- Initial Row -->
-            <tr>
-                <td>1</td>
-                <td>
-                    <select class="form-control" id="medicine_id1" name="prescriptions[1][medicine_id]"
-                        style="width: 100%;" required>
-                        <option value=""> Select a Medicine </option>
-                        @foreach ($medicines as $medicine)
-                            <option value="{{ $medicine->id }}">{{ $medicine->med_name }}</option>
-                        @endforeach
-                    </select>
-                </td>
-                <td>
-                    <select class="form-control" id="dosage1" name="prescriptions[1][dosage_id]" required
-                        style="width: 100%;">
-                        <option value=""> Select a Dosage </option>
-                        @foreach ($dosages as $dosage)
-                            <option value="{{ $dosage->id }}"> {{ $dosage->dos_name }}</option>
-                        @endforeach
-                    </select>
-                </td>
-                <td>
-                    <div class="input-group">
-                        <input type="number" class="form-control" id="duration1" name="prescriptions[1][duration]"
-                            aria-describedby="basic-addon2" required>
-                        <div class="input-group-append">
-                            <span class="input-group-text" id="basic-addon2">days</span>
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <select class="form-control" id="advice1" name="prescriptions[1][advice]" required
-                        style="width: 100%;">
-                        <option value="After food">After food</option>
-                        <option value="Before food">Before food</option>
-                    </select>
-                </td>
-                <td>
-                    <input type="text" class="form-control" id="remarks1" name="prescriptions[1][remark]"
-                        placeholder="remarks">
-                </td>
-                <td>
-                    <!-- Empty cell for actions -->
-                </td>
-            </tr>
-        </tbody> --}}
         <tbody id="presctablebody">
             @forelse ($patientPrescriptions as $index => $prescription)
                 <tr>
@@ -141,6 +54,11 @@
                                 </option>
                             @endforeach
                         </select>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" id="dose{{ $index + 1 }}"
+                            name="prescriptions[{{ $index + 1 }}][dose]" placeholder="Dose"
+                            value="{{ $prescription->dose ?? '' }}" required>
                     </td>
                     <td>
                         <select class="form-control dosage_id_select" id="dosage{{ $index + 1 }}"
@@ -171,6 +89,18 @@
                                 After food</option>
                             <option value="Before food" {{ $prescription->advice == 'Before food' ? 'selected' : '' }}>
                                 Before food</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-control medicine_route_select" id="route{{ $index + 1 }}"
+                            name="prescriptions[{{ $index + 1 }}][route_id]" required style="width: 100%;">
+                            <option value="">Select a Route</option>
+                            @foreach ($medicineRoutes as $route)
+                                <option value="{{ $route->id }}"
+                                    {{ $prescription->route_id == $route->id ? 'selected' : '' }}>
+                                    {{ $route->route_name }}
+                                </option>
+                            @endforeach
                         </select>
                     </td>
                     <td>

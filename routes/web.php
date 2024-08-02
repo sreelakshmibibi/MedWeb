@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\Appointment\AppointmentController;
-use App\Http\Controllers\Billing\BillingController;
 use App\Http\Controllers\Appointment\TreatmentController;
 use App\Http\Controllers\Auth\StaffVerificationController;
+use App\Http\Controllers\Billing\BillingController;
 use App\Http\Controllers\HelperController;
 use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
@@ -44,8 +44,9 @@ Route::get('/session-data', [HelperController::class, 'getSessionData']);
 Route::get('/fetch-doctors/{branchId}', [PatientListController::class, 'fetchDoctors'])->name('get.doctors');
 Route::get('/fetch-existingAppoinmtents/{branchId}', [PatientListController::class, 'fetchExistingAppointments'])->name('get.exisitingAppointments');
 Route::get('/fetch-ExistingExamination/{toothId}/{appId}/{patientId}', [TreatmentController::class, 'fetchExistingExamination'])->name('get.toothExamination');
-Route::post('/generate-pdf', [HelperController::class, 'generatePdf'])->name('generate.pdf');
+Route::post('/generate-pdf', [HelperController::class, 'generateTreatmentPdf'])->name('generate.pdf');
 Route::get('/fetch-teeth-details/{patientId}/{appId}', [HelperController::class, 'fetchTeethDetails'])->name('fetch.teeth.details');
+Route::post('/download-prescription', [HelperController::class, 'generatePrescriptionPdf'])->name('download.prescription');
 
 Route::get('/clinic', [ClinicBranchController::class, 'index'])->name('settings.clinic');
 Route::post('/clinic/create', [ClinicBranchController::class, 'create'])->name('settings.clinic.create');

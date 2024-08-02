@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
             TeethRowSeeder::class,
             TreatmentStatusSeeder::class,
             TreatmentPlanSeeder::class,
+            MedicineRouteSeeder::class,
             // Other seeders...
         ]);
         $adminUser = User::factory()->create([
@@ -53,6 +54,5 @@ class DatabaseSeeder extends Seeder
         $drole = Role::findByName('Doctor');
         $doctorUser->assignRole($drole);
 
-        
     }
 }
