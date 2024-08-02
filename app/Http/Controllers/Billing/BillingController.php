@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Appointment;
+namespace App\Http\Controllers\Billing;
 
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
-class AppointmentController extends Controller
+class BillingController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -96,6 +96,8 @@ class AppointmentController extends Controller
                     $buttons = [];
                     $base64Id = base64_encode($row->id);
                     $idEncrypted = Crypt::encrypt($base64Id);
+                    $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='generate bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-plus'></i></a>";
+
                     // Check if the appointment date is less than the selected date
                     if ($row->app_date < date('Y-m-d') && $row->app_status == AppointmentStatus::COMPLETED) {
                         // If appointment date is less than the selected date, show view icon
@@ -106,7 +108,6 @@ class AppointmentController extends Controller
                     } else {
                         $buttons[] = '';
                     }
-                    $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1' title='follow up' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>";
                     if ($row->app_status != AppointmentStatus::COMPLETED) {
 
                         $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-reschedule btn-xs me-1' title='reschedule' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' data-bs-target='#modal-reschedule'><i class='fa-solid fa-calendar-days'></i></button>";
@@ -114,6 +115,8 @@ class AppointmentController extends Controller
                     }
                     if ($row->app_status == AppointmentStatus::COMPLETED) {
                         $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-secondary btn-pdf-generate btn-xs me-1' title='Download' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}'  data-bs-target='#modal-download'><i class='fa fa-download'></i></button>";
+                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-pdf-generate btn-xs' title='Print' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}'  data-bs-target='#modal-download'><i class='fa fa-print'></i></button>";
+
                     }
 
                     return implode('', $buttons);
@@ -131,7 +134,13 @@ class AppointmentController extends Controller
         $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($firstBranchId, $currentDayName);
         $appointmentTypes = AppointmentType::all();
 
-        return view('appointment.index', compact('clinicBranches', 'firstBranchId', 'currentDayName', 'workingDoctors', 'appointmentTypes'));
+        return view('billing.index', compact('clinicBranches', 'firstBranchId', 'currentDayName', 'workingDoctors', 'appointmentTypes'));
+    }
+
+    public function create()
+    {
+
+        return view('billing.add');
     }
 
     /**
