@@ -52,17 +52,17 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-12 table-responsive">
+                    <div class="col-12 table-responsive-sm lh-1">
                         <table class="table table-bordered caption-top text-center">
                             <caption class="pt-0">Treatment Details</caption>
                             <tbody>
                                 <tr>
-                                    <th class="w-10">#</th>
-                                    <th>Treatment</th>
-                                    <th class="w-20">Quantity</th>
-                                    <th class="w-20">Unit Cost</th>
-                                    <th class="w-20">Discount</th>
-                                    <th class="w-50">Subtotal</th>
+                                    <th style="width: 5%;">#</th>
+                                    <th style="width: 45%;">Treatment</th>
+                                    <th style="width: 10%;">Quantity</th>
+                                    <th style="width: 15%;">Unit Cost</th>
+                                    <th style="width: 10%;">Discount</th>
+                                    <th style="width: 15%;">Subtotal</th>
                                 </tr>
                                 <tr>
                                     <td>1</td>
@@ -98,41 +98,41 @@
                                 </tr>
                             </tbody>
                             <tbody>
-                                <tr class="bs-3 border-transparent">
-                                    <td colspan="3" class="text-start">
+                                <tr>
+                                    <td colspan="2" class="text-start">
                                         <input type="checkbox" id="combo_checkbox" name="combo_checkbox"
-                                            class="filled-in chk-col-success" />
+                                            class="filled-in chk-col-success " />
                                         <label for="combo_checkbox">Combo offers</label>
                                     </td>
-                                    <td colspan="2" class="text-end">Sub - Total amount</td>
+                                    <td colspan="3" class="text-end">Sub - Total amount</td>
                                     <td>&#8377; 3,592.00</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="3" class="text-start">
+                                    <td colspan="2" class="text-start">
                                         <input type="checkbox" id="medicine_checkbox" name="medicine_checkbox"
-                                            class="filled-in chk-col-success" />
+                                            class="filled-in chk-col-success " />
                                         <label for="medicine_checkbox">Medicines</label>
                                     </td>
-                                    <td colspan="2" class="text-end">Combo Offer</td>
+                                    <td colspan="3" class="text-end">Combo Offer</td>
                                     <td>&#8377; 3,592.00</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="3" class="text-start">
+                                    <td colspan="2" class="text-start">
                                         <input type="checkbox" id="insurance_checkbox" name="insurance_checkbox"
                                             class="filled-in chk-col-success" />
                                         <label for="insurance_checkbox">Insurance</label>
                                     </td>
-                                    <td colspan="2" class="text-end">Insurance</td>
+                                    <td colspan="3" class="text-end">Insurance</td>
                                     <td>&#8377; 3,592.00</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="3"></td>
-                                    <td colspan="2" class="text-end">Doctor Discount (20%)</td>
+                                    <td colspan="2"></td>
+                                    <td colspan="3" class="text-end">Doctor Discount (20%)</td>
                                     <td>&#8377; 110.44</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="3"></td>
-                                    <td colspan="2" class="text-end">Tax (18%)</td>
+                                    <td colspan="2"></td>
+                                    <td colspan="3" class="text-end">Tax (18%)</td>
                                     <td>&#8377; 646.56</td>
                                 </tr>
                                 <tr class="bt-3 border-primary">

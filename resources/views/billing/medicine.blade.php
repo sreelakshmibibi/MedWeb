@@ -16,10 +16,10 @@
 
                             <thead class="bg-dark">
                                 <tr>
-                                    <th class="text-start">Medicine</th>
-                                    <th>Duration</th>
-                                    <th class="text-end">Rate</th>
-                                    <th class="text-end">Status</th>
+                                    <th style="width:50%;" class="text-start">Medicine</th>
+                                    <th style="width:30%;">Duration</th>
+                                    <th style="width:5%;" class="text-end">Status</th>
+                                    <th style="width:15%;" class="text-end">Rate</th>
                                 </tr>
                             </thead>
                             <tbody id="tablebody">
@@ -30,7 +30,7 @@
                                             medicine1</label>
                                     </td>
                                     <td>
-                                        <div class="input-group">
+                                        <div class="input-group col-12">
                                             <input type="number" class="form-control text-center" id="duration"
                                                 name="prescriptions[][duration]" aria-describedby="basic-addon2"
                                                 required>
@@ -39,8 +39,9 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-end">&#8377; 10</td>
+
                                     <td>in stock</td>
+                                    <td class="text-end">&#8377; 10</td>
                                 </tr>
                                 <tr>
                                     <td class="text-start"><input type="checkbox" id="medicine_checkbox2"
@@ -58,8 +59,9 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-end">&#8377; 1000</td>
+
                                     <td>out off stock</td>
+                                    <td class="text-end">&#8377; 1000</td>
                                 </tr>
                             </tbody>
                             <tbody>

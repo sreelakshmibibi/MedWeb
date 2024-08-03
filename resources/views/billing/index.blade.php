@@ -17,7 +17,7 @@
             <section class="content">
                 <div class="box">
                     <div class="box-body">
-                        <div id="paginator"></div>
+                        <div id="billing_paginator"></div>
                         <br />
                         <div class="table-responsive">
 
@@ -52,13 +52,13 @@
 
         $(document).ready(function() {
 
-            $("#paginator").datepaginator({
+            $("#billing_paginator").datepaginator({
                 onSelectedDateChanged: function(a, t) {
                     selectedDate = moment(t).format("YYYY-MM-DD");
                     table.ajax.reload();
                 },
             });
-            var initialDate = $("#paginator").datepaginator("getDate");
+            var initialDate = $("#billing_paginator").datepaginator("getDate");
             selectedDate = moment(initialDate).format("YYYY-MM-DD")
         });
 
