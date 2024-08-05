@@ -9,13 +9,9 @@
         </button> --}}
 
         <a href='#'
-            class='waves-effect waves-light btn btn-circle btn-prescription-pdf-generate btn-info btn-xs me-1'
+            class='waves-effect waves-light btn btn-circle btn-prescription-pdf-generate btn-warning btn-xs me-1'
             title='Download & Print Prescription' data-app-id='{{ session('appId') }}'
-            data-patient-id='{{ session('patientId') }}'><i class='fa fa-print'></i></a>
-        {{-- <a href='#' class='waves-effect waves-light btn btn-circle btn-prescription-print btn-success btn-xs me-1'
-            title='Print Prescription' data-app-id='{{ session('appId') }}'
-            data-patient-id='{{ session('patientId') }}'><i class='fa fa-print'></i></a> --}}
-
+            data-patient-id='{{ session('patientId') }}'><i class='fa fa-prescription'></i></a>
     </div>
 </div>
 <hr class="my-15">
@@ -27,9 +23,9 @@
             <tr class="bg-primary-light">
                 <th>No</th>
                 <th>Medicine</th>
-                <th>Dose</th>
+                <th style="width:124px;">Dose</th>
                 <th>Frequency</th>
-                <th style="width:200px;">Duration</th>
+                <th style="width:124px;">Duration</th>
                 <th>Advice</th>
                 <th>Route</th>
                 <th>Remarks</th>
@@ -57,7 +53,7 @@
                         </select>
                     </td>
                     <td>
-                        <input type="text" class="form-control" id="dose{{ $index + 1 }}"
+                        <input type="text" class="form-control text-center" id="dose{{ $index + 1 }}"
                             name="prescriptions[{{ $index + 1 }}][dose]" placeholder="Dose"
                             value="{{ $prescription->dose ?? '' }}" required>
                     </td>
@@ -74,7 +70,7 @@
                         </select>
                     </td>
                     <td>
-                        <div class="input-group">
+                        <div class="input-group col-12">
                             <input type="number" class="form-control text-center" id="duration{{ $index + 1 }}"
                                 name="prescriptions[{{ $index + 1 }}][duration]" aria-describedby="basic-addon2"
                                 value="{{ $prescription->duration ?? '' }}" required>
@@ -105,7 +101,7 @@
                         </select>
                     </td>
                     <td>
-                        <input type="text" class="form-control" id="remarks{{ $index + 1 }}"
+                        <input type="text" class="form-control text-center" id="remarks{{ $index + 1 }}"
                             name="prescriptions[{{ $index + 1 }}][remark]" placeholder="remarks"
                             value="{{ $prescription->remark ?? '' }}">
                     </td>

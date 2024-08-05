@@ -22,7 +22,7 @@
                         <div class="table-responsive">
 
                             <table class="table table-bordered table-hover table-striped mb-0 data-table text-center"
-                                width="100%">
+                                id="billing_table" width="100%">
                                 <thead class="bg-primary-light">
                                     <tr>
                                         <th width="10px">Token No</th>
@@ -63,7 +63,7 @@
         });
 
         jQuery(function($) {
-            table = $('.data-table').DataTable({
+            table = $('#billing_table').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {

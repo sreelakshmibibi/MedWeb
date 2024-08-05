@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Session;
         <i class="fa fa-table"></i>
         Info</button> --}}
 
-    <button type='button' class='waves-effect waves-light btn btn-circle btn-info btn-treatment-pdf-generate btn-xs me-1'
+    <button type='button'
+        class='waves-effect waves-light btn btn-circle btn-secondary btn-treatment-pdf-generate btn-xs me-1'
         title='Download & Print Treatment Summary' data-bs-toggle='modal' data-app-id='{{ session('appId') }}'
         data-parent-id='{$parent_id}' data-patient-id='{{ session('patientId') }}' data-bs-target='#modal-download'><i
             class='fa fa-download'></i></button>

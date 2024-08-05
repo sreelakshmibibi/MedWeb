@@ -73,9 +73,7 @@ function getDentalTable(stepIndex) {
                                 teethNameDisplay = exam.tooth_id
                                     ? exam.teeth.teeth_name
                                     : "Row : " + rowName;
-                                teethType = exam.tooth_id
-                                    ? 'Teeth'
-                                    : 'Row';
+                                teethType = exam.tooth_id ? "Teeth" : "Row";
                                 // Check if there are x-ray images
                                 if (
                                     exam.x_ray_images &&
@@ -102,7 +100,8 @@ function getDentalTable(stepIndex) {
                                     <td>${index + 1}</td>
                                     <td>${teethNameDisplay}</td>
                                     <td>${exam.chief_complaint}</td>
-                                    <td>${exam.disease ? exam.disease.name : ""
+                                    <td>${
+                                        exam.disease ? exam.disease.name : ""
                                     }</td>
                                     <td>${exam.hpi}</td>
                                     <td>${exam.dental_examination}</td>
@@ -202,6 +201,10 @@ function handlePrescription(isChecked) {
         $(".advice_select").select2({
             width: "100%",
         });
+        $(".medicine_route_select").select2({
+            width: "100%",
+            placeholder: "Select a Route",
+        });
     } else {
         $(".wizard-content .wizard > .steps > ul > li.presc_class").attr(
             "style",
@@ -213,6 +216,7 @@ function handlePrescription(isChecked) {
         $(".medicine_id_select").select2("destroy");
         $(".dosage_id_select").select2("destroy");
         $(".advice_select").select2("destroy");
+        $(".medicine_route_select").select2("destroy");
     }
 }
 
@@ -294,13 +298,15 @@ function getTreatmentTable(stepIndex) {
                             var row = `
                                 <tr>
                                     <td>${index + 1}</td>
-                                    <td>${exam.treatment.treat_name
-                                } (${treatCost.toFixed(2)})</td>
-                                    <td>${treatDiscount != null
-                                    ? treatDiscount
-                                    : 0
-                                } %</td>
-                                    <td>${discountCost.toFixed(2)}</td>
+                                    <td>${
+                                        exam.treatment.treat_name
+                                    } (&#8377; ${treatCost.toFixed(2)})</td>
+                                    <td>${
+                                        treatDiscount != null
+                                            ? treatDiscount
+                                            : 0
+                                    } %</td>
+                                    <td>&#8377; ${discountCost.toFixed(2)}</td>
                                 </tr>
                             `;
                             tableBody.append(row);
@@ -342,7 +348,7 @@ function updateTotalCharge(totalCost, discountPercentage = 0) {
     var row = `
         <tr class="bt-3 border-primary">
             <th colspan="3" class="text-end">Total Rate</th>
-            <td colspan="1">${totalCost.toFixed(2)}</td>
+            <td colspan="1">&#8377; ${totalCost.toFixed(2)}</td>
         </tr>
         <tr>
             <th colspan="3" class="text-end">Doctor Discount (if any)</th>
@@ -357,7 +363,7 @@ function updateTotalCharge(totalCost, discountPercentage = 0) {
         </tr>
         <tr class="bg-primary">
             <th colspan="3" class="text-end fs-18 fw-600">Total Amount</th>
-            <td colspan="1" class="fs-18 fw-600">${totalAmount}</td>
+            <td colspan="1" class="fs-18 fw-600">&#8377; ${totalAmount}</td>
         </tr>
     `;
     tableChargeBody.append(row);

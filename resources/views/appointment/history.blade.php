@@ -43,7 +43,10 @@
                 },
                 {
                     data: 'treat_date',
-                    name: 'treat_date'
+                    name: 'treat_date',
+                    render: function(data, type, row) {
+                        return moment(data).format('DD-MM-YYYY');
+                    }
                 },
                 {
                     data: 'teeth',
