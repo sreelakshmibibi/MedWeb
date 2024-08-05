@@ -53,9 +53,71 @@
                         </select>
                     </td>
                     <td>
-                        <input type="text" class="form-control text-center" id="dose{{ $index + 1 }}"
-                            name="prescriptions[{{ $index + 1 }}][dose]" placeholder="Dose"
-                            value="{{ $prescription->dose ?? '' }}" required>
+                        <div class="input-group">
+                            <input type="text" class="form-control text-center" id="dose{{ $index + 1 }}"
+                                name="prescriptions[{{ $index + 1 }}][dose]" placeholder="Dose"
+                                value="{{ $prescription->dose ?? '' }}" required>
+                            <select class="form-control" id="dose_unit{{ $index + 1 }}"
+                                name="prescriptions[{{ $index + 1 }}][dose_unit]" required>
+                                <option value="" disabled selected>Select unit</option>
+                                <option value="ml"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'ml' ? 'selected' : '' }}>
+                                    ml
+                                </option>
+                                <option value="drops"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'drops' ? 'selected' : '' }}>
+                                    drops</option>
+                                <option value="tab"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'tab' ? 'selected' : '' }}>
+                                    tab</option>
+                                <option value="g"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'g' ? 'selected' : '' }}>
+                                    g
+                                </option>
+                                <option value="mg"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'mg' ? 'selected' : '' }}>
+                                    mg
+                                </option>
+                                <option value="cc"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'cc' ? 'selected' : '' }}>
+                                    cc
+                                </option>
+                                <option value="pills"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'pills' ? 'selected' : '' }}>
+                                    pills</option>
+                                <option value="units"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'units' ? 'selected' : '' }}>
+                                    units</option>
+                                <option value="teaspoon"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'teaspoon' ? 'selected' : '' }}>
+                                    teaspoon</option>
+                                <option value="tablespoon"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'tablespoon' ? 'selected' : '' }}>
+                                    tablespoon</option>
+                                <option value="cup"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'cup' ? 'selected' : '' }}>
+                                    cup</option>
+                                <option value="patch"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'patch' ? 'selected' : '' }}>
+                                    patch</option>
+                                <option value="inhaler"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'inhaler' ? 'selected' : '' }}>
+                                    inhaler</option>
+                                <option value="spray"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'spray' ? 'selected' : '' }}>
+                                    spray</option>
+                                <option value="dropper"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'dropper' ? 'selected' : '' }}>
+                                    dropper</option>
+                                <option value="vial"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'vial' ? 'selected' : '' }}>
+                                    vial</option>
+                                <option value="ampule"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'ampule' ? 'selected' : '' }}>
+                                    ampule</option>
+
+                            </select>
+                        </div>
                     </td>
                     <td>
                         <select class="form-control dosage_id_select" id="dosage{{ $index + 1 }}"
@@ -90,7 +152,7 @@
                     </td>
                     <td>
                         <select class="form-control medicine_route_select" id="route{{ $index + 1 }}"
-                            name="prescriptions[{{ $index + 1 }}][route_id]" required style="width: 100%;">
+                            name="prescriptions[{{ $index + 1 }}][route_id]" style="width: 100%;">
                             <option value="">Select a Route</option>
                             @foreach ($medicineRoutes as $route)
                                 <option value="{{ $route->id }}"

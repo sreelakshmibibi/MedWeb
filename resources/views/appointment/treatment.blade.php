@@ -106,7 +106,7 @@ use Illuminate\Support\Facades\Session;
         var treatmentShowChargeRoute = "{{ route('treatment.showCharge', ['appointment' => ':appId']) }}";
         var pdfTeethRoute = "{{ route('fetch.teeth.details', ['patientId' => ':patientId', 'appId' => ':appId']) }}";
         var appAction = "{{ $appAction }}";
-        var currency = "{{ session::get('currency')}}";
+        var currency = "{{ session::get('currency') }}";
         var row1 = "{{ App\Models\TeethRow::Row_1_Desc }}";
         var row2 = "{{ App\Models\TeethRow::Row_2_Desc }}";
         var row3 = "{{ App\Models\TeethRow::Row_3_Desc }}";
@@ -336,7 +336,29 @@ use Illuminate\Support\Facades\Session;
                         </select>
                     </td>
                     <td>
+                        <div class="input-group">
                         <input type="text" class="form-control" id="dose${rowIndex}" name="prescriptions[${rowIndex}][dose]" placeholder="Dose" required>
+                    <select class="form-control" id="dose_unit${rowIndex}" name="prescriptions[${rowIndex}][dose_unit]" required style="width: 100%;">
+                <option value="" disabled selected>Select a Unit</option>
+                <option value="ml">ml</option>
+                <option value="drops">drops</option>
+                <option value="tab">tab</option>
+                <option value="g">g</option>
+                <option value="mg">mg</option>
+                <option value="cc">cc</option>
+                <option value="pills">pills</option>
+                <option value="units">units</option>
+                <option value="teaspoon">teaspoon</option>
+                <option value="tablespoon">tablespoon</option>
+                <option value="cup">cup</option>
+                <option value="patch">patch</option>
+                <option value="inhaler">inhaler</option>
+                <option value="spray">spray</option>
+                <option value="dropper">dropper</option>
+                <option value="vial">vial</option>
+                <option value="ampule">ampule</option>
+            </select>
+            </div>
                     </td>
                     <td>
                         <select class="form-control" id="dosage${rowIndex}" name="prescriptions[${rowIndex}][dosage_id]" required style="width: 100%;">
@@ -361,7 +383,7 @@ use Illuminate\Support\Facades\Session;
                         </select>
                     </td>
                     <td>
-                        <select class="form-control" id="route${rowIndex}" name="prescriptions[${rowIndex}][route_id]" required style="width: 100%;">
+                        <select class="form-control" id="route${rowIndex}" name="prescriptions[${rowIndex}][route_id]"  style="width: 100%;">
                             <option value="">Select a Route</option>
                             @foreach ($medicineRoutes as $route)
                                 <option value="{{ $route->id }}">{{ $route->route_name }}</option>

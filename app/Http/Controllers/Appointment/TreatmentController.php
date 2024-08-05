@@ -107,7 +107,7 @@ class TreatmentController extends Controller
         ])
             ->where('app_id', $id)
             ->where('status', 'Y')
-            ->get(['id', 'patient_id', 'app_id', 'medicine_id', 'dosage_id', 'duration', 'advice', 'remark', 'prescribed_by', 'dose', 'route_id']);
+            ->get(['id', 'patient_id', 'app_id', 'medicine_id', 'dosage_id', 'duration', 'advice', 'remark', 'prescribed_by', 'dose', 'dose_unit', 'route_id']);
         $latestFollowup = Appointment::where('app_parent_id', $id)
             ->with('doctor', 'branch')
             ->orderBy('app_date', 'desc')
@@ -743,6 +743,7 @@ class TreatmentController extends Controller
                     $prescriptionData->app_id = $appId;
                     $prescriptionData->medicine_id = $medicineId;
                     $prescriptionData->dose = $prescription['dose'];
+                    $prescriptionData->dose_unit = $prescription['dose_unit'];
                     $prescriptionData->dosage_id = $prescription['dosage_id'];
                     $prescriptionData->duration = $prescription['duration'];
                     $prescriptionData->advice = $prescription['advice'];

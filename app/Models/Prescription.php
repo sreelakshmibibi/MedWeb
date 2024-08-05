@@ -22,6 +22,7 @@ class Prescription extends Model
         'duration',
         'advice',
         'dose',
+        'dose_unit',
         'route_id',
         'remark',
         'prescribed_by',
