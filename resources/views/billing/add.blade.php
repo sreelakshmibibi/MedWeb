@@ -102,37 +102,31 @@
                                     <td colspan="2" class="text-start">
                                         <input type="checkbox" id="combo_checkbox" name="combo_checkbox"
                                             class="filled-in chk-col-success " />
-                                        <label for="combo_checkbox">Combo offers</label>
-                                    </td>
-                                    <td colspan="3" class="text-end">Sub - Total amount</td>
-                                    <td>&#8377; 3,592.00</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2" class="text-start">
+                                        <label for="combo_checkbox">Combo offers</label> &nbsp;&nbsp;
                                         <input type="checkbox" id="medicine_checkbox" name="medicine_checkbox"
                                             class="filled-in chk-col-success " />
-                                        <label for="medicine_checkbox">Medicines</label>
-                                    </td>
-                                    <td colspan="3" class="text-end">Combo Offer</td>
-                                    <td>&#8377; 3,592.00</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2" class="text-start">
+                                        <label for="medicine_checkbox">Medicines</label> &nbsp;&nbsp;
                                         <input type="checkbox" id="insurance_checkbox" name="insurance_checkbox"
-                                            class="filled-in chk-col-success" />
+                                            class="filled-in chk-col-success " />
                                         <label for="insurance_checkbox">Insurance</label>
                                     </td>
-                                    <td colspan="3" class="text-end">Insurance</td>
+                                    <td colspan="3" class="text-end text-bold">Sub - Total amount</td>
+                                    <td><b>&#8377; 3,592.00</b></td>
+                                </tr>
+                                <tr id="combotr" style="display: none;">
+                                    <td colspan="5" class="text-end">Combo Offer</td>
+                                    <td>&#8377; 3,592.00</td>
+                                </tr>
+                                <tr id="insurancetr" style="display: none;">
+                                    <td colspan="5" class="text-end">Insurance</td>
                                     <td>&#8377; 3,592.00</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="2"></td>
-                                    <td colspan="3" class="text-end">Doctor Discount (20%)</td>
+                                    <td colspan="5" class="text-end">Doctor Discount (20%)</td>
                                     <td>&#8377; 110.44</td>
                                 </tr>
-                                <tr>
-                                    <td colspan="2"></td>
-                                    <td colspan="3" class="text-end">Tax (18%)</td>
+                                <tr id="medicinetr" style="display: none;">
+                                    <td colspan="5" class="text-end">Tax (18%)</td>
                                     <td>&#8377; 646.56</td>
                                 </tr>
                                 <tr class="bt-3 border-primary">
@@ -145,7 +139,8 @@
                                 </tr>
                                 <tr>
                                     <td colspan="5" class="text-end ">Paid Amount</td>
-                                    <td>&#8377; 4,350.00</td>
+                                    <td><input type="text" class="form-control m-0" style="line-height:10px;" /></td>
+                                    {{-- <td>&#8377; 4,350.00</td> --}}
                                 </tr>
                                 <tr>
                                     <td colspan="5" class="text-end ">Balance</td>

@@ -3,11 +3,16 @@ document.addEventListener("DOMContentLoaded", (event) => {
     const insurance_checkbox = document.getElementById("insurance_checkbox");
     const medicine_checkbox = document.getElementById("medicine_checkbox");
 
+    const comboBtn = document.getElementById("comboBtn");
+    const insuranceBtn = document.getElementById("insuranceBtn");
+    const medicineBtn = document.getElementById("medicineBtn");
+
     combo_checkbox.addEventListener("change", () => {
         if (combo_checkbox.checked) {
             $("#modal-combo").modal("show");
         } else {
             $("#modal-combo").modal("hide");
+            $("#combotr").hide();
         }
     });
 
@@ -16,6 +21,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
             $("#modal-insurance").modal("show");
         } else {
             $("#modal-insurance").modal("hide");
+            $("#insurancetr").hide();
         }
     });
 
@@ -24,6 +30,17 @@ document.addEventListener("DOMContentLoaded", (event) => {
             $("#modal-medicine").modal("show");
         } else {
             $("#modal-medicine").modal("hide");
+            $("#medicinetr").hide();
         }
+    });
+
+    comboBtn.addEventListener("click", () => {
+        $("#combotr").show();
+    });
+    insuranceBtn.addEventListener("click", () => {
+        $("#insurancetr").show();
+    });
+    medicineBtn.addEventListener("click", () => {
+        $("#medicinetr").show();
     });
 });
