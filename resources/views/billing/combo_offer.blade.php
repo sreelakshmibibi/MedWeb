@@ -53,7 +53,7 @@
 
             <div class="modal-footer modal-footer-uniform">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-success float-end" id="newAppointmentBtn">Save</button>
+                <button type="button" class="btn btn-success float-end" id="comboBtn">Save</button>
             </div>
         </div>
     </div>
