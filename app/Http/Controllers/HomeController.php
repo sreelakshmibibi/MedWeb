@@ -37,6 +37,7 @@ class HomeController extends Controller
 
         // Check if there are entries in clinic_branches and clinic_basic_details tables
         $hasClinics = DB::table('clinic_basic_details')->exists();
+        $clinicsData = DB::table('clinic_basic_details')->first();
         $hasBranches = DB::table('clinic_branches')->exists();
         $role = '';
         $totalPatients = 0;
@@ -79,6 +80,8 @@ class HomeController extends Controller
 
             session(['username' => $username]);
             session(['role' => $role]);
+            session(['currency' => $clinicsData->currency]);
+            session(['treatmentTax' => $clinicsData->treatment_tax_included]);
 
             if ($staffDetails) {
                 session(['staffPhoto' => $staffDetails->photo]);

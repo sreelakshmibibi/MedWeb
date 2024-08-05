@@ -276,37 +276,23 @@ function getTreatmentTable(stepIndex) {
                     var treatments = response.toothExaminations;
                     var comboOffers = response.comboOffer;
                     var doctorDiscount = response.doctorDiscount;
-                    if (
-                        doctorDiscount === null ||
-                        doctorDiscount === undefined
-                    ) {
+                    if (doctorDiscount === null || doctorDiscount === undefined) {
                         doctorDiscount = 0; // Or any default value you want to set
                     }
                     var totalCost = 0;
                     if (treatments && treatments.length > 0) {
                         treatments.forEach(function (exam, index) {
-                            var treatCost = parseFloat(
-                                exam.treatment.treat_cost
-                            );
-                            var discountCost = parseFloat(
-                                exam.treatment.discount_cost
-                            );
+                            var treatCost = parseFloat(exam.treatment.treat_cost);
+                            var discountCost = parseFloat(exam.treatment.discount_cost);
                             totalCost += discountCost;
-                            var treatDiscount =
-                                exam.treatment.discount_percentage;
+                            var treatDiscount = exam.treatment.discount_percentage;
 
                             var row = `
                                 <tr>
                                     <td>${index + 1}</td>
-                                    <td>${
-                                        exam.treatment.treat_name
-                                    } (&#8377; ${treatCost.toFixed(2)})</td>
-                                    <td>${
-                                        treatDiscount != null
-                                            ? treatDiscount
-                                            : 0
-                                    } %</td>
-                                    <td>&#8377; ${discountCost.toFixed(2)}</td>
+                                    <td>${exam.treatment.treat_name} (${currency} ${treatCost.toFixed(3)})</td>
+                                    <td>${treatDiscount != null ? treatDiscount : 0} %</td>
+                                    <td>${currency} ${discountCost.toFixed(3)}</td>
                                 </tr>
                             `;
                             tableBody.append(row);
@@ -332,6 +318,7 @@ function getTreatmentTable(stepIndex) {
             console.error("Error fetching session data:", xhr);
         });
 }
+
 // Function to update total charge based on discount
 function updateTotalCharge(totalCost, discountPercentage = 0) {
     // If discount percentage is null or undefined, default to 0
@@ -340,7 +327,7 @@ function updateTotalCharge(totalCost, discountPercentage = 0) {
     }
 
     var discountedAmount = totalCost * (1 - discountPercentage / 100);
-    var totalAmount = discountedAmount.toFixed(2);
+    var totalAmount = discountedAmount.toFixed(3);
 
     var tableChargeBody = $("#totalChargeBody");
     tableChargeBody.empty(); // Clear any existing rows
@@ -348,7 +335,7 @@ function updateTotalCharge(totalCost, discountPercentage = 0) {
     var row = `
         <tr class="bt-3 border-primary">
             <th colspan="3" class="text-end">Total Rate</th>
-            <td colspan="1">&#8377; ${totalCost.toFixed(2)}</td>
+            <td colspan="1">${currency} ${totalCost.toFixed(3)}</td>
         </tr>
         <tr>
             <th colspan="3" class="text-end">Doctor Discount (if any)</th>
@@ -363,15 +350,14 @@ function updateTotalCharge(totalCost, discountPercentage = 0) {
         </tr>
         <tr class="bg-primary">
             <th colspan="3" class="text-end fs-18 fw-600">Total Amount</th>
-            <td colspan="1" class="fs-18 fw-600">&#8377; ${totalAmount}</td>
+            <td colspan="1" class="fs-18 fw-600">${currency} ${totalAmount}</td>
         </tr>
     `;
     tableChargeBody.append(row);
 
     // Set focus back to the discount input field after updating
     var discountInput = $("#discount1");
-    var discountValue = discountInput.val();
-    discountInput.focus().val("").val(discountValue);
+    discountInput.focus().val("").val(discountPercentage);
 }
 
 // Event listener for discount input change
@@ -383,10 +369,10 @@ $(document).on("input", "#discount1", function () {
 
     // If the input value is numeric or empty, update the total charge
     var discountPercentage = parseFloat(numericValue);
-    if (!isNaN(discountPercentage) || discountValue === "") {
+    if (!isNaN(discountPercentage) || numericValue === "") {
         // Fetch current total cost from the UI
         var currentTotalCost = parseFloat(
-            $("#totalChargeBody .bt-3.border-primary td:last-child").text()
+            $("#totalChargeBody .bt-3.border-primary td:last-child").text().replace('₹', '').trim()
         );
 
         // Check if currentTotalCost is NaN or not a valid number
@@ -402,6 +388,7 @@ $(document).on("input", "#discount1", function () {
         updateTotalCharge(0, 0);
     }
 });
+
 
 function updateValidationRules() {
     var followCheckboxChecked = $("#follow_checkbox").is(":checked");
