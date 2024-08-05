@@ -452,7 +452,7 @@ class PatientListController extends Controller
             $clinicDetails = ClinicBasicDetail::first();
             if ($clinicDetails->clinic_insurance_available == 'Y') {
 
-                if (($request->input('policy_holder_type') != '' || $request->input('is_primary_insurance') == 'Y' || $request->input('is_secondary_insurance') == 'Y')) {
+                if (($request->input('policy_number') != '')) {
                     // Check if an active insurance record already exists for this patient
                     $existingInsurance = Insurance::where('patient_id', $patient->patient_id)
                         ->where('status', 'Y')
@@ -461,38 +461,22 @@ class PatientListController extends Controller
                     // If an existing insurance record is found, update its status to 'N'
                     if ($existingInsurance) {
                         $existingInsurance->update(['status' => 'N']);
+                        $existingInsurance->update(['updated_by' => auth()->user()->id]);
                     }
 
-                    // Create a new insurance record with the provided data
+                    // Create a new insurance record
                     Insurance::create([
                         'patient_id' => $patient->patient_id,
-                        'policy_holder_type' => $request->input('policy_holder_type'), // Default to an empty array if not provided
-                        'is_primary_insurance' => $request->input('is_primary_insurance', 'N'), // Default to 'N' if not provided
-                        'prim_ins_id' => $request->input('prim_ins_id'),
-                        'prim_ins_insured_name' => $request->input('prim_ins_insured_name'),
-                        'prim_ins_insured_dob' => $request->input('prim_ins_insured_dob'),
-                        'prim_ins_company_id' => $request->input('prim_ins_company_id'),
-                        'prim_ins_company' => $request->input('prim_ins_company'),
-                        'prim_ins_com_address' => $request->input('prim_ins_com_address'),
-                        'prim_ins_group_name' => $request->input('prim_ins_group_name'),
-                        'prim_ins_group_number' => $request->input('prim_ins_group_number'),
-                        'prim_ins_policy_start_date' => $request->input('prim_ins_policy_start_date'),
-                        'prim_ins_policy_end_date' => $request->input('prim_ins_policy_end_date'),
-                        'prim_ins_relation_to_insured' => $request->input('prim_ins_relation_to_insured'),
-                        'is_secondary_insurance' => $request->input('is_secondary_insurance'), // Default to 'N' if not provided
-                        'sec_ins_id' => $request->input('sec_ins_id'),
-                        'sec_ins_insured_name' => $request->input('sec_ins_insured_name'),
-                        'sec_ins_insured_dob' => $request->input('sec_ins_insured_dob'),
-                        'sec_ins_company_id' => $request->input('sec_ins_company_id'),
-                        'sec_ins_company' => $request->input('sec_ins_company'),
-                        'sec_ins_com_address' => $request->input('sec_ins_com_address'),
-                        'sec_ins_group_name' => $request->input('sec_ins_group_name'),
-                        'sec_ins_group_number' => $request->input('sec_ins_group_number'),
-                        'sec_ins_policy_start_date' => $request->input('sec_ins_policy_start_date'),
-                        'sec_ins_policy_end_date' => $request->input('sec_ins_policy_end_date'),
-                        'sec_ins_relation_to_insured' => $request->input('sec_ins_relation_to_insured'),
-                        'status' => $request->input('status', 'Y'), // Default to 'Y' if not provided
+                        'policy_number' => $request->input('policy_number'),
+                        'insurance_company_id' => $request->input('insurance_company_id'),
+                        'policy_end_date' => $request->input('policy_end_date'),
+                        'status' => $request->input('status'),
+                        'created_by' => auth()->user()->id,
+                        'updated_by' => auth()->user()->id,
+                        // 'insured_name' => $request->input('insured_name'),
+                        // 'insured_dob' => $request->input('insured_dob'),
                     ]);
+
                 }
 
             }
