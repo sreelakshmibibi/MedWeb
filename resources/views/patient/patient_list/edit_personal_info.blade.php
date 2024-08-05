@@ -114,7 +114,7 @@
              <label class="form-label" for="regdate">Registration Date <span class="text-danger">
                      *</span></label>
              <input type="date" class="form-control" id="regdate" name="regdate"
-                 value="{{ \Carbon\Carbon::parse($patientProfile->created_at)->format('Y-m-d') }}" required>
+                 value="{{ \Carbon\Carbon::parse($patientProfile->created_at)->format('Y-m-d') }}" readonly>
          </div>
      </div>
      <div class="col-md-2">

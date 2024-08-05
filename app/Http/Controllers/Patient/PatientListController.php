@@ -10,10 +10,13 @@ use App\Models\Appointment;
 use App\Models\AppointmentStatus;
 use App\Models\AppointmentType;
 use App\Models\City;
+use App\Models\ClinicBasicDetail;
 use App\Models\ClinicBranch;
 use App\Models\Country;
 use App\Models\DoctorWorkingHour;
 use App\Models\History;
+use App\Models\Insurance;
+use App\Models\InsuranceCompany;
 use App\Models\PatientProfile;
 use App\Models\State;
 use App\Services\CommonService;
@@ -391,6 +394,9 @@ class PatientListController extends Controller
         $dateTime = Carbon::parse($dateTimeString)
             ->format('Y-m-d\TH:i');
         $medicalConditions = $patientProfile->history->pluck('history')->toArray();
+        $insuranceCompanies = InsuranceCompany::where('status', 'Y')->get();
+        $patientInsurance = Insurance::where('patient_id', $patientProfile->patient_id)->where('status', 'Y')->get();
+        $clinicDetails = ClinicBasicDetail::first();
 
         return view(
             'patient.patient_list.edit',
@@ -403,7 +409,10 @@ class PatientListController extends Controller
                 'appointmentStatuses',
                 'workingDoctors',
                 'dateTime',
-                'medicalConditions'
+                'medicalConditions',
+                'insuranceCompanies',
+                'patientInsurance',
+                'clinicDetails'
             )
         );
     }
@@ -432,11 +441,6 @@ class PatientListController extends Controller
                 'city_id' => $request->input('city_id'),
                 'pincode' => $request->input('pincode'),
                 'marital_status' => $request->input('marital_status'),
-                // 'smoking_status' => $request->input('smoking_status'),
-                // 'alcoholic_status' => $request->input('alcoholic_status'),
-                // 'diet' => $request->input('diet'),
-                // 'allergies' => $request->input('allergies'),
-                // 'pregnant' => $request->input('pregnant'),
                 'updated_by' => auth()->user()->id,
             ]);
 
@@ -445,28 +449,53 @@ class PatientListController extends Controller
                 return redirect()->back()->with('error', 'Failed to update patient');
             }
 
-            // Update medical conditions in the history table
-            // $medicalConditions = $request->input('medical_conditions', []);
-            // // Clear existing medical history for the patient
-            // $patient->history()->delete();
-            // $patient = PatientProfile::with('latestAppointment')->find($request->edit_patient_id);
-            // $patientId = $patient->latestAppointment->patient_id;
-            // $appId = $patient->latestAppointment->id;
-            // $doctorId = $patient->latestAppointment->doctor_id;
-            // // Add new medical conditions to the history table
-            // foreach ($medicalConditions as $condition) {
-            //     if (! empty($condition)) {
-            //         $history = new History();
-            //         $history->patient_id = $patientId;
-            //         $history->app_id = $appId; // Assuming you have this in your request
-            //         $history->history = $condition;
-            //         $history->doctor_id = $doctorId; // Assuming the logged-in user is the doctor
-            //         $history->created_by = auth()->user()->id;
-            //         $history->updated_by = auth()->user()->id;
-            //         $history->save();
-            //     }
-            // }
+            $clinicDetails = ClinicBasicDetail::first();
+            if ($clinicDetails->clinic_insurance_available == 'Y') {
 
+                if (($request->input('policy_holder_type') != '' || $request->input('is_primary_insurance') == 'Y' || $request->input('is_secondary_insurance') == 'Y')) {
+                    // Check if an active insurance record already exists for this patient
+                    $existingInsurance = Insurance::where('patient_id', $patient->patient_id)
+                        ->where('status', 'Y')
+                        ->first();
+
+                    // If an existing insurance record is found, update its status to 'N'
+                    if ($existingInsurance) {
+                        $existingInsurance->update(['status' => 'N']);
+                    }
+
+                    // Create a new insurance record with the provided data
+                    Insurance::create([
+                        'patient_id' => $patient->patient_id,
+                        'policy_holder_type' => $request->input('policy_holder_type'), // Default to an empty array if not provided
+                        'is_primary_insurance' => $request->input('is_primary_insurance', 'N'), // Default to 'N' if not provided
+                        'prim_ins_id' => $request->input('prim_ins_id'),
+                        'prim_ins_insured_name' => $request->input('prim_ins_insured_name'),
+                        'prim_ins_insured_dob' => $request->input('prim_ins_insured_dob'),
+                        'prim_ins_company_id' => $request->input('prim_ins_company_id'),
+                        'prim_ins_company' => $request->input('prim_ins_company'),
+                        'prim_ins_com_address' => $request->input('prim_ins_com_address'),
+                        'prim_ins_group_name' => $request->input('prim_ins_group_name'),
+                        'prim_ins_group_number' => $request->input('prim_ins_group_number'),
+                        'prim_ins_policy_start_date' => $request->input('prim_ins_policy_start_date'),
+                        'prim_ins_policy_end_date' => $request->input('prim_ins_policy_end_date'),
+                        'prim_ins_relation_to_insured' => $request->input('prim_ins_relation_to_insured'),
+                        'is_secondary_insurance' => $request->input('is_secondary_insurance'), // Default to 'N' if not provided
+                        'sec_ins_id' => $request->input('sec_ins_id'),
+                        'sec_ins_insured_name' => $request->input('sec_ins_insured_name'),
+                        'sec_ins_insured_dob' => $request->input('sec_ins_insured_dob'),
+                        'sec_ins_company_id' => $request->input('sec_ins_company_id'),
+                        'sec_ins_company' => $request->input('sec_ins_company'),
+                        'sec_ins_com_address' => $request->input('sec_ins_com_address'),
+                        'sec_ins_group_name' => $request->input('sec_ins_group_name'),
+                        'sec_ins_group_number' => $request->input('sec_ins_group_number'),
+                        'sec_ins_policy_start_date' => $request->input('sec_ins_policy_start_date'),
+                        'sec_ins_policy_end_date' => $request->input('sec_ins_policy_end_date'),
+                        'sec_ins_relation_to_insured' => $request->input('sec_ins_relation_to_insured'),
+                        'status' => $request->input('status', 'Y'), // Default to 'Y' if not provided
+                    ]);
+                }
+
+            }
             DB::commit();
 
             return redirect()->route('patient.patient_list')->with('success', 'Patient updated successfully');
