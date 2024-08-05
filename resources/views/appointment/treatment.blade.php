@@ -106,6 +106,7 @@ use Illuminate\Support\Facades\Session;
         var treatmentShowChargeRoute = "{{ route('treatment.showCharge', ['appointment' => ':appId']) }}";
         var pdfTeethRoute = "{{ route('fetch.teeth.details', ['patientId' => ':patientId', 'appId' => ':appId']) }}";
         var appAction = "{{ $appAction }}";
+        var currency = "{{ session::get('currency')}}";
         var row1 = "{{ App\Models\TeethRow::Row_1_Desc }}";
         var row2 = "{{ App\Models\TeethRow::Row_2_Desc }}";
         var row3 = "{{ App\Models\TeethRow::Row_3_Desc }}";

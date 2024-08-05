@@ -150,7 +150,7 @@ Route::delete('/treatment/{toothExamId}', [TreatmentController::class, 'destroy'
 Route::post('/treatment/details/store', [TreatmentController::class, 'storeDetails'])->name('treatment.details.store');
 
 Route::get('/billing', [BillingController::class, 'index'])->name('billing');
-Route::get('/billing/add', [BillingController::class, 'create'])->name('billing.create');
+Route::get('/billing/add/{appointmentId}', [BillingController::class, 'create'])->name('billing.create');
 Route::post('/billing/store', [BillingController::class, 'store'])->name('billing.store');
 Route::get('/billing/{billing}/edit', [BillingController::class, 'edit'])->name('billing.edit');
 Route::post('/billing/update', [BillingController::class, 'update'])->name('billing.update');

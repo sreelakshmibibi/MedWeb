@@ -6,7 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\AppointmentStatus;
 use App\Models\AppointmentType;
+use App\Models\ClinicBasicDetail;
 use App\Models\ClinicBranch;
+use App\Models\StaffProfile;
+use App\Models\ToothExamination;
+use App\Services\BillingService;
 use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
 use Carbon\Carbon;
@@ -123,23 +127,38 @@ class BillingController extends Controller
                 ->rawColumns(['patient_id', 'name', 'status', 'action'])
                 ->make(true);
         }
-        $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])
-            ->where('clinic_status', 'Y')
-            ->get();
-        $firstBranchId = $clinicBranches->first()?->id;
-        $currentDayName = Carbon::now()->englishDayOfWeek;
-        $doctorAvailabilityService = new DoctorAvaialbilityService();
-        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($firstBranchId, $currentDayName);
-        $appointmentTypes = AppointmentType::all();
-
-        return view('billing.index', compact('clinicBranches', 'firstBranchId', 'currentDayName', 'workingDoctors', 'appointmentTypes'));
+        
+        return view('billing.index');
     }
 
-    public function create()
+    public function create($appointmentId)
     {
-
-        return view('billing.add');
+        $id = base64_decode(Crypt::decrypt($appointmentId));
+        $appointment = Appointment::with(['patient', 'doctor', 'branch'])
+                        ->find($id);
+        $billingService = new BillingService();
+        $treatmentAmounts = $billingService->individualTreatmentAmounts($id, $appointment->patient_id);
+        $individualTreatmentAmounts = $treatmentAmounts['individualTreatmentAmounts'];
+        $totalCost = $treatmentAmounts['totalCost'];
+        // Fetch the doctor discount from the appointment
+        $insuranceApproved = 0;
+        $doctorDiscount = $appointment->doctor_discount;
+        $clinicBasicDetails = ClinicBasicDetail::first();
+        $feesFrequency = $clinicBasicDetails->consultation_fees_frequency;
+        $checkAppointmentCount = $billingService->getAppointmentCount($appointment->patient_id);
+        $consultationFees = 1;
+        $fees = $appointment->doctor->staffProfile->consultation_fees;
+        if ($checkAppointmentCount > 1) {
+            $consultationFees = $billingService->getConsultationFees($appointment->patient_id, $feesFrequency);
+            
+        }
+        
+        // Pass variables to the view
+        return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees'));
     }
+
+
+
 
     /**
      * Store a newly created resource in storage.
