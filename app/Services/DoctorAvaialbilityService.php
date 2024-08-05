@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Appointment;
 use App\Models\AppointmentStatus;
 use App\Models\DoctorWorkingHour;
-use App\Models\MenuItem;
 use App\Models\WeekDay;
 
 class DoctorAvaialbilityService
@@ -13,22 +12,22 @@ class DoctorAvaialbilityService
     public function availableBranchAndTimings($userId)
     {
         $clinicBranches = DoctorWorkingHour::select('clinic_branch_id')
-        ->where('user_id', $userId)
-        ->where('status', 'Y')
-        ->groupBy('clinic_branch_id')
-        ->get();
-        
+            ->where('user_id', $userId)
+            ->where('status', 'Y')
+            ->groupBy('clinic_branch_id')
+            ->get();
+
         $availableBranches = [];
 
         foreach ($clinicBranches as $clinicBranch) {
             $timings = DoctorWorkingHour::where('user_id', $userId)
-                                        ->where('clinic_branch_id', $clinicBranch->clinic_branch_id)
-                                        ->where('status', 'Y')
-                                        ->get();
-            
+                ->where('clinic_branch_id', $clinicBranch->clinic_branch_id)
+                ->where('status', 'Y')
+                ->get();
+
             $availableTimings = [
                 'clinic_branch_id' => $clinicBranch->clinic_branch_id,
-                'timings' => []
+                'timings' => [],
             ];
 
             foreach ($timings as $timing) {
@@ -78,7 +77,7 @@ class DoctorAvaialbilityService
         return $availableBranches;
     }
 
-    public function getTodayWorkingDoctors($branchId = null, $weekday)
+    public function getTodayWorkingDoctors($branchId, $weekday)
     {
 
         $query = DoctorWorkingHour::where('week_day', $weekday)
@@ -94,7 +93,7 @@ class DoctorAvaialbilityService
     public function getExistingAppointments($branchId, $appDate, $doctorId)
     {
         $query = Appointment::where('status', 'Y')
-                        ->where('app_status', AppointmentStatus::SCHEDULED );
+            ->where('app_status', AppointmentStatus::SCHEDULED);
         if ($branchId) {
             $query->where('app_branch', $branchId);
         }
@@ -104,14 +103,16 @@ class DoctorAvaialbilityService
         if ($appDate) {
             $query->where('app_date', $appDate);
         }
+
         return $query->get('app_time');
-        
+
     }
+
     public function checkAllocatedAppointments($branchId, $appDate, $doctorId, $appTime)
     {
         // Start building the query with basic conditions
         $query = Appointment::where('status', 'Y')
-                            ->where('app_status', AppointmentStatus::SCHEDULED);
+            ->where('app_status', AppointmentStatus::SCHEDULED);
 
         // Apply optional filters based on parameters
         if ($branchId) {
@@ -129,32 +130,45 @@ class DoctorAvaialbilityService
 
         // Execute the query and return the result
         $appointments = $query->get(['app_time']); // Fetch only app_time field
-        
+
         return $appointments;
     }
 
     public function checkAppointmentDate($branchId, $appDate, $doctorId, $patientId)
     {
         $query = Appointment::where('status', 'Y')
-        ->where('app_status', AppointmentStatus::SCHEDULED);
+            ->where('app_status', AppointmentStatus::SCHEDULED);
 
         // Apply optional filters based on parameters
         if ($branchId) {
-        $query->where('app_branch', $branchId);
+            $query->where('app_branch', $branchId);
         }
         if ($doctorId) {
-        $query->where('doctor_id', $doctorId);
+            $query->where('doctor_id', $doctorId);
         }
         if ($appDate) {
-        $query->whereDate('app_date', $appDate); // Assuming app_date is a date field
+            $query->whereDate('app_date', $appDate); // Assuming app_date is a date field
         }
         if ($patientId) {
             $query->whereDate('patient_id', $patientId); // Assuming app_date is a date field
-            }
+        }
         // Execute the query and return the result
         $appointments = $query->exists(); // Use exists() for a boolean check
 
         return $appointments ? 1 : 0;
-        
+
+    }
+
+    public function isDoctorAvailable($branchId, $doctorId, $weekDay, $time)
+    {
+        $workingHour = DoctorWorkingHour::where('user_id', $doctorId)
+            ->where('week_day', $weekDay)
+            ->where('status', 'Y') // Assuming 'Y' indicates the doctor is available
+            ->where('clinic_branch_id', $branchId)
+            ->whereTime('from_time', '<=', $time)
+            ->whereTime('to_time', '>=', $time)
+            ->first();
+
+        return ! is_null($workingHour);
     }
 }

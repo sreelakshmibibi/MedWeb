@@ -89,6 +89,12 @@
 
                         </div>
                         <div class="row">
+                            <div style="display:none" id="doctorNotAvailable">
+                                <span class="text-danger">Sorry, the doctor is not available at the selected time.
+                                    Please choose another time.</span>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div style="display:none" id="alreadyExistsPatient">
                                 <span class="text-danger">Already exists appointment for the selected date!</span>
                             </div>
@@ -227,7 +233,7 @@
             $('#existAppContainer').hide();
             $('#existingAppointments').empty();
             $('#existingAppointments').hide();
-
+            $('#doctorNotAvailable').hide();
         });
     });
 

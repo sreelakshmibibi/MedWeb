@@ -206,6 +206,12 @@ use Illuminate\Support\Facades\Session;
                 </tr>
             </tbody>
         </table>
+        <div class="row">
+            <div style="display:none" id="doctorNotAvailable">
+                <span class="text-danger">Sorry, the doctor is not available at the selected time.
+                    Please choose another time.</span>
+            </div>
+        </div>
         <div class="row mt-2">
             <div style="display:none" id="existingAppointmentsError">
                 <span class="text-danger">Already exists appointment for the selected time!</span>
@@ -917,6 +923,7 @@ use Illuminate\Support\Facades\Session;
         var appDate = $('#appdate').val();
         var doctorId = $('#doctor_id').val();
         $('#existingAppointmentsError').hide();
+        $('#doctorNotAvailable').hide();
         showExistingAppointments(branchId, appDate, doctorId);
 
     });
@@ -950,6 +957,11 @@ use Illuminate\Support\Facades\Session;
                         $('#existingAppointmentsError').show();
                     } else {
                         $('#existingAppointmentsError').hide();
+                    }
+                    if (data.doctorAvailable == true) {
+                        $('#doctorNotAvailable').hide();
+                    } else {
+                        $('#doctorNotAvailable').show();
                     }
                     if (data.existingAppointments.length > 0) {
 

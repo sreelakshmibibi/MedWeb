@@ -77,6 +77,7 @@
 
                         </div>
 
+
                         <div class="row">
                             <div style="display:none" id="rescheduleExistingAppointmentsError">
                                 <span class="text-danger">Already exists appointment for the selected time!</span>
@@ -84,6 +85,12 @@
                         </div>
                         <div class="row">
                             <div style="display:none" id="rescheduleExistingAppointments">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div style="display:none" id="rescheduleDoctorNotAvailable">
+                                <span class="text-danger">Sorry, the doctor is not available at the selected time.
+                                    Please choose another time.</span>
                             </div>
                         </div>
 
@@ -111,6 +118,7 @@
             $('#rescheduledAppdateError').text('');
             $('#reschedule_reason').removeClass('is-invalid');
             $('#rescheduleReasonError').text('');
+            $('#rescheduleDoctorNotAvailable').hide();
         });
 
         // Pre-populate form fields when modal opens for editing
@@ -145,49 +153,49 @@
             }
 
             if (isValid) {
-            // If validation passed, submit the form via AJAX
-            var form = $('#rescheduleAppointmentForm');
-            var url = form.attr('action');
-            var formData = form.serialize();
+                // If validation passed, submit the form via AJAX
+                var form = $('#rescheduleAppointmentForm');
+                var url = form.attr('action');
+                var formData = form.serialize();
 
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: formData,
-                dataType: 'json',
-                success: function(response) {
-                    // If successful, hide modal and show success message
-                    $('#existingAppointments').hide();
-                    $('#existingAppointmentsError').hide();
-                    $('#modal-reschedule').modal('hide');
-                    $('#successMessage').text('Appointment rescheduled successfully');
-                    $('#successMessage').fadeIn().delay(3000)
-                        .fadeOut(); // Show for 3 seconds
-                    // location.reload();
-                    table.ajax.reload();
-                },
-                error: function(xhr) {
-                    // Reset previous error messages
-                    $('#rescheduledAppdateError').text('');
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: formData,
+                    dataType: 'json',
+                    success: function(response) {
+                        // If successful, hide modal and show success message
+                        $('#existingAppointments').hide();
+                        $('#existingAppointmentsError').hide();
+                        $('#modal-reschedule').modal('hide');
+                        $('#successMessage').text('Appointment rescheduled successfully');
+                        $('#successMessage').fadeIn().delay(3000)
+                            .fadeOut(); // Show for 3 seconds
+                        // location.reload();
+                        table.ajax.reload();
+                    },
+                    error: function(xhr) {
+                        // Reset previous error messages
+                        $('#rescheduledAppdateError').text('');
 
-                    // Check if there are validation errors
-                    var errors = xhr.responseJSON.errors;
+                        // Check if there are validation errors
+                        var errors = xhr.responseJSON.errors;
 
-                    // Check if there are validation errors
-                    var errors = xhr.responseJSON.errors;
-                    if (errors && errors.hasOwnProperty('app_date')) {
-                        $('#rescheduledAppdate').addClass('is-invalid');
-                        $('#rescheduledAppdateError').text(errors.appdate[0]);
-                    } else {
-                        // Handle specific error from backend
-                        var errorMessage = xhr.responseJSON.error;
-                        if (errorMessage) {
-                            $('#rescheduleExistingAppointmentsError').show();
+                        // Check if there are validation errors
+                        var errors = xhr.responseJSON.errors;
+                        if (errors && errors.hasOwnProperty('app_date')) {
+                            $('#rescheduledAppdate').addClass('is-invalid');
+                            $('#rescheduledAppdateError').text(errors.appdate[0]);
+                        } else {
+                            // Handle specific error from backend
+                            var errorMessage = xhr.responseJSON.error;
+                            if (errorMessage) {
+                                $('#rescheduleExistingAppointmentsError').show();
+                            }
                         }
                     }
-                }
-            });
-        }
+                });
+            }
         });
     });
 

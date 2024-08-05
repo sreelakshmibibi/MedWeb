@@ -284,6 +284,7 @@
             $('#existingAppointmentsError').hide();
             $('#existAppContainer').hide();
             $('#existingAppointments').empty();
+            $('#doctorNotAvailable').hide();
             showExistingAppointments(branchId, appDate, doctorId, patientId, 'store');
 
         });
@@ -294,6 +295,7 @@
             var patientId = $('#patient_id').val();
             $('#alreadyExistsPatient').hide();
             $('#existingAppointmentsError').hide();
+            $('#rescheduleDoctorNotAvailable').hide();
             showExistingAppointments(branchId, appDate, doctorId, patientId, 'edit');
 
         });
@@ -432,7 +434,16 @@
                         } else {
                             $('#alreadyExistsPatient').hide();
                         }
-
+                        if (data.doctorAvailable == true && methodType === 'store') {
+                            $('#doctorNotAvailable').hide();
+                        } else {
+                            $('#doctorNotAvailable').show();
+                        }
+                        if (data.doctorAvailable == true && methodType === 'edit') {
+                            $('#rescheduleDoctorNotAvailable').hide();
+                        } else {
+                            $('#rescheduleDoctorNotAvailable').show();
+                        }
                         // Show/hide the 'existingAppointmentsError' div based on 'checkAllocated'
                         if (data.checkAllocated.length > 0) {
                             $('#existingAppointmentsError').show();

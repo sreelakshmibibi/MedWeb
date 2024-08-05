@@ -64,7 +64,12 @@
     </div>
 
 </div>
-
+<div class="row">
+    <div style="display:none" id="doctorNotAvailable">
+        <span class="text-danger">Sorry, the doctor is not available at the selected time.
+            Please choose another time.</span>
+    </div>
+</div>
 <div class="row mb-3">
     <div style="display:none" id="existingAppointmentsError" class="text-danger">
         <span class="text-danger">Appointments already exists for the selected time!</span>

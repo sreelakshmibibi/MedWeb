@@ -193,13 +193,28 @@ class PatientListController extends Controller
         $checkAppointmentDate = $doctorAvailabilityService->checkAppointmentDate($branchId, $appDate, $doctor_id, $patient_id);
         $existingAppointments = $doctorAvailabilityService->getExistingAppointments($branchId, $appDate, $doctor_id);
         $checkAllocated = $doctorAvailabilityService->checkAllocatedAppointments($branchId, $appDate, $doctor_id, $appTime);
+
+        $carbonDate = Carbon::parse($appDate);
+        $weekDay = $carbonDate->format('l');
+        $doctorAvailable = true;
+        if ($branchId != '' && $doctor_id != '' && $weekDay != '' && $appTime != '') {
+            $doctorAvailable = $doctorAvailabilityService->isDoctorAvailable($branchId, $doctor_id, $weekDay, $appTime);
+        }
+
         //$patient = PatientProfile::where('patient_id', $patient_id)->first();
         //$nextAppointment = $patient ? $patient->nextDoctorBranchAppointment($doctor_id, $branchId) : null;
-        // Log::info('$existingAppointments: '.$existingAppointments);
+        // Log::info('Doctor availability result', [
+        //     'doctor_id' => $doctor_id,
+        //     'branch_id' => $branchId,
+        //     'week_day' => $weekDay,
+        //     'time' => $appTime,
+        //     'is_available' => $doctorAvailable,
+        // ]);
         $response = [
             'existingAppointments' => $existingAppointments,
             'checkAllocated' => $checkAllocated,
             'checkAppointmentDate' => $checkAppointmentDate,
+            'doctorAvailable' => $doctorAvailable,
             // 'nextAppointment' => $nextAppointment,
         ];
 
