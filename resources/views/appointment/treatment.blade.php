@@ -207,112 +207,6 @@ use Illuminate\Support\Facades\Session;
 
 
             let count = 1;
-
-            // Event listener for Add Row button click
-            // $(document).on('click', '#medicineAddRow', function() {
-            //     count++;
-            //     let newRow = `<tr>
-        //         <td>${count}</td>
-        //         <td>
-        //             <select class="select2" id="medicine_id${count}" name="medicine_id${count}" required
-        //                 data-placeholder="Select a Medicine" style="width: 100%;">
-        //                     <option value=""> Select a Medicine </option>
-        //                     <?php foreach ( $medicines as $medicine ) { ?>
-        //                     <option value="{{ $medicine->id }}"> {{ $medicine->med_name }}</option>
-        //                     <?php } ?>
-        //             </select>
-        //         </td>
-        //         <td>
-        //             <select class="select2" id="dosage${count}" name="dosage${count}" required
-        //                 data-placeholder="Select a Dosage" style="width: 100%;">
-        //                 <option value=""> Select a Dosage </option>
-        //                 <?php foreach ( $dosages as $dosage ) { ?>
-        //                     <option value="{{ $dosage->id }}"> {{ $dosage->dos_name }}</option>
-        //                 <?php } ?>
-        //             </select>
-        //         </td>
-        //         <td>
-        //             <div class="input-group">
-        //                 <input type="number" class="form-control" id="duration${count}" name="duration${count}" aria-describedby="basic-addon2">
-        //                 <div class="input-group-append">
-        //                     <span class="input-group-text" id="basic-addon2">days</span>
-        //                 </div>
-        //             </div>
-        //         </td>
-        //         <td>
-        //             <select class="select2" id="advice${count}" name="advice${count}" required class="form-control"
-        //                  style="width: 100%;">
-        //                     <option value="After food">After food</option>
-        //                    <option value="Before food">Before food</option>
-        //             </select>
-        //         </td>
-        //         <td>
-        //             <input type="text" class="form-control" id="remarks${count}" name="remarks${count}" placeholder="remarks">
-        //         </td>
-        //         <td>
-        //             <button type="button" class="btnDelete waves-effect waves-light btn btn-danger btn-sm"
-        //                     title="delete row"> <i class="fa fa-trash"></i></button>
-        //         </td>
-        //     </tr>`;
-
-            //     $('#presctablebody').append(newRow);
-            //     // Reinitialize Select2 on the newly added select element
-            //     $(`#medicine_id${count}`).select2({
-            //         width: '100%',
-            //         placeholder: 'Select a Medicine',
-            //         tags: true, // Allow user to add new tags (medicines)
-            //         tokenSeparators: [',', ' '], // Define how tags are separated
-            //         createTag: function(params) {
-            //             var term = $.trim(params.term);
-
-            //             if (term === '') {
-            //                 return null;
-            //             }
-
-            //             // Check if the term already exists as an option
-            //             var found = false;
-            //             $(this).find('option').each(function() {
-            //                 if ($.trim($(this).text()) === term) {
-            //                     found = true;
-            //                     return false; // Exit the loop early
-            //                 }
-            //             });
-
-            //             if (!found) {
-            //                 // Return object for new tag
-            //                 return {
-            //                     id: term,
-            //                     text: term,
-            //                     newTag: true // Add a custom property to indicate it's a new tag
-            //                 };
-            //             }
-
-            //             return null; // If term already exists, return null
-            //         }
-            //     });
-            //     $(`#dosage${count}`).select2({
-            //         width: '100%',
-            //         placeholder: 'Select a Dosage'
-            //     });
-            //     $(`#advice${count}`).select2({
-            //         width: '100%',
-            //     });
-            //     updateRowCount();
-            // });
-
-            // Event listener for Delete button click
-            // $(document).on('click', '.btnDelete', function() {
-            //     $(this).closest('tr').remove();
-            //     updateRowCount();
-            // });
-
-            // Function to update row count input field value
-            // function updateRowCount() {
-            //     $('#row_count').val(count);
-            // }
-
-
-
             let rowIndex = {{ count($patientPrescriptions) + 1 }};
             $(document).on('click', '#medicineAddRow',
                 function() {
@@ -337,28 +231,28 @@ use Illuminate\Support\Facades\Session;
                     </td>
                     <td>
                         <div class="input-group">
-                        <input type="text" class="form-control" id="dose${rowIndex}" name="prescriptions[${rowIndex}][dose]" placeholder="Dose" required>
-                    <select class="form-control" id="dose_unit${rowIndex}" name="prescriptions[${rowIndex}][dose_unit]" required style="width: 100%;">
-                <option value="" disabled selected>Select a Unit</option>
-                <option value="ml">ml</option>
-                <option value="drops">drops</option>
-                <option value="tab">tab</option>
-                <option value="g">g</option>
-                <option value="mg">mg</option>
-                <option value="cc">cc</option>
-                <option value="pills">pills</option>
-                <option value="units">units</option>
-                <option value="teaspoon">teaspoon</option>
-                <option value="tablespoon">tablespoon</option>
-                <option value="cup">cup</option>
-                <option value="patch">patch</option>
-                <option value="inhaler">inhaler</option>
-                <option value="spray">spray</option>
-                <option value="dropper">dropper</option>
-                <option value="vial">vial</option>
-                <option value="ampule">ampule</option>
-            </select>
-            </div>
+                            <input type="text" class="form-control" id="dose${rowIndex}" name="prescriptions[${rowIndex}][dose]" placeholder="Dose" aria-describedby="dose_unit${rowIndex}" required>
+                            <select class="form-control input-group-text" id="dose_unit${rowIndex}" name="prescriptions[${rowIndex}][dose_unit]" required >
+                                <option value="" disabled selected>Unit</option>
+                                <option value="ml">ml</option>
+                                <option value="drops">drops</option>
+                                <option value="tab">tab</option>
+                                <option value="g">g</option>
+                                <option value="mg">mg</option>
+                                <option value="cc">cc</option>
+                                <option value="pills">pills</option>
+                                <option value="units">units</option>
+                                <option value="teaspoon">teaspoon</option>
+                                <option value="tablespoon">tablespoon</option>
+                                <option value="cup">cup</option>
+                                <option value="patch">patch</option>
+                                <option value="inhaler">inhaler</option>
+                                <option value="spray">spray</option>
+                                <option value="dropper">dropper</option>
+                                <option value="vial">vial</option>
+                                <option value="ampule">ampule</option>
+                            </select>
+                        </div>
                     </td>
                     <td>
                         <select class="form-control" id="dosage${rowIndex}" name="prescriptions[${rowIndex}][dosage_id]" required style="width: 100%;">

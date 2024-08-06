@@ -1,6 +1,6 @@
 <div class="table-responsive">
     <!-- Main content -->
-    <table class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center" width="100%">
+    <table class="table table-bordered table-hover table-striped mb-0 data-table text-center" width="100%">
         <thead class="bg-primary-light">
             <tr>
                 <th>No</th>
@@ -12,8 +12,7 @@
                 <th>Consulted Doctor</th>
                 <th>Branch</th>
                 <th>Status</th>
-                {{-- <th>Remarks</th> --}}
-                <th width="150px">Action</th>
+                <th width="80px">Action</th>
             </tr>
         </thead>
         <tbody>
@@ -28,10 +27,7 @@
         var table = $('.data-table').DataTable({
             processing: true,
             serverSide: true,
-            // ajax: "",
-
             ajax: {
-                //url: "{{ route('treatment', ['appointment' => $appointment->id]) }}",
                 url: "",
                 type: 'GET',
             },
@@ -70,7 +66,8 @@
                 },
                 {
                     data: 'branch',
-                    name: 'branch'
+                    name: 'branch',
+                    className: 'text-left',
                 },
                 {
                     data: 'status',
@@ -78,10 +75,6 @@
                     orderable: false,
                     searchable: true
                 },
-                // {
-                //     data: 'remarks',
-                //     name: 'remarks',
-                // },
                 {
                     data: 'action',
                     name: 'action',

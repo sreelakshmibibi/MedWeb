@@ -21,18 +21,20 @@
 
         <thead>
             <tr class="bg-primary-light">
-                <th>No</th>
-                <th>Medicine</th>
-                <th style="width:124px;">Dose</th>
-                <th>Frequency</th>
-                <th style="width:124px;">Duration</th>
-                <th>Advice</th>
-                <th>Route</th>
+                <th style="width:1%;">No</th>
+                <th style="width:20%;">Medicine</th>
+                <th style="width:11%;">Dose</th>
+                <th style="width:10%;">Frequency</th>
+                <th style="width:10%;">Duration</th>
+                <th style="width:10%;">Advice</th>
+                <th style="width:10%;">Route</th>
                 <th>Remarks</th>
-                <th> <button id="medicineAddRow" type="button" class="waves-effect waves-light btn btn-sm btn-primary">
+                <th style="width:10%;">
+                    <button id="medicineAddRow" type="button" class="waves-effect waves-light btn btn-sm btn-primary">
                         <i class="fa fa-add"></i>
                         Add Row
-                    </button></th>
+                    </button>
+                </th>
             </tr>
         </thead>
 
@@ -53,11 +55,12 @@
                         </select>
                     </td>
                     <td>
-                        <div class="input-group">
+                        <div class="input-group col-12">
                             <input type="text" class="form-control text-center" id="dose{{ $index + 1 }}"
                                 name="prescriptions[{{ $index + 1 }}][dose]" placeholder="Dose"
-                                value="{{ $prescription->dose ?? '' }}" required>
-                            <select class="form-control" id="dose_unit{{ $index + 1 }}"
+                                value="{{ $prescription->dose ?? '' }}" required
+                                aria-describedby="dose_unit{{ $index + 1 }}">
+                            <select class="form-control input-group-text" id="dose_unit{{ $index + 1 }}"
                                 name="prescriptions[{{ $index + 1 }}][dose_unit]" required>
                                 <option value="" disabled selected>Select unit</option>
                                 <option value="ml"
