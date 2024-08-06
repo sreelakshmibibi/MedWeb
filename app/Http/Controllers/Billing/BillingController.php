@@ -8,6 +8,7 @@ use App\Models\AppointmentStatus;
 use App\Models\AppointmentType;
 use App\Models\ClinicBasicDetail;
 use App\Models\ClinicBranch;
+use App\Models\Prescription;
 use App\Models\StaffProfile;
 use App\Models\ToothExamination;
 use App\Models\TreatmentComboOffer;
@@ -132,14 +133,36 @@ class BillingController extends Controller
         return view('billing.index');
     }
 
+    public function comboOffer(Request $request, $appointmentId)
+    {
+       
+        // Decode and decrypt appointment ID
+        $id = base64_decode(Crypt::decrypt($appointmentId));
+        $appointment = Appointment::find($id);
+
+        // Check if the appointment exists
+        if (!$appointment) {
+            return response()->json(['success' => false, 'message' => 'Appointment not found.'], 404);
+        }
+
+        // Process incoming data
+        $appointment->combo_offer_id = $request->input('combos');
+        $appointment->save();
+
+        // Redirect back to the page where the appointment is displayed
+        return response()->json(['success' => true, 'message' => ''], 200);
+    }
+
     public function create($appointmentId)
     {
+        // print_r($request->all());exit;
         $id = base64_decode(Crypt::decrypt($appointmentId));
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])
                         ->find($id);
         $billingService = new BillingService();
         $treatmentAmounts = $billingService->individualTreatmentAmounts($id, $appointment->patient_id);
         $individualTreatmentAmounts = $treatmentAmounts['individualTreatmentAmounts'];
+        $selectedTreatments = $treatmentAmounts['selectedTreatmentIds'];
         $totalCost = $treatmentAmounts['totalCost'];
         // Fetch the doctor discount from the appointment
         $insuranceApproved = 0;
@@ -153,9 +176,33 @@ class BillingController extends Controller
             $consultationFees = $billingService->getConsultationFees($appointment->patient_id, $feesFrequency);
             
         }
-        $combOffers = $billingService->getOffers();
+        $combOffers = $billingService->getOffers($selectedTreatments, $appointment->combo_offer_id);
+        $isMedicineProvided = (ClinicBranch::find($appointment->app_branch))->is_medicine_provided;
+        $prescriptions = Prescription::where('app_id', $appointment->id)
+                            ->where('patient_id', $appointment->patient_id)
+                            ->where('status', 'Y')
+                            ->get();
+        $comboOfferId = $appointment->combo_offer_id ? $appointment->combo_offer_id : 0;
+        $comboOfferApplied = 0;
+        $comboOfferDeduction = 0;
+        if($comboOfferId) {
+            $comboOfferTreatments = TreatmentComboOffer::with('treatments')->find($comboOfferId);
+            if ($comboOfferTreatments) {
+                $comboOfferApplied = $comboOfferTreatments->offer_amount;
+                $comboOfferActualAmount = $comboOfferTreatments->treatments->sum('treat_cost');
+                $actualCost = 0;
+                foreach ($individualTreatmentAmounts as &$individualTreatmentAmount) {
+                    $individualTreatmentAmount['discount_percentage'] = 0;
+                    $individualTreatmentAmount['treat_cost'] = $individualTreatmentAmount['cost'];
+                    $individualTreatmentAmount['subtotal'] = $individualTreatmentAmount['quantity'] * $individualTreatmentAmount['treat_cost'];                    // $actualCost += $individualTreatmentAmount->cost; 
+                }
+                $comboOfferDeduction= $comboOfferActualAmount - $comboOfferApplied;
+            } 
+        }
+        $medicineTotal = 0;
+        $insurance = 0;
         // Pass variables to the view
-        return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers'));
+        return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction'));
     }
 
 

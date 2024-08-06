@@ -1,4 +1,7 @@
-<?php use Illuminate\Support\Facades\Session; ?>
+<?php
+
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Session; ?>
 @extends('layouts.dashboard')
 @section('title', 'Billing')
 @section('content')
@@ -11,18 +14,7 @@
                             {{ $appointment->patient_id}}- {{str_replace('<br>', ' ', $appointment->patient->first_name . ' ' . $appointment->patient->last_name)}}
                         </span>
                     </h3>
-                    
-                        <input type="checkbox" id="combo_checkbox" name="combo_checkbox"
-                            class="filled-in chk-col-success " />
-                        <label for="combo_checkbox">Combo offers</label>
-
-                        <input type="checkbox" id="medicine_checkbox" name="medicine_checkbox"
-                            class="filled-in chk-col-success " />
-                        <label for="medicine_checkbox">Medicines</label>
-                        <input type="checkbox" id="insurance_checkbox" name="insurance_checkbox"
-                            class="filled-in chk-col-success" />
-                        <label for="insurance_checkbox">Insurance</label>
-                                    
+                   
                     <div>
                         <button type='button'
                             class='waves-effect waves-light btn btn-circle btn-info btn-pdf-generate btn-xs me-1'
@@ -52,6 +44,9 @@
                         <div class="flexbox invoice-details px-1   no-margin">
                             <div>
                                 <p class="mb-1"><b>Bill No:</b> 7541296</p>
+                                <?php  $base64Id = base64_encode($appointment->id);
+                                        $idEncrypted = Crypt::encrypt($base64Id); ?>
+                                <input type="hidden" id="appointmentId" value="{{ $idEncrypted }}">
                                 <p class="mb-0"><b>Generated at:</b>{{ date ('d/m/Y H:m:s')}}</p>
                             </div>
                             <div><b>Appointment ID:</b> {{ $appointment->app_id}}</div>
@@ -79,9 +74,11 @@
                                 <?php $i = 0;
                                 $treatmentTotal = 0; ?>
                                 @foreach ( $individualTreatmentAmounts as $individualTreatmentAmount )
-                                <?php $i++;
-                                 
-                               ?>
+                                <?php 
+                                $cost = is_numeric($individualTreatmentAmount['cost']) ? floatval($individualTreatmentAmount['cost']) : 0;
+                                $subtotal = is_numeric($individualTreatmentAmount['subtotal']) ? floatval($individualTreatmentAmount['subtotal']) : 0;
+                        
+                                ?>
                                     <tr>
                                         <td>{{ $i }}</td>
                                         <td class="text-start">{{ $individualTreatmentAmount['treat_name'] }}
@@ -94,7 +91,8 @@
                                         <td> <input type="text" readonly name="subtotal{{$i}}" class="form-control text-center" value="{{ number_format($individualTreatmentAmount['subtotal'], 3) }}"></td> <!-- Format the cost -->
                                         <?php
 
-                                        $treatmentTotal += number_format($individualTreatmentAmount['subtotal'], 3)
+                                        // $treatmentTotal += number_format($individualTreatmentAmount['subtotal'], 3)
+                                        $treatmentTotal += $subtotal;
                                         ?>
                                     </tr>   
                                 @endforeach
@@ -137,18 +135,31 @@
                             </tbody>
                             <tbody>
                                 <tr>
-                               
                                     <td colspan="5" class="text-end">Sub - Total amount</td>
-                                    <td><input type="text" readonly name="treatmenttotal" class="form-control text-center" value="{{ number_format($treatmentTotal, 3) }}"> </td>
+                                    <td><input type="text" readonly name="treatmenttotal" id="treatmenttotal" class="form-control text-center" value="{{ number_format($treatmentTotal, 3) }}"> </td>
                                 </tr>
+                                <?php if (sizeof($combOffers) > 0) { ?>
+                                    <tr>
+                                        <td colspan="5" class="text-end">
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#modal-combo">
+                                            <span class="text-danger">(Select Offer)</span></a>
+
+                                        <label for="combo_checkbox">Combo offer Discount</label></td>
+                                        <?php $treatmentTotal -= $comboOfferDeduction; ?>
+                                        <td><input type="text" readonly name="comboOfferAmount" id ="comboOfferAmount" class="form-control text-center" value="{{ number_format($comboOfferDeduction, 3) }}"> </td>
+                                    </tr> 
+                                <?php  } ?>
                                 <!-- <tr>
                                     <td colspan="5" class="text-end">Combo Offer</td>
                                     <td>{{ session('currency') }}</td>
                                 </tr> -->
                                 @if ($insuranceApproved) 
                                 <tr>
-                                    <td colspan="5" class="text-end">Insurance</td>
-                                    <td>{{ session('currency') }} </td>
+                                <tr>
+                                        <td colspan="5" class="text-end">Insurance paid</td>
+                                        <?php $treatmentTotal -= $insurance; ?>
+                                        <td><input type="text" readonly name="insurance" id ="insurance" class="form-control text-center" value="{{ number_format($insurance, 3) }}"> </td>
+                                    </tr> 
                                 </tr>
                                 @endif
                                 @if ($doctorDiscount != 0)
@@ -158,7 +169,7 @@
                                     $doctorDisc = $treatmentTotal * ($doctorDiscount/100);
                                     $treatmentTotal = $treatmentTotal - $doctorDisc;
                                     ?>
-                                    <td><input type="text" readonly name="treatmenttotal" class="form-control text-center" value="{{ number_format($doctorDisc, 3) }}"> </td>
+                                    <td><input type="text" readonly name="doctorDisc" id="doctorDisc" class="form-control text-center" value="{{ number_format($doctorDisc, 3) }}"> </td>
                                 </tr>
                                 @endif
                                 @if ($clinicBasicDetails->treatment_tax_included == 'N') 
@@ -175,16 +186,18 @@
                                         <h3><b>Total</b></h3>
                                     </td>
                                     <td>
-                                        <h3>{{ session('currency') }}{{$treatmentTotal}}</h3>
+                                        <h3>{{ session('currency') }}{{ number_format($treatmentTotal, 2) }}
+                                        <input type="hidden" name="totaltoPay" id="totalToPay" class="form-control text-center" value="{{ $treatmentTotal }}">
+                                        </h3>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colspan="5" class="text-end ">Paid Amount</td>
-                                    <td><input type="text" name="amountPaid" class="form-control text-center" ></td>
+                                    <td><input type="text" name="amountPaid" id="amountPaid" class="form-control text-center" ></td>
                                 </tr>
                                 <tr>
                                     <td colspan="5" class="text-end ">Balance</td>
-                                    <td><input type="text" name="balance" class="form-control text-center" ></td>
+                                    <td><input type="text" name="balance" id="balance" class="form-control text-center" ></td>
                                 </tr>
                             </tbody>
                         </table>

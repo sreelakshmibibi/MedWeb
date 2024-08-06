@@ -45,6 +45,7 @@ class Appointment extends Model
         'consult_end_time',
         'remarks',
         'doctor_discount',
+        'combo_offer_id',
         'status',
         'app_status_change_reason',
         'created_by',
