@@ -156,15 +156,18 @@
                                     <td colspan="5" class="text-end">Doctor Discount ({{$doctorDiscount}}) %</td>
                                     <?php 
                                     $doctorDisc = $treatmentTotal * ($doctorDiscount/100);
-                                    $treatmentTotalAfterDoctorDiscount = $treatmentTotal - $doctorDisc;
+                                    $treatmentTotal = $treatmentTotal - $doctorDisc;
                                     ?>
                                     <td><input type="text" readonly name="treatmenttotal" class="form-control text-center" value="{{ number_format($doctorDisc, 3) }}"> </td>
                                 </tr>
                                 @endif
-                                @if (session::get('treatmentTax') == 'N') 
+                                @if ($clinicBasicDetails->treatment_tax_included == 'N') 
                                 <tr>
-                                    <td colspan="5" class="text-end">Tax (18%)</td>
-                                    <td>{{ session('currency') }}</td>
+                                    <td colspan="5" class="text-end">Tax ({{$clinicBasicDetails->tax}}%)</td>
+                                    <?php 
+                                    $taxAmount = $treatmentTotal * ($clinicBasicDetails->tax / 100);
+                                    $treatmentTotal += $taxAmount;?>
+                                    <td><input type="text" readonly name="treatmenttotal" class="form-control text-center" value="{{ number_format($taxAmount, 3) }}"></td>
                                 </tr>
                                 @endif
                                 <tr class="bt-3 border-primary">
@@ -172,7 +175,7 @@
                                         <h3><b>Total</b></h3>
                                     </td>
                                     <td>
-                                        <h3>{{ session('currency') }}{{$treatmentTotalAfterDoctorDiscount}}</h3>
+                                        <h3>{{ session('currency') }}{{$treatmentTotal}}</h3>
                                     </td>
                                 </tr>
                                 <tr>

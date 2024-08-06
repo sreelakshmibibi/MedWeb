@@ -6,6 +6,7 @@ use App\Models\Appointment;
 use App\Models\AppointmentStatus;
 use App\Models\MenuItem;
 use App\Models\ToothExamination;
+use App\Models\TreatmentComboOffer;
 use Carbon\Carbon;
 use DateTime;
 
@@ -123,5 +124,25 @@ class BillingService
         } else {
             return 1;
         }
+    }
+
+    public function getOffers()
+    {
+        return TreatmentComboOffer::with('treatments')
+                        ->where('status', 'Y')
+                        ->whereDate('offer_from', '<=', date('Y-m-d'))
+                        ->whereDate('offer_to', '>=', date('Y-m-d'))
+                        ->get()
+                        ->mapWithKeys(function ($combOffer) {
+                            return [
+                                $combOffer->id => [
+                                    'id' => $combOffer->id,
+                                    'treatment' => $combOffer->treatments->pluck('treat_name')->implode(', '),
+                                    'cost' => number_format((float)$combOffer->treatments->sum('treat_cost'), 3, '.', ','),
+                                    'offer' => number_format((float) $combOffer->offer_amount, 3, '.', ',')
+                                ]
+                            ];
+                        });
+                        
     }
 }

@@ -10,6 +10,7 @@ use App\Models\ClinicBasicDetail;
 use App\Models\ClinicBranch;
 use App\Models\StaffProfile;
 use App\Models\ToothExamination;
+use App\Models\TreatmentComboOffer;
 use App\Services\BillingService;
 use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
@@ -152,9 +153,9 @@ class BillingController extends Controller
             $consultationFees = $billingService->getConsultationFees($appointment->patient_id, $feesFrequency);
             
         }
-        
+        $combOffers = $billingService->getOffers();
         // Pass variables to the view
-        return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees'));
+        return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers'));
     }
 
 
