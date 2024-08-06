@@ -17,35 +17,24 @@
                             <thead class="bg-dark">
                                 <tr>
                                     <th class="text-start">Combo</th>
-                                    <th class="text-end">Rate</th>
+                                    <th class="text-center">Cost</th>
+                                    <th class="text-end">Offer Rate</th>
                                 </tr>
                             </thead>
                             <tbody id="tablebody">
-                                <tr>
-                                    <td class="text-start"><input type="checkbox" id="combo_checkbox1"
-                                            name="combo_checkbox1" class="filled-in chk-col-success" />
-                                        <label for="combo_checkbox1">
-                                            Tooth cleaning + Root canal</label>
-                                    </td>
-                                    <td class="text-end">&#8377; 1000</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-start"><input type="checkbox" id="combo_checkbox2"
-                                            name="combo_checkbox2" class="filled-in chk-col-success" />
-                                        <label for="combo_checkbox2">
-                                            Tooth cleaning + Root canal</label>
-                                    </td>
-                                    <td class="text-end">&#8377; 1000</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-start"><input type="checkbox" id="combo_checkbox3"
-                                            name="combo_checkbox3" class="filled-in chk-col-success" />
-                                        <label for="combo_checkbox3">
-                                            Tooth cleaning + Root canal</label>
-                                    </td>
-                                    <td class="text-end">&#8377; 1000</td>
-                                </tr>
-                            </tbody>
+    @foreach ($combOffers as $id => $details)
+        <tr>
+            <td class="text-start">
+                <input type="checkbox" id="combo_checkbox_{{ $id }}"
+                       name="combo_checkbox[]" class="filled-in chk-col-success"
+                       value="{{ $id }}" />
+                <label for="combo_checkbox_{{ $id }}">{{ $details['treatment'] }}</label>
+            </td>
+            <td class="text-center">{{ $clinicBasicDetails->currency}}{{ $details['cost'] }}</td>
+            <td class="text-center">{{ $clinicBasicDetails->currency}}{{ $details['offer'] }}</td>
+        </tr>
+    @endforeach
+</tbody>
                         </table>
                     </div>
                 </div>
