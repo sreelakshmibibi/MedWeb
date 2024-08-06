@@ -326,17 +326,17 @@
                 <div class="box">
                     <div class="box-body px-0 text-center py-3">
                         <div style="min-height: 156px;">
-                            <div id="chart124"></div>
+                            <div id="patientschart"></div>
                         </div>
                         <div class="mt-15 d-inline-block">
                             <div class="text-start mb-10">
                                 <span class="badge badge-xl badge-dot badge-primary me-15"></span> Woman
-                                44%
+                                {{ ($femalePatientsCount / $totalUniquePatients) * 100 }}%
                             </div>
                             <div class="text-start">
                                 <span class="badge badge-xl badge-dot badge-primary-light me-15"></span>
                                 Man
-                                55%
+                                {{ ($malePatientsCount / $totalUniquePatients) * 100 }}%
                             </div>
                         </div>
                     </div>

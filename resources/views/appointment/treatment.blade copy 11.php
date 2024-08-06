@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Session;
         <div class="container-full">
             <div class="content-header">
                 <div class="d-flex align-items-center justify-content-between">
+                    {{-- <h3 class="page-title">Treatment : <?= Session::get('patientName') ?> ( <?= Session::get('patientId') ?>
+                        )</h3> --}}
                     <h3 class="page-title">Treatment:<span class="fs-20 text-info">
                             <?= Session::get('patientId') ?>- <?= Session::get('patientName') ?>
                         </span>
@@ -36,16 +38,45 @@ use Illuminate\Support\Facades\Session;
                             <section class="tabSection">
                                 @include('appointment.personal_info')
                             </section>
+                            <?php if ($latestAppointment != 0) { ?>
+                            {{-- <h6 class="tabHeading">Appointment History</h6>
+                            <section class="tabSection">
+                                @include('appointment.history')
+                            </section> --}}
+                            <?php } ?>
+
 
                             <h6 class="tabHeading">Dental Chart</h6>
                             <section class="tabSection">
                                 @include('appointment.dchart_images')
                             </section>
 
+                            {{-- <h6 class="tabHeading">Examination</h6>
+                            <section class="tabSection">
+                                @include('appointment.examination')
+                            </section> --}}
+
                             <h6 class="tabHeading">Dental Table</h6>
                             <section class="tabSection">
                                 @include('appointment.dtable')
+                                {{-- @include('appointment.teeth_delete') --}}
                             </section>
+
+                            {{-- <h6 class="tabHeading">Prescription</h6>
+                            <section class="tabSection">
+                                @include('appointment.prescription')
+                            </section> --}}
+
+                            {{-- <h6 class="tabHeading">Charge</h6>
+                            <section class="tabSection">
+                                @include('appointment.charge')
+                            </section> --}}
+
+                            {{-- <h6 class="tabHeading">Chart</h6>
+                            <section class="tabSection">
+                                @include('appointment.dchart')
+                            </section> --}}
+
 
                             {{-- <div id="updateRoute" data-url="{{ route('patient.patient_list.update') }}"
                                 data-patientlist-route="{{ route('patient.patient_list') }}"></div> --}}
@@ -71,6 +102,8 @@ use Illuminate\Support\Facades\Session;
             </section>
         </div>
     </div>
+
+
 
     <script>
         var treatmentShowRoute = "{{ route('treatment.show', ['appointment' => ':appId']) }}";
