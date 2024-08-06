@@ -232,7 +232,7 @@ date_default_timezone_set('Asia/Kolkata');
                         <tr>
                             <td>{{ ++$i }}</td>
                             <td style="text-align:left;">{{ $prescription->medicine->med_name ?? '' }}</td>
-                            <td>{{ $prescription->dose ?? '' }}</td>
+                            <td>{{ $prescription->dose ?? '' }} {{ $prescription->dose_unit ?? '' }}</td>
                             <td>{{ $prescription->dosage->dos_name ?? '' }}</td>
                             <td>{{ $prescription->duration ?? '' }}</td>
                             <td>{{ $prescription->advice ?? '' }}</td>
