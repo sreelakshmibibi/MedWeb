@@ -328,11 +328,13 @@ class TreatmentController extends Controller
             DB::beginTransaction();
             $checkExists = [];
             if (in_array($request->row_id, [1, 2, 3, 4])) {
+                
                 $checkExists = ToothExamination::where('row_id', $request->row_id)
                     ->where('patient_id', $request->patient_id)
                     ->where('app_id', $request->app_id)
                     ->where('status', 'Y')
                     ->get();
+                    
             } else {
                 $checkExists = ToothExamination::where('tooth_id', $request->tooth_id)
                     ->where('patient_id', $request->patient_id)
@@ -341,7 +343,7 @@ class TreatmentController extends Controller
                     ->get();
             }
 
-            if (!empty($checkExists)) {
+            if (!$checkExists->isEmpty()) {
                 foreach ($checkExists as $check) {
                     $check->status = 'N';
                     $check->save();
@@ -440,7 +442,6 @@ class TreatmentController extends Controller
     {
         // Retrieve patient_id from the query parameters
         $patientId = $request->query('patient_id');
-        echo $patientId;
         // Fetch ToothExamination data with related teeth and treatment details
         $toothExaminations = ToothExamination::with([
             'teeth:id,teeth_name,teeth_image',
