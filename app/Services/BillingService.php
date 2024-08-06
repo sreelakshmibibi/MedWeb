@@ -30,6 +30,7 @@ class BillingService
 
         // Initialize arrays and variables
         $individualTreatmentAmounts = [];
+        $selectedTreatmentIds = null;
         $totalCost = 0;
 
 
@@ -71,6 +72,7 @@ class BillingService
         // Increment quantity and update subtotal for this treatment
         $individualTreatmentAmounts[$treatmentId]['quantity']++;
         $individualTreatmentAmounts[$treatmentId]['subtotal'] += $discountCost;
+        $selectedTreatmentIds[] = $treatmentId;
 
         // Accumulate total cost
         $totalCost += $discountCost;
@@ -79,7 +81,7 @@ class BillingService
         /* consulting fees */
         /* REgistration fees for new patient */
 
-        return ['individualTreatmentAmounts' => $individualTreatmentAmounts, 'totalCost' => $totalCost];
+        return ['individualTreatmentAmounts' => $individualTreatmentAmounts, 'totalCost' => $totalCost, 'selectedTreatmentIds' => $selectedTreatmentIds];
 
     }
 
@@ -126,23 +128,33 @@ class BillingService
         }
     }
 
-    public function getOffers()
+    public function getOffers(array $selectedTreatmentIds, $selectedOffer)
     {
+    
         return TreatmentComboOffer::with('treatments')
-                        ->where('status', 'Y')
-                        ->whereDate('offer_from', '<=', date('Y-m-d'))
-                        ->whereDate('offer_to', '>=', date('Y-m-d'))
-                        ->get()
-                        ->mapWithKeys(function ($combOffer) {
-                            return [
-                                $combOffer->id => [
-                                    'id' => $combOffer->id,
-                                    'treatment' => $combOffer->treatments->pluck('treat_name')->implode(', '),
-                                    'cost' => number_format((float)$combOffer->treatments->sum('treat_cost'), 3, '.', ','),
-                                    'offer' => number_format((float) $combOffer->offer_amount, 3, '.', ',')
-                                ]
-                            ];
-                        });
-                        
+            ->where('status', 'Y')
+            ->whereDate('offer_from', '<=', date('Y-m-d'))
+            ->whereDate('offer_to', '>=', date('Y-m-d'))
+            ->get()
+            ->filter(function ($combOffer) use ($selectedTreatmentIds) {
+                // Get treatment IDs for the combo offer
+                $comboOfferTreatmentIds = $combOffer->treatments->pluck('id')->toArray();
+
+                // Check if all treatment IDs in the combo offer are present in the selected treatments
+                return empty(array_diff($comboOfferTreatmentIds, $selectedTreatmentIds));
+            })
+            ->mapWithKeys(function ($combOffer) use ($selectedOffer) {
+                return [
+                    $combOffer->id => [
+                        'id' => $combOffer->id,
+                        'selected' => $combOffer->id == $selectedOffer ? 1 : 0,
+                        'treatment' => $combOffer->treatments->pluck('treat_name')->implode(', '),
+                        'treatment_ids' => $combOffer->treatments->pluck('id')->toArray(),
+                        'cost' => number_format((float)$combOffer->treatments->sum('treat_cost'), 3, '.', ','),
+                        'offer' => number_format((float)$combOffer->offer_amount, 3, '.', ','),
+                    ]
+                ];
+            });
     }
+
 }

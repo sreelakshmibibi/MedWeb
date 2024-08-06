@@ -44,3 +44,33 @@ document.addEventListener("DOMContentLoaded", (event) => {
         $("#medicinetr").show();
     });
 });
+document.addEventListener('DOMContentLoaded', function() {
+    function updateBalance() {
+        // Get the total amount from the hidden input
+        let totalAmountElement = document.getElementById('totalToPay');
+        let totalAmount = parseFloat(totalAmountElement.value) || 0;
+
+        // Get the amount paid
+        let amountPaidElement = document.getElementById('amountPaid');
+        let amountPaid = parseFloat(amountPaidElement.value.replace(/,/g, '')) || 0;
+
+        // Calculate the balance
+        let balance = totalAmount - amountPaid;
+
+        // Format the balance and amount paid
+        amountPaidElement.value = formatNumber(amountPaid);
+        document.getElementById('balance').value = formatNumber(balance);
+    }
+
+    // Format number with commas and 2 decimal places
+    function formatNumber(num) {
+        return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Add event listener to the amountPaid input field
+    document.getElementById('amountPaid').addEventListener('input', updateBalance);
+
+    // Initialize the balance on page load
+    updateBalance();
+});
+
