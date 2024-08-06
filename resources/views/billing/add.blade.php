@@ -14,8 +14,16 @@ use Illuminate\Support\Facades\Session; ?>
                             {{ $appointment->patient_id}}- {{str_replace('<br>', ' ', $appointment->patient->first_name . ' ' . $appointment->patient->last_name)}}
                         </span>
                     </h3>
-                   
-                    <div>
+                    <?php  $base64Id = base64_encode($appointment->id);
+                            $idEncrypted = Crypt::encrypt($base64Id); ?>
+                                
+                                <div>
+    <?php if (sizeof($prescriptions) > 0 && $isMedicineProvided == 'Y') { ?> 
+        <a href="{{ route('medicineBilling.create', ['appointmentId' => $idEncrypted]) }}" class="btn btn-success float-end">Medicine Bill</a> 
+    <?php } ?>
+    <a href="{{ route('billing.create', ['appointmentId' => $idEncrypted]) }}" class="btn btn-success float-end">Treatment Bill</a>
+</div>
+<div>
                         <button type='button'
                             class='waves-effect waves-light btn btn-circle btn-info btn-pdf-generate btn-xs me-1'
                             title='Download' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}'
@@ -44,8 +52,6 @@ use Illuminate\Support\Facades\Session; ?>
                         <div class="flexbox invoice-details px-1   no-margin">
                             <div>
                                 <p class="mb-1"><b>Bill No:</b> 7541296</p>
-                                <?php  $base64Id = base64_encode($appointment->id);
-                                        $idEncrypted = Crypt::encrypt($base64Id); ?>
                                 <input type="hidden" id="appointmentId" value="{{ $idEncrypted }}">
                                 <p class="mb-0"><b>Generated at:</b>{{ date ('d/m/Y H:m:s')}}</p>
                             </div>
@@ -219,7 +225,7 @@ use Illuminate\Support\Facades\Session; ?>
 
     @include('billing.combo_offer')
     @include('billing.insurance')
-    @include('billing.medicine')
+    
 
     <script src="{{ asset('js/billing.js') }}"></script>
 @endsection

@@ -16,33 +16,33 @@ document.addEventListener("DOMContentLoaded", (event) => {
         }
     });
 
-    insurance_checkbox.addEventListener("change", () => {
-        if (insurance_checkbox.checked) {
-            $("#modal-insurance").modal("show");
-        } else {
-            $("#modal-insurance").modal("hide");
-            $("#insurancetr").hide();
-        }
-    });
+    // insurance_checkbox.addEventListener("change", () => {
+    //     if (insurance_checkbox.checked) {
+    //         $("#modal-insurance").modal("show");
+    //     } else {
+    //         $("#modal-insurance").modal("hide");
+    //         $("#insurancetr").hide();
+    //     }
+    // });
 
-    medicine_checkbox.addEventListener("change", () => {
-        if (medicine_checkbox.checked) {
-            $("#modal-medicine").modal("show");
-        } else {
-            $("#modal-medicine").modal("hide");
-            $("#medicinetr").hide();
-        }
-    });
+    // medicine_checkbox.addEventListener("change", () => {
+    //     if (medicine_checkbox.checked) {
+    //         $("#modal-medicine").modal("show");
+    //     } else {
+    //         $("#modal-medicine").modal("hide");
+    //         $("#medicinetr").hide();
+    //     }
+    // });
 
-    comboBtn.addEventListener("click", () => {
-        $("#combotr").show();
-    });
-    insuranceBtn.addEventListener("click", () => {
-        $("#insurancetr").show();
-    });
-    medicineBtn.addEventListener("click", () => {
-        $("#medicinetr").show();
-    });
+    // comboBtn.addEventListener("click", () => {
+    //     $("#combotr").show();
+    // });
+    // insuranceBtn.addEventListener("click", () => {
+    //     $("#insurancetr").show();
+    // });
+    // medicineBtn.addEventListener("click", () => {
+    //     $("#medicinetr").show();
+    // });
 });
 document.addEventListener('DOMContentLoaded', function() {
     function updateBalance() {
