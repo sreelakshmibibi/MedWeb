@@ -74,7 +74,8 @@ use Illuminate\Support\Facades\Session; ?>
                                 <?php $i = 0;
                                 $treatmentTotal = 0; ?>
                                 @foreach ( $individualTreatmentAmounts as $individualTreatmentAmount )
-                                <?php 
+                                <?php
+                                $i++;
                                 $cost = is_numeric($individualTreatmentAmount['cost']) ? floatval($individualTreatmentAmount['cost']) : 0;
                                 $subtotal = is_numeric($individualTreatmentAmount['subtotal']) ? floatval($individualTreatmentAmount['subtotal']) : 0;
                         
