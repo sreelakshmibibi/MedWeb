@@ -24,69 +24,81 @@
                             <div id="editTreatmentsError" class="invalid-feedback"></div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="offer_amount" class="form-label">Offer Amount <span
-                                    class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="edit_offer_amount" name="offer_amount"
-                                placeholder="Offer Amount" autocomplete="off">
-                            <div id="editOfferAmountError" class="invalid-feedback"></div>
-                        </div>
-
-                        <div class="form-group mt-3">
-                            <label for="edit_offer_from" class="form-label">Offer From <span
-                                    class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="edit_offer_from" name="offer_from">
-                            <div id="editOfferFromError" class="invalid-feedback"></div>
-                        </div>
-
-                        <div class="form-group mt-3">
-                            <label for="edit_offer_to" class="form-label">Offer To <span
-                                    class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="edit_offer_to" name="offer_to">
-                            <div id="editOfferToError" class="invalid-feedback"></div>
-                        </div>
-
-                        <div class="form-group mt-2">
-                            <label class="form-label">Status</label>
-                            <div>
-                                <input type="radio" name="status" id="edit_active" value="Y"
-                                    class="form-check-input">
-                                <label for="edit_active" class="form-check-label">Active</label>
-
-                                <input type="radio" name="status" id="edit_inactive" value="N"
-                                    class="form-check-input">
-                                <label for="edit_inactive" class="form-check-label">Inactive</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="offer_amount" class="form-label">Offer Amount <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="edit_offer_amount"
+                                        name="offer_amount" placeholder="Offer Amount" autocomplete="off">
+                                    <div id="editOfferAmountError" class="invalid-feedback"></div>
+                                </div>
                             </div>
-                            <div class="text-danger" id="editStatusError"></div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Status</label>
+                                    <div>
+                                        <input type="radio" name="status" id="edit_active" value="Y"
+                                            class="form-control with-gap">
+                                        <label for="edit_active" class="form-check-label">Active</label>
+
+                                        <input type="radio" name="status" id="edit_inactive" value="N"
+                                            class="form-control with-gap">
+                                        <label for="edit_inactive" class="form-check-label">Inactive</label>
+                                    </div>
+                                    <div class="text-danger" id="editStatusError"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="edit_offer_from" class="form-label">Offer From <span
+                                            class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="edit_offer_from" name="offer_from"
+                                        placeholder="Offer From Date" autocomplete="off">
+                                    <div id="editOfferFromError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="edit_offer_to" class="form-label">Offer To <span
+                                            class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="edit_offer_to" name="offer_to"
+                                        placeholder="Offer To Date" autocomplete="off">
+                                    <div id="editOfferToError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-group mt-3" id="editTreatDiv" style="display: none;">
-                            <h5>Treatment Details</h5>
-                            <table class="table table-bordered" id="editTreatmentDetailsTable">
-                                <thead>
+                            <h6 class="text-warning">Treatment Details</h6>
+                            <table class="table table-sm table-bordered table-hover table-striped"
+                                id="editTreatmentDetailsTable">
+                                <thead class="bg-light text-center">
                                     <tr>
                                         <th>Treatment Name</th>
-                                        <th>Treatment Cost</th>
+                                        <th class="w-100">Cost</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <!-- Dynamically added rows will go here -->
                                 </tbody>
-                                <tfoot>
+                                <tfoot class="bg-light bt-2 text-center border-primary">
                                     <tr>
-                                        <th>Total</th>
+                                        <th class="text-end">Total</th>
                                         <th id="editTotalCost">0.00</th>
                                     </tr>
                                 </tfoot>
                             </table>
                         </div>
-
                     </div>
                 </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success" id="updateComboOfferBtn">Update</button>
+                    <button type="button" class="btn btn-success float-end" id="updateComboOfferBtn">Update</button>
                 </div>
             </div>
         </div>
@@ -230,7 +242,8 @@
                 var treatmentCost = parseFloat($(this).data('cost'));
                 totalCost += treatmentCost;
                 treatmentDetailsTable.append(
-                    '<tr><td>' + treatmentName + '</td><td>' + treatmentCost.toFixed(2) +
+                    '<tr><td class="text-left">' + treatmentName +
+                    '</td><td class="text-center">' + treatmentCost.toFixed(2) +
                     '</td></tr>'
                 );
             });

@@ -1,12 +1,13 @@
 <!-- Modal -->
-<div class="modal fade" id="modal-download" tabindex="-1" aria-labelledby="modalDownloadLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalDownloadLabel">Request PDF</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="pdfRequestForm" method="POST" action="{{ route('generate.pdf') }}">
+<form id="pdfRequestForm" method="POST" action="{{ route('generate.pdf') }}">
+    <div class="modal fade" id="modal-download" tabindex="-1" aria-labelledby="modalDownloadLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalDownloadLabel">Request PDF</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
                 <div class="modal-body">
                     @csrf
                     <input type="hidden" name="pdf_appointment_id" id="pdf_appointment_id">
@@ -32,12 +33,13 @@
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success" id="treatmentDownloadBtn">Generate PDF</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary float-end" data-bs-dismiss="modal">Cancel</button>
                 </div>
-            </form>
+
+            </div>
         </div>
     </div>
-</div>
+</form>
 <script>
     var pdfTeethRoute = "{{ route('fetch.teeth.details', ['patientId' => ':patientId', 'appId' => ':appId']) }}";
     // Show or hide the tooth selection based on the PDF type
