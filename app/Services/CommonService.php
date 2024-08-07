@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Appointment;
 use App\Models\MenuItem;
+use App\Models\PatientTreatmentBilling;
 use Carbon\Carbon;
 use DateTime;
 
@@ -106,7 +107,30 @@ class CommonService
         return $ageString;
     }
     
-    
+    public function generateUniqueBillingId()
+    {
+        $appointmentDate = Carbon::parse(date('Y-m-d'));
+
+        // Get the year and month from the provided appointment date
+        $year = $appointmentDate->format('y'); // Use 'Y' for four-digit year
+        $month = $appointmentDate->format('m'); // 'm' for two-digit month
+        $day = $appointmentDate->format('d'); // 'm' for two-digit month
+        
+        // Count the number of appointments created in the current month and year
+        $appointmentCount = PatientTreatmentBilling::whereYear('created_at', $appointmentDate->format('Y'))
+            ->whereMonth('created_at', $month)
+            ->count();
+            
+        // Increment the count by 1
+        $newAppointmentNumber = $appointmentCount + 1;
+
+        // Concatenate the year, month, and the incremented count to form the appointment ID
+        $appId = $year . $month . $day. str_pad($newAppointmentNumber, 3, '0', STR_PAD_LEFT);
+        //Log::info('$appId: '.$appId);
+
+        return $appId;
+    }
+
 
     // Other common methods can be added here
 }

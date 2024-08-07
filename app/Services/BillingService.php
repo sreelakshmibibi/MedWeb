@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Appointment;
 use App\Models\AppointmentStatus;
 use App\Models\MenuItem;
+use App\Models\PatientDetailBilling;
 use App\Models\ToothExamination;
 use App\Models\TreatmentComboOffer;
 use Carbon\Carbon;
@@ -85,12 +86,14 @@ class BillingService
 
     }
 
-    public function getAppointmentCount($patient_id) 
+    public function getAppointmentCount($patient_id, $appointmentId) 
     {
-        $count = Appointment::where('patient_id', $patient_id)
+       $count = Appointment::where('patient_id', $patient_id)
+                    ->where('id', '<=', $appointmentId)
                     ->where('status', 'Y')
                     ->where('app_status', AppointmentStatus::COMPLETED)
                     ->count();
+                   
         return $count;
     }
 
@@ -155,6 +158,39 @@ class BillingService
                     ]
                 ];
             });
+    }
+
+    public function savePatientDetailBilling($billingId, $request, $index)
+    {
+        $patientDetailBilling = new PatientDetailBilling();
+        $patientDetailBilling->billing_id = $billingId;
+        $patientDetailBilling->treatment_id = $request->input('treatmentId' . $index);
+        $patientDetailBilling->quantity = $request->input('quantity' . $index);
+        $patientDetailBilling->cost = (float) str_replace(',', '',$request->input('cost' . $index));
+        $patientDetailBilling->discount = (float)$request->input('discount_percentage' . $index);
+        $patientDetailBilling->amount = (float) str_replace(',', '',$request->input('subtotal' . $index));
+        $patientDetailBilling->save();
+    }
+
+    public function saveAdditionalCharges($billingId, $inputs)
+    {
+        $charges = [
+            'treatmentReg' => ['cost' => 'regCost', 'amount' => 'regAmount'],
+            'consultationFees' => ['cost' => 'consultationFeesCost', 'amount' => 'consultationFeesAmount']
+        ];
+    
+        foreach ($charges as $key => $fields) {
+            if (isset($inputs[$key]) && $inputs[$key] !== null) {
+                $patientDetailBilling = new PatientDetailBilling();
+                $patientDetailBilling->billing_id = $billingId;
+                $patientDetailBilling->consultation_registration = $inputs[$key];
+                $patientDetailBilling->quantity = 1;
+                $patientDetailBilling->cost = (float) str_replace(',', '',$inputs[$fields['cost']]);
+                $patientDetailBilling->discount = 0;
+                $patientDetailBilling->amount = (float) str_replace(',', '',$inputs[$fields['amount']]);
+                $patientDetailBilling->save();
+            }
+        }
     }
 
 }
