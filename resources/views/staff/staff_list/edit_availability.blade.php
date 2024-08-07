@@ -52,6 +52,7 @@
                             <input type="time" class="form-control timeInput toTime"
                                 id="sunday_to{{ $i }}" title="to" name="sunday_to{{ $i }}"
                                 style="width:115px;" value="{{ $branch['timings']['sunday_to'] ?? '' }}">
+                            <span class="error-message" id="error_sunday_from{{$i}}"></span>
                         </td>
                         <td>
                             <input type="time" class="form-control timeInput fromTime"
@@ -61,6 +62,7 @@
                             <input type="time" class="form-control timeInput toTime"
                                 id="monday_to{{ $i }}" name="monday_to{{ $i }}" title="to"
                                 style="width:115px;" value="{{ $branch['timings']['monday_to'] ?? '' }}">
+                            <span class="error-message" id="error_monday_from{{$i}}"></span>
                         </td>
                         <td>
                             <input type="time" class="form-control timeInput fromTime"
@@ -70,6 +72,7 @@
                             <input type="time" class="form-control timeInput toTime"
                                 id="tuesday_to{{ $i }}" name="tuesday_to{{ $i }}" title="to"
                                 style="width:115px;" value="{{ $branch['timings']['tuesday_to'] ?? '' }}">
+                            <span class="error-message" id="error_tuesday_from{{$i}}"></span>
                         </td>
                         <td>
                             <input type="time" class="form-control timeInput fromTime"
@@ -80,6 +83,7 @@
                                 id="wednesday_to{{ $i }}" name="wednesday_to{{ $i }}"
                                 title="to" style="width:115px;"
                                 value="{{ $branch['timings']['wednesday_to'] ?? '' }}">
+                            <span class="error-message" id="error_friday_from{{$i}}"></span>
                         </td>
                         <td>
                             <input type="time" class="form-control timeInput fromTime"
@@ -90,6 +94,7 @@
                                 id="thursday_to{{ $i }}" name="thursday_to{{ $i }}"
                                 title="to" style="width:115px;"
                                 value="{{ $branch['timings']['thursday_to'] ?? '' }}">
+                            <span class="error-message" id="error_thursday_from{{$i}}"></span>
                         </td>
                         <td>
                             <input type="time" class="form-control timeInput fromTime"
@@ -99,6 +104,7 @@
                             <input type="time" class="form-control timeInput toTime"
                                 id="friday_to{{ $i }}" name="friday_to{{ $i }}" title="to"
                                 style="width:115px;" value="{{ $branch['timings']['friday_to'] ?? '' }}">
+                            <span class="error-message" id="error_friday_from{{$i}}"></span>
                         </td>
                         <td>
                             <input type="time" class="form-control timeInput fromTime"
@@ -109,6 +115,7 @@
                                 id="saturday_to{{ $i }}" name="saturday_to{{ $i }}"
                                 title="to" style="width:115px;"
                                 value="{{ $branch['timings']['saturday_to'] ?? '' }}">
+                            <span class="error-message" id="error_saturday_from{{$i}}"></span>
                         </td>
                         <td>
                             <button type="button" id="btnDelete" title="delete row"

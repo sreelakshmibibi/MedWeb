@@ -99,7 +99,7 @@
                 // Add placeholder option
                 $selectElement.append(new Option('Select a Branch', ''));
                 // Populate options excluding selected ones
-                @foreach ($clinicBranches as $clinicBranch)
+                foreach ($clinicBranches as $clinicBranch)
                     <?php
                     $clinicAddress = $clinicBranch->clinic_address;
                     $clinicAddress = explode('<br>', $clinicBranch->clinic_address);
@@ -128,42 +128,49 @@
                             name="sunday_from${count}" title="from" style="width:115px;">
                         <input type="time" class="form-control timeInput toTime" id="sunday_to${count}"
                             name="sunday_to${count}" title="to" style="width:115px;">
+                            <span class="error-message" id="error_sunday_from${count}"></span>
                     </td>
                     <td>
                         <input type="time" class="form-control timeInput fromTime" id="monday_from${count}"
                             name="monday_from${count}" title="from" style="width:115px;">
                         <input type="time" class="form-control timeInput toTime" id="monday_to${count}"
                             name="monday_to${count}" title="to" style="width:115px;">
+                        <span class="error-message" id="error_monday_from${count}"></span>
                     </td>
                     <td>
                         <input type="time" class="form-control timeInput fromTime" id="tuesday_from${count}"
                             name="tuesday_from${count}" title="from" style="width:115px;">
                         <input type="time" class="form-control timeInput toTime" id="tuesday_to${count}"
                             name="tuesday_to${count}" title="to" style="width:115px;">
+                        <span class="error-message" id="error_tuesday_from${count}"></span>
                     </td>
                     <td>
                         <input type="time" class="form-control timeInput fromTime" id="wednesday_from${count}"
                             name="wednesday_from${count}" title="from" style="width:115px;">
                         <input type="time" class="form-control timeInput toTime" id="wednesday_to${count}"
                             name="wednesday_to${count}" title="to" style="width:115px;">
+                        <span class="error-message" id="error_wednesday_from${count}"></span>
                     </td>
                     <td>
                         <input type="time" class="form-control timeInput fromTime" id="thursday_from${count}"
                             name="thursday_from${count}" title="from" style="width:115px;">
                         <input type="time" class="form-control timeInput toTime" id="thursday_to${count}"
                             name="thursday_to${count}" title="to" style="width:115px;">
+                        <span class="error-message" id="error_thursday_from${count}"></span>
                     </td>
                     <td>
                         <input type="time" class="form-control timeInput fromTime" id="friday_from${count}"
                             name="friday_from${count}" title="from" style="width:115px;">
                         <input type="time" class="form-control timeInput toTime" id="friday_to${count}"
                             name="friday_to${count}" title="to" style="width:115px;">
+                        <span class="error-message" id="error_friday_from${count}"></span>
                     </td>
                     <td>
                         <input type="time" class="form-control timeInput fromTime" id="saturday_from${count}"
                             name="saturday_from${count}" title="from" style="width:115px;">
                         <input type="time" class="form-control timeInput toTime" id="saturday_to${count}"
                             name="saturday_to${count}" title="to" style="width:115px;">
+                        <span class="error-message" id="error_saturday_from${count}"></span>
                     </td>
                     <td>
                         <button type="button" class="btnDelete waves-effect waves-light btn btn-danger btn-sm"
@@ -173,7 +180,7 @@
 
                 $('#tablebody').append(newRow);
                 let $newSelect = $(`#clinic_branch_id${count}`);
-                populateOptions($newSelect);
+                // populateOptions($newSelect);
                 // Reinitialize Select2 on the newly added select element
                 $(`#clinic_branch_id${count}`).select2({
                     width: '100%',
@@ -200,7 +207,6 @@
 
             // Validation for 'from' and 'to' time fields
             $(document).on('focusout', '.fromTime, .toTime', function() {
-                console.log('hi');
                 let index = $(this).attr('id').match(/\d+/)[0];
                 let day = $(this).closest('td').prevAll().length; // Determine the column index
                 switch (day) {
@@ -261,6 +267,26 @@
                         fromField.rules('remove', 'required');
                     }
                 }
+                let fromTimeValue = fromField.val();
+                let toTimeValue = toField.val();
+
+                if (fromTimeValue && toTimeValue) {
+                    let fromTime = new Date(`1970-01-01T${fromTimeValue}:00`);
+                    let toTime = new Date(`1970-01-01T${toTimeValue}:00`);
+
+                    if (fromTime > toTime) {
+                        fromField.addClass('is-invalid');
+                        toField.addClass('is-invalid');
+                        fromField.siblings('.error-message').text('From Time cannot be greater than To Time.');
+                        toField.siblings('.error-message').text('From Time cannot be greater than To Time.');
+                    } else {
+                        fromField.removeClass('is-invalid');
+                        toField.removeClass('is-invalid');
+                        fromField.siblings('.error-message').text('');
+                        toField.siblings('.error-message').text('');
+                    }
+                }
+                
             });
 
             // Handle change event for role dropdown

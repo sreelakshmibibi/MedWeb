@@ -230,7 +230,7 @@ class StaffListController extends Controller
                             }
                         } else {
                             DB::rollBack();
-                            return response()->json(['error' => 'Failed to create doctor: Availbilty of time slots required'], 422);
+                            return response()->json(['error' => 'Failed to create doctor: Availbilty of time slots required or please check the slots provided'], 422);
                         }
                     } else {
                         DB::commit();
