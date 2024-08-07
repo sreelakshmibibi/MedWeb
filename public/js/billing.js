@@ -43,23 +43,26 @@ document.addEventListener("DOMContentLoaded", (event) => {
     // medicineBtn.addEventListener("click", () => {
     //     $("#medicinetr").show();
     // });
-});
-document.addEventListener('DOMContentLoaded', function() {
+});document.addEventListener('DOMContentLoaded', function() {
     function updateBalance() {
         // Get the total amount from the hidden input
-        let totalAmountElement = document.getElementById('totalToPay');
-        let totalAmount = parseFloat(totalAmountElement.value) || 0;
+        const totalAmountElement = document.getElementById('totalToPay');
+        const amountPaidElement = document.getElementById('amountPaid');
+        const balanceElement = document.getElementById('balance');
 
-        // Get the amount paid
-        let amountPaidElement = document.getElementById('amountPaid');
-        let amountPaid = parseFloat(amountPaidElement.value.replace(/,/g, '')) || 0;
+        if (!totalAmountElement || !amountPaidElement || !balanceElement) {
+            return;
+        }
+
+        const totalAmount = parseFloat(totalAmountElement.value) || 0;
+        const amountPaid = parseFloat(amountPaidElement.value.replace(/,/g, '')) || 0;
 
         // Calculate the balance
-        let balance = totalAmount - amountPaid;
+        const balance = totalAmount - amountPaid;
 
         // Format the balance and amount paid
         amountPaidElement.value = formatNumber(amountPaid);
-        document.getElementById('balance').value = formatNumber(balance);
+        balanceElement.value = formatNumber(balance);
     }
 
     // Format number with commas and 2 decimal places
@@ -67,10 +70,46 @@ document.addEventListener('DOMContentLoaded', function() {
         return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
-    // Add event listener to the amountPaid input field
-    document.getElementById('amountPaid').addEventListener('input', updateBalance);
+    // Check if the amountPaid element exists before adding the event listener
+    const amountPaidElement = document.getElementById('amountPaid');
+    if (amountPaidElement) {
+        amountPaidElement.addEventListener('input', updateBalance);
+    } 
 
     // Initialize the balance on page load
     updateBalance();
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const totalToPayElement = document.getElementById('totalToPay');
+    const insurancePaidElement = document.getElementById('insurance_paid');
+    const amountToBePaidElement = document.getElementById('amount_to_be_paid');
+
+    function updateAmounts() {
+        // Check if elements exist
+        if (!totalToPayElement || !amountToBePaidElement) return;
+
+        // Get values from elements
+        const totalToPay = parseFloat(totalToPayElement.value) || 0;
+        const insurancePaid = insurancePaidElement ? parseFloat(insurancePaidElement.value) || 0 : 0;
+        
+        // Calculate balance amount
+        const balanceAmount = totalToPay - insurancePaid;
+
+        // Update the DOM elements
+        amountToBePaidElement.value = balanceAmount.toFixed(2);
+
+        // Optional: Update hidden totalToPay value
+        totalToPayElement.value = totalToPay.toFixed(2);
+    }
+
+    // Initial update
+    updateAmounts();
+
+    // Check if the insurancePaidElement exists before adding the event listener
+    if (insurancePaidElement) {
+        insurancePaidElement.addEventListener('input', updateAmounts);
+    }
+});
+
 

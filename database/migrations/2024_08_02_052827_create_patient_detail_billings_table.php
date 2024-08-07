@@ -14,10 +14,12 @@ return new class extends Migration
         Schema::create('patient_detail_billings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('billing_id')->constrained('patient_treatment_billings');
-            $table->foreignId('treatment_id')->constrained('treatment_types');
-            $table->integer('cost');
-            $table->integer('discount');
-            $table->integer('amount');
+            $table->foreignId('treatment_id')->nullable()->constrained('treatment_types');
+            $table->string('consultation_registration')->nullable();
+            $table->integer('quantity')->default(1);
+            $table->decimal('cost', 10, 3);
+            $table->decimal('discount', 10, 3);
+            $table->decimal('amount', 10, 3);
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
             $table->timestamps();

@@ -8,6 +8,9 @@ use App\Models\AppointmentStatus;
 use App\Models\AppointmentType;
 use App\Models\ClinicBasicDetail;
 use App\Models\ClinicBranch;
+use App\Models\Insurance;
+use App\Models\PatientDetailBilling;
+use App\Models\PatientTreatmentBilling;
 use App\Models\Prescription;
 use App\Models\StaffProfile;
 use App\Models\ToothExamination;
@@ -155,10 +158,17 @@ class BillingController extends Controller
 
     public function create($appointmentId)
     {
-        // print_r($request->all());exit;
         $id = base64_decode(Crypt::decrypt($appointmentId));
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])
                         ->find($id);
+        $billExists = PatientTreatmentBilling::where('status', 'Y')
+                        ->where('appointment_id', $id)
+                        ->where('patient_id', $appointment->patient_id)
+                        ->first();
+        if (!empty($billExists)) {
+            $detailBill = PatientDetailBilling::where('billing_id', $billExists->id)->get();
+            return view('billing.generateBill', compact('appointment', 'billExists', 'detailBill'));
+        }
         $billingService = new BillingService();
         $treatmentAmounts = $billingService->individualTreatmentAmounts($id, $appointment->patient_id);
         $individualTreatmentAmounts = $treatmentAmounts['individualTreatmentAmounts'];
@@ -169,13 +179,17 @@ class BillingController extends Controller
         $doctorDiscount = $appointment->doctor_discount;
         $clinicBasicDetails = ClinicBasicDetail::first();
         $feesFrequency = $clinicBasicDetails->consultation_fees_frequency;
-        $checkAppointmentCount = $billingService->getAppointmentCount($appointment->patient_id);
+        $checkAppointmentCount = $billingService->getAppointmentCount($appointment->patient_id, $appointment->id);
         $consultationFees = 1;
         $fees = $appointment->doctor->staffProfile->consultation_fees;
         if ($checkAppointmentCount > 1) {
             $consultationFees = $billingService->getConsultationFees($appointment->patient_id, $feesFrequency);
             
         }
+        $insuranceDetails = Insurance::where('patient_id', $appointment->patient_id)
+        ->where('status', 'Y')
+        ->where('policy_end_date', '>=', $appointment->app_date)
+        ->first();
         $combOffers = $billingService->getOffers($selectedTreatments, $appointment->combo_offer_id);
         $isMedicineProvided = (ClinicBranch::find($appointment->app_branch))->is_medicine_provided;
         $prescriptions = Prescription::where('app_id', $appointment->id)
@@ -185,6 +199,13 @@ class BillingController extends Controller
         $comboOfferId = $appointment->combo_offer_id ? $appointment->combo_offer_id : 0;
         $comboOfferApplied = 0;
         $comboOfferDeduction = 0;
+        if (!empty($insuranceDetails)) {
+            foreach ($individualTreatmentAmounts as &$individualTreatmentAmount) {
+                $individualTreatmentAmount['discount_percentage'] = 0;
+                $individualTreatmentAmount['treat_cost'] = $individualTreatmentAmount['cost'];
+                $individualTreatmentAmount['subtotal'] = $individualTreatmentAmount['quantity'] * $individualTreatmentAmount['treat_cost'];                    // $actualCost += $individualTreatmentAmount->cost; 
+            }
+        }
         if($comboOfferId) {
             $comboOfferTreatments = TreatmentComboOffer::with('treatments')->find($comboOfferId);
             if ($comboOfferTreatments) {
@@ -194,169 +215,76 @@ class BillingController extends Controller
                 foreach ($individualTreatmentAmounts as &$individualTreatmentAmount) {
                     $individualTreatmentAmount['discount_percentage'] = 0;
                     $individualTreatmentAmount['treat_cost'] = $individualTreatmentAmount['cost'];
-                    $individualTreatmentAmount['subtotal'] = $individualTreatmentAmount['quantity'] * $individualTreatmentAmount['treat_cost'];                    // $actualCost += $individualTreatmentAmount->cost; 
+                    $individualTreatmentAmount['subtotal'] = $individualTreatmentAmount['quantity'] * $individualTreatmentAmount['treat_cost']; 
                 }
                 $comboOfferDeduction= $comboOfferActualAmount - $comboOfferApplied;
             } 
         }
+        
         $medicineTotal = 0;
         $insurance = 0;
         // Pass variables to the view
-        return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction'));
+       
+        // if (!empty($insuranceDetails)) {
+        return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction', 'insuranceDetails'));
+        // }
+        //  else {
+        //     return view('billing.generateBill', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction'));
+        // }
     }
 
-
-
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         try {
             DB::beginTransaction();
-            $appDateTime = Carbon::parse($request->input('appdate'));
-            $appDate = $appDateTime->toDateString(); // 'Y-m-d'
-            $appTime = $appDateTime->toTimeString(); // 'H:i:s'
-            $doctorId = $request->input('doctor_id');
-            $patientId = $request->input('patient_id');
+    
+            // Collect inputs
+            $inputs = $request->only([
+                'appointment_id', 'patient_id', 'treatment_total_amount',
+                'combo_offer_deduction', 'doctor_discount', 'insurance_paid',
+                'amount_to_be_paid', 'treatmentCount', 'treatmentReg', 'regCost',
+                'regAmount', 'consultationFees', 'consultationFeesCost', 'consultationFeesAmount'
+            ]);
+            // Create and save treatment bill
+            $treatmentBill = new PatientTreatmentBilling($inputs);
             $commonService = new CommonService();
-            $doctorAvailabilityService = new DoctorAvaialbilityService();
-            $tokenNo = $commonService->generateTokenNo($doctorId, $appDate);
-            $clinicBranchId = $request->input('clinic_branch_id');
-            // Check if an appointment with the same date, time, and doctor exists
-            $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId);
-            $existingAppointmentPatient = $doctorAvailabilityService->checkAppointmentDate($clinicBranchId, $appDate, $doctorId, $patientId);
-            if ($existingAppointmentPatient) {
-                return response()->json(['errorPatient' => 'An appointment already exists for the given date and doctor.'], 422);
-            }
-            if ($existingAppointment) {
-                return response()->json(['error' => 'An appointment already exists for the given date, time, and doctor.'], 422);
-            }
+            $biilingId = $commonService->generateUniqueBillingId();
+            $treatmentBill->bill_id = $biilingId;
+            $treatmentBill->treatment_total_amount = (float) str_replace(',', '',$inputs['treatment_total_amount']);
+            $treatmentBill->combo_offer_deduction = (float) str_replace(',', '',$inputs['combo_offer_deduction'] ?? 0.000);
+            $treatmentBill->doctor_discount = (float) str_replace(',', '',$inputs['doctor_discount'] ?? 0.000);
+            $treatmentBill->insurance_paid = (float) str_replace(',', '',$inputs['insurance_paid'] ?? 0.000);
+            $treatmentBill->amount_to_be_paid = (float)  str_replace(',', '',$inputs['amount_to_be_paid'] ?? 0.000);
+            $treatmentSave = $treatmentBill->save();
 
-            // Store the appointment data
-            $appointment = new Appointment();
-            $appointment->app_id = $commonService->generateUniqueAppointmentId($appDate);
-            $appointment->patient_id = $patientId;
-            $appointment->app_date = $appDate;
-            $appointment->app_time = $appTime;
-            $appointment->token_no = $tokenNo;
-            $appointment->doctor_id = $doctorId;
-            $appointment->app_branch = $clinicBranchId;
-            $appointment->app_type = AppointmentType::FOLLOWUP;
-            $appointment->height_cm = $request->input('height');
-            $appointment->weight_kg = $request->input('weight');
-            $appointment->blood_pressure = $request->input('bp');
-            $appointment->referred_doctor = $request->input('rdoctor');
-            $appointment->app_status = AppointmentStatus::SCHEDULED;
-            $appointment->app_parent_id = $request->input('app_parent_id');
-            $appointment->created_by = auth()->user()->id;
-            $appointment->updated_by = auth()->user()->id;
-
-            if ($appointment->save()) {
+            if ($treatmentSave) {
+                $billingService = new BillingService();
+                // Process treatment details
+                $treatmentCount = $inputs['treatmentCount'] ?? 0;
+                for ($i = 1; $i <= $treatmentCount; $i++) {
+                    $billingService->savePatientDetailBilling($treatmentBill->id, $request, $i);
+                }
+        
+                // Process additional charges if present
+                $billingService->saveAdditionalCharges($treatmentBill->id, $inputs);
+            
                 DB::commit();
-
-                return redirect()->back()->with('success', 'Appointment added successfully');
+                
+                return redirect()->back()->with('success', 'Bill created successfully.');
             } else {
                 DB::rollBack();
-
-                return redirect()->back()->with('error', 'Failed to create appointment');
+                exit;
+                return redirect()->back()->with('error', 'Failed to create bill ');
             }
         } catch (\Exception $e) {
-            DB::rollback();
-
-            return redirect()->back()->with('error', 'Failed to create appointment: ' . $e->getMessage());
+            DB::rollBack();
+            echo "<pre>"; print_r($e->getMessage());echo "</pre>";exit;
+            return redirect()->back()->with('error', 'Failed to create bill: ' . $e->getMessage());
         }
     }
-
+    
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        $appointment = Appointment::with(['patient', 'doctor', 'branch'])->find($id);
-        abort_if(!$appointment, 404);
-        // Format clinic address
-        $clinicAddress = implode(', ', [
-            str_replace('<br>', ', ', $appointment->branch->clinic_address),
-            $appointment->branch->city->city,
-            $appointment->branch->state->state,
-        ]);
-        $appointment->clinic_branch = $clinicAddress;
-        $appointment->app_date = date('d-m-Y', strtotime($appointment->app_date));
-        $appointment->app_time = date('H:i', strtotime($appointment->app_time));
-
-        return $appointment;
-    }
-
-    public function update(Request $request)
-    {
-        try {
-            DB::beginTransaction();
-            $existingAppointment = Appointment::with(['patient', 'doctor', 'branch'])->find($request->edit_app_id);
-            $existingAppointment->app_status = AppointmentStatus::RESCHEDULED;
-            $existingAppointment->app_status_change_reason = $request->reschedule_reason;
-            $existingAppointment->status = 'N';
-            $existingAppointment->save();
-
-            $appDateTime = Carbon::parse($request->input('rescheduledAppdate'));
-            $appDate = $appDateTime->toDateString(); // 'Y-m-d'
-            $appTime = $appDateTime->toTimeString(); // 'H:i:s'
-            $doctorId = $existingAppointment->doctor_id;
-            $commonService = new CommonService();
-            $tokenNo = $commonService->generateTokenNo($doctorId, $appDate);
-            // Check if an appointment with the same date, time, and doctor exists
-            $appointmentExists = $commonService->checkexisting($doctorId, $appDate, $appTime, $existingAppointment->app_branch);
-
-            if ($appointmentExists) {
-                return response()->json(['error' => 'An appointment already exists for the given date, time, and doctor.'], 422);
-            }
-            // Store the appointment data
-            $appointment = new Appointment();
-            $appointment->app_id = $commonService->generateUniqueAppointmentId($appDate);
-            $appointment->patient_id = $existingAppointment->patient_id;
-            $appointment->app_date = $appDate;
-            $appointment->app_time = $appTime;
-            $appointment->token_no = $tokenNo;
-            $appointment->doctor_id = $doctorId;
-            $appointment->app_branch = $existingAppointment->app_branch;
-            $appointment->app_type = $existingAppointment->app_type;
-            $appointment->height_cm = $existingAppointment->height_cm;
-            $appointment->weight_kg = $existingAppointment->weight_kg;
-            $appointment->blood_pressure = $existingAppointment->blood_pressure;
-            $appointment->referred_doctor = $existingAppointment->referred_doctor;
-            $appointment->app_status = AppointmentStatus::SCHEDULED;
-            $appointment->app_parent_id = $existingAppointment->app_parent_id;
-            if ($appointment->save()) {
-                DB::commit();
-
-                return redirect()->back()->with('success', 'Appointment rescheduled successfully');
-            } else {
-                DB::rollBack();
-
-                return redirect()->back()->with('error', 'Failed to reschedule appointment: ');
-            }
-
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to reschedule appointment: ' . $e->getMessage());
-        }
-    }
-
-    public function destroy($id, Request $request)
-    {
-        try {
-            $appointment = Appointment::findOrFail($id);
-            $appointment->app_status_change_reason = $request->input('app_status_change_reason');
-            $appointment->app_status = AppointmentStatus::CANCELLED;
-            $appointment->status = 'N';
-            if ($appointment->save()) {
-                return response()->json(['success', 'Appointment cancelled successfully.'], 200);
-            } else {
-                return response()->json(['error', 'Appointment cancellation unsuccessfull.'], 422);
-            }
-
-        } catch (Exception $e) {
-            return response()->json(['error', 'Appointment not cancelled.'], 200);
-        }
-    }
+    
 }

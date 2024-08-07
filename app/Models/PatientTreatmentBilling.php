@@ -12,7 +12,7 @@ class PatientTreatmentBilling extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = [ 'bill_id', 'appointment_id', 'app_id','patient_id', 'treatment_total_amount', 'prescription_total_amount', 'total_amount', 'combo_offer_id', 'previous_outstanding', 'doctor_discount', 'amount_to_be_paid', 'amount_paid', 'balance_due', 'created_by', 'updated_by' ];
+    protected $fillable = [ 'bill_id', 'appointment_id', 'app_id','patient_id', 'treatment_total_amount','combo_offer_deduction', 'mode_of_payment', 'previous_outstanding', 'doctor_discount', 'amount_to_be_paid', 'amount_paid', 'balance_due', 'insurance_paid', 'status', 'created_by', 'updated_by' ];
 
     protected $dates = ['deleted_at'];
 

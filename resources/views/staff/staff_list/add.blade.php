@@ -99,7 +99,7 @@
                 // Add placeholder option
                 $selectElement.append(new Option('Select a Branch', ''));
                 // Populate options excluding selected ones
-                foreach ($clinicBranches as $clinicBranch)
+                @foreach ($clinicBranches as $clinicBranch)
                     <?php
                     $clinicAddress = $clinicBranch->clinic_address;
                     $clinicAddress = explode('<br>', $clinicBranch->clinic_address);
