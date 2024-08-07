@@ -5,7 +5,8 @@
         <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fa fa-briefcase"> </i> Edit Medicine Details</h5>
+                    <h5 class="modal-title"><i class="fa-solid fa-prescription-bottle-medical"> </i> Edit Medicine
+                        Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -32,7 +33,6 @@
                             </div>
                         </div>
 
-
                         <div class="form-group">
                             <label class="form-label" for="med_company">Company Name <span class="text-danger">
                                     *</span></label>
@@ -42,7 +42,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="form-label" for="med_price">Price <span class="text-danger">
                                             *</span></label>
@@ -51,7 +51,8 @@
                                     <div id="editMedPriceError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="form-label" for="expiry_date">Expiring Date <span class="text-danger">
                                             *</span></label>
@@ -59,44 +60,8 @@
                                     <div id="editMedExpDateError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="edit_units_per_package">Units per Package <span
-                                            class="text-danger">
-                                            *</span></label>
-                                    <input class="form-control" type="text" id="edit_units_per_package"
-                                        name="units_per_package" placeholder="Number of units per package."
-                                        onblur="generateEditTotalQuantity()">
-                                    <div id="editMedUnitPerPackError" class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="edit_package_count">Package Count <span
-                                            class="text-danger">
-                                            *</span></label>
-                                    <input class="form-control" type="text" id="edit_package_count"
-                                        name="package_count" placeholder="Total number of packages"
-                                        onblur="generateEditTotalQuantity()">
-                                    <div id="editmedPackageCountErrorError" class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="edit_total_quantity">Total Quantity</label>
-                                    <input class="form-control" type="text" id="edit_total_quantity"
-                                        name="total_quantity"
-                                        placeholder=" Total number of units available across all packages" readonly>
-                                    <div id="editMedQuantityError" class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="form-label" for="edit_package_type">Packaging Type <span
                                             class="text-danger">
@@ -111,6 +76,40 @@
                             </div>
                         </div>
 
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label" for="edit_units_per_package">Units per Package <span
+                                            class="text-danger">
+                                            *</span></label>
+                                    <input class="form-control" type="text" id="edit_units_per_package"
+                                        name="units_per_package" placeholder="Number of units per package."
+                                        onblur="generateEditTotalQuantity()">
+                                    <div id="editMedUnitPerPackError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label" for="edit_package_count">Package Count <span
+                                            class="text-danger">
+                                            *</span></label>
+                                    <input class="form-control" type="text" id="edit_package_count"
+                                        name="package_count" placeholder="Total number of packages"
+                                        onblur="generateEditTotalQuantity()">
+                                    <div id="editmedPackageCountErrorError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label" for="edit_total_quantity">Total Quantity</label>
+                                    <input class="form-control" type="text" id="edit_total_quantity"
+                                        name="total_quantity"
+                                        placeholder=" Total number of units available across all packages" readonly>
+                                    <div id="editMedQuantityError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label class="form-label" for="med_remarks">Remarks</label>
                             <input class="form-control" type="text" id="edit_med_remarks" name="med_remarks"
@@ -118,30 +117,35 @@
                             <div id="editMedRemarkError" class="invalid-feedback"></div>
                         </div>
 
-                        <div class="form-group mt-2">
-                            <label class="form-label col-md-6">Stock Status</label>
-                            <div>
-                                <input name="stock_status" type="radio" class="form-control-input" id="edit_in"
-                                    value="In Stock">
-                                <label class="form-check-label" for="edit_in">In Stock</label>
-                                <input name="stock_status" type="radio" class="form-control-input" id="edit_out"
-                                    value="Out of Stock">
-                                <label class="form-check-label" for="edit_out">Out of Stock</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label col-md-6">Stock Status</label>
+                                    <div>
+                                        <input name="stock_status" type="radio" class="form-control with-gap"
+                                            id="edit_in" value="In Stock">
+                                        <label class="pe-2" for="edit_in">In Stock</label>
+                                        <input name="stock_status" type="radio" class="form-control with-gap"
+                                            id="edit_out" value="Out of Stock">
+                                        <label class="pe-2" for="edit_out">Out of Stock</label>
+                                    </div>
+                                    <div class="text-danger" id="editMedStockStatusError"></div>
+                                </div>
                             </div>
-                            <div class="text-danger" id="editMedStockStatusError"></div>
-                        </div>
-
-                        <div class="form-group mt-2">
-                            <label class="form-label col-md-6">Active</label>
-                            <div>
-                                <input name="status" type="radio" class="form-control-input" id="med_edit_yes"
-                                    value="Y">
-                                <label class="form-check-label" for="med_edit_yes">Yes</label>
-                                <input name="status" type="radio" class="form-control-input" id="med_edit_no"
-                                    value="N">
-                                <label class="form-check-label" for="med_edit_no">No</label>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label col-md-6">Active</label>
+                                    <div>
+                                        <input name="status" type="radio" class="form-control with-gap"
+                                            id="med_edit_yes" value="Y">
+                                        <label class="pe-2" for="med_edit_yes">Yes</label>
+                                        <input name="status" type="radio" class="form-control with-gap"
+                                            id="med_edit_no" value="N">
+                                        <label class="pe-2" for="med_edit_no">No</label>
+                                    </div>
+                                    <div class="text-danger" id="editMedStatusError"></div>
+                                </div>
                             </div>
-                            <div class="text-danger" id="editMedStatusError"></div>
                         </div>
                     </div>
                 </div>
