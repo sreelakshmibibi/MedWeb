@@ -203,7 +203,6 @@ function handlePrescription(isChecked) {
         });
         $(".medicine_route_select").select2({
             width: "100%",
-            placeholder: "Select a Route",
         });
     } else {
         $(".wizard-content .wizard > .steps > ul > li.presc_class").attr(
@@ -276,23 +275,39 @@ function getTreatmentTable(stepIndex) {
                     var treatments = response.toothExaminations;
                     var comboOffers = response.comboOffer;
                     var doctorDiscount = response.doctorDiscount;
-                    if (doctorDiscount === null || doctorDiscount === undefined) {
+                    if (
+                        doctorDiscount === null ||
+                        doctorDiscount === undefined
+                    ) {
                         doctorDiscount = 0; // Or any default value you want to set
                     }
                     var totalCost = 0;
                     if (treatments && treatments.length > 0) {
                         treatments.forEach(function (exam, index) {
-                            var treatCost = parseFloat(exam.treatment.treat_cost);
-                            var discountCost = parseFloat(exam.treatment.discount_cost);
+                            var treatCost = parseFloat(
+                                exam.treatment.treat_cost
+                            );
+                            var discountCost = parseFloat(
+                                exam.treatment.discount_cost
+                            );
                             totalCost += discountCost;
-                            var treatDiscount = exam.treatment.discount_percentage;
+                            var treatDiscount =
+                                exam.treatment.discount_percentage;
 
                             var row = `
                                 <tr>
                                     <td>${index + 1}</td>
-                                    <td>${exam.treatment.treat_name} (${currency} ${treatCost.toFixed(3)})</td>
-                                    <td>${treatDiscount != null ? treatDiscount : 0} %</td>
-                                    <td>${currency} ${discountCost.toFixed(3)}</td>
+                                    <td style="text-align:left;">${
+                                        exam.treatment.treat_name
+                                    } (${currency} ${treatCost.toFixed(3)})</td>
+                                    <td>${
+                                        treatDiscount != null
+                                            ? treatDiscount
+                                            : 0
+                                    } %</td>
+                                    <td>${currency} ${discountCost.toFixed(
+                                3
+                            )}</td>
                                 </tr>
                             `;
                             tableBody.append(row);
@@ -341,7 +356,7 @@ function updateTotalCharge(totalCost, discountPercentage = 0) {
             <th colspan="3" class="text-end">Doctor Discount (if any)</th>
             <td colspan="1">
                 <div class="input-group">
-                    <input type="text" class="form-control" id="discount1" name="discount1" aria-describedby="basic-addon2" value="${discountPercentage}">
+                    <input type="text" style="text-align:right;" class="form-control" id="discount1" name="discount1" aria-describedby="basic-addon2" value="${discountPercentage}">
                     <div class="input-group-append">
                         <span class="input-group-text" id="basic-addon2">%</span>
                     </div>
@@ -372,7 +387,10 @@ $(document).on("input", "#discount1", function () {
     if (!isNaN(discountPercentage) || numericValue === "") {
         // Fetch current total cost from the UI
         var currentTotalCost = parseFloat(
-            $("#totalChargeBody .bt-3.border-primary td:last-child").text().replace('₹', '').trim()
+            $("#totalChargeBody .bt-3.border-primary td:last-child")
+                .text()
+                .replace("₹", "")
+                .trim()
         );
 
         // Check if currentTotalCost is NaN or not a valid number
@@ -388,7 +406,6 @@ $(document).on("input", "#discount1", function () {
         updateTotalCharge(0, 0);
     }
 });
-
 
 function updateValidationRules() {
     var followCheckboxChecked = $("#follow_checkbox").is(":checked");
@@ -573,10 +590,13 @@ $("#treatmentform").steps({
         errorPlacement: function (error, element) {
             if (
                 $(element).hasClass("select2-hidden-accessible") ||
-                $(element).hasClass("select2") ||
-                $(element).parent().hasClass("input-group")
+                $(element).hasClass("select2")
             ) {
                 error.insertAfter($(element).siblings());
+            } else if ($(element).parent().hasClass("input-group")) {
+                var parentElement = $(element).parent();
+                var lastChild = parentElement.children().last();
+                error.insertAfter(lastChild);
             } else {
                 error.insertAfter(element);
             }

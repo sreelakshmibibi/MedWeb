@@ -1,33 +1,33 @@
-<!-- <section id="finalStepContent" class="tabHideSection" @if (Auth::user()->isAdmin !=1)  style="display:none" @endif> -->
-    <div class="d-flex align-items-center justify-content-between">
-        <h5 class="box-title text-info mb-0 mt-2 "><i class="fa-solid fa-indian-rupee-sign me-15"></i>
-            Charge
-        </h5>
-        <!-- <button id="chargeAddRow" type="button" class="waves-effect waves-light btn btn-sm btn-outline-primary">
+<!-- <section id="finalStepContent" class="tabHideSection" @if (Auth::user()->isAdmin != 1) style="display:none" @endif> -->
+<div class="d-flex align-items-center justify-content-between">
+    <h5 class="box-title text-info mb-0 mt-2 "><i class="fa-solid fa-indian-rupee-sign me-15"></i>
+        Charge
+    </h5>
+    <!-- <button id="chargeAddRow" type="button" class="waves-effect waves-light btn btn-sm btn-outline-primary">
             <i class="fa fa-add"></i>
             Add</button> -->
-    </div>
-    <hr class="my-15 ">
+</div>
+<hr class="my-15 ">
 
-    <div class="table-responsive ">
+<div class="table-responsive ">
 
-        <table class="table table-bordered table-hover table-striped mb-0 text-center" id="charge">
+    <table class="table table-bordered table-hover table-striped mb-0 text-center" id="charge">
 
-            <thead>
-                <tr class="bg-primary-light">
-                    <th>No</th>
-                    <th>Treatment (Cost)</th>
-                    <th>Discount %(if any)</th>
-                    <th class="w-200">Rate</th>
-                    <!-- <th style="width:80px;">Action</th> -->
-                </tr>
-            </thead>
-            <tbody id="chargetablebody">
-                
-            </tbody>
-            <tbody id="totalChargeBody">
-                
-            </tbody>
-        </table>
-    </div>
+        <thead>
+            <tr class="bg-primary-light">
+                <th class="w-50">No</th>
+                <th>Treatment (Cost)</th>
+                <th class="w-100">Discount %(if any)</th>
+                <th class="w-200">Rate</th>
+                <!-- <th style="width:80px;">Action</th> -->
+            </tr>
+        </thead>
+        <tbody id="chargetablebody">
+
+        </tbody>
+        <tbody id="totalChargeBody">
+
+        </tbody>
+    </table>
+</div>
 <!-- </section> -->

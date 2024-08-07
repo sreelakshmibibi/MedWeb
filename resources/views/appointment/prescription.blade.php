@@ -136,9 +136,9 @@
                     </td>
                     <td>
                         <div class="input-group col-12">
-                            <input type="number" class="form-control text-center" id="duration{{ $index + 1 }}"
-                                name="prescriptions[{{ $index + 1 }}][duration]" aria-describedby="basic-addon2"
-                                value="{{ $prescription->duration ?? '' }}" required>
+                            <input type="number" min="1" max="365" class="form-control text-center"
+                                id="duration{{ $index + 1 }}" name="prescriptions[{{ $index + 1 }}][duration]"
+                                aria-describedby="basic-addon2" value="{{ $prescription->duration ?? '' }}" required>
                             <div class="input-group-append">
                                 <span class="input-group-text" id="basic-addon2">days</span>
                             </div>
@@ -156,7 +156,7 @@
                     <td>
                         <select class="form-control medicine_route_select" id="route{{ $index + 1 }}"
                             name="prescriptions[{{ $index + 1 }}][route_id]" style="width: 100%;">
-                            <option value="">Select a Route</option>
+                            {{-- <option value="">Select a Route</option> --}}
                             @foreach ($medicineRoutes as $route)
                                 <option value="{{ $route->id }}"
                                     {{ $prescription->route_id == $route->id ? 'selected' : '' }}>

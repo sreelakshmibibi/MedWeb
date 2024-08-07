@@ -235,7 +235,7 @@ use Illuminate\Support\Facades\Session;
                     </td>
                     <td>
                         <div class="input-group">
-                            <input type="number" class="form-control" id="duration${rowIndex}" name="prescriptions[${rowIndex}][duration]" aria-describedby="basic-addon2" required>
+                            <input type="number" min="1" max="365" class="form-control" id="duration${rowIndex}" name="prescriptions[${rowIndex}][duration]" aria-describedby="basic-addon2" required>
                             <div class="input-group-append">
                                 <span class="input-group-text" id="basic-addon2">days</span>
                             </div>
@@ -249,14 +249,13 @@ use Illuminate\Support\Facades\Session;
                     </td>
                     <td>
                         <select class="form-control" id="route${rowIndex}" name="prescriptions[${rowIndex}][route_id]"  style="width: 100%;">
-                            <option value="">Select a Route</option>
                             @foreach ($medicineRoutes as $route)
                                 <option value="{{ $route->id }}">{{ $route->route_name }}</option>
                             @endforeach
                         </select>
                     </td>
                     <td>
-                        <input type="text" class="form-control" id="remarks${rowIndex}" name="prescriptions[${rowIndex}][remark]" placeholder="remarks">
+                        <input type="text" class="form-control text-center" id="remarks${rowIndex}" name="prescriptions[${rowIndex}][remark]" placeholder="remarks">
                     </td>
                     <td>
                         <button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">
