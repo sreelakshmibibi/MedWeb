@@ -16,7 +16,7 @@
                             <div class="col-lg-4 col-12">
                                 <div class="box">
                                     <div class="box-body">
-                                        <div class="d-flex align-items-center">
+                                        <div class="d-flex align-items-center" style="min-height: 110px;">
                                             <div class="me-15">
                                                 <img src="../images/svg-icon/color-svg/custom-20.svg" alt=""
                                                     class="w-120" />
@@ -26,7 +26,6 @@
                                                 <h3 class="countnm mb-0" id="total-patient"> <?= $totalPatients ?></h3>
                                             </div>
                                         </div>
-                                        <pre class="mt-2"> </pre>
                                     </div>
                                 </div>
                             </div>
@@ -34,7 +33,6 @@
                                 <div class="box">
                                     <div class="box-body">
                                         <div class="d-flex align-items-center">
-
                                             <div class="me-15">
                                                 <img src="../images/svg-icon/color-svg/custom-18.svg" alt=""
                                                     class="w-120" />
@@ -59,17 +57,16 @@
                             <div class="col-lg-4 col-12">
                                 <div class="box">
                                     <div class="box-body">
-                                        <div class="d-flex align-items-center pb-8">
+                                        <div class="d-flex align-items-center pb-8" style="min-height: 110px;">
                                             <div class="me-15">
                                                 <img src="../images/svg-icon/color-svg/custom-19.svg" alt=""
                                                     class="w-120" />
                                             </div>
                                             <div>
                                                 <h4 class="mb-0">Total Surgery</h4>
-                                                <h3 class="countnm mb-0" id="total-surgery">245</h3>
+                                                <h3 class="countnm mb-0" id="total-surgery"><?= $totalTreatments ?></h3>
                                             </div>
                                         </div>
-                                        <pre class="mt-2"> </pre>
                                     </div>
                                 </div>
                             </div>
