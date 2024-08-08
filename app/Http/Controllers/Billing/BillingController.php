@@ -166,8 +166,8 @@ class BillingController extends Controller
                         ->where('patient_id', $appointment->patient_id)
                         ->first();
         if (!empty($billExists)) {
-            $detailBill = PatientDetailBilling::where('billing_id', $billExists->id)->get();
-            return view('billing.generateBill', compact('appointment', 'billExists', 'detailBill'));
+            $detailBills = PatientDetailBilling::where('billing_id', $billExists->id)->get();
+            return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills'));
         }
         $billingService = new BillingService();
         $treatmentAmounts = $billingService->individualTreatmentAmounts($id, $appointment->patient_id);

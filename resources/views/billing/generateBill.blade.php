@@ -81,122 +81,80 @@ use Illuminate\Support\Facades\Session; ?>
                                 </tr>
                                 <?php $i = 0;
                                 $treatmentTotal = 0; ?>
-                                @foreach ( $individualTreatmentAmounts as $individualTreatmentAmount )
+                                @foreach ( $detailBills as $detailBill )
                                 <?php
                                 $i++;
-                                $cost = is_numeric($individualTreatmentAmount['cost']) ? floatval($individualTreatmentAmount['cost']) : 0;
-                                $subtotal = is_numeric($individualTreatmentAmount['subtotal']) ? floatval($individualTreatmentAmount['subtotal']) : 0;
+                                $cost = is_numeric($detailBill->cost) ? floatval($detailBill->cost) : 0;
+                                // $subtotal = is_numeric($detailBill->amount) ? floatval($detailBill->amount) : 0;
                         
                                 ?>
                                     <tr>
                                         <td>{{ $i }}</td>
-                                        <td class="text-start">{{ $individualTreatmentAmount['treat_name'] }}
-                                            <input type="hidden" name="treatmentId{{$i}}" value="{{ $individualTreatmentAmount['treat_id'] }}">
+                                        <td class="text-start">{{ $detailBill->treatment_id ? $detailBill->treatment_id  :  $detailBill->consultation_registration}}
+                                            <input type="hidden" name="treatmentId{{$i}}" value="{{ $detailBill->treatment_id }}">
                                         </td>
-                                        <td><input type="text" readonly name="quantity{{$i}}" class="form-control text-center" value="{{ $individualTreatmentAmount['quantity'] }}"></td> <!-- Add quantity if available -->
-                                        <td><input type="text" readonly name="cost{{$i}}" class="form-control text-center" value="{{ number_format($individualTreatmentAmount['cost'], 3)}}"></td>
-                                       <td> <input type="text" readonly name="discount_percentage{{$i}}" class="form-control text-center" value="{{ $individualTreatmentAmount['discount_percentage'] }}"></td>    
+                                        <td><input type="text" readonly name="quantity{{$i}}" class="form-control text-center" value="{{ $detailBill->quantity }}"></td> <!-- Add quantity if available -->
+                                        <td><input type="text" readonly name="cost{{$i}}" class="form-control text-center" value="{{ number_format($detailBill->cost, 3)}}"></td>
+                                       <td> <input type="text" readonly name="discount_percentage{{$i}}" class="form-control text-center" value="{{ $detailBill->discount }}"></td>    
                                         
-                                        <td> <input type="text" readonly name="subtotal{{$i}}" class="form-control text-center" value="{{ number_format($individualTreatmentAmount['subtotal'], 3) }}"></td> <!-- Format the cost -->
+                                        <td> <input type="text" readonly name="subtotal{{$i}}" class="form-control text-center" value="{{ $detailBill->amount}}"></td> <!-- Format the cost -->
                                         <?php
 
                                         // $treatmentTotal += number_format($individualTreatmentAmount['subtotal'], 3)
-                                        $treatmentTotal += $subtotal;
+                                       
                                         ?>
                                     </tr>   
                                 @endforeach
-                                @if ($checkAppointmentCount == 1) 
-                                    <tr>
-                                    <td>{{ ++$i }}</td>
-                                        <td class="text-start">Registration Fees
-                                            <input type="hidden" name="regFees">
-                                        </td>
-                                        <td><input type="text" readonly name="reg_quantity" class="form-control text-center" value="1"></td> <!-- Add quantity if available -->
-                                        <td><input type="text" readonly name="regCost" class="form-control text-center" value="{{ number_format($clinicBasicDetails->patient_registration_fees, 3) }}"></td>
-                                       <td> <input type="text" readonly name="regDiscount" class="form-control text-center" value="0"></td>    
-                                        
-                                        <td> <input type="text" readonly name="regAmount" class="form-control text-center" value="{{ number_format($clinicBasicDetails->patient_registration_fees, 3) }}"></td> <!-- Format the cost -->
-                                        <?php
-
-                                        $treatmentTotal += number_format($clinicBasicDetails->patient_registration_fees, 3)
-                                        ?>
-                                    </tr>  
-                                    @endif
-                                    @if ($consultationFees == 1) 
-                                    <tr>
-                                    <td>{{ ++$i }}</td>
-                                        <td class="text-start">Consultation Fees
-                                            <input type="hidden" name="consultationFees">
-                                        </td>
-                                        <td><input type="text" readonly name="consultationFees_quantity" class="form-control text-center" value="1"></td> <!-- Add quantity if available -->
-                                        <td><input type="text" readonly name="consultationFeesCost" class="form-control text-center" value="{{ number_format($fees, 3) }}"></td>
-                                       <td> <input type="text" readonly name="consultationFeesDiscount" class="form-control text-center" value="0"></td>    
-                                        
-                                        <td> <input type="text" readonly name="consultationFeesAmount" class="form-control text-center" value="{{ number_format($fees, 3) }}"></td> <!-- Format the cost -->
-                                        <?php
-
-                                        $treatmentTotal += number_format($fees, 3)
-                                        ?>
-                                    </tr>  
-                                    @endif
-
+                                    
                                 
                             </tbody>
                             <tbody>
                                 <tr>
                                     <td colspan="5" class="text-end">Sub - Total amount</td>
-                                    <td><input type="text" readonly name="treatmenttotal" id="treatmenttotal" class="form-control text-center" value="{{ number_format($treatmentTotal, 3) }}"> </td>
+                                    <td><input type="text" readonly name="treatmenttotal" id="treatmenttotal" class="form-control text-center" value="{{ number_format($billExists->treatment_total_amount, 3) }}"> </td>
                                 </tr>
-                                <?php if (sizeof($combOffers) > 0) { ?>
+                                <?php if ($billExists->combo_offer_deduction != 0) { ?>
                                     <tr>
                                         <td colspan="5" class="text-end">
-                                        <a href="#" data-bs-toggle="modal" data-bs-target="#modal-combo">
-                                            <span class="text-danger">(Select Offer)</span></a>
+                                     
 
                                         <label for="combo_checkbox">Combo offer Discount</label></td>
-                                        <?php $treatmentTotal -= $comboOfferDeduction; ?>
-                                        <td><input type="text" readonly name="comboOfferAmount" id ="comboOfferAmount" class="form-control text-center" value="{{ number_format($comboOfferDeduction, 3) }}"> </td>
+                                        
+                                        <td><input type="text" readonly name="comboOfferAmount" id ="comboOfferAmount" class="form-control text-center" value="{{ number_format($billExists->combo_offer_deduction, 3) }}"> </td>
                                     </tr> 
                                 <?php  } ?>
                                 <!-- <tr>
                                     <td colspan="5" class="text-end">Combo Offer</td>
                                     <td>{{ session('currency') }}</td>
                                 </tr> -->
-                                @if ($insuranceApproved) 
+                                @if ($billExists->insurance_paid) 
                                 <tr>
                                 <tr>
                                         <td colspan="5" class="text-end">Insurance paid</td>
-                                        <?php $treatmentTotal -= $insurance; ?>
-                                        <td><input type="text" readonly name="insurance" id ="insurance" class="form-control text-center" value="{{ number_format($insurance, 3) }}"> </td>
+                                        <td><input type="text" readonly name="insurance" id ="insurance" class="form-control text-center" value="{{ number_format($billExists->insurance_paid, 3) }}"> </td>
                                     </tr> 
                                 </tr>
                                 @endif
-                                @if ($doctorDiscount != 0)
+                                @if ($billExists->doctor_discount != 0)
                                 <tr>
-                                    <td colspan="5" class="text-end">Doctor Discount ({{$doctorDiscount}}) %</td>
-                                    <?php 
-                                    $doctorDisc = $treatmentTotal * ($doctorDiscount/100);
-                                    $treatmentTotal = $treatmentTotal - $doctorDisc;
-                                    ?>
-                                    <td><input type="text" readonly name="doctorDisc" id="doctorDisc" class="form-control text-center" value="{{ number_format($doctorDisc, 3) }}"> </td>
+                                    <td colspan="5" class="text-end">Doctor Discount () %</td>
+                                    
+                                    <td><input type="text" readonly name="doctorDisc" id="doctorDisc" class="form-control text-center" value="{{ number_format($billExists->doctor_discount, 3) }}"> </td>
                                 </tr>
                                 @endif
-                                @if ($clinicBasicDetails->treatment_tax_included == 'N') 
                                 <tr>
-                                    <td colspan="5" class="text-end">Tax ({{$clinicBasicDetails->tax}}%)</td>
-                                    <?php 
-                                    $taxAmount = $treatmentTotal * ($clinicBasicDetails->tax / 100);
-                                    $treatmentTotal += $taxAmount;?>
-                                    <td><input type="text" readonly name="treatmenttotal" class="form-control text-center" value="{{ number_format($taxAmount, 3) }}"></td>
+                                    <td colspan="5" class="text-end">Tax ()</td>
+                                  
+                                    <td><input type="text" readonly name="treatmenttotal" class="form-control text-center" value="{{ number_format(0, 3) }}"></td>
                                 </tr>
-                                @endif
+                                
                                 <tr class="bt-3 border-primary">
                                     <td colspan="5" class="text-end ">
                                         <h3><b>Total</b></h3>
                                     </td>
                                     <td>
-                                        <h3>{{ session('currency') }}{{ number_format($treatmentTotal, 2) }}
-                                        <input type="hidden" name="totaltoPay" id="totalToPay" class="form-control text-center" value="{{ $treatmentTotal }}">
+                                        <h3>{{ session('currency') }}{{ number_format($billExists->amount_to_be_paid, 2) }}
+                                        <input type="hidden" name="totaltoPay" id="totalToPay" class="form-control text-center" value="{{ $billExists->amount_to_be_paid }}">
                                         </h3>
                                     </td>
                                 </tr>
@@ -235,6 +193,6 @@ use Illuminate\Support\Facades\Session; ?>
         </div>
     </div>
 
-    @include('billing.combo_offer')
+
     <script src="{{ asset('js/billing.js') }}"></script>
 @endsection
