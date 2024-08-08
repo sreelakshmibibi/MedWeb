@@ -14,8 +14,12 @@ use App\Http\Controllers\Settings\DepartmentController;
 use App\Http\Controllers\Settings\DiseaseController;
 use App\Http\Controllers\Settings\InsuranceController;
 use App\Http\Controllers\Settings\MedicineController;
+use App\Http\Controllers\Settings\MenuItemController;
+use App\Http\Controllers\Settings\PermissionController;
+use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\TreatmentCostController;
 use App\Http\Controllers\Settings\TreatmentPlanController;
+use App\Http\Controllers\Settings\UserController;
 use App\Http\Controllers\Staff\StaffListController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +43,41 @@ Auth::routes(['verify' => true]);
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+Route::group(['middleware' => ['role:Superadmin|Admin']], function () {
+
+    Route::resource('/permissions', PermissionController::class);
+    Route::get('/permissions/{permissionId}/delete', [PermissionController::class, 'destroy']);
+
+    //Route::resource('/roles', RoleController::class);
+    Route::resource('roles', RoleController::class)->names([
+        'index' => 'roles.index',
+        'create' => 'roles.create',
+        'store' => 'roles.store',
+        'show' => 'roles.show',
+        'edit' => 'roles.edit',
+        'update' => 'roles.update',
+        'destroy' => 'roles.destroy',
+    ]);
+    Route::get('/roles/{roleId}/delete', [RoleController::class, 'destroy']);
+    Route::get('/roles/{roleId}/give-permissions', [RoleController::class, 'addPermissionToRole']);
+    Route::put('/roles/{roleId}/give-permissions', [RoleController::class, 'givePermissionToRole']);
+    Route::resource('users', UserController::class);
+    Route::get('users/{userId}/delete', [UserController::class, 'destroy']);
+
+});
+Route::group(['middleware' => ['role:Superadmin']], function () {
+    Route::resource('menu_items', MenuItemController::class, [
+        'names' => [
+            'index' => 'menu_items.index',
+            'create' => 'menu_items.create',
+            'store' => 'menu_items.store',
+            'show' => 'menu_items.show',
+            'edit' => 'menu_items.edit',
+            'update' => 'menu_items.update',
+            'destroy' => 'menu_items.destroy',
+        ],
+    ]);
+});
 Route::get('/get-states/{countryId}', [HelperController::class, 'getStates'])->name('get.states');
 Route::get('/get-cities/{stateId}', [HelperController::class, 'getCities'])->name('get.cities');
 Route::get('/session-data', [HelperController::class, 'getSessionData']);
@@ -152,12 +191,10 @@ Route::post('/treatment/details/store', [TreatmentController::class, 'storeDetai
 
 Route::get('/billing', [BillingController::class, 'index'])->name('billing');
 Route::get('/billing/add/{appointmentId}', [BillingController::class, 'create'])->name('billing.create');
-Route::post('/billing/combo/{appointmentId}', [BillingController::class, 'comboOffer'])->name('billing.combo');
 Route::post('/billing/store', [BillingController::class, 'store'])->name('billing.store');
 Route::get('/billing/{billing}/edit', [BillingController::class, 'edit'])->name('billing.edit');
 Route::post('/billing/update', [BillingController::class, 'update'])->name('billing.update');
 Route::post('/billing/{billing}', [BillingController::class, 'destroy'])->name('billing.destroy');
-
 
 Route::get('/medicineBilling', [MedicineBillController::class, 'index'])->name('medicineBilling');
 Route::get('/medicineBilling/add/{appointmentId}', [MedicineBillController::class, 'create'])->name('medicineBilling.create');

@@ -36,7 +36,23 @@ class MenuItemsSeeder extends Seeder
             'treatment_cost',
             'combo_offers',
             'insurance',
-            'treatment_plan'
+            'treatment_plan',
+            'view role',
+            'create role',
+            'update role',
+            'delete role',
+            'view permission',
+            'create permission',
+            'update permission',
+            'delete permission',
+            'view user',
+            'create user',
+            'update user',
+            'delete user',
+            'view menu item',
+            'create menu item',
+            'update menu item',
+            'delete menu item',
         ];
 
         foreach ($permissions as $permission) {
@@ -45,8 +61,31 @@ class MenuItemsSeeder extends Seeder
 
         // Assign permissions to roles
         $superadmin->syncPermissions($permissions);
+        $adminPermissions = [
+            'view_dashboard',
+            'manage_appointments',
+            'staff_list',
+            'staff_details',
+            'patient_list',
+            'patient_details',
+            'patients',
+            'clinics',
+            'departments',
+            'medicines',
+            'treatment_cost',
+            'combo_offers',
+            'insurance',
+            'treatment_plan',
+            'view role',
+            'create role',
+            'view permission',
+            'create permission',
+            'view user',
+            'create user',
+            'update user',
+        ];
 
-        $admin->syncPermissions($permissions);
+        $admin->syncPermissions($adminPermissions);
 
         $doctor->syncPermissions([
             'view_dashboard',
@@ -57,7 +96,7 @@ class MenuItemsSeeder extends Seeder
             'medicines',
             'staff_list',
             'insurance',
-            'treatment_plan'
+            'treatment_plan',
         ]);
 
         $nurse->syncPermissions([
@@ -99,8 +138,8 @@ class MenuItemsSeeder extends Seeder
 
         $patients = MenuItem::create([
             'name' => 'Patients',
-            'url' => '#',
-            'route_name' => '#',
+            'url' => '/patient_list',
+            'route_name' => 'patient.patient_list',
             'icon' => 'fa-solid fa-hospital-user',
             'order_no' => 4,
         ]);
@@ -138,6 +177,12 @@ class MenuItemsSeeder extends Seeder
             ['name' => 'Combo Offers', 'url' => '/combo_offer', 'route_name' => 'settings.combo_offer', 'icon' => 'icon-Commit', 'order_no' => 6],
             ['name' => 'Insurance', 'url' => '/insurance', 'route_name' => 'settings.insurance', 'icon' => 'icon-Commit', 'order_no' => 7],
             ['name' => 'Treatment Plan', 'url' => '/treatment_plan', 'route_name' => 'settings.treatment_plan', 'icon' => 'icon-Commit', 'order_no' => 8],
+            ['name' => 'Roles and Permissions', 'url' => 'roles', 'route_name' => 'roles.index', 'icon' => 'icon-Commit', 'order_no' => 9],
+        ]);
+
+        $settingSuperAdminSubmenus = $settings->children()->createMany([
+            ['name' => 'Menu Items', 'url' => 'menu_items', 'route_name' => 'menu_items.index', 'icon' => 'icon-Commit', 'order_no' => 10],
+
         ]);
 
         $staffSubmenus = $staffs->children()->createMany([
@@ -163,9 +208,13 @@ class MenuItemsSeeder extends Seeder
         $settings->roles()->attach([$superadmin->id, $admin->id]);
         $reports->roles()->attach([$superadmin->id, $admin->id]);
         $billing->roles()->attach([$superadmin->id, $admin->id]);
+
         // Attach roles to submenu items
         foreach ($settingSubmenus as $submenu) {
             $submenu->roles()->attach([$superadmin->id, $admin->id]);
+        }
+        foreach ($settingSuperAdminSubmenus as $submenu) {
+            $submenu->roles()->attach([$superadmin->id]);
         }
         // Fetching the created submenus
         $staffList = $staffSubmenus->where('name', 'Staff List')->first();
