@@ -13,6 +13,7 @@ jQuery(function ($) {
             {
                 data: "DT_RowIndex",
                 name: "DT_RowIndex",
+                className: "text-center",
                 orderable: false,
                 searchable: false,
                 render: function (data, type, row, meta) {
@@ -23,14 +24,17 @@ jQuery(function ($) {
             {
                 data: "department",
                 name: "department",
+                className: "text-left",
             },
             {
                 data: "status",
                 name: "status",
+                className: "text-center",
             },
             {
                 data: "action",
                 name: "action",
+                className: "text-center",
                 orderable: false,
                 searchable: true,
             },
