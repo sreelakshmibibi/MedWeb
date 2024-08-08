@@ -97,7 +97,7 @@ class HelperController extends Controller
                 ->first();
             $toothExamDetails = $appointment->toothExamination;
             //Log::info('Appointments: '.$toothExamDetails);
-            if (! $appointment) {
+            if (!$appointment) {
                 return response()->json(['message' => 'Appointment not found'], 404);
             }
 
@@ -108,7 +108,7 @@ class HelperController extends Controller
                 'clinicDetails' => $clinicDetails,
             ];
 
-            $fileName = 'appointment_'.$appointmentId.'.pdf';
+            $fileName = 'appointment_' . $appointmentId . '.pdf';
 
         } elseif ($pdfType === 'tooth') {
             // Extract tooth IDs and row IDs from the $toothIds
@@ -137,11 +137,11 @@ class HelperController extends Controller
                     $query->where('status', 'Y')
                         ->where('app_id', $appointmentId)
                         ->where(function ($query) use ($toothIdValues, $rowIdValues) {
-                            if (! empty($toothIdValues)) {
+                            if (!empty($toothIdValues)) {
                                 $query->whereIn('tooth_id', $toothIdValues);
                             }
 
-                            if (! empty($rowIdValues)) {
+                            if (!empty($rowIdValues)) {
                                 $query->orWhereIn('row_id', $rowIdValues);
                             }
                         })
@@ -160,14 +160,11 @@ class HelperController extends Controller
                             'buccalCondition:id,condition',
                         ]);
                 },
-                'patient:id,first_name,last_name,gender,aadhaar_no,patient_id,date_of_birth,phone,address1,address2,pincode,city_id,state_id,country_id', // Include patient details
-                'patient.country:id,country',
-                'patient.state:id,state',
-                'patient.city:id,city',
             ])
                 ->where('id', $appointmentId)
                 ->first();
-            if (! $tooth) {
+
+            if (!$tooth) {
                 return response()->json(['message' => 'Tooth examination not found'], 404);
             }
 
@@ -179,9 +176,12 @@ class HelperController extends Controller
                 'clinicDetails' => $clinicDetails,
             ];
 
-            $fileName = 'tooth_'.$toothIds->map(function ($id) {
+            $fileName = 'tooth_' . $toothIds->map(function ($id) {
                 return str_replace(['Teeth:', 'Row:'], '', $id); // Clean IDs for file name
-            })->implode('_').'.pdf';
+            })->implode('_') . '.pdf';
+            $fileName = 'tooth_' . $toothIds->map(function ($id) {
+                return str_replace(['Teeth:', 'Row:'], '', $id); // Clean IDs for file name
+            })->implode('_') . '.pdf';
         } else {
             return response()->json(['message' => 'Invalid PDF type'], 400);
         }
@@ -205,7 +205,7 @@ class HelperController extends Controller
                 if ($examination->tooth_id) {
                     // If `tooth_id` is present, use the related teeth name
                     return [
-                        'teeth_id' => 'Teeth:'.$examination->tooth_id,
+                        'teeth_id' => 'Teeth:' . $examination->tooth_id,
                         'teeth_name' => $examination->teeth ? $examination->teeth->teeth_name : 'Unknown Tooth',
                     ];
                 } elseif ($examination->row_id) {
@@ -229,8 +229,40 @@ class HelperController extends Controller
                     }
 
                     return [
-                        'teeth_id' => 'Row:'.$examination->row_id,
-                        'teeth_name' => 'Row : '.$teethName,
+                        'teeth_id' => 'Row:' . $examination->row_id,
+                        'teeth_name' => 'Row : ' . $teethName,
+                    ];
+                }
+
+                if ($examination->tooth_id) {
+                    // If `tooth_id` is present, use the related teeth name
+                    return [
+                        'teeth_id' => 'Teeth:' . $examination->tooth_id,
+                        'teeth_name' => $examination->teeth ? $examination->teeth->teeth_name : 'Unknown Tooth',
+                    ];
+                } elseif ($examination->row_id) {
+                    // If `row_id` is present, use it to get the description
+                    switch ($examination->row_id) {
+                        case TeethRow::Row1:
+                            $teethName = TeethRow::Row_1_Desc;
+                            break;
+                        case TeethRow::Row2:
+                            $teethName = TeethRow::Row_2_Desc;
+                            break;
+                        case TeethRow::Row3:
+                            $teethName = TeethRow::Row_3_Desc;
+                            break;
+                        case TeethRow::Row4:
+                            $teethName = TeethRow::Row_4_Desc;
+                            break;
+                        default:
+                            $teethName = 'Unknown Row';
+                            break;
+                    }
+
+                    return [
+                        'teeth_id' => 'Row:' . $examination->row_id,
+                        'teeth_name' => 'Row : ' . $teethName,
                     ];
                 }
 
@@ -286,6 +318,60 @@ class HelperController extends Controller
 
         // Download the generated PDF
         return $pdf->download('prescription.pdf');
+    }
+
+    public function generatePatientIDCardPdf(Request $request)
+    {
+        $appId = $request->input('app_id');
+        $patientId = $request->input('patient_id');
+
+        $clinicDetails = ClinicBasicDetail::first();
+        // $prescriptions = Prescription::with([
+        //     'medicine',
+        //     'dosage',
+        //     'prescribedBy:id,name',
+        //     'route:id,route_name',
+        // ])
+        //     ->where('patient_id', $patientId)
+        //     ->where('app_id', $appId)
+        //     ->where('status', 'Y')
+        //     ->get();
+        if ($clinicDetails->clinic_logo == '') {
+            $clinicLogo = 'public/images/logo-It.png';
+        } else {
+            $clinicLogo = 'storage/' . $clinicDetails->clinic_logo;
+        }
+
+        // Fetch appointment and patient details
+        $appointment = Appointment::with([
+            'doctor:id,name',
+            'branch:id,clinic_address,city_id,state_id,country_id,pincode,clinic_phone,clinic_email',
+            'branch.state:id,state',
+            'branch.city:id,city',
+            'branch.country:id,country',
+        ])
+            ->where('id', $appId)
+            ->first();
+
+        $patient = PatientProfile::with([
+            'country:id,country',
+            'state:id,state',
+            'city:id,city',
+        ])
+            ->where('patient_id', $patientId)
+            ->first();
+
+        // Pass data to the PDF view
+        $pdf = Pdf::loadView('pdf.patientidcard_pdf', [
+            // 'prescriptions' => $prescriptions,
+            'appointment' => $appointment,
+            'patient' => $patient,
+            'clinicDetails' => $clinicDetails,
+            'clinicLogo' => $clinicLogo,
+        ])->setPaper('A6', 'landscape');
+
+        // Download the generated PDF
+        return $pdf->download('patientidcard.pdf');
     }
 
     // public function printPrescription(Request $request)

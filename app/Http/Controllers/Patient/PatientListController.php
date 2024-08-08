@@ -26,6 +26,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\DataTables as DataTables;
 
 class PatientListController extends Controller
@@ -41,6 +42,16 @@ class PatientListController extends Controller
 
             return DataTables::of($patient)
                 ->addIndexColumn()
+                ->addColumn('patient_id', function ($row) {
+                    if ($row->latestAppointment == '') {
+                        $name1 = "<a href='#' class='waves-effect waves-light btn-patientidcard-pdf-generate' title='download patient ID' data-app-id='{$row->nextAppointment->id}'
+                            data-patient-id='{$row->patient_id}'>" . $row->patient_id . '</i></a>';
+                    } else {
+                        $name1 = "<a href='#' class='waves-effect waves-light btn-patientidcard-pdf-generate' title='download patient ID' data-app-id='{$row->latestAppointment->id}'
+    data-patient-id='{$row->patient_id}'>" . $row->patient_id . '</i></a>';
+                    }
+                    return $name1;
+                })
                 ->addColumn('name', function ($row) {
                     $firstName = str_replace('<br>', ' ', $row->first_name);
 
@@ -113,7 +124,7 @@ class PatientListController extends Controller
                     return $btn;
                 })
                 //->rawColumns(['appointment_status', 'new_appointment', 'record_status', 'action'])
-                ->rawColumns(['appointment_status', 'record_status', 'action'])
+                ->rawColumns(['patient_id', 'appointment_status', 'record_status', 'action'])
                 ->make(true);
         }
 
@@ -378,7 +389,8 @@ class PatientListController extends Controller
         }
         $appointment = $patientProfile->lastAppointment;
         $history = $patientProfile->history;
-
+        Session::put('patientId', $patientProfile->patient_id);
+        Session::put('appId', $patientProfile->lastAppointment->id);
         // Return a view with the PatientProfile data
         return view('patient.patient_list.view_patient', compact('patientProfile', 'appointment', 'history'));
     }
