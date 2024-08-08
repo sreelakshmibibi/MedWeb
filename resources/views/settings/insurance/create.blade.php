@@ -4,7 +4,7 @@
         <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fa fa-briefcase"></i> Insurance Details</h5>
+                    <h5 class="modal-title"><i class="fa-solid fa-shield-alt"> </i> Insurance Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -21,8 +21,7 @@
 
                         <!--Claim types-->
                         <div class="form-group">
-                            <label class="form-label" for="claim_type">Claim Type <span
-                                    class="text-danger">
+                            <label class="form-label" for="claim_type">Claim Type <span class="text-danger">
                                     *</span></label>
                             <select class="form-select" id="claim_type" name="claim_type">
                                 <option value="">Select Claim Type</option>
@@ -31,7 +30,7 @@
                             </select>
                             <div id="claimTypeError" class="invalid-feedback"></div>
                         </div>
-                        
+
                         <!-- Status -->
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6">Active</label>
@@ -61,7 +60,7 @@
 <script>
     $(function() {
         var formSubmitting = false; // Flag to prevent multiple submissions
-            
+
         // Handle Save button click
         $('#saveInsuranceBtn').click(function() {
             if (formSubmitting) {
