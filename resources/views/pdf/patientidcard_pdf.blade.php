@@ -39,7 +39,6 @@ date_default_timezone_set('Asia/Kolkata');
             vertical-align: middle;
             /* width: 50px; */
             margin-bottom: 0;
-            /* border-top: 1px solid #666; */
         }
 
         .headingdiv {
@@ -81,27 +80,19 @@ date_default_timezone_set('Asia/Kolkata');
             font-size: 12px;
         }
 
-        .info-table,
-        .prescription-table {
+        .info-table {
             width: 100%;
             border-collapse: collapse;
             /* margin-bottom: 20px; */
             padding: 0 8px;
         }
 
-        .info-table td,
-        .prescription-table td,
-        .prescription-table th {
+        .info-table td {
             text-align: left;
             vertical-align: top;
-        }
-
-        .info-table td {
             border: none;
             padding-bottom: 8px;
         }
-
-
 
         .details {
             position: absolute;
@@ -113,7 +104,6 @@ date_default_timezone_set('Asia/Kolkata');
 
         .footer {
             bottom: 12px;
-            /* font-size: 12px; */
             width: 100%;
             border-top: 1px solid #666;
             padding-top: 4px;
@@ -124,17 +114,14 @@ date_default_timezone_set('Asia/Kolkata');
 
         .footer_text1 {
             text-align: left;
-            /* width: 50%; */
             float: left;
             padding-left: 4px;
         }
 
         .footer_text2 {
             text-align: right;
-            /* width: 50%; */
             float: right;
             padding-right: 4px;
-
         }
 
         @media print {
@@ -183,7 +170,7 @@ date_default_timezone_set('Asia/Kolkata');
         <h3 class="heading">
             <center>Patient ID Card</center>
         </h3>
-        {{-- <h4 class="subheading">Patient Information</h4> --}}
+
         <table class="info-table">
             <tr>
                 <td style="width: 15%;">
@@ -199,8 +186,6 @@ date_default_timezone_set('Asia/Kolkata');
                 </td>
             </tr>
 
-
-
             <tr>
                 <td><strong>Name:</strong></td>
                 <td>{{ str_replace('<br>', ' ', $patient->first_name) }}
@@ -209,8 +194,6 @@ date_default_timezone_set('Asia/Kolkata');
                     {{ isset($appointment->patient->date_of_birth) ? (preg_match('/(\d+) years/', $commonService->calculateAge($appointment->patient->date_of_birth), $matches) ? $matches[1] : 'N/A') : 'N/A' }}
                 </td>
             </tr>
-
-
 
             <tr>
                 <td><strong>Phone No.:</strong></td>
@@ -228,7 +211,6 @@ date_default_timezone_set('Asia/Kolkata');
                 </td>
             </tr>
 
-
             <tr>
                 <td><strong>Address:</strong></td>
                 <td> {{ $patient->address1 ?? 'N/A' }}<br />
@@ -241,7 +223,6 @@ date_default_timezone_set('Asia/Kolkata');
                         Group:</strong> {{ $patient->blood_group ?? '-' }}</td>
             </tr>
         </table>
-
     </div>
 
     {{-- <div class="details">
