@@ -16,7 +16,7 @@
 
 <div class="row">
     @foreach ($insuranceFields as $field => $label)
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="form-group">
                 <label class="form-label" for="{{ $field }}">{{ $label }}</label>
 
@@ -41,10 +41,26 @@
             </div>
         </div>
     @endforeach
+
+    <!-- Status -->
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label">Status</label>
+            <div>
+                <input name="status" type="radio" class="form-control with-gap" id="yes" value="Y"
+                    {{ ($insurance->status ?? 'Y') == 'Y' ? 'checked' : '' }}>
+                <label for="yes" class="pe-2">Active</label>
+                <input name="status" type="radio" class="form-control with-gap" id="no" value="N"
+                    {{ ($insurance->status ?? 'Y') == 'N' ? 'checked' : '' }}>
+                <label for="no">Inactive</label>
+            </div>
+            <div id="medStockStatusError" class="invalid-feedback"></div>
+        </div>
+    </div>
 </div>
 
 <!-- Status -->
-<div class="form-group mt-2">
+{{-- <div class="form-group mt-2">
     <label class="form-label">Status <span class="text-danger">*</span></label>
 
     <div class="form-check form-check-inline">
@@ -60,4 +76,4 @@
     </div>
 
     <div id="statusError" class="invalid-feedback"></div>
-</div>
+</div> --}}

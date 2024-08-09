@@ -34,11 +34,11 @@
                                 class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center">
                                 <thead class="bg-primary-light">
                                     <tr>
-                                        <th>No</th>
-                                        <th>ICD Code</th>
+                                        <th width="10px">No</th>
+                                        <th width="100px">ICD Code</th>
                                         <th>Name</th>
-                                        <th>Status</th>
-                                        <th width="100px">Action</th>
+                                        <th width="20px">Status</th>
+                                        <th width="80px">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -80,7 +80,7 @@
                     },
                     {
                         data: 'name',
-                        name: 'name'
+                        name: 'name',
                     },
                     {
                         data: 'status',

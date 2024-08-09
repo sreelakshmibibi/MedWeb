@@ -30,14 +30,13 @@
                 <div class="box">
                     <div class="box-body">
                         <div class="table-responsive">
-                            <table
-                                class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center">
-                                <thead class="bg-primary-light">
+                            <table class="table table-bordered table-hover table-striped mb-0 border-2 data-table">
+                                <thead class="bg-primary-light text-center">
                                     <tr>
-                                        <th>No</th>
+                                        <th width="10px">No</th>
                                         <th>Name</th>
-                                        <th>Status</th>
-                                        <th width="100px">Action</th>
+                                        <th width="20px">Status</th>
+                                        <th width="80px">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>

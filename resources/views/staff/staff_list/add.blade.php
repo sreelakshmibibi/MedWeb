@@ -180,7 +180,7 @@
 
                 $('#tablebody').append(newRow);
                 let $newSelect = $(`#clinic_branch_id${count}`);
-                // populateOptions($newSelect);
+                populateOptions($newSelect);
                 // Reinitialize Select2 on the newly added select element
                 $(`#clinic_branch_id${count}`).select2({
                     width: '100%',
@@ -277,8 +277,10 @@
                     if (fromTime > toTime) {
                         fromField.addClass('is-invalid');
                         toField.addClass('is-invalid');
-                        fromField.siblings('.error-message').text('From Time cannot be greater than To Time.');
-                        toField.siblings('.error-message').text('From Time cannot be greater than To Time.');
+                        fromField.siblings('.error-message').text(
+                            'From Time cannot be greater than To Time.');
+                        toField.siblings('.error-message').text(
+                            'From Time cannot be greater than To Time.');
                     } else {
                         fromField.removeClass('is-invalid');
                         toField.removeClass('is-invalid');
@@ -286,7 +288,7 @@
                         toField.siblings('.error-message').text('');
                     }
                 }
-                
+
             });
 
             // Handle change event for role dropdown
@@ -319,7 +321,7 @@
             function loadStates(countryId, stateSelectElement) {
                 if (countryId) {
                     $.ajax({
-                        url: '{{ route("get.states", "") }}' + '/' + countryId,
+                        url: '{{ route('get.states', '') }}' + '/' + countryId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -345,7 +347,7 @@
             function loadCities(stateId, citySelectElement) {
                 if (stateId) {
                     $.ajax({
-                        url: '{{ route("get.cities", "") }}' + '/' + stateId,
+                        url: '{{ route('get.cities', '') }}' + '/' + stateId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {

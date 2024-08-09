@@ -12,13 +12,15 @@
                 <div class="modal-body">
                     <div class="container-fluid">
                         <div class="form-group">
-                            <label class="form-label" for="edit_icd_code">Disease</label>
+                            <label class="form-label" for="edit_icd_code">ICD Code <span class="text-danger">
+                                    *</span></label>
                             <input class="form-control" type="text" id="edit_icd_code" name="edit_icd_code" required
                                 minlength="3" placeholder="ICD Code" autocomplete="off">
                             <div class="invalid-feedback"></div>
                         </div>
                         <div class="form-group">
-                            <label class="form-label" for="edit_disease">Disease</label>
+                            <label class="form-label" for="edit_disease">Disease <span class="text-danger">
+                                    *</span></label>
                             <input class="form-control" type="text" id="edit_disease" name="edit_disease" required
                                 minlength="3" placeholder="Disease Name" autocomplete="off">
                             <div class="invalid-feedback"></div>
@@ -33,10 +35,10 @@
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6">Active</label>
                             <div>
-                                <input name="status" type="radio" class="form-control-input" id="edit_yes"
+                                <input name="status" type="radio" class="form-control with-gap" id="edit_yes"
                                     value="Y">
                                 <label class="form-check-label" for="edit_yes">Yes</label>
-                                <input name="status" type="radio" class="form-control-input" id="edit_no"
+                                <input name="status" type="radio" class="form-control with-gap" id="edit_no"
                                     value="N">
                                 <label class="form-check-label" for="edit_no">No</label>
                             </div>

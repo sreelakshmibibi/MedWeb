@@ -37,8 +37,8 @@
                                         <th>Treatments</th>
                                         <th>Total Treatment Amount</th>
                                         <th>Offer Amount</th>
-                                        <th>Offer From</th>
-                                        <th>Offer To</th>
+                                        <th width="80px">Offer From</th>
+                                        <th width="80px">Offer To</th>
                                         <th width="20px">Status</th>
                                         <th width="80px">Actions</th>
                                     </tr>

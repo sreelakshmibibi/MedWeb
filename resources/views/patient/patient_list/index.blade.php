@@ -67,6 +67,47 @@
 
     <!-- ./wrapper -->
     <script type="text/javascript">
+        $(document).ready(function() {
+            $(document).on('click', '.btn-patientidcard-pdf-generate', function() {
+                var appId = $(this).data('app-id');
+                var patientId = $(this).data('patient-id');
+                const url = '{{ route('download.patientidcard') }}';
+
+                // Make the AJAX request
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        app_id: appId,
+                        patient_id: patientId,
+                        _token: '{{ csrf_token() }}' // Include CSRF token for security
+                    },
+                    xhrFields: {
+                        responseType: 'blob' // Important for handling binary data like PDFs
+                    },
+                    success: function(response) {
+                        var blob = new Blob([response], {
+                            type: 'application/pdf'
+                        });
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = 'patientidcard.pdf';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+
+                        // For printing, open the PDF in a new window or iframe and call print
+                        var printWindow = window.open(link.href, '_blank');
+                        printWindow.onload = function() {
+                            printWindow.print();
+                        };
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            });
+        });
         jQuery(function($) {
             var table;
             table = $('.data-table').DataTable({
