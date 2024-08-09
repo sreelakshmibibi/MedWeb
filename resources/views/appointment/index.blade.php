@@ -42,7 +42,7 @@
                                         <th width="60px">Phone number</th>
                                         <th width="180px">Branch</th>
                                         <th width="10px">Time</th>
-                                        <th width="20px">Type</th>
+                                        <th width="10px">Type</th>
                                         <th>Status</th>
                                         <th width="144px">Action</th>
                                     </tr>
@@ -128,7 +128,7 @@
                             var timeParts = data.split(':');
                             var hours = parseInt(timeParts[0], 10);
                             var minutes = parseInt(timeParts[1], 10);
-                            var ampm = hours >= 12 ? 'pm' : 'am';
+                            var ampm = hours >= 12 ? 'PM' : 'AM';
                             hours = hours % 12;
                             hours = hours ? hours : 12; // Handle midnight (00:xx) as 12
                             var formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
@@ -141,9 +141,14 @@
                         name: 'app_type',
                         render: function(data, type, row) {
                             if (data === 'NEW') {
-                                return '<span class="text-warning">' + data + '</span>';
+                                return '<span class="fa-stack fa-1x text-white fs-10" title="' +
+                                    data +
+                                    '"><i class="fas fa-square fa-stack-2x"></i> <i class="fas fa-n fa-stack-1x fa-inverse text-primary"></i></span>';
+
                             } else {
-                                return '<span class="text-info">' + data + '</span>';
+                                return '<span class="fa-stack fa-1x text-primary fs-10" title="' +
+                                    data +
+                                    '"><i class="fas fa-square fa-stack-2x"></i> <i class="fas fa-f fa-stack-1x fa-inverse text-white"></i></span>';
                             }
                         }
                     },

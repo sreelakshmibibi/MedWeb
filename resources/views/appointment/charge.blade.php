@@ -17,7 +17,7 @@
             <tr class="bg-primary-light">
                 <th class="w-50">No</th>
                 <th>Treatment (Cost)</th>
-                <th class="w-100">Discount %(if any)</th>
+                <th class="w-150">Discount %(if any)</th>
                 <th class="w-200">Rate</th>
                 <!-- <th style="width:80px;">Action</th> -->
             </tr>

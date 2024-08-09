@@ -48,17 +48,30 @@ class StaffListController extends Controller
                 })
                 ->addColumn('role', function ($row) {
                     $role = '';
+                    // if ($row->user->is_doctor) {
+                    //     $role .= '<span class="d-block  badge badge-success-light mb-1">Doctor</span>';
+                    // }
+                    // if ($row->user->is_nurse) {
+                    //     $role .= '<span class="d-block  badge badge-warning-light mb-1">Nurse</span>';
+                    // }
+                    // if ($row->user->is_admin) {
+                    //     $role .= '<span class="d-block  badge badge-primary-light mb-1">Admin</span>';
+                    // }
+                    // if ($row->user->is_reception) {
+                    //     $role .= '<span class="d-block  badge badge-info-light mb-1">Others</span>';
+                    // }
+    
                     if ($row->user->is_doctor) {
-                        $role .= '<span class="d-block  badge badge-success-light mb-1">Doctor</span>';
+                        $role .= '<span class="d-block  badge badge-success mb-1">Doctor</span>';
                     }
                     if ($row->user->is_nurse) {
-                        $role .= '<span class="d-block  badge badge-warning-light mb-1">Nurse</span>';
+                        $role .= '<span class="d-block  badge badge-warning mb-1">Nurse</span>';
                     }
                     if ($row->user->is_admin) {
-                        $role .= '<span class="d-block  badge badge-primary-light mb-1">Admin</span>';
+                        $role .= '<span class="d-block  badge badge-primary mb-1">Admin</span>';
                     }
                     if ($row->user->is_reception) {
-                        $role .= '<span class="d-block  badge badge-info-light mb-1">Others</span>';
+                        $role .= '<span class="d-block  badge badge-info mb-1">Others</span>';
                     }
                     return $role;
                 })
