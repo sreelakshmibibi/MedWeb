@@ -17,28 +17,28 @@ use Illuminate\Support\Facades\Session; ?>
                     <?php  $base64Id = base64_encode($appointment->id);
                             $idEncrypted = Crypt::encrypt($base64Id); ?>
                                 
-                                <div>
-    <?php if (sizeof($prescriptions) > 0 && $isMedicineProvided == 'Y') { ?> 
-        <a href="{{ route('medicineBilling.create', ['appointmentId' => $idEncrypted]) }}" class="btn btn-success float-end">Medicine Bill</a> 
-    <?php } ?>
-    <a href="{{ route('billing.create', ['appointmentId' => $idEncrypted]) }}" class="btn btn-success float-end">Treatment Bill</a>
-</div>
-<div>
-                        <button type='button'
-                            class='waves-effect waves-light btn btn-circle btn-info btn-pdf-generate btn-xs me-1'
-                            title='Download' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}'
-                            data-patient-id='{$row->patient->patient_id}' data-bs-target='#modal-download'><i
-                                class='fa fa-download'></i></button>
-                        <button type='button'
-                            class='waves-effect waves-light btn btn-circle btn-warning buttons-print btn-pdf-generate btn-xs me-1'
-                            title='Print' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}'
-                            data-patient-id='{$row->patient->patient_id}' data-bs-target='#modal-download'><i
-                                class='fa fa-print'></i></button>
-                        <a type="button" class="waves-effect waves-light btn btn-primary btn-circle btn-xs me-1"
-                            href="{{ route('billing') }}">
-                            <i class="fa-solid fa-angles-left"></i></a>
+                            <div>
+                                <?php if (sizeof($prescriptions) > 0 && $isMedicineProvided == 'Y') { ?> 
+                                    <a href="{{ route('medicineBilling.create', ['appointmentId' => $idEncrypted]) }}" class="btn btn-success float-end">Medicine Bill</a> 
+                                <?php } ?>
+                                <a href="{{ route('billing.create', ['appointmentId' => $idEncrypted]) }}" class="btn btn-success float-end">Treatment Bill</a>
+                            </div>
+                        <div>
+                            <button type='button'
+                                class='waves-effect waves-light btn btn-circle btn-info btn-pdf-generate btn-xs me-1'
+                                title='Download' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}'
+                                data-patient-id='{$row->patient->patient_id}' data-bs-target='#modal-download'><i
+                                    class='fa fa-download'></i></button>
+                            <button type='button'
+                                class='waves-effect waves-light btn btn-circle btn-warning buttons-print btn-pdf-generate btn-xs me-1'
+                                title='Print' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}'
+                                data-patient-id='{$row->patient->patient_id}' data-bs-target='#modal-download'><i
+                                    class='fa fa-print'></i></button>
+                            <a type="button" class="waves-effect waves-light btn btn-primary btn-circle btn-xs me-1"
+                                href="{{ route('billing') }}">
+                                <i class="fa-solid fa-angles-left"></i></a>
+                        </div>
                     </div>
-                </div>
                 <div id="error-message-container">
                     <p id="error-message"
                         class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fadeOut"
@@ -53,7 +53,7 @@ use Illuminate\Support\Facades\Session; ?>
                         <div class=" col-sm-12 invoice-col mb-15">
                             <div class="flexbox invoice-details px-1   no-margin">
                                 <div>
-                                    <p class="mb-1"><b>Bill No:</b> 7541296</p>
+                                    <p class="mb-1"><b>Bill No:</b></p>
                                     <input type="hidden" id="appointmentId" value="{{ $idEncrypted }}">
                                     <p class="mb-0"><b>Generated at:</b>{{ date ('d/m/Y H:m:s')}}</p>
                                 </div>
@@ -111,25 +111,6 @@ use Illuminate\Support\Facades\Session; ?>
                                             ?>
                                         </tr>   
                                     @endforeach
-                                    @if ($checkAppointmentCount == 1) 
-                                        <tr>
-                                        <td>{{ ++$i }}</td>
-                                            <td class="text-start">Registration Fees
-                                                <input type="hidden" name="treatmentReg" value="ReistarationFees">
-                                            </td>
-                                            <td><input type="text" readonly name="reg_quantity" class="form-control text-center" value="1"></td> <!-- Add quantity if available -->
-                                            <td><input type="text" readonly name="regCost" class="form-control text-center" value="{{ number_format($clinicBasicDetails->patient_registration_fees, 3) }}"></td>
-                                            <?php if (empty($insuranceDetails)) { ?>
-                                            <td> <input type="text" readonly name="regDiscount" class="form-control text-center" value="0"></td>    
-                                            <?php } ?>
-                                            
-                                            <td> <input type="text" readonly name="regAmount" class="form-control text-center" value="{{ number_format($clinicBasicDetails->patient_registration_fees, 3) }}"></td> <!-- Format the cost -->
-                                            <?php
-
-                                            $treatmentTotal += number_format($clinicBasicDetails->patient_registration_fees, 3)
-                                            ?>
-                                        </tr>  
-                                        @endif
                                         @if ($consultationFees == 1) 
                                         <tr>
                                         <td>{{ ++$i }}</td>
@@ -190,7 +171,7 @@ use Illuminate\Support\Facades\Session; ?>
                                         <?php 
                                         $taxAmount = $treatmentTotal * ($clinicBasicDetails->tax / 100);
                                         $treatmentTotal += $taxAmount;?>
-                                        <td><input type="text" readonly name="treatmenttotal" class="form-control text-center" value="{{ number_format($taxAmount, 3) }}"></td>
+                                        <td><input type="text" readonly name="tax" class="form-control text-center" value="{{ number_format($taxAmount, 3) }}"></td>
                                     </tr>
                                     @endif
                                     <tr class="bt-3 border-primary">
@@ -211,7 +192,7 @@ use Illuminate\Support\Facades\Session; ?>
                                         </tr>  
                                         <tr>
                                         <td colspan="{{$colspan}}" class="text-end ">Balance Amount to be Paid</td>
-                                        <td><input type="text" name="amount_to_be_paid" id="amount_to_be_paid" class="form-control text-center" ></td>
+                                        <td><input type="text" name="amount_to_be_paid_insurance" id="amount_to_be_paid_insurance" class="form-control text-center" ></td>
                                     </tr>
                                     <?php } ?>
                                    

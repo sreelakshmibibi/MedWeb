@@ -166,7 +166,7 @@ class BillingController extends Controller
                         ->where('patient_id', $appointment->patient_id)
                         ->first();
         if (!empty($billExists)) {
-            $detailBills = PatientDetailBilling::where('billing_id', $billExists->id)->get();
+            $detailBills = PatientDetailBilling::with('treatment')->where('billing_id', $billExists->id)->get();
             return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills'));
         }
         $billingService = new BillingService();
@@ -237,24 +237,41 @@ class BillingController extends Controller
     {
         try {
             DB::beginTransaction();
-    
+
             // Collect inputs
+           
             $inputs = $request->only([
                 'appointment_id', 'patient_id', 'treatment_total_amount',
                 'combo_offer_deduction', 'doctor_discount', 'insurance_paid',
-                'amount_to_be_paid', 'treatmentCount', 'treatmentReg', 'regCost',
-                'regAmount', 'consultationFees', 'consultationFeesCost', 'consultationFeesAmount'
+                'amount_to_be_paid_insurance', 'treatmentCount', 'treatmentReg', 'regCost',
+                'tax', 'totaltoPay', 'consultationFees', 'consultationFeesCost', 'consultationFeesAmount'
             ]);
+            
+            // Fix input key case
+            $totalToPay = (float) str_replace(',', '', $request->input('totaltoPay')) ?? 0.00;
+            $insurancePaid = $inputs['insurance_paid'] ?? 0.000;
+           
+            
+            // Convert inputs to float
+            $inputs['treatment_total_amount'] = (float) str_replace(',', '', $inputs['treatment_total_amount']);
+            $inputs['combo_offer_deduction'] = (float) str_replace(',', '', $inputs['combo_offer_deduction'] ?? 0.000);
+            $inputs['doctor_discount'] = (float) str_replace(',', '', $inputs['doctor_discount'] ?? 0.000);
+            $inputs['insurance_paid'] = (float) str_replace(',', '', $insurancePaid);
+            $inputs['tax'] = (float) str_replace(',', '', $inputs['tax'] ?? 0.000);
+
+            // Determine amount to be paid
+            $amountToBePaid = isset($inputs['insurance_paid']) && $inputs['insurance_paid'] > 0
+                ? (float) str_replace(',', '', $inputs['amount_to_be_paid_insurance'] ?? 0.000)
+                : (float) str_replace(',', '', $totalToPay);
+
             // Create and save treatment bill
+            $clinicBasicDetails = ClinicBasicDetail::first();
             $treatmentBill = new PatientTreatmentBilling($inputs);
             $commonService = new CommonService();
             $biilingId = $commonService->generateUniqueBillingId();
             $treatmentBill->bill_id = $biilingId;
-            $treatmentBill->treatment_total_amount = (float) str_replace(',', '',$inputs['treatment_total_amount']);
-            $treatmentBill->combo_offer_deduction = (float) str_replace(',', '',$inputs['combo_offer_deduction'] ?? 0.000);
-            $treatmentBill->doctor_discount = (float) str_replace(',', '',$inputs['doctor_discount'] ?? 0.000);
-            $treatmentBill->insurance_paid = (float) str_replace(',', '',$inputs['insurance_paid'] ?? 0.000);
-            $treatmentBill->amount_to_be_paid = (float)  str_replace(',', '',$inputs['amount_to_be_paid'] ?? 0.000);
+            $treatmentBill->amount_to_be_paid = $amountToBePaid;
+            $treatmentBill->tax_percentile = $clinicBasicDetails->tax;
             $treatmentSave = $treatmentBill->save();
 
             if ($treatmentSave) {
@@ -264,25 +281,29 @@ class BillingController extends Controller
                 for ($i = 1; $i <= $treatmentCount; $i++) {
                     $billingService->savePatientDetailBilling($treatmentBill->id, $request, $i);
                 }
-        
+
                 // Process additional charges if present
                 $billingService->saveAdditionalCharges($treatmentBill->id, $inputs);
-            
+
                 DB::commit();
                 
                 return redirect()->back()->with('success', 'Bill created successfully.');
             } else {
                 DB::rollBack();
-                exit;
-                return redirect()->back()->with('error', 'Failed to create bill ');
+                return redirect()->back()->with('error', 'Failed to create bill.');
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            echo "<pre>"; print_r($e->getMessage());echo "</pre>";exit;
             return redirect()->back()->with('error', 'Failed to create bill: ' . $e->getMessage());
         }
     }
-    
+
+
+    public function payment(Request $request)
+    {
+        dd($request->all());
+    }
+
     /**
      * Show the form for editing the specified resource.
      */

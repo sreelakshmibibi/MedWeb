@@ -43,7 +43,7 @@ return new class extends Migration
             $table->time('consult_end_time')->nullable();
             $table->string('remarks', 500)->nullable();
             $table->decimal('doctor_discount', 5, 2)->nullable();
-            $table->foreignId('combo_offer_id')->nulable()->constrained('treatment_combo_offers');
+            $table->foreignId('combo_offer_id')->nullable()->constrained('treatment_combo_offers');
             $table->string('status', 5)->default('Y');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');

@@ -21,8 +21,11 @@ return new class extends Migration
             $table->decimal('previous_outstanding', 10, 3)->nullable();
             $table->decimal('doctor_discount', 10, 3)->nullable();
             $table->decimal('insurance_paid', 10, 3)->nullable();
+            $table->float('tax_percentile')->nullable();
+            $table->decimal('tax', 10, 3)->nullable();
             $table->decimal('amount_to_be_paid', 10, 3)->nullable();
             $table->string('mode_of_payment')->nullable();
+            $table->decimal('bank_tax', 10, 3)->nullable();
             $table->decimal('amount_paid', 10, 3)->nullable();
             $table->decimal('balance_due' , 10, 3)->nullable();
             $table->char('status')->default('Y');

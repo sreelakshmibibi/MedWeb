@@ -43,47 +43,33 @@ document.addEventListener("DOMContentLoaded", (event) => {
     // medicineBtn.addEventListener("click", () => {
     //     $("#medicinetr").show();
     // });
-});document.addEventListener('DOMContentLoaded', function() {
-    function updateBalance() {
-        // Get the total amount from the hidden input
-        const totalAmountElement = document.getElementById('totalToPay');
-        const amountPaidElement = document.getElementById('amountPaid');
-        const balanceElement = document.getElementById('balance');
+});
 
-        if (!totalAmountElement || !amountPaidElement || !balanceElement) {
-            return;
-        }
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('billingForm');
+    const amountPaidInput = form.querySelector('#amountPaid');
+    const totalToPayInput = form.querySelector('#totalToPay');
+    const balanceDueInput = form.querySelector('#balance');
+    const balanceToGiveBackInput = form.querySelector('#balanceToGiveBack');
 
-        const totalAmount = parseFloat(totalAmountElement.value) || 0;
-        const amountPaid = parseFloat(amountPaidElement.value.replace(/,/g, '')) || 0;
+    function updateBalances() {
+        const amountPaid = parseFloat(amountPaidInput.value) || 0;
+        const totalToPay = parseFloat(totalToPayInput.value) || 0;
 
-        // Calculate the balance
-        const balance = totalAmount - amountPaid;
+        const balanceDue = totalToPay - amountPaid;
+        const balanceToGiveBack = amountPaid > totalToPay ? amountPaid - totalToPay : 0;
 
-        // Format the balance and amount paid
-        amountPaidElement.value = formatNumber(amountPaid);
-        balanceElement.value = formatNumber(balance);
+        balanceDueInput.value = balanceDue.toFixed(3);
+        balanceToGiveBackInput.value = balanceToGiveBack.toFixed(3);
     }
 
-    // Format number with commas and 2 decimal places
-    function formatNumber(num) {
-        return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
-
-    // Check if the amountPaid element exists before adding the event listener
-    const amountPaidElement = document.getElementById('amountPaid');
-    if (amountPaidElement) {
-        amountPaidElement.addEventListener('input', updateBalance);
-    } 
-
-    // Initialize the balance on page load
-    updateBalance();
+    amountPaidInput.addEventListener('input', updateBalances);
 });
 
 document.addEventListener('DOMContentLoaded', function() {
     const totalToPayElement = document.getElementById('totalToPay');
     const insurancePaidElement = document.getElementById('insurance_paid');
-    const amountToBePaidElement = document.getElementById('amount_to_be_paid');
+    const amountToBePaidElement = document.getElementById('amount_to_be_paid_insurance');
 
     function updateAmounts() {
         // Check if elements exist
@@ -97,10 +83,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const balanceAmount = totalToPay - insurancePaid;
 
         // Update the DOM elements
-        amountToBePaidElement.value = balanceAmount.toFixed(2);
+        amountToBePaidElement.value = balanceAmount.toFixed(3);
 
         // Optional: Update hidden totalToPay value
-        totalToPayElement.value = totalToPay.toFixed(2);
+        totalToPayElement.value = totalToPay.toFixed(3);
     }
 
     // Initial update
@@ -112,4 +98,86 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    const balanceInput = document.getElementById('balance');
+    const balanceToGiveBackInput = document.getElementById('balanceToGiveBack');
+    const considerForNextPaymentCheckbox = document.getElementById('consider_for_next_payment');
+    const balanceGivenCheckbox = document.getElementById('balance_given');
 
+    // Function to check if input fields have values
+    function checkValues() {
+        const balance = parseFloat(balanceInput.value) || 0;
+        const balanceToGiveBack = parseFloat(balanceToGiveBackInput.value) || 0;
+
+        // Enable checkboxes based on values
+        considerForNextPaymentCheckbox.disabled = balance != 0;
+        balanceGivenCheckbox.disabled = balanceToGiveBack != 0;
+    }
+
+    // Function to handle mutually exclusive selection
+    function handleCheckboxChange() {
+        if (considerForNextPaymentCheckbox.checked && balanceGivenCheckbox.checked) {
+            // Uncheck balanceGivenCheckbox if considerForNextPaymentCheckbox is checked
+            balanceGivenCheckbox.checked = false;
+        } else if (balanceGivenCheckbox.checked && considerForNextPaymentCheckbox.checked) {
+            // Uncheck considerForNextPaymentCheckbox if balanceGivenCheckbox is checked
+            considerForNextPaymentCheckbox.checked = false;
+        }
+    }
+
+    // Initialize checkbox states
+    checkValues();
+
+    // Add event listeners to update states when input values change
+    balanceInput.addEventListener('input', checkValues);
+    balanceToGiveBackInput.addEventListener('input', checkValues);
+
+    // Add event listeners to handle mutually exclusive checkbox selection
+    considerForNextPaymentCheckbox.addEventListener('change', handleCheckboxChange);
+    balanceGivenCheckbox.addEventListener('change', handleCheckboxChange);
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Add event listener to the submit button
+    document.querySelector('#submitPayment').addEventListener('click', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+        
+        // Get the form and its inputs
+        const form = document.getElementById('billingForm');
+        const modeOfPayment = form.querySelector('input[name="mode_of_payment"]:checked');
+        const amountPaid = form.querySelector('input[name="amountPaid"]').value;
+        const balanceToGiveBack = parseFloat(form.querySelector('input[name="balanceToGiveBack"]').value) || 0;
+        const considerForNextPayment = form.querySelector('input[name="consider_for_next_payment"]').checked;
+        const balanceGiven = form.querySelector('input[name="balance_given"]').checked;
+        var isValid = 1;
+        // Check if mode of payment is selected
+        if (!modeOfPayment) {
+            $('#modeError').text('Please select a mode of payment.');
+            isValid = 0;
+        }
+
+        // Check if amount paid is not null or empty
+        if (!amountPaid || isNaN(amountPaid) || parseFloat(amountPaid) <= 0) {
+            $('#paidAmountError').text('Please enter a valid amount paid.');
+            isValid = 0;
+        }
+
+        // Check if balance to give back is greater than zero and at least one checkbox is checked
+        if ( balanceToGiveBack > 0) {
+            if (!considerForNextPayment && !balanceGiven) {
+                $('#checkError').text('If balance is to be given back, at least one checkbox (Consider for Next Payment or Balance Given) must be checked.');
+                isValid = 0;
+            }
+        }
+        if (isValid) {
+            // If all checks pass, submit the form
+            $('#modeError').text('');
+            $('#paidAmountError').text('');
+            $('#checkError').text('');
+            form.submit();
+
+        } else {
+            return;
+        }
+    });
+});
