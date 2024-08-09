@@ -78,6 +78,7 @@ Route::group(['middleware' => ['role:Superadmin']], function () {
         ],
     ]);
 });
+
 Route::get('/get-states/{countryId}', [HelperController::class, 'getStates'])->name('get.states');
 Route::get('/get-cities/{stateId}', [HelperController::class, 'getCities'])->name('get.cities');
 Route::get('/session-data', [HelperController::class, 'getSessionData']);
@@ -191,6 +192,7 @@ Route::post('/treatment/details/store', [TreatmentController::class, 'storeDetai
 
 Route::get('/billing', [BillingController::class, 'index'])->name('billing');
 Route::get('/billing/add/{appointmentId}', [BillingController::class, 'create'])->name('billing.create');
+Route::post('/billing/combo/{appointmentId}', [BillingController::class, 'comboOffer'])->name('billing.combo');
 Route::post('/billing/store', [BillingController::class, 'store'])->name('billing.store');
 Route::get('/billing/{billing}/edit', [BillingController::class, 'edit'])->name('billing.edit');
 Route::post('/billing/update', [BillingController::class, 'update'])->name('billing.update');
