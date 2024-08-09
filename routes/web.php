@@ -154,6 +154,8 @@ Route::get('/billing', [BillingController::class, 'index'])->name('billing');
 Route::get('/billing/add/{appointmentId}', [BillingController::class, 'create'])->name('billing.create');
 Route::post('/billing/combo/{appointmentId}', [BillingController::class, 'comboOffer'])->name('billing.combo');
 Route::post('/billing/store', [BillingController::class, 'store'])->name('billing.store');
+Route::post('/billing/payment', [BillingController::class, 'payment'])->name('billing.payment');
+
 Route::get('/billing/{billing}/edit', [BillingController::class, 'edit'])->name('billing.edit');
 Route::post('/billing/update', [BillingController::class, 'update'])->name('billing.update');
 Route::post('/billing/{billing}', [BillingController::class, 'destroy'])->name('billing.destroy');
@@ -163,6 +165,7 @@ Route::get('/medicineBilling', [MedicineBillController::class, 'index'])->name('
 Route::get('/medicineBilling/add/{appointmentId}', [MedicineBillController::class, 'create'])->name('medicineBilling.create');
 Route::post('/medicineBilling/combo/{appointmentId}', [MedicineBillController::class, 'comboOffer'])->name('medicineBilling.combo');
 Route::post('/medicineBilling/store', [MedicineBillController::class, 'store'])->name('medicineBilling.store');
+Route::post('/medicineBilling/payment', [MedicineBillController::class, 'payment'])->name('medicineBilling.payment');
 Route::get('/medicineBilling/{billing}/edit', [MedicineBillController::class, 'edit'])->name('medicineBilling.edit');
 Route::post('/medicineBilling/update', [MedicineBillController::class, 'update'])->name('medicineBilling.update');
 Route::post('/medicineBilling/{billing}', [MedicineBillController::class, 'destroy'])->name('medicineBilling.destroy');

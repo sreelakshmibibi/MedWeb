@@ -45,7 +45,10 @@ use Illuminate\Support\Facades\Session; ?>
                         style="display: none;"></p>
                 </div>
             </div>
-
+            <form method="post"  id="billingForm"
+            action="{{ route('billing.payment') }}" enctype="multipart/form-data">
+            @csrf
+           
             <section class="content">
                 <div class=" row invoice-info">
                     <div class=" col-sm-12 invoice-col mb-15">
@@ -90,7 +93,7 @@ use Illuminate\Support\Facades\Session; ?>
                                 ?>
                                     <tr>
                                         <td>{{ $i }}</td>
-                                        <td class="text-start">{{ $detailBill->treatment_id ? $detailBill->treatment_id  :  $detailBill->consultation_registration}}
+                                        <td class="text-start">{{ $detailBill->treatment_id ? $detailBill->treatment->treat_name  :  $detailBill->consultation_registration}}
                                             <input type="hidden" name="treatmentId{{$i}}" value="{{ $detailBill->treatment_id }}">
                                         </td>
                                         <td><input type="text" readonly name="quantity{{$i}}" class="form-control text-center" value="{{ $detailBill->quantity }}"></td> <!-- Add quantity if available -->
@@ -127,7 +130,7 @@ use Illuminate\Support\Facades\Session; ?>
                                     <td colspan="5" class="text-end">Combo Offer</td>
                                     <td>{{ session('currency') }}</td>
                                 </tr> -->
-                                @if ($billExists->insurance_paid) 
+                                @if ($billExists->insurance_paid!= 0) 
                                 <tr>
                                 <tr>
                                         <td colspan="5" class="text-end">Insurance paid</td>
@@ -137,17 +140,18 @@ use Illuminate\Support\Facades\Session; ?>
                                 @endif
                                 @if ($billExists->doctor_discount != 0)
                                 <tr>
-                                    <td colspan="5" class="text-end">Doctor Discount () %</td>
+                                    <td colspan="5" class="text-end">Doctor Discount ({{$appointment->doctor_discount}} %)</td>
                                     
                                     <td><input type="text" readonly name="doctorDisc" id="doctorDisc" class="form-control text-center" value="{{ number_format($billExists->doctor_discount, 3) }}"> </td>
                                 </tr>
                                 @endif
+                                @if ($billExists->tax_percentile != 0 && $billExists->tax != 0) 
                                 <tr>
-                                    <td colspan="5" class="text-end">Tax ()</td>
+                                    <td colspan="5" class="text-end">Tax ({{$billExists->tax_percentile}}%)</td>
                                   
-                                    <td><input type="text" readonly name="treatmenttotal" class="form-control text-center" value="{{ number_format(0, 3) }}"></td>
+                                    <td><input type="text" readonly name="tax" class="form-control text-center" value="{{ number_format($billExists->tax, 3) }}"></td>
                                 </tr>
-                                
+                                @endif
                                 <tr class="bt-3 border-primary">
                                     <td colspan="5" class="text-end ">
                                         <h3><b>Total</b></h3>
@@ -160,21 +164,37 @@ use Illuminate\Support\Facades\Session; ?>
                                 </tr>
                                 <tr>
                                 <td colspan="3">
-    <span class="text-bold">Mode of Payment : </span>
-    <input type="radio" class="form-check-input" name="mode_of_payment" id="mode_of_payment_gpay" value="gpay">
-        <label class="form-check-label" for="mode_of_payment_gpay">Gpay</label>
-    <input type="radio" class="form-check-input" name="mode_of_payment" id="mode_of_payment_cash" value="cash">
-        <label class="form-check-label" for="mode_of_payment_cash">Cash</label>
-    <input type="radio" class="form-check-input" name="mode_of_payment" id="mode_of_payment_insurance" value="insurance">
-        <label class="form-check-label" for="mode_of_payment_insurance">Insurance</label>
-    </td>
+                                    <span class="text-bold">Mode of Payment : </span>
+                                    <input type="radio" class="form-check-input" name="mode_of_payment" id="mode_of_payment_gpay" value="gpay" required>
+                                        <label class="form-check-label" for="mode_of_payment_gpay">Gpay</label>
+                                    <input type="radio" class="form-check-input" name="mode_of_payment" id="mode_of_payment_gpay" value="gpay" required>
+                                        <label class="form-check-label" for="mode_of_payment_gpay">Card</label>
+                                    <input type="radio" class="form-check-input" name="mode_of_payment" id="mode_of_payment_cash" value="cash" required>
+                                        <label class="form-check-label" for="mode_of_payment_cash">Cash</label>
+                                        <span class="error-message text-danger" id="modeError"></span>
+                                </td>
 
-                                    <td colspan="2" class="text-end ">Paid Amount</td>
-                                    <td><input type="text" name="amountPaid" id="amountPaid" class="form-control text-center" ></td>
+                                <td colspan="2" class="text-end ">Paid Amount</td>
+                                <td><input type="text" name="amountPaid" id="amountPaid" class="form-control text-center" required ><span class="error-message text-danger" id="paidAmountError"></span>
+                                </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="5" class="text-end ">Balance</td>
+                                    <td colspan="3">
+                                        <input type="checkbox" name="consider_for_next_payment" id="consider_for_next_payment" class="form-check-input">
+                                        <label class="form-check-label" for="consider_for_next_payment">Consider for Next Payment</label>
+                                    </td>
+                                    
+                                    <td colspan="2" class="text-end ">BalanceDue</td>
                                     <td><input type="text" name="balance" id="balance" class="form-control text-center" ></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <input type="checkbox" name="balance_given" id="balance_given" class="form-check-input">
+                                        <label class="form-check-label" for="balance_given">Balance Given</label>
+                                        <span class="error-message text-danger" id="checkError"></span>
+                                    </td>
+                                    <td colspan="2" class="text-end">Balance to Give Back</td>
+                                    <td><input type="text" name="balanceToGiveBack" id="balanceToGiveBack" class="form-control text-center" readonly></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -183,13 +203,14 @@ use Illuminate\Support\Facades\Session; ?>
 
                 <div class="row text-end py-3">
                     <div class="col-12">
-                        <button type="button" class="btn btn-success pull-right"><i class="fa fa-credit-card"></i>
+                        <button type="button" class="btn btn-success pull-right" name="submitPayment" id="submitPayment"><i class="fa fa-credit-card"></i>
                             Submit Payment
                         </button>
                     </div>
                 </div>
 
             </section>
+            </form>
         </div>
     </div>
 

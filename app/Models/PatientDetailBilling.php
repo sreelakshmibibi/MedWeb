@@ -29,4 +29,9 @@ class PatientDetailBilling extends Model
         });
     }
 
+    public function treatment()
+    {
+        return $this->belongsTo(TreatmentType::class, 'treatment_id', 'id');
+    }
+
 }
