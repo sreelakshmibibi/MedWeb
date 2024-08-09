@@ -34,9 +34,9 @@ class TodayController extends Controller
             // Example: Fetch data from your model based on selected date
             $appointments = Appointment::whereDate('app_date', $selectedDate);
             if (!Auth::user()->is_admin) {
-                $appointments =  $appointments->where('doctor_id', Auth::user()->id);
-            } 
-            $appointments =  $appointments->with(['patient', 'doctor', 'branch'])
+                $appointments = $appointments->where('doctor_id', Auth::user()->id);
+            }
+            $appointments = $appointments->with(['patient', 'doctor', 'branch'])
                 ->orderBy('token_no', 'ASC')
                 ->get();
             return DataTables::of($appointments)
@@ -57,7 +57,7 @@ class TodayController extends Controller
                     $interval = $now->diff($dob); // Difference between current date and DOB
                     return $interval->y;
                 })
-                
+
                 ->addColumn('phone', function ($row) {
                     // return str_replace("<br>", " ", $row->patient->first_name . " " . $row->patient->last_name);
                     // $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
@@ -70,21 +70,35 @@ class TodayController extends Controller
                         ($row->app_type == AppointmentType::FOLLOWUP ? AppointmentType::FOLLOWUP_WORDS : '');
                 })
                 ->addColumn('status', function ($row) {
+                    // $statusMap = [
+                    //     AppointmentStatus::SCHEDULED => 'badge-success',
+                    //     AppointmentStatus::WAITING => 'badge-warning',
+                    //     AppointmentStatus::UNAVAILABLE => 'badge-warning-light',
+                    //     AppointmentStatus::CANCELLED => 'badge-danger',
+                    //     AppointmentStatus::COMPLETED => 'badge-success-light',
+                    //     AppointmentStatus::BILLING => 'badge-primary',
+                    //     AppointmentStatus::PROCEDURE => 'badge-secondary',
+                    //     AppointmentStatus::MISSED => 'badge-danger-light',
+                    //     AppointmentStatus::RESCHEDULED => 'badge-info',
+                    // ];
+    
                     $statusMap = [
-                        AppointmentStatus::SCHEDULED => 'badge-success',
-                        AppointmentStatus::WAITING => 'badge-warning',
-                        AppointmentStatus::UNAVAILABLE => 'badge-warning-light',
-                        AppointmentStatus::CANCELLED => 'badge-danger',
-                        AppointmentStatus::COMPLETED => 'badge-success-light',
-                        AppointmentStatus::BILLING => 'badge-primary',
-                        AppointmentStatus::PROCEDURE => 'badge-secondary',
-                        AppointmentStatus::MISSED => 'badge-danger-light',
-                        AppointmentStatus::RESCHEDULED => 'badge-info',
+                        AppointmentStatus::SCHEDULED => 'text-success',
+                        AppointmentStatus::WAITING => 'text-warning',
+                        AppointmentStatus::UNAVAILABLE => 'text-dark',
+                        AppointmentStatus::CANCELLED => 'text-danger',
+                        AppointmentStatus::COMPLETED => 'text-muted',
+                        AppointmentStatus::BILLING => 'text-primary',
+                        AppointmentStatus::PROCEDURE => 'text-secondary',
+                        AppointmentStatus::MISSED => 'text-white',
+                        AppointmentStatus::RESCHEDULED => 'text-info',
                     ];
                     $btnClass = isset($statusMap[$row->app_status]) ? $statusMap[$row->app_status] : '';
-                    return "<span class='btn d-block btn-xs badge {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . "</span>";
+                    return "<span class=' {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . "</span>";
+
+                    // return "<span class='btn d-block btn-xs badge {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . "</span>";
                 })
-                
+
                 ->addColumn('action', function ($row) {
                     $btn = null;
                     $base64Id = base64_encode($row->id);
@@ -108,9 +122,9 @@ class TodayController extends Controller
         // Perform logic to calculate or retrieve the total
         $total = PatientProfile::where('status', 'Y')->count(); // Replace with your actual logic to get the total
         $totalStaff = StaffProfile::where('status', 'Y')->count();
-        $totalDoctor = StaffProfile::where('status', 'Y')->whereNot('license_number', NULL )->count();
+        $totalDoctor = StaffProfile::where('status', 'Y')->whereNot('license_number', NULL)->count();
         $totalOthers = $totalStaff - $totalDoctor;
-       
+
         return response()->json(['total' => $total, 'totalStaff' => $totalStaff, 'totalDoctor' => $totalDoctor, 'totalOthers' => $totalOthers]);
     }
 

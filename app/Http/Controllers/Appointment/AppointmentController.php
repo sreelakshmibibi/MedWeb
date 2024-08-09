@@ -90,7 +90,7 @@ class AppointmentController extends Controller
                         AppointmentStatus::WAITING => 'text-warning',
                         AppointmentStatus::UNAVAILABLE => 'text-dark',
                         AppointmentStatus::CANCELLED => 'text-danger',
-                        AppointmentStatus::COMPLETED => 'text-mute',
+                        AppointmentStatus::COMPLETED => 'text-muted',
                         AppointmentStatus::BILLING => 'text-primary',
                         AppointmentStatus::PROCEDURE => 'text-secondary',
                         AppointmentStatus::MISSED => 'text-white',

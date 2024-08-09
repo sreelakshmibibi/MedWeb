@@ -73,7 +73,7 @@
 
                             <div class="col-xl-12 col-12">
                                 <div class="box">
-                                    <div class="box-header">
+                                    <div class="box-header pb-3">
                                         <h4 class="box-title">Patient Statistics</h4>
                                     </div>
                                     <div class="box-body">
@@ -89,7 +89,7 @@
                     </div>
                     <div class="col-xxxl-3 col-xl-4 col-12">
                         <div class="box">
-                            <div class="box-header">
+                            <div class="box-header pb-3">
                                 <h4 class="box-title">Total Patient</h4>
                             </div>
                             <div class="box-body">
@@ -97,14 +97,15 @@
                             </div>
                         </div>
                         <div class="box">
-                            <div class="box-header with-border">
+                            <div class="box-header with-border pb-2">
                                 <h4 class="box-title">Doctors List</h4>
                                 <p class="mb-0 pull-right">Today</p>
                             </div>
                             <div class="box-body">
                                 <div class="inner-user-div3">
                                     <div class="d-flex align-items-center mb-30">
-                                        @if (!empty($workingDoctors))
+                                        {{-- @if (!empty($workingDoctors)) --}}
+                                        @if ($workingDoctors->isNotEmpty())
                                             @foreach ($workingDoctors as $workingDoctor)
                                                 <div class="me-15">
                                                     <img src="{{ asset('storage/' . $workingDoctor->user->staffProfile->photo) }}"
@@ -124,6 +125,8 @@
                                                     href="{{ route('staff.staff_list.view', $workingDoctor->user->staffProfile->id) }}"><i
                                                         class="fa fa-eye"></i></a>
                                             @endforeach
+                                        @else
+                                            <h6 class="text-muted mb-1 fs-16">No doctors available today!</h6>
                                         @endif
                                     </div>
 

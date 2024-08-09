@@ -1,17 +1,17 @@
 <div class="box">
-    <div class="box-header with-border">
+    <div class="box-header with-border pb-2 ">
         <h4 class="box-title">Patients List</h4>
         <p class="mb-0 pull-right">Today</p>
     </div>
     <div class="box-body">
         <div class="table-responsive">
-            <table class="table table-bordered table-hover table-striped mb-0 data-table text-center">
+            <table class="table table-bordered table-hover table-striped mb-0 data-table text-center" width="100%">
 
                 <thead>
                     <tr class="bg-primary-light">
                         <th>No</th>
                         {{-- <th>Date</th> --}}
-                        <th>Token No</th>
+                        <th>PID</th>
                         <th>Name</th>
                         <th>Age</th>
                         <th>Doctor</th>
@@ -20,7 +20,7 @@
                         <th>Type</th>
                         <th>Status</th>
                         {{-- <th>Settings</th> --}}
-                        <th width="100px">Action</th>
+                        <th width="20px">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,7 +31,7 @@
     </div>
     <div class="box-footer bg-light py-10 with-border">
         <div class="d-flex align-items-center justify-content-between">
-            <p class="mb-0">Total <span id="total-value"> </span> Patients</p>
+            <p class="mb-0">Total <span id="total-value"></span> Patients</p>
             <a type="button" href="{{ route('patient.patient_list') }}"
                 class="waves-effect waves-light btn btn-primary">View
                 All</a>
@@ -72,14 +72,21 @@
         var table = $('.data-table').DataTable({
             processing: true,
             serverSide: true,
+            responsive: true,
             lengthMenu: [5, 10, 25, 50],
             ajax: {
                 url: '{{ route('patient.today') }}',
                 type: "GET",
+                dataSrc: function(json) {
+                    $('#total-value').text(json
+                        .recordsTotal);
+                    return json.data;
+                }
             },
             columns: [{
                     data: 'token_no',
-                    name: 'token_no'
+                    name: 'token_no',
+                    className: 'max-w-10'
                 },
                 {
                     data: 'patient_id',
@@ -88,15 +95,18 @@
 
                 {
                     data: 'name',
-                    name: 'name'
+                    name: 'name',
+                    className: 'w-120'
                 },
                 {
                     data: 'age',
-                    name: 'age'
+                    name: 'age',
+                    className: 'max-w-10'
                 },
                 {
                     data: 'doctor',
-                    name: 'doctor'
+                    name: 'doctor',
+                    className: 'w-120'
                 },
                 {
                     data: 'phone',
@@ -106,11 +116,12 @@
                 {
                     data: 'app_time',
                     name: 'app_time',
+                    className: 'w-10',
                     render: function(data, type, row) {
                         var timeParts = data.split(':');
                         var hours = parseInt(timeParts[0], 10);
                         var minutes = parseInt(timeParts[1], 10);
-                        var ampm = hours >= 12 ? 'pm' : 'am';
+                        var ampm = hours >= 12 ? 'PM' : 'AM';
                         hours = hours % 12;
                         hours = hours ? hours : 12; // Handle midnight (00:xx) as 12
 
@@ -121,12 +132,22 @@
                         return formattedTime;
                     }
                 },
-
-
                 {
                     data: 'app_type',
                     name: 'app_type',
+                    className: 'max-w-10',
+                    render: function(data, type, row) {
+                        if (data === 'NEW') {
+                            return '<span class="fa-stack fa-1x text-white fs-10" title="' +
+                                data +
+                                '"><i class="fas fa-square fa-stack-2x"></i> <i class="fas fa-n fa-stack-1x fa-inverse text-primary"></i></span>';
 
+                        } else {
+                            return '<span class="fa-stack fa-1x text-primary fs-10" title="' +
+                                data +
+                                '"><i class="fas fa-square fa-stack-2x"></i> <i class="fas fa-f fa-stack-1x fa-inverse text-white"></i></span>';
+                        }
+                    }
                 },
 
                 {
@@ -138,6 +159,7 @@
                 {
                     data: 'action',
                     name: 'action',
+                    className: 'w-10',
                     orderable: false,
                     searchable: true
                 },
