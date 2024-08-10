@@ -3,11 +3,11 @@
     <td>{{ str_repeat('—', $level) }} {{ $item->name }}</td>
     <td>{{ $item->url }}</td>
     <td>{{ $item->icon }}</td>
-    <td>{{ $item->order_no }}</td>
+    <td class="text-center">{{ $item->order_no }}</td>
     <td>{{ $item->route_name }}</td>
-    <td>{{ $item->status == 'Y' ? 'Active' : 'Inactive' }}</td>
-    <td>
-        <a href="{{ route('menu_items.edit', $item->id) }}" class="btn btn-warning btn-sm">Edit</a>
+    <td class="text-center">{{ $item->status == 'Y' ? 'Active' : 'Inactive' }}</td>
+    <td class="text-center">
+        <a href="{{ route('menu_items.edit', $item->id) }}" class="btn btn-warning btn-sm me-2">Edit</a>
         <form action="{{ route('menu_items.destroy', $item->id) }}" method="POST" style="display:inline;">
             @csrf
             @method('DELETE')
