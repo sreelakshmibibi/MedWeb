@@ -18,11 +18,13 @@ use App\Models\TreatmentComboOffer;
 use App\Services\BillingService;
 use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\DataTables;
 
 class BillingController extends Controller
@@ -272,6 +274,7 @@ class BillingController extends Controller
             $treatmentBill->bill_id = $biilingId;
             $treatmentBill->amount_to_be_paid = $amountToBePaid;
             $treatmentBill->tax_percentile = $clinicBasicDetails->tax;
+            $treatmentBill->bill_status = PatientTreatmentBilling::BILL_GENERATED;
             $treatmentSave = $treatmentBill->save();
 
             if ($treatmentSave) {
@@ -301,11 +304,68 @@ class BillingController extends Controller
 
     public function payment(Request $request)
     {
-        dd($request->all());
+        $billId = base64_decode(Crypt::decrypt($request['billId']));
+        $appointmentId = base64_decode(Crypt::decrypt($request['appointmentId']));
+        $patientId = $request['patientId']; 
+        $patientTreatmentBilling = PatientTreatmentBilling::findOrFail($billId);
+        if (!$patientTreatmentBilling)
+            abort(404);
+        
+        $patientTreatmentBilling->amount_paid = $request['amountPaid'];
+        $patientTreatmentBilling->mode_of_payment = $request['mode_of_payment'];
+        $patientTreatmentBilling->consider_for_next_payment = isset($request['consider_for_next_payment']) ? 1 : 0;
+        $patientTreatmentBilling->balance_due = $request['balance'];
+        $patientTreatmentBilling->balance_to_give_back = $request['balanceToGiveBack'];
+        $patientTreatmentBilling->balance_given = isset($request['balance_given']) ? 1 :0;
+        $patientTreatmentBilling->bill_status = PatientTreatmentBilling::PAYMENT_DONE;
+        $patientTreatmentBilling->save();
+        $appointment = Appointment::with(['patient', 'doctor', 'branch'])
+                        ->find($appointmentId);
+        $billDetails = PatientDetailBilling::with('treatment')->where('billing_id', $billId)->get();
+        $clinicBasicDetails = ClinicBasicDetail::first();
+        $pdf = Pdf::loadView('pdf.treatmentBill_pdf', [
+            'billDetails' => $billDetails,
+            'patientTreatmentBilling' => $patientTreatmentBilling,
+            'appointment' => $appointment,
+            'patient' => $appointment->patient,
+            'clinicBasicDetails' => $clinicBasicDetails
+        ])->setPaper('A5', 'portrait');
+        $bill_patientId = "bill_".$appointment->patient_id."_".date('Y-m-d').".pdf";
+        return $pdf->download($bill_patientId);
+        
+
     }
 
     /**
      * Show the form for editing the specified resource.
      */
+
+     public function paymentReceipt(Request $request)
+     {
+        $billId = base64_decode(Crypt::decrypt($request->input('billId')));
+        $appointmentId = base64_decode(Crypt::decrypt($request['appointmentId']));
+        $patientTreatmentBilling = PatientTreatmentBilling::findOrFail($billId);
+        
+        // Generate PDF
+        $appointment = Appointment::with(['patient', 'doctor', 'branch'])
+                    ->find($appointmentId);
+        $billDetails = PatientDetailBilling::with('treatment')->where('billing_id', $billId)->get();
+        $clinicBasicDetails = ClinicBasicDetail::first();
+        $pdf = Pdf::loadView('pdf.treatmentBill_pdf', [
+                'billDetails' => $billDetails,
+                'patientTreatmentBilling' => $patientTreatmentBilling,
+                'appointment' => $appointment,
+                'patient' => $appointment->patient,
+                'clinicBasicDetails' => $clinicBasicDetails
+                ])->setPaper('A5', 'portrait');
+        $bill_patientId = "bill_".$appointment->patient_id."_".date('Y-m-d').".pdf";
+         // Save PDF to storage
+        $fileName = 'billing_report_' . $bill_patientId;
+        $filePath = 'public/pdfs/' . $fileName;
+        Storage::put($filePath, $pdf->output());
+    
+        // Return PDF file URL
+        return response()->json(['pdfUrl' => Storage::url($filePath)]);
+     }
     
 }

@@ -28,6 +28,10 @@ return new class extends Migration
             $table->decimal('bank_tax', 10, 3)->nullable();
             $table->decimal('amount_paid', 10, 3)->nullable();
             $table->decimal('balance_due' , 10, 3)->nullable();
+            $table->decimal('balance_to_give_back' , 10, 3)->nullable();
+            $table->char('balance_given')->nullable();
+            $table->char('consider_for_next_payment')->nullable();
+            $table->integer('bill_status')->nullable();
             $table->char('status')->default('Y');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');

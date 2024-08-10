@@ -139,6 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 document.addEventListener('DOMContentLoaded', function () {
     // Add event listener to the submit button
+    if (document.querySelector('#submitPayment')) {
     document.querySelector('#submitPayment').addEventListener('click', function (event) {
         event.preventDefault(); // Prevent the default form submission
         
@@ -179,5 +180,42 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             return;
         }
+        
     });
+}
+    document.getElementById('printPayment').addEventListener('click', function () {
+        var billId = document.getElementById('billId').value;
+        var appointmentId = document.getElementById('appointmentId').value;
+
+        // AJAX request to generate the PDF
+        fetch(receiptRoute, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ billId: billId, appointmentId: appointmentId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.pdfUrl) {
+                // Open the PDF in a new window and trigger print dialog
+                var printWindow = window.open(data.pdfUrl, '_blank');
+                printWindow.addEventListener('load', function () {
+                    printWindow.print();
+                });
+
+                // Redirect after printing
+                printWindow.addEventListener('afterprint', function () {
+                    window.location.href = "{{ route('billing') }}";
+                });
+            } else {
+                alert('Failed to generate PDF.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+    
 });
