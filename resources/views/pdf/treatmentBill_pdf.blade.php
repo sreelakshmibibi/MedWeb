@@ -219,9 +219,9 @@ date_default_timezone_set('Asia/Kolkata');
                         <th>#</th>
                         <th>Treatment</th>
                         <th>Quantity</th>
-                        <th>Unit Cost ({{$clinicBasicDetails->currency}})</th>
+                        <th>Unit Cost ({{$clinicDetails->currency}})</th>
                         <th>Discount(%)</th>
-                        <th>SubTotal ({{$clinicBasicDetails->currency}})</th>
+                        <th>SubTotal ({{$clinicDetails->currency}})</th>
                     </tr>
                 </thead>
                 <tbody>

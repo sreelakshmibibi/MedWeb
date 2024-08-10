@@ -322,18 +322,22 @@ class BillingController extends Controller
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])
                         ->find($appointmentId);
         $billDetails = PatientDetailBilling::with('treatment')->where('billing_id', $billId)->get();
-        $clinicBasicDetails = ClinicBasicDetail::first();
+        $clinicDetails = ClinicBasicDetail::first();
+        if ($clinicDetails->clinic_logo == '') {
+            $clinicLogo = 'public/images/logo-It.png';
+        } else {
+            $clinicLogo = 'storage/' . $clinicDetails->clinic_logo;
+        }
         $pdf = Pdf::loadView('pdf.treatmentBill_pdf', [
             'billDetails' => $billDetails,
             'patientTreatmentBilling' => $patientTreatmentBilling,
             'appointment' => $appointment,
             'patient' => $appointment->patient,
-            'clinicBasicDetails' => $clinicBasicDetails
+            'clinicDetails' => $clinicDetails,
+            'clinicLogo' => $clinicLogo,
         ])->setPaper('A5', 'portrait');
         $bill_patientId = "bill_".$appointment->patient_id."_".date('Y-m-d').".pdf";
         return $pdf->download($bill_patientId);
-        
-
     }
 
     /**
@@ -350,13 +354,18 @@ class BillingController extends Controller
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])
                     ->find($appointmentId);
         $billDetails = PatientDetailBilling::with('treatment')->where('billing_id', $billId)->get();
-        $clinicBasicDetails = ClinicBasicDetail::first();
-        $pdf = Pdf::loadView('pdf.treatmentBill_pdf', [
+        $clinicDetails = ClinicBasicDetail::first();
+        if ($clinicDetails->clinic_logo == '') {
+            $clinicLogo = 'public/images/logo-It.png';
+        } else {
+            $clinicLogo = 'storage/' . $clinicDetails->clinic_logo;
+        }$pdf = Pdf::loadView('pdf.treatmentBill_pdf', [
                 'billDetails' => $billDetails,
                 'patientTreatmentBilling' => $patientTreatmentBilling,
                 'appointment' => $appointment,
                 'patient' => $appointment->patient,
-                'clinicBasicDetails' => $clinicBasicDetails
+                'clinicDetails' => $clinicDetails,
+                'clinicLogo' => $clinicLogo,
                 ])->setPaper('A5', 'portrait');
         $bill_patientId = "bill_".$appointment->patient_id."_".date('Y-m-d').".pdf";
          // Save PDF to storage
