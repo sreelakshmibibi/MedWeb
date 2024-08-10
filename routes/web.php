@@ -197,7 +197,7 @@ Route::get('/billing/add/{appointmentId}', [BillingController::class, 'create'])
 Route::post('/billing/combo/{appointmentId}', [BillingController::class, 'comboOffer'])->name('billing.combo');
 Route::post('/billing/store', [BillingController::class, 'store'])->name('billing.store');
 Route::post('/billing/payment', [BillingController::class, 'payment'])->name('billing.payment');
-
+Route::post('/billing/paymentReceipt', [BillingController::class, 'paymentReceipt'])->name('billing.paymentReceipt');
 Route::get('/billing/{billing}/edit', [BillingController::class, 'edit'])->name('billing.edit');
 Route::post('/billing/update', [BillingController::class, 'update'])->name('billing.update');
 Route::post('/billing/{billing}', [BillingController::class, 'destroy'])->name('billing.destroy');

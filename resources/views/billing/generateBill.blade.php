@@ -15,7 +15,9 @@ use Illuminate\Support\Facades\Session; ?>
                         </span>
                     </h3>
                     <?php  $base64Id = base64_encode($appointment->id);
-                            $idEncrypted = Crypt::encrypt($base64Id); ?>
+                            $idEncrypted = Crypt::encrypt($base64Id);
+                            $base64BillId = base64_encode($billExists->id);
+                            $idEncryptedBill = Crypt::encrypt($base64BillId); ?>
                                 
                                 <div>
     <?php //if (sizeof($prescriptions) > 0 && $isMedicineProvided == 'Y') { ?> 
@@ -55,7 +57,8 @@ use Illuminate\Support\Facades\Session; ?>
                         <div class="flexbox invoice-details px-1   no-margin">
                             <div>
                                 <p class="mb-1"><b>Bill No:</b> {{$billExists->bill_id}}</p>
-                                <input type="hidden" id="appointmentId" value="{{ $idEncrypted }}">
+                                <input type="hidden" name="appointmentId" id="appointmentId" value="{{ $idEncrypted }}">
+                                <input type="hidden" name="billId" id="billId" value="{{ $idEncryptedBill }}">
                                 <p class="mb-0"><b>Created at:</b>{{$billExists->updated_at}}</p>
                             </div>
                             <div><b>Appointment ID:</b> {{ $appointment->app_id}}</div>
@@ -163,38 +166,38 @@ use Illuminate\Support\Facades\Session; ?>
                                     </td>
                                 </tr>
                                 <tr>
-                                <td colspan="3">
-                                    <span class="text-bold">Mode of Payment : </span>
-                                    <input type="radio" class="form-check-input" name="mode_of_payment" id="mode_of_payment_gpay" value="gpay" required>
-                                        <label class="form-check-label" for="mode_of_payment_gpay">Gpay</label>
-                                    <input type="radio" class="form-check-input" name="mode_of_payment" id="mode_of_payment_gpay" value="gpay" required>
-                                        <label class="form-check-label" for="mode_of_payment_gpay">Card</label>
-                                    <input type="radio" class="form-check-input" name="mode_of_payment" id="mode_of_payment_cash" value="cash" required>
-                                        <label class="form-check-label" for="mode_of_payment_cash">Cash</label>
-                                        <span class="error-message text-danger" id="modeError"></span>
-                                </td>
+                                    <td colspan="3">
+                                        <span class="text-bold">Mode of Payment : </span>
+                                        <input type="radio" class="form-check-input" name="mode_of_payment" id="mode_of_payment_gpay" value="gpay" required <?php if ($billExists->mode_of_payment == "gpay") { ?> checked <?php } ?>  >
+                                            <label class="form-check-label" for="mode_of_payment_gpay">Gpay</label>
+                                        <input type="radio" class="form-check-input" name="mode_of_payment" id="mode_of_payment_card" value="card" required <?php if ($billExists->mode_of_payment == "card") { ?> checked <?php } ?>>
+                                            <label class="form-check-label" for="mode_of_payment_card">Card</label>
+                                        <input type="radio" class="form-check-input" name="mode_of_payment" id="mode_of_payment_cash" value="cash" required <?php if ($billExists->mode_of_payment == "cash") { ?> checked <?php } ?>>
+                                            <label class="form-check-label" for="mode_of_payment_cash">Cash</label>
+                                            <span class="error-message text-danger" id="modeError"></span>
+                                    </td>
 
-                                <td colspan="2" class="text-end ">Paid Amount</td>
-                                <td><input type="text" name="amountPaid" id="amountPaid" class="form-control text-center" required ><span class="error-message text-danger" id="paidAmountError"></span>
-                                </td>
+                                    <td colspan="2" class="text-end ">Paid Amount</td>
+                                    <td><input type="text" name="amountPaid" id="amountPaid" class="form-control text-center" value="<?php if ($billExists->amount_paid!=null) { echo $billExists->amount_paid;} ?>"required ><span class="error-message text-danger" id="paidAmountError"></span>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td colspan="3">
-                                        <input type="checkbox" name="consider_for_next_payment" id="consider_for_next_payment" class="form-check-input">
+                                        <input type="checkbox" name="consider_for_next_payment" id="consider_for_next_payment" class="form-check-input" <?php if ($billExists->consider_for_next_payment == 1) { ?> checked <?php } ?>>
                                         <label class="form-check-label" for="consider_for_next_payment">Consider for Next Payment</label>
                                     </td>
                                     
-                                    <td colspan="2" class="text-end ">BalanceDue</td>
-                                    <td><input type="text" name="balance" id="balance" class="form-control text-center" ></td>
+                                    <td colspan="2" class="text-end ">Balance Due</td>
+                                    <td><input type="text" name="balance" id="balance" class="form-control text-center" value="<?php if ($billExists->balance_due!=null) { echo $billExists->balance_due;} ?>"></td>
                                 </tr>
                                 <tr>
                                     <td colspan="3">
-                                        <input type="checkbox" name="balance_given" id="balance_given" class="form-check-input">
+                                        <input type="checkbox" name="balance_given" id="balance_given" class="form-check-input" <?php if ($billExists->balance_given == 1) { ?> checked <?php } ?>>
                                         <label class="form-check-label" for="balance_given">Balance Given</label>
                                         <span class="error-message text-danger" id="checkError"></span>
                                     </td>
                                     <td colspan="2" class="text-end">Balance to Give Back</td>
-                                    <td><input type="text" name="balanceToGiveBack" id="balanceToGiveBack" class="form-control text-center" readonly></td>
+                                    <td><input type="text" name="balanceToGiveBack" id="balanceToGiveBack" class="form-control text-center" value="<?php if ($billExists->balance_to_give_back!=null) { echo $billExists->balance_to_give_back;} ?>" readonly></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -203,9 +206,15 @@ use Illuminate\Support\Facades\Session; ?>
 
                 <div class="row text-end py-3">
                     <div class="col-12">
-                        <button type="button" class="btn btn-success pull-right" name="submitPayment" id="submitPayment"><i class="fa fa-credit-card"></i>
-                            Submit Payment
-                        </button>
+                        <?php if ($billExists->amount_paid == null) { ?>
+                            <button type="button" class="btn btn-success pull-right" name="submitPayment" id="submitPayment"><i class="fa fa-credit-card"></i>
+                                Submit Payment
+                            </button>
+                        <?php  } else { ?>
+                            <button type="button" class="btn btn-success pull-right" name="printPayment" id="printPayment"><i class="fa fa-credit-card"></i>
+                                Print Receipt
+                            </button>
+                        <?php } ?>
                     </div>
                 </div>
 
@@ -214,6 +223,9 @@ use Illuminate\Support\Facades\Session; ?>
         </div>
     </div>
 
-
+<script>
+var receiptRoute = "{{ route('billing.paymentReceipt') }}";
+</script>
     <script src="{{ asset('js/billing.js') }}"></script>
+
 @endsection
