@@ -336,10 +336,16 @@ class BillingController extends Controller
             'clinicDetails' => $clinicDetails,
             'clinicLogo' => $clinicLogo,
         ])->setPaper('A5', 'portrait');
-        $bill_patientId = "bill_".$appointment->patient_id."_".date('Y-m-d').".pdf";
-        return $pdf->download($bill_patientId);
+        $fileName = "bill_".$appointment->patient_id."_".date('Y-m-d').".pdf";
+        $filePath = 'public/pdfs/' . $fileName;
+        Storage::put($filePath, $pdf->output());
+
+    // Redirect to index with PDF file name
+        return redirect()->route('billing')->with('pdf_file_name', $fileName);
+        // return $pdf->download($bill_patientId);
     }
 
+    
     /**
      * Show the form for editing the specified resource.
      */

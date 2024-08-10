@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 class HelperController extends Controller
 {
@@ -418,4 +419,18 @@ class HelperController extends Controller
     //         'clinicDetails' => $clinicDetails,
     //     ]);
     // }
+
+    public function printReceipt($fileName)
+    {
+        $filePath = 'public/pdfs/' . $fileName;
+
+        if (Storage::exists($filePath)) {
+            $pdf = Storage::get($filePath);
+            return response($pdf, 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="' . $fileName . '"');
+        } else {
+            return abort(404);
+        }
+    }
 }
