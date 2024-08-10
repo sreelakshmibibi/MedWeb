@@ -39,18 +39,18 @@ class UserController extends Controller
                 // })
                 ->addColumn('roles', function ($user) {
                     $roles = $user->getRoleNames(); // Get role names
-
+    
                     return $roles->map(function ($role) {
-                        return '<label class="badge bg-primary mx-1">'.$role.'</label>';
+                        return '<label class="badge bg-primary mx-1">' . $role . '</label>';
                     })->implode(''); // Concatenate badges
                 })
                 ->addColumn('action', function ($user) {
                     $btn = '';
                     if (auth()->user()->can('update user')) {
-                        $btn .= '<a href="'.url('users/'.$user->id.'/edit').'" class="btn btn-success btn-edit" data-id="'.$user->id.'">Edit</a> ';
+                        $btn .= '<a href="' . url('users/' . $user->id . '/edit') . '" class="btn btn-sm btn-success btn-edit" data-id="' . $user->id . '">Edit</a> ';
                     }
                     if (auth()->user()->can('delete user')) {
-                        $btn .= '<a href="'.url('users/'.$user->id.'/delete').'" class="btn btn-danger btn-delete" data-id="'.$user->id.'">Delete</a>';
+                        $btn .= '<a href="' . url('users/' . $user->id . '/delete') . '" class="btn btn-sm btn-danger btn-delete" data-id="' . $user->id . '">Delete</a>';
                     }
 
                     return $btn;
@@ -95,7 +95,8 @@ class UserController extends Controller
 
         $user->syncRoles($request->roles);
 
-        return redirect('/users')->with('status', 'User created successfully with roles');
+        // return redirect('/users')->with('status', 'User created successfully with roles');
+        return redirect('roles')->with('status', 'User created successfully with roles');
     }
 
     public function edit(User $user)
@@ -130,7 +131,7 @@ class UserController extends Controller
             'is_reception' => $isReception,
         ];
 
-        if (! empty($request->password)) {
+        if (!empty($request->password)) {
             $data += [
                 'password' => Hash::make($request->password),
             ];
@@ -139,7 +140,8 @@ class UserController extends Controller
         $user->update($data);
         $user->syncRoles($request->roles);
 
-        return redirect('/users')->with('status', 'User Updated Successfully with roles');
+        // return redirect('/users')->with('status', 'User Updated Successfully with roles');
+        return redirect('roles')->with('status', 'User Updated Successfully with roles');
     }
 
     public function destroy($userId)
@@ -147,6 +149,7 @@ class UserController extends Controller
         $user = User::findOrFail($userId);
         $user->delete();
 
-        return redirect('/users')->with('status', 'User Delete Successfully');
+        // return redirect('/users')->with('status', 'User Delete Successfully');
+        return redirect('roles')->with('status', 'User deleted successfully');
     }
 }

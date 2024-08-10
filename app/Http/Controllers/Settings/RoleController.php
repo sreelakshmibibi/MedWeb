@@ -60,7 +60,7 @@ class RoleController extends Controller
             'name' => [
                 'required',
                 'string',
-                'unique:roles,name,'.$role->id,
+                'unique:roles,name,' . $role->id,
             ],
         ]);
 

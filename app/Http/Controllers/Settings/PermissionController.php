@@ -33,12 +33,12 @@ class PermissionController extends Controller
 
                     // Check if the user has 'update permission' ability
                     if (auth()->user()->can('update permission')) {
-                        $btn .= '<a href="'.url('permissions/'.$row->id.'/edit').'" class="btn btn-success">Edit</a> ';
+                        $btn .= '<a href="' . url('permissions/' . $row->id . '/edit') . '" class="btn btn-sm btn-success">Edit</a> ';
                     }
 
                     // Check if the user has 'delete permission' ability
                     if (auth()->user()->can('delete permission')) {
-                        $btn .= '<a href="'.url('permissions/'.$row->id.'/delete').'" class="btn btn-danger mx-2">Delete</a>';
+                        $btn .= '<a href="' . url('permissions/' . $row->id . '/delete') . '" class="btn btn-sm btn-danger mx-2">Delete</a>';
                     }
 
                     return $btn;
@@ -69,7 +69,8 @@ class PermissionController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect('permissions')->with('status', 'Permission Created Successfully');
+        // return redirect('permissions')->with('status', 'Permission Created Successfully');
+        return redirect('roles')->with('status', 'Permission Created Successfully');
     }
 
     public function edit(Permission $permission)
@@ -83,7 +84,7 @@ class PermissionController extends Controller
             'name' => [
                 'required',
                 'string',
-                'unique:permissions,name,'.$permission->id,
+                'unique:permissions,name,' . $permission->id,
             ],
         ]);
 
@@ -91,7 +92,8 @@ class PermissionController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect('permissions')->with('status', 'Permission Updated Successfully');
+        // return redirect('permissions')->with('status', 'Permission Updated Successfully');
+        return redirect('roles')->with('status', 'Permission Updated Successfully');
     }
 
     public function destroy($permissionId)
@@ -99,6 +101,7 @@ class PermissionController extends Controller
         $permission = Permission::find($permissionId);
         $permission->delete();
 
-        return redirect('permissions')->with('status', 'Permission Deleted Successfully');
+        // return redirect('permissions')->with('status', 'Permission Deleted Successfully');
+        return redirect('roles')->with('status', 'Permission Deleted Successfully');
     }
 }
