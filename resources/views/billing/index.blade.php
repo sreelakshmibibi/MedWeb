@@ -6,7 +6,7 @@
         <div class="container-full">
             <div class="content-header">
                 <div id="successMessage" style="display:none;" class="alert alert-success">
-                    Bill created successfully
+                    
                 </div>
 
                 <div class="d-flex align-items-center justify-content-between">
@@ -31,6 +31,7 @@
                                         <th width="60px">Phone number</th>
                                         <th width="180px">Branch</th>
                                         <th>Consulted Doctor</th>
+                                        <!-- <th>Bill Amount</th> -->
                                         <th>Status</th>
                                         <th width="144px">Action</th>
                                     </tr>
@@ -45,6 +46,7 @@
             </section>
         </div>
     </div>
+    @include('billing.cancel')
 
     <script type="text/javascript">
         var selectedDate;
@@ -99,7 +101,10 @@
                         data: 'doctor',
                         name: 'doctor'
                     },
-
+                    // {
+                    //     data: 'amount',
+                    //     name: 'amount'
+                    // },
                     {
                         data: 'status',
                         name: 'status',
@@ -128,5 +133,48 @@
             $('#toothSelection').addClass('d-none'); // Hide tooth selection by default
             $('#modal-download').modal('show'); // Show the modal
         });
+
+        $(document).on('click', '#btn-cancel-bill', function() {
+            var billId = $(this).data('id');
+            $('#delete_bill_id').val(billId);
+            $('#modal-cancel-bill').modal('show');
+        });
+
+        $('#btn-confirm-cancel').click(function() {
+            var billId = $('#delete_bill_id').val();
+            var reason = $('#reason').val();
+
+            if (reason.length === 0) {
+                $('#reason').addClass('is-invalid');
+                $('#reasonError').text('Reason is required.');
+                return; // Stop further execution
+            }
+
+            var url = "{{ route('billing.destroy', ':billId') }}";
+            url = url.replace(':billId', billId);
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "reason": reason
+                },
+                success: function(response) {
+                    $('#modal-cancel-bill').modal('hide'); // Close modal after success
+                    table.draw(); // Refresh DataTable
+                    $('#successMessage').text('Bill cancelled successfully');
+                    $('#successMessage').fadeIn().delay(3000)
+                        .fadeOut(); // Show for 3 seconds
+
+                },
+                error: function(xhr) {
+                    $('#modal-cancel-bill').modal(
+                        'hide'); // Close modal in case of error
+                    console.log("Error!", xhr.responseJSON.message, "error");
+                }
+            });
+        });
+
     </script>
 @endsection

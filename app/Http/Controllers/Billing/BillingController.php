@@ -44,7 +44,9 @@ class BillingController extends Controller
             $selectedDate = $request->input('selectedDate');
             $appointments = Appointment::whereDate('app_date', $selectedDate)
                 ->with(['patient', 'doctor', 'branch'])
+                // ->where('app_status', AppointmentStatus::COMPLETED)
                 ->get();
+
 
             return DataTables::of($appointments)
                 ->addIndexColumn()
@@ -83,7 +85,27 @@ class BillingController extends Controller
                 ->addColumn('phone', function ($row) {
                     return $row->patient->phone;
                 })
+                // ->addColumn('amount', function ($row) {
+                //     $billing = PatientTreatmentBilling::where('appointment_id', $row->id)
+                //     ->where('status', 'Y')
+                //     ->first();
+                //     $amount = number_format(0, 3);
+                //     if (!empty($billing) && $billing->insurance_paid != null)
+                //     {
+                //         $amount =  $billing->amount_to_be_paid + $billing->insurance_paid;
+                //     } else if (!empty($billing))
+                //     {
+                //         $amount = $billing->amount_to_be_paid;
+                       
+                //     } 
+                //     return number_format($amount, 3);
+                    
+                // })
                 ->addColumn('status', function ($row) {
+                    $billing = PatientTreatmentBilling::where('appointment_id', $row->id)
+                    // ->whereNot('bill_status', PatientTreatmentBilling::BILL_CANCELLED)
+                    ->first();
+                    
                     $statusMap = [
                         AppointmentStatus::SCHEDULED => 'badge-success',
                         AppointmentStatus::WAITING => 'badge-warning',
@@ -95,9 +117,19 @@ class BillingController extends Controller
                         AppointmentStatus::MISSED => 'badge-danger-light',
                         AppointmentStatus::RESCHEDULED => 'badge-info',
                     ];
+                    $status = $row->app_status;
+                    $bill_status = null;
                     $btnClass = isset($statusMap[$row->app_status]) ? $statusMap[$row->app_status] : '';
-
-                    return "<span class='btn d-block btn-xs badge {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . '</span>';
+                    if ($status == AppointmentStatus::COMPLETED) {
+                        if (!empty($billing) && $billing->bill_status == PatientTreatmentBilling::BILL_GENERATED) {
+                            $bill_status = PatientTreatmentBilling::BILL_GENERATED_WORDS;
+                        } else if (!empty($billing) && $billing->bill_status == PatientTreatmentBilling::PAYMENT_DONE) {
+                            $bill_status = PatientTreatmentBilling::PAYMENT_DONE_WORDS;
+                        } else if (!empty($billing) && $billing->bill_status == PatientTreatmentBilling::BILL_CANCELLED) {
+                            $bill_status = PatientTreatmentBilling::BILL_CANCELLED_WORDS;
+                        }
+                    }
+                    return "<span class='btn d-block btn-xs badge {$btnClass}'>" . $bill_status != null ? $bill_status : AppointmentStatus::statusToWords($status) . '</span>';
                 })
                 ->addColumn('action', function ($row) {
                     if ($row->app_status == AppointmentStatus::CANCELLED || $row->app_status == AppointmentStatus::RESCHEDULED) {
@@ -107,25 +139,23 @@ class BillingController extends Controller
                     $buttons = [];
                     $base64Id = base64_encode($row->id);
                     $idEncrypted = Crypt::encrypt($base64Id);
-                    $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='generate bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-plus'></i></a>";
-
-                    // Check if the appointment date is less than the selected date
-                    if ($row->app_date < date('Y-m-d') && $row->app_status == AppointmentStatus::COMPLETED) {
-                        // If appointment date is less than the selected date, show view icon
-                        $buttons[] = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa-solid fa-eye'></i></a>";
-                    } elseif ($row->app_date == date('Y-m-d')) {
-                        // Otherwise, show treatment icon
-                    } else {
-                        $buttons[] = '';
+                    $billing = PatientTreatmentBilling::where('appointment_id', $row->id)
+                    // ->whereNot('bill_status', PatientTreatmentBilling::BILL_CANCELLED)
+                    ->first();
+                    if ($row->app_status == AppointmentStatus::COMPLETED && !empty($billing) && $billing->bill_status == PatientTreatmentBilling::BILL_CANCELLED) {
+                        $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='generate bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-plus'></i></a>";
+                        
+                    } else if ($row->app_status == AppointmentStatus::COMPLETED && empty($billing)) {
+                        $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='generate bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-plus'></i></a>";
                     }
-                    if ($row->app_status != AppointmentStatus::COMPLETED) {
-
-                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-xs' id='btn-cancel' data-bs-toggle='modal' data-bs-target='#modal-cancel' data-id='{$row->id}' title='cancel'><i class='fa fa-times'></i></button>";
-                    }
-                    if ($row->app_status == AppointmentStatus::COMPLETED) {
-                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-secondary btn-pdf-generate btn-xs me-1' title='Download' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}'  data-bs-target='#modal-download'><i class='fa fa-download'></i></button>";
-                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-pdf-generate btn-xs' title='Print' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}'  data-bs-target='#modal-download'><i class='fa fa-print'></i></button>";
-
+                   
+                    if (!empty($billing) && $billing->amount_paid != NULL && $billing->bill_status != PatientTreatmentBilling::BILL_CANCELLED) {
+                        $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-success btn-xs me-1' title='Print bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-money-bill-alt'></i></a>";
+                        if (auth()->user()->hasRole('Admin')) {
+                            // $buttons[] = "<a href='" . route('billing.edit', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-warning btn-xs me-1' title='Edit bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-edit'></i></a>";
+                            $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-xs' id='btn-cancel-bill' data-bs-toggle='modal' data-bs-target='#modal-cancel-bill' data-id='{$billing->id}' title='cancel'><i class='fa fa-times'></i></button>
+                            ";
+                        }
                     }
 
                     return implode('', $buttons);
@@ -381,6 +411,25 @@ class BillingController extends Controller
     
         // Return PDF file URL
         return response()->json(['pdfUrl' => Storage::url($filePath)]);
+     }
+
+     public function destroy($id, Request $request)
+     {
+         try {
+             $bill = PatientTreatmentBilling::findOrFail($id);
+             $bill->bill_delete_reason = $request->input('reason');
+             $bill->status = 'N';
+             $bill->bill_status = PatientTreatmentBilling::BILL_CANCELLED;
+
+             if ($bill->save()) {
+                 return response()->json(['success', 'Bill cancelled successfully.'], 200);
+             } else {
+                 return response()->json(['error', 'Bill cancellation unsuccessfull.'], 422);
+             }
+ 
+         } catch (Exception $e) {
+             return response()->json(['error', 'Bill not cancelled.'], 200);
+         }
      }
     
 }
