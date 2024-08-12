@@ -122,14 +122,17 @@ class BillingController extends Controller
                     $btnClass = isset($statusMap[$row->app_status]) ? $statusMap[$row->app_status] : '';
                     if ($status == AppointmentStatus::COMPLETED) {
                         if (!empty($billing) && $billing->bill_status == PatientTreatmentBilling::BILL_GENERATED) {
+                            $btnClass = "badge-warning";
                             $bill_status = PatientTreatmentBilling::BILL_GENERATED_WORDS;
                         } else if (!empty($billing) && $billing->bill_status == PatientTreatmentBilling::PAYMENT_DONE) {
+                            $btnClass = "badge-success";
                             $bill_status = PatientTreatmentBilling::PAYMENT_DONE_WORDS;
                         } else if (!empty($billing) && $billing->bill_status == PatientTreatmentBilling::BILL_CANCELLED) {
+                            $btnClass = "badge-danger";
                             $bill_status = PatientTreatmentBilling::BILL_CANCELLED_WORDS;
                         }
                     }
-                    return "<span class='btn d-block btn-xs badge {$btnClass}'>" . $bill_status != null ? $bill_status : AppointmentStatus::statusToWords($status) . '</span>';
+                    return "<span class='btn d-block btn-xs badge {$btnClass}'>" . ($bill_status != null ? $bill_status : AppointmentStatus::statusToWords($row->app_status) ). '</span>';
                 })
                 ->addColumn('action', function ($row) {
                     if ($row->app_status == AppointmentStatus::CANCELLED || $row->app_status == AppointmentStatus::RESCHEDULED) {
