@@ -13,16 +13,29 @@ return new class extends Migration
     {
         Schema::create('patient_prescription_billings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('billing_id')->constrained('patient_treatment_billings');
-            $table->foreignId('medicine_id')->constrained('medicines');
-            $table->integer('cost');
-            $table->integer('quantity');
-            $table->integer('discount');
-            $table->integer('amount');
+            $table->string('bill_id')->unique();
+            $table->unsignedBigInteger('appointment_id')->constrained('appointments');
+            $table->unsignedBigInteger('patient_id');
+            $table->decimal('prescription_total_amount', 10, 3)->nullable();
+            $table->float('tax_percentile')->nullable();
+            $table->decimal('tax', 10, 3)->nullable();
+            $table->decimal('discount', 10, 3)->nullable();
+            $table->decimal('amount_to_be_paid', 10, 3)->nullable();
+            $table->string('mode_of_payment')->nullable();
+            $table->decimal('bank_tax', 10, 3)->nullable();
+            $table->decimal('amount_paid', 10, 3)->nullable();
+            $table->decimal('balance_given', 10, 3)->nullable();
+            $table->char('status')->default('Y');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('patient_id')
+                ->references('patient_id')
+                ->on('patient_profiles')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
     }
 
@@ -31,10 +44,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('patient_prescription_billings', function (Blueprint $table) {
-            $table->dropForeign(['billing_id']);
-            $table->dropForeign(['medicine_id']);
-        });
+
         Schema::dropIfExists('patient_prescription_billings');
     }
 };

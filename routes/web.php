@@ -91,7 +91,6 @@ Route::post('/download-prescription', [HelperController::class, 'generatePrescri
 Route::get('/print-prescription', [HelperController::class, 'printPrescription'])->name('print.prescription');
 Route::post('/download-patientidcard', [HelperController::class, 'generatePatientIDCardPdf'])->name('download.patientidcard');
 
-
 Route::get('/clinic', [ClinicBranchController::class, 'index'])->name('settings.clinic');
 Route::post('/clinic/create', [ClinicBranchController::class, 'create'])->name('settings.clinic.create');
 Route::post('/clinic/store', [ClinicBranchController::class, 'store'])->name('settings.clinic.store');
@@ -205,8 +204,9 @@ Route::post('/billing/{billing}', [BillingController::class, 'destroy'])->name('
 
 Route::get('/medicineBilling', [MedicineBillController::class, 'index'])->name('medicineBilling');
 Route::get('/medicineBilling/add/{appointmentId}', [MedicineBillController::class, 'create'])->name('medicineBilling.create');
-Route::post('/medicineBilling/combo/{appointmentId}', [MedicineBillController::class, 'comboOffer'])->name('medicineBilling.combo');
 Route::post('/medicineBilling/store', [MedicineBillController::class, 'store'])->name('medicineBilling.store');
+Route::post('/medicineBilling/paymentReceipt', [MedicineBillController::class, 'paymentReceipt'])->name('medicineBilling.paymentReceipt');
+Route::post('/medicineBilling/combo/{appointmentId}', [MedicineBillController::class, 'comboOffer'])->name('medicineBilling.combo');
 Route::post('/medicineBilling/payment', [MedicineBillController::class, 'payment'])->name('medicineBilling.payment');
 Route::get('/medicineBilling/{billing}/edit', [MedicineBillController::class, 'edit'])->name('medicineBilling.edit');
 Route::post('/medicineBilling/update', [MedicineBillController::class, 'update'])->name('medicineBilling.update');
