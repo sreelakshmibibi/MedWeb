@@ -10,16 +10,16 @@
             <div class="box-body p-15">
                 <div class="table-responsive">
                     <!-- Main content -->
-                    <table class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center"
+                    <table class="table table-bordered table-hover table-striped mb-0 data-table text-center"
                         width="100%">
                         <thead class="bg-primary-light">
                             <tr>
-                                <th>No</th>
+                                <th width="10px">No</th>
                                 <th>Patient ID</th>
                                 <th>Patient Name</th>
                                 <th>Phone number</th>
                                 <th>Branch</th>
-                                <th width="150px">Action</th>
+                                <th width="80px">Action</th>
                             </tr>
                         </thead>
                         <tbody>

@@ -364,7 +364,10 @@ class StaffListController extends Controller
                     return $row->patient->phone;
                 })
                 ->addColumn('action', function ($row) {
-                    $button = "<button type='button' class='waves-effect waves-light btn btn-circle btn-info btn-xs' title='view'><i class='fa fa-eye'></i></button>";
+                    $base64Id = base64_encode($row->id);
+                    $idEncrypted = Crypt::encrypt($base64Id);
+                    // $button = "<button type='button' class='waves-effect waves-light btn btn-circle btn-info btn-xs' title='view'><i class='fa fa-eye'></i></button>";
+                    $button = '<a href="' . route('patient.patient_list.view', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
                     return $button;
                 })
                 ->rawColumns(['action'])

@@ -39,7 +39,7 @@
                 <ul class="header-megamenu nav">
                     <li class="btn-group d-lg-inline-flex d-none">
                         <div class="app-menu">
-                            <div class="search-bx mx-5">
+                            <div class="d-none search-bx mx-5">
                                 <form>
                                     <div class="input-group">
                                         <input type="search" class="form-control" placeholder="Search"
@@ -82,7 +82,7 @@
                                     <img src="{{ asset('storage/' . $staffPhoto) }}"
                                         class="avatar rounded-10 bg-primary-light h-40 w-40" alt="" />
                                 @else
-                                    <img src="{{ asset('images/avatar/avatar-1.png') }}"
+                                    <img src="{{ asset('images/svg-icon/user.svg') }}"
                                         class="avatar rounded-10 bg-primary-light h-40 w-40" alt="" />
                                 @endif
 

@@ -1,3 +1,6 @@
+<?php
+use Illuminate\Support\Facades\Crypt;
+?>
 @extends('layouts.dashboard')
 @section('title', 'Dashboard')
 @section('loader')
@@ -108,9 +111,14 @@
                                         @if ($workingDoctors->isNotEmpty())
                                             @foreach ($workingDoctors as $workingDoctor)
                                                 <div class="me-15">
-                                                    <img src="{{ asset('storage/' . $workingDoctor->user->staffProfile->photo) }}"
-                                                        class="avatar avatar-lg rounded10 bg-primary-light"
-                                                        alt="" />
+                                                    @if ($workingDoctor->user->staffProfile->photo != '')
+                                                        <img src="{{ asset('storage/' . $workingDoctor->user->staffProfile->photo) }}"
+                                                            class="avatar avatar-lg rounded10 bg-primary-light"
+                                                            alt="" />
+                                                    @else
+                                                        <img src="{{ asset('images/svg-icon/user.svg') }}" alt="photo"
+                                                            class="avatar avatar-lg rounded10 bg-primary-light">
+                                                    @endif
                                                 </div>
 
                                                 <div class="d-flex flex-column flex-grow-1 fw-500">
@@ -121,8 +129,18 @@
                                                         class="text-fade"><?= $workingDoctor->user->staffProfile->designation ?>
                                                     </span>
                                                 </div>
+                                                @php
+                                                    // Get the ID from the related model
+                                                    $id = $workingDoctor->user->staffProfile->id;
+
+                                                    // Base64 encode the ID
+                                                    $base64Id = base64_encode($id);
+
+                                                    // Encrypt the Base64 encoded ID
+                                                    $idEncrypted = Crypt::encrypt($base64Id);
+                                                @endphp
                                                 <a class="px-10 pt-5"
-                                                    href="{{ route('staff.staff_list.view', $workingDoctor->user->staffProfile->id) }}"><i
+                                                    href="{{ route('staff.staff_list.view', $idEncrypted) }}"><i
                                                         class="fa fa-eye"></i></a>
                                             @endforeach
                                         @else

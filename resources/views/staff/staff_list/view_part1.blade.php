@@ -22,8 +22,13 @@
                 </div>
 
                 <div class="d-flex align-items-center">
-                    <img src="{{ asset('storage/' . $staffProfile->photo) }}" alt="photo"
-                        class="bg-success-light rounded10 me-20 align-self-end h-100">
+                    @if ($staffProfile->photo != '')
+                        <img src="{{ asset('storage/' . $staffProfile->photo) }}" alt="photo"
+                            class="bg-success-light rounded10 me-20 align-self-end h-100">
+                    @else
+                        <img src="{{ asset('images/svg-icon/user.svg') }}" alt="photo"
+                            class="bg-primary rounded10 me-20 align-self-end h-100">
+                    @endif
 
                     <div class="d-flex flex-column flex-grow-1">
                         <a href="#"
