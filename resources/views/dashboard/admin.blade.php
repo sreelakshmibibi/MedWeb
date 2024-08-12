@@ -80,7 +80,7 @@ use Illuminate\Support\Facades\Crypt;
                                         <h4 class="box-title">Patient Statistics</h4>
                                     </div>
                                     <div class="box-body">
-                                        <div id="patient_statistics"></div>
+                                        <div id="monthly_patient_count"></div>
                                     </div>
                                 </div>
                             </div>
@@ -159,4 +159,74 @@ use Illuminate\Support\Facades\Crypt;
     </div>
     <!-- /.content-wrapper -->
     <!-- ./wrapper -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script>
+        console.log(@json($revisitedPatientsData));
+
+        var options = {
+            series: [{
+                name: 'Revisited',
+                data: @json($revisitedPatientsData)
+            }, {
+                name: 'Newly Registered',
+                data: @json($newlyRegisteredData)
+            }],
+            chart: {
+                type: 'bar',
+                foreColor: "#bac0c7",
+                height: 260,
+                stacked: true,
+                toolbar: {
+                    show: false,
+                }
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '30%',
+                },
+            },
+            dataLabels: {
+                enabled: false,
+            },
+            grid: {
+                show: true,
+            },
+            stroke: {
+                show: true,
+                width: 2,
+                colors: ['transparent']
+            },
+            colors: ['#5156be', '#ffa800'],
+            xaxis: {
+                categories: @json($months),
+            },
+            yaxis: {
+                title: {
+                    text: 'Patient Statistics'
+                }
+            },
+            legend: {
+                show: true,
+                position: 'top',
+            },
+            fill: {
+                opacity: 1
+            },
+            tooltip: {
+                y: {
+                    formatter: function(val) {
+                        return val + " patient";
+                    }
+                },
+                marker: {
+                    show: false,
+                },
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#monthly_patient_count"), options);
+        chart.render();
+    </script>
 @endsection
