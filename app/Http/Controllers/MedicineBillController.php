@@ -106,6 +106,35 @@ class MedicineBillController extends Controller
 
         return redirect()->route('billing')->with('success', 'Billing recorded successfully!');
 
+        // $patientPrescriptionBilling = PatientPrescriptionBilling::findOrFail($bill_id);
+
+        // // Generate PDF
+        // $appointment = Appointment::with(['patient', 'doctor', 'branch'])
+        //     ->find($appId);
+        // $billDetails = PrescriptionDetailBilling::with('medicine')->where('bill_id', $bill_id)->get();
+        // $clinicDetails = ClinicBasicDetail::first();
+        // if ($clinicDetails->clinic_logo == '') {
+        //     $clinicLogo = 'public/images/logo-It.png';
+        // } else {
+        //     $clinicLogo = 'storage/'.$clinicDetails->clinic_logo;
+        // }
+        // $pdf = Pdf::loadView('pdf.prescriptionBill_pdf', [
+        //     'billDetails' => $billDetails,
+        //     'patientPrescriptionBilling' => $patientPrescriptionBilling,
+        //     'appointment' => $appointment,
+        //     'patient' => $appointment->patient,
+        //     'clinicDetails' => $clinicDetails,
+        //     'clinicLogo' => $clinicLogo,
+        // ])->setPaper('A5', 'portrait');
+        // $bill_patientId = 'prescriptionbill_'.$appointment->patient_id.'_'.date('Y-m-d').'.pdf';
+        // // Save PDF to storage
+        // $fileName = 'prescriptionBilling_report_'.$bill_patientId;
+        // $filePath = 'public/pdfs/'.$fileName;
+        // Storage::put($filePath, $pdf->output());
+
+        // // Return PDF file URL
+        // return response()->json(['pdfUrl' => Storage::url($filePath)]);
+
     }
 
     public function generateBillId()

@@ -327,6 +327,7 @@ use Illuminate\Support\Facades\Session; ?>
     </div>
     <script>
         var receiptRoute = "{{ route('medicineBilling.paymentReceipt') }}";
+        var billingRoute = "{{ route('billing') }}";
     </script>
     <script src="{{ asset('js/prescription_billing.js') }}"></script>
 @endsection

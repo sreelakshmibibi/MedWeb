@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     // });
 });
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('billingForm');
     const amountPaidInput = form.querySelector('#amountPaid');
     const totalToPayInput = form.querySelector('#totalToPay');
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
     amountPaidInput.addEventListener('input', updateBalances);
 });
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const totalToPayElement = document.getElementById('totalToPay');
     const insurancePaidElement = document.getElementById('insurance_paid');
     const amountToBePaidElement = document.getElementById('amount_to_be_paid_insurance');
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Get values from elements
         const totalToPay = parseFloat(totalToPayElement.value) || 0;
         const insurancePaid = insurancePaidElement ? parseFloat(insurancePaidElement.value) || 0 : 0;
-        
+
         // Calculate balance amount
         const balanceAmount = totalToPay - insurancePaid;
 
@@ -140,49 +140,80 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('DOMContentLoaded', function () {
     // Add event listener to the submit button
     if (document.querySelector('#submitPayment')) {
-    document.querySelector('#submitPayment').addEventListener('click', function (event) {
-        event.preventDefault(); // Prevent the default form submission
-        
-        // Get the form and its inputs
-        const form = document.getElementById('billingForm');
-        const modeOfPayment = form.querySelector('input[name="mode_of_payment"]:checked');
-        const amountPaid = form.querySelector('input[name="amountPaid"]').value;
-        const balanceToGiveBack = parseFloat(form.querySelector('input[name="balanceToGiveBack"]').value) || 0;
-        const considerForNextPayment = form.querySelector('input[name="consider_for_next_payment"]').checked;
-        const balanceGiven = form.querySelector('input[name="balance_given"]').checked;
-        var isValid = 1;
-        // Check if mode of payment is selected
-        if (!modeOfPayment) {
-            $('#modeError').text('Please select a mode of payment.');
-            isValid = 0;
-        }
+        document.querySelector('#submitPayment').addEventListener('click', function (event) {
+            event.preventDefault(); // Prevent the default form submission
 
-        // Check if amount paid is not null or empty
-        if (!amountPaid || isNaN(amountPaid) || parseFloat(amountPaid) <= 0) {
-            $('#paidAmountError').text('Please enter a valid amount paid.');
-            isValid = 0;
-        }
-
-        // Check if balance to give back is greater than zero and at least one checkbox is checked
-        if ( balanceToGiveBack > 0) {
-            if (!considerForNextPayment && !balanceGiven) {
-                $('#checkError').text('If balance is to be given back, at least one checkbox (Consider for Next Payment or Balance Given) must be checked.');
+            // Get the form and its inputs
+            const form = document.getElementById('billingForm');
+            const modeOfPayment = form.querySelector('input[name="mode_of_payment"]:checked');
+            const amountPaid = form.querySelector('input[name="amountPaid"]').value;
+            const balanceToGiveBack = parseFloat(form.querySelector('input[name="balanceToGiveBack"]').value) || 0;
+            const considerForNextPayment = form.querySelector('input[name="consider_for_next_payment"]').checked;
+            const balanceGiven = form.querySelector('input[name="balance_given"]').checked;
+            var isValid = 1;
+            // Check if mode of payment is selected
+            if (!modeOfPayment) {
+                $('#modeError').text('Please select a mode of payment.');
                 isValid = 0;
             }
-        }
-        if (isValid) {
-            // If all checks pass, submit the form
-            $('#modeError').text('');
-            $('#paidAmountError').text('');
-            $('#checkError').text('');
-            form.submit();
 
-        } else {
-            return;
-        }
-        
-    });
-}
+            // Check if amount paid is not null or empty
+            if (!amountPaid || isNaN(amountPaid) || parseFloat(amountPaid) <= 0) {
+                $('#paidAmountError').text('Please enter a valid amount paid.');
+                isValid = 0;
+            }
+
+            // Check if balance to give back is greater than zero and at least one checkbox is checked
+            if (balanceToGiveBack > 0) {
+                if (!considerForNextPayment && !balanceGiven) {
+                    $('#checkError').text('If balance is to be given back, at least one checkbox (Consider for Next Payment or Balance Given) must be checked.');
+                    isValid = 0;
+                }
+            }
+            if (isValid) {
+                // If all checks pass, submit the form
+                $('#modeError').text('');
+                $('#paidAmountError').text('');
+                $('#checkError').text('');
+                //form.submit();
+                // Submit the form via AJAX
+                const formData = new FormData(form);
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.pdfUrl) {
+                            // Open the PDF in a new window and trigger print dialog
+                            var printWindow = window.open(data.pdfUrl, '_blank');
+                            printWindow.addEventListener('load', function () {
+                                printWindow.print();
+                            });
+
+                            // Redirect after printing
+                            printWindow.addEventListener('afterprint', function () {
+                                // window.location.href = "{{ route('billing') }}";
+                                window.location.href = billingRoute;
+                            });
+                        } else {
+                            alert('Failed to generate PDF.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+
+
+            } else {
+                return;
+            }
+
+        });
+    }
     document.getElementById('printPayment').addEventListener('click', function () {
         var billId = document.getElementById('billId').value;
         var appointmentId = document.getElementById('appointmentId').value;
@@ -196,26 +227,26 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             body: JSON.stringify({ billId: billId, appointmentId: appointmentId })
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.pdfUrl) {
-                // Open the PDF in a new window and trigger print dialog
-                var printWindow = window.open(data.pdfUrl, '_blank');
-                printWindow.addEventListener('load', function () {
-                    printWindow.print();
-                });
+            .then(response => response.json())
+            .then(data => {
+                if (data.pdfUrl) {
+                    // Open the PDF in a new window and trigger print dialog
+                    var printWindow = window.open(data.pdfUrl, '_blank');
+                    printWindow.addEventListener('load', function () {
+                        printWindow.print();
+                    });
 
-                // Redirect after printing
-                printWindow.addEventListener('afterprint', function () {
-                    window.location.href = "{{ route('billing') }}";
-                });
-            } else {
-                alert('Failed to generate PDF.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+                    // Redirect after printing
+                    printWindow.addEventListener('afterprint', function () {
+                        window.location.href = "{{ route('billing') }}";
+                    });
+                } else {
+                    alert('Failed to generate PDF.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     });
-    
+
 });

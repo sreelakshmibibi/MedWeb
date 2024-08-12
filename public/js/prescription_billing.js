@@ -311,7 +311,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     printWindow.print();
                 };
                 printWindow.addEventListener('afterprint', function () {
-                    window.location.href = "{{ route('billing') }}";
+                    //window.location.href = "{{ route('billing') }}";
+                    window.location.href = billingRoute;
                 });
             },
             error: function (xhr, status, error) {

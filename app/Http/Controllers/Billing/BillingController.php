@@ -12,14 +12,10 @@ use App\Models\Insurance;
 use App\Models\PatientDetailBilling;
 use App\Models\PatientTreatmentBilling;
 use App\Models\Prescription;
-use App\Models\StaffProfile;
-use App\Models\ToothExamination;
 use App\Models\TreatmentComboOffer;
 use App\Services\BillingService;
 use App\Services\CommonService;
-use App\Services\DoctorAvaialbilityService;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -47,14 +43,13 @@ class BillingController extends Controller
                 // ->where('app_status', AppointmentStatus::COMPLETED)
                 ->get();
 
-
             return DataTables::of($appointments)
                 ->addIndexColumn()
                 ->addColumn('patient_id', function ($row) {
                     $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
                     $base64Id = base64_encode($parent_id);
                     $idEncrypted = Crypt::encrypt($base64Id);
-                    $name1 = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light' title='open treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' >" . $row->patient->patient_id . '</i></a>';
+                    $name1 = "<a href='".route('treatment', $idEncrypted)."' class='waves-effect waves-light' title='open treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->patient->first_name.' '.$row->patient->last_name)."' >".$row->patient->patient_id.'</i></a>';
 
                     return $name1;
                 })
@@ -62,8 +57,8 @@ class BillingController extends Controller
                     $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
                     $base64Id = base64_encode($parent_id);
                     $idEncrypted = Crypt::encrypt($base64Id);
-                    $name = str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name);
-                    $name1 = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light' title='open treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' >" . $name . '</i></a>';
+                    $name = str_replace('<br>', ' ', $row->patient->first_name.' '.$row->patient->last_name);
+                    $name1 = "<a href='".route('treatment', $idEncrypted)."' class='waves-effect waves-light' title='open treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->patient->first_name.' '.$row->patient->last_name)."' >".$name.'</i></a>';
 
                     return $name1;
                 })
@@ -75,7 +70,7 @@ class BillingController extends Controller
                         ($row->app_type == AppointmentType::FOLLOWUP ? AppointmentType::FOLLOWUP_WORDS : '');
                 })
                 ->addColumn('branch', function ($row) {
-                    if (!$row->branch) {
+                    if (! $row->branch) {
                         return '';
                     }
                     $address = implode(', ', explode('<br>', $row->branch->clinic_address));
@@ -96,16 +91,16 @@ class BillingController extends Controller
                 //     } else if (!empty($billing))
                 //     {
                 //         $amount = $billing->amount_to_be_paid;
-                       
-                //     } 
+
+                //     }
                 //     return number_format($amount, 3);
-                    
+
                 // })
                 ->addColumn('status', function ($row) {
                     $billing = PatientTreatmentBilling::where('appointment_id', $row->id)
                     // ->whereNot('bill_status', PatientTreatmentBilling::BILL_CANCELLED)
-                    ->first();
-                    
+                        ->first();
+
                     $statusMap = [
                         AppointmentStatus::SCHEDULED => 'badge-success',
                         AppointmentStatus::WAITING => 'badge-warning',
@@ -121,18 +116,19 @@ class BillingController extends Controller
                     $bill_status = null;
                     $btnClass = isset($statusMap[$row->app_status]) ? $statusMap[$row->app_status] : '';
                     if ($status == AppointmentStatus::COMPLETED) {
-                        if (!empty($billing) && $billing->bill_status == PatientTreatmentBilling::BILL_GENERATED) {
-                            $btnClass = "badge-warning";
+                        if (! empty($billing) && $billing->bill_status == PatientTreatmentBilling::BILL_GENERATED) {
+                            $btnClass = 'badge-warning';
                             $bill_status = PatientTreatmentBilling::BILL_GENERATED_WORDS;
-                        } else if (!empty($billing) && $billing->bill_status == PatientTreatmentBilling::PAYMENT_DONE) {
-                            $btnClass = "badge-success";
+                        } elseif (! empty($billing) && $billing->bill_status == PatientTreatmentBilling::PAYMENT_DONE) {
+                            $btnClass = 'badge-success';
                             $bill_status = PatientTreatmentBilling::PAYMENT_DONE_WORDS;
-                        } else if (!empty($billing) && $billing->bill_status == PatientTreatmentBilling::BILL_CANCELLED) {
-                            $btnClass = "badge-danger";
+                        } elseif (! empty($billing) && $billing->bill_status == PatientTreatmentBilling::BILL_CANCELLED) {
+                            $btnClass = 'badge-danger';
                             $bill_status = PatientTreatmentBilling::BILL_CANCELLED_WORDS;
                         }
                     }
-                    return "<span class='btn d-block btn-xs badge {$btnClass}'>" . ($bill_status != null ? $bill_status : AppointmentStatus::statusToWords($row->app_status) ). '</span>';
+
+                    return "<span class='btn d-block btn-xs badge {$btnClass}'>".($bill_status != null ? $bill_status : AppointmentStatus::statusToWords($row->app_status)).'</span>';
                 })
                 ->addColumn('action', function ($row) {
                     if ($row->app_status == AppointmentStatus::CANCELLED || $row->app_status == AppointmentStatus::RESCHEDULED) {
@@ -144,16 +140,16 @@ class BillingController extends Controller
                     $idEncrypted = Crypt::encrypt($base64Id);
                     $billing = PatientTreatmentBilling::where('appointment_id', $row->id)
                     // ->whereNot('bill_status', PatientTreatmentBilling::BILL_CANCELLED)
-                    ->first();
-                    if ($row->app_status == AppointmentStatus::COMPLETED && !empty($billing) && $billing->bill_status == PatientTreatmentBilling::BILL_CANCELLED) {
-                        $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='generate bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-plus'></i></a>";
-                        
-                    } else if ($row->app_status == AppointmentStatus::COMPLETED && empty($billing)) {
-                        $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='generate bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-plus'></i></a>";
+                        ->first();
+                    if ($row->app_status == AppointmentStatus::COMPLETED && ! empty($billing) && $billing->bill_status == PatientTreatmentBilling::BILL_CANCELLED) {
+                        $buttons[] = "<a href='".route('billing.create', $idEncrypted)."' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='generate bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->patient->first_name.' '.$row->patient->last_name)."' ><i class='fa fa-plus'></i></a>";
+
+                    } elseif ($row->app_status == AppointmentStatus::COMPLETED && empty($billing)) {
+                        $buttons[] = "<a href='".route('billing.create', $idEncrypted)."' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='generate bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->patient->first_name.' '.$row->patient->last_name)."' ><i class='fa fa-plus'></i></a>";
                     }
-                   
-                    if (!empty($billing) && $billing->amount_paid != NULL && $billing->bill_status != PatientTreatmentBilling::BILL_CANCELLED) {
-                        $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-success btn-xs me-1' title='Print bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-money-bill-alt'></i></a>";
+
+                    if (! empty($billing) && $billing->amount_paid != null && $billing->bill_status != PatientTreatmentBilling::BILL_CANCELLED) {
+                        $buttons[] = "<a href='".route('billing.create', $idEncrypted)."' class='waves-effect waves-light btn btn-circle btn-success btn-xs me-1' title='Print bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->patient->first_name.' '.$row->patient->last_name)."' ><i class='fa fa-money-bill-alt'></i></a>";
                         if (auth()->user()->hasRole('Admin')) {
                             // $buttons[] = "<a href='" . route('billing.edit', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-warning btn-xs me-1' title='Edit bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-edit'></i></a>";
                             $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-xs' id='btn-cancel-bill' data-bs-toggle='modal' data-bs-target='#modal-cancel-bill' data-id='{$billing->id}' title='cancel'><i class='fa fa-times'></i></button>
@@ -167,19 +163,19 @@ class BillingController extends Controller
                 ->rawColumns(['patient_id', 'name', 'status', 'action'])
                 ->make(true);
         }
-        
+
         return view('billing.index');
     }
 
     public function comboOffer(Request $request, $appointmentId)
     {
-       
+
         // Decode and decrypt appointment ID
         $id = base64_decode(Crypt::decrypt($appointmentId));
         $appointment = Appointment::find($id);
 
         // Check if the appointment exists
-        if (!$appointment) {
+        if (! $appointment) {
             return response()->json(['success' => false, 'message' => 'Appointment not found.'], 404);
         }
 
@@ -195,13 +191,14 @@ class BillingController extends Controller
     {
         $id = base64_decode(Crypt::decrypt($appointmentId));
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])
-                        ->find($id);
+            ->find($id);
         $billExists = PatientTreatmentBilling::where('status', 'Y')
-                        ->where('appointment_id', $id)
-                        ->where('patient_id', $appointment->patient_id)
-                        ->first();
-        if (!empty($billExists)) {
+            ->where('appointment_id', $id)
+            ->where('patient_id', $appointment->patient_id)
+            ->first();
+        if (! empty($billExists)) {
             $detailBills = PatientDetailBilling::with('treatment')->where('billing_id', $billExists->id)->get();
+
             return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills'));
         }
         $billingService = new BillingService();
@@ -219,29 +216,29 @@ class BillingController extends Controller
         $fees = $appointment->doctor->staffProfile->consultation_fees;
         if ($checkAppointmentCount > 1) {
             $consultationFees = $billingService->getConsultationFees($appointment->patient_id, $feesFrequency);
-            
+
         }
         $insuranceDetails = Insurance::where('patient_id', $appointment->patient_id)
-        ->where('status', 'Y')
-        ->where('policy_end_date', '>=', $appointment->app_date)
-        ->first();
+            ->where('status', 'Y')
+            ->where('policy_end_date', '>=', $appointment->app_date)
+            ->first();
         $combOffers = $billingService->getOffers($selectedTreatments, $appointment->combo_offer_id);
         $isMedicineProvided = (ClinicBranch::find($appointment->app_branch))->is_medicine_provided;
         $prescriptions = Prescription::where('app_id', $appointment->id)
-                            ->where('patient_id', $appointment->patient_id)
-                            ->where('status', 'Y')
-                            ->get();
+            ->where('patient_id', $appointment->patient_id)
+            ->where('status', 'Y')
+            ->get();
         $comboOfferId = $appointment->combo_offer_id ? $appointment->combo_offer_id : 0;
         $comboOfferApplied = 0;
         $comboOfferDeduction = 0;
-        if (!empty($insuranceDetails)) {
+        if (! empty($insuranceDetails)) {
             foreach ($individualTreatmentAmounts as &$individualTreatmentAmount) {
                 $individualTreatmentAmount['discount_percentage'] = 0;
                 $individualTreatmentAmount['treat_cost'] = $individualTreatmentAmount['cost'];
-                $individualTreatmentAmount['subtotal'] = $individualTreatmentAmount['quantity'] * $individualTreatmentAmount['treat_cost'];                    // $actualCost += $individualTreatmentAmount->cost; 
+                $individualTreatmentAmount['subtotal'] = $individualTreatmentAmount['quantity'] * $individualTreatmentAmount['treat_cost'];                    // $actualCost += $individualTreatmentAmount->cost;
             }
         }
-        if($comboOfferId) {
+        if ($comboOfferId) {
             $comboOfferTreatments = TreatmentComboOffer::with('treatments')->find($comboOfferId);
             if ($comboOfferTreatments) {
                 $comboOfferApplied = $comboOfferTreatments->offer_amount;
@@ -250,16 +247,16 @@ class BillingController extends Controller
                 foreach ($individualTreatmentAmounts as &$individualTreatmentAmount) {
                     $individualTreatmentAmount['discount_percentage'] = 0;
                     $individualTreatmentAmount['treat_cost'] = $individualTreatmentAmount['cost'];
-                    $individualTreatmentAmount['subtotal'] = $individualTreatmentAmount['quantity'] * $individualTreatmentAmount['treat_cost']; 
+                    $individualTreatmentAmount['subtotal'] = $individualTreatmentAmount['quantity'] * $individualTreatmentAmount['treat_cost'];
                 }
-                $comboOfferDeduction= $comboOfferActualAmount - $comboOfferApplied;
-            } 
+                $comboOfferDeduction = $comboOfferActualAmount - $comboOfferApplied;
+            }
         }
-        
+
         $medicineTotal = 0;
         $insurance = 0;
         // Pass variables to the view
-       
+
         // if (!empty($insuranceDetails)) {
         return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction', 'insuranceDetails'));
         // }
@@ -274,19 +271,18 @@ class BillingController extends Controller
             DB::beginTransaction();
 
             // Collect inputs
-           
+
             $inputs = $request->only([
                 'appointment_id', 'patient_id', 'treatment_total_amount',
                 'combo_offer_deduction', 'doctor_discount', 'insurance_paid',
                 'amount_to_be_paid_insurance', 'treatmentCount', 'treatmentReg', 'regCost',
-                'tax', 'totaltoPay', 'consultationFees', 'consultationFeesCost', 'consultationFeesAmount'
+                'tax', 'totaltoPay', 'consultationFees', 'consultationFeesCost', 'consultationFeesAmount',
             ]);
-            
+
             // Fix input key case
             $totalToPay = (float) str_replace(',', '', $request->input('totaltoPay')) ?? 0.00;
             $insurancePaid = $inputs['insurance_paid'] ?? 0.000;
-           
-            
+
             // Convert inputs to float
             $inputs['treatment_total_amount'] = (float) str_replace(',', '', $inputs['treatment_total_amount']);
             $inputs['combo_offer_deduction'] = (float) str_replace(',', '', $inputs['combo_offer_deduction'] ?? 0.000);
@@ -322,44 +318,46 @@ class BillingController extends Controller
                 $billingService->saveAdditionalCharges($treatmentBill->id, $inputs);
 
                 DB::commit();
-                
+
                 return redirect()->back()->with('success', 'Bill created successfully.');
             } else {
                 DB::rollBack();
+
                 return redirect()->back()->with('error', 'Failed to create bill.');
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Failed to create bill: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'Failed to create bill: '.$e->getMessage());
         }
     }
-
 
     public function payment(Request $request)
     {
         $billId = base64_decode(Crypt::decrypt($request['billId']));
         $appointmentId = base64_decode(Crypt::decrypt($request['appointmentId']));
-        $patientId = $request['patientId']; 
+        $patientId = $request['patientId'];
         $patientTreatmentBilling = PatientTreatmentBilling::findOrFail($billId);
-        if (!$patientTreatmentBilling)
+        if (! $patientTreatmentBilling) {
             abort(404);
-        
+        }
+
         $patientTreatmentBilling->amount_paid = $request['amountPaid'];
         $patientTreatmentBilling->mode_of_payment = $request['mode_of_payment'];
         $patientTreatmentBilling->consider_for_next_payment = isset($request['consider_for_next_payment']) ? 1 : 0;
         $patientTreatmentBilling->balance_due = $request['balance'];
         $patientTreatmentBilling->balance_to_give_back = $request['balanceToGiveBack'];
-        $patientTreatmentBilling->balance_given = isset($request['balance_given']) ? 1 :0;
+        $patientTreatmentBilling->balance_given = isset($request['balance_given']) ? 1 : 0;
         $patientTreatmentBilling->bill_status = PatientTreatmentBilling::PAYMENT_DONE;
         $patientTreatmentBilling->save();
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])
-                        ->find($appointmentId);
+            ->find($appointmentId);
         $billDetails = PatientDetailBilling::with('treatment')->where('billing_id', $billId)->get();
         $clinicDetails = ClinicBasicDetail::first();
         if ($clinicDetails->clinic_logo == '') {
             $clinicLogo = 'public/images/logo-It.png';
         } else {
-            $clinicLogo = 'storage/' . $clinicDetails->clinic_logo;
+            $clinicLogo = 'storage/'.$clinicDetails->clinic_logo;
         }
         $pdf = Pdf::loadView('pdf.treatmentBill_pdf', [
             'billDetails' => $billDetails,
@@ -369,70 +367,68 @@ class BillingController extends Controller
             'clinicDetails' => $clinicDetails,
             'clinicLogo' => $clinicLogo,
         ])->setPaper('A5', 'portrait');
-        $fileName = "bill_".$appointment->patient_id."_".date('Y-m-d').".pdf";
-        $filePath = 'public/pdfs/' . $fileName;
+        $fileName = 'bill_'.$appointment->patient_id.'_'.date('Y-m-d').'.pdf';
+        $filePath = 'public/pdfs/'.$fileName;
         Storage::put($filePath, $pdf->output());
 
-    // Redirect to index with PDF file name
-        return redirect()->route('billing')->with('pdf_file_name', $fileName);
+        // Redirect to index with PDF file name
+        // return redirect()->route('billing')->with('pdf_file_name', $fileName);
+        return response()->json(['pdfUrl' => Storage::url($filePath)]);
         // return $pdf->download($bill_patientId);
     }
 
-    
     /**
      * Show the form for editing the specified resource.
      */
-
-     public function paymentReceipt(Request $request)
-     {
+    public function paymentReceipt(Request $request)
+    {
         $billId = base64_decode(Crypt::decrypt($request->input('billId')));
         $appointmentId = base64_decode(Crypt::decrypt($request['appointmentId']));
         $patientTreatmentBilling = PatientTreatmentBilling::findOrFail($billId);
-        
+
         // Generate PDF
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])
-                    ->find($appointmentId);
+            ->find($appointmentId);
         $billDetails = PatientDetailBilling::with('treatment')->where('billing_id', $billId)->get();
         $clinicDetails = ClinicBasicDetail::first();
         if ($clinicDetails->clinic_logo == '') {
             $clinicLogo = 'public/images/logo-It.png';
         } else {
-            $clinicLogo = 'storage/' . $clinicDetails->clinic_logo;
+            $clinicLogo = 'storage/'.$clinicDetails->clinic_logo;
         }$pdf = Pdf::loadView('pdf.treatmentBill_pdf', [
-                'billDetails' => $billDetails,
-                'patientTreatmentBilling' => $patientTreatmentBilling,
-                'appointment' => $appointment,
-                'patient' => $appointment->patient,
-                'clinicDetails' => $clinicDetails,
-                'clinicLogo' => $clinicLogo,
-                ])->setPaper('A5', 'portrait');
-        $bill_patientId = "bill_".$appointment->patient_id."_".date('Y-m-d').".pdf";
-         // Save PDF to storage
-        $fileName = 'billing_report_' . $bill_patientId;
-        $filePath = 'public/pdfs/' . $fileName;
+            'billDetails' => $billDetails,
+            'patientTreatmentBilling' => $patientTreatmentBilling,
+            'appointment' => $appointment,
+            'patient' => $appointment->patient,
+            'clinicDetails' => $clinicDetails,
+            'clinicLogo' => $clinicLogo,
+        ])->setPaper('A5', 'portrait');
+        $bill_patientId = 'bill_'.$appointment->patient_id.'_'.date('Y-m-d').'.pdf';
+        // Save PDF to storage
+        $fileName = 'billing_report_'.$bill_patientId;
+        $filePath = 'public/pdfs/'.$fileName;
         Storage::put($filePath, $pdf->output());
-    
+
         // Return PDF file URL
         return response()->json(['pdfUrl' => Storage::url($filePath)]);
-     }
+    }
 
-     public function destroy($id, Request $request)
-     {
-         try {
-             $bill = PatientTreatmentBilling::findOrFail($id);
-             $bill->bill_delete_reason = $request->input('reason');
-             $bill->status = 'N';
-             $bill->bill_status = PatientTreatmentBilling::BILL_CANCELLED;
+    public function destroy($id, Request $request)
+    {
+        try {
+            $bill = PatientTreatmentBilling::findOrFail($id);
+            $bill->bill_delete_reason = $request->input('reason');
+            $bill->status = 'N';
+            $bill->bill_status = PatientTreatmentBilling::BILL_CANCELLED;
 
-             if ($bill->save()) {
-                 return response()->json(['success', 'Bill cancelled successfully.'], 200);
-             } else {
-                 return response()->json(['error', 'Bill cancellation unsuccessfull.'], 422);
-             }
- 
-         } catch (Exception $e) {
-             return response()->json(['error', 'Bill not cancelled.'], 200);
-         }
-     }
-    
+            if ($bill->save()) {
+                return response()->json(['success', 'Bill cancelled successfully.'], 200);
+            } else {
+                return response()->json(['error', 'Bill cancellation unsuccessfull.'], 422);
+            }
+
+        } catch (Exception $e) {
+            return response()->json(['error', 'Bill not cancelled.'], 200);
+        }
+    }
 }
