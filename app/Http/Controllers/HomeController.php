@@ -46,17 +46,38 @@ class HomeController extends Controller
             ->pluck('count', 'month')
             ->toArray();
 
+        $newlyRegisteredPatients = DB::table('patient_profiles')
+            ->select('patient_id')
+            ->whereMonth('created_at', now()->month)
+            ->pluck('patient_id')
+            ->toArray();
+
+        $firstVisits = DB::table('appointments')
+            ->select('patient_id', DB::raw('MIN(created_at) as first_visit_date'))
+            ->whereIn('patient_id', $newlyRegisteredPatients)
+            ->groupBy('patient_id')
+            ->pluck('first_visit_date', 'patient_id')
+            ->toArray();
+
+        $firstVisitDates = array_values($firstVisits);
+
         $revisitedPatients = DB::table('appointments')
             ->select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as count'))
-            ->whereIn('patient_id', function ($query) {
+            ->whereIn('patient_id', function ($query) use ($newlyRegisteredPatients) {
                 $query->select('patient_id')
                     ->from('appointments')
                     ->groupBy('patient_id')
-                    ->havingRaw('COUNT(*) > 1');
+                    ->havingRaw('COUNT(*) > 1')
+                    ->whereNotIn('patient_id', $newlyRegisteredPatients);
+            })
+            ->orWhere(function ($query) use ($newlyRegisteredPatients, $firstVisitDates) {
+                $query->whereIn('patient_id', $newlyRegisteredPatients)
+                    ->whereNotIn('created_at', $firstVisitDates); // Exclude first visit
             })
             ->groupBy(DB::raw('MONTH(created_at)'))
             ->pluck('count', 'month')
             ->toArray();
+
         $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         $defaultArray = array_fill_keys($months, 0);
         function mapMonthData($data, $months)
