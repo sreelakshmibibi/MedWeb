@@ -96,7 +96,7 @@ use Illuminate\Support\Facades\Crypt;
                                 <h4 class="box-title">Total Patient</h4>
                             </div>
                             <div class="box-body">
-                                <div id="total_patient"></div>
+                                <div id="daywise_total_patient"></div>
                             </div>
                         </div>
                         <div class="box">
@@ -162,8 +162,6 @@ use Illuminate\Support\Facades\Crypt;
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     <script>
-        console.log(@json($revisitedPatientsData));
-
         var options = {
             series: [{
                 name: 'Revisited',
@@ -227,6 +225,44 @@ use Illuminate\Support\Facades\Crypt;
         };
 
         var chart = new ApexCharts(document.querySelector("#monthly_patient_count"), options);
+        chart.render();
+
+        var options = {
+            series: [{
+                name: 'Total Patient',
+                type: 'column',
+                data: @json($chartTotalPatients)
+            }, {
+                name: 'Followup Patient',
+                type: 'line',
+                data: @json($chartfollowupPatients)
+            }],
+            chart: {
+                height: 350,
+                type: 'line',
+                toolbar: {
+                    show: false,
+                }
+            },
+            stroke: {
+                width: [0, 4],
+                curve: 'smooth'
+            },
+            colors: ['#E7E4FF', '#5156be'],
+            dataLabels: {
+                enabled: false,
+            },
+            labels: @json($dates),
+            xaxis: {
+                type: 'datetime'
+            },
+            legend: {
+                show: true,
+                position: 'top',
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#daywise_total_patient"), options);
         chart.render();
     </script>
 @endsection

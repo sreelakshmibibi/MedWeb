@@ -45,22 +45,16 @@ class HomeController extends Controller
             ->groupBy(DB::raw('MONTH(created_at)'))
             ->pluck('count', 'month')
             ->toArray();
-        // $revisitedPatients = DB::table('appointments')
-        //     ->join('patient_profiles', 'appointments.patient_id', '=', 'patient_profiles.patient_id')
-        //     ->select(DB::raw('MONTH(appointments.created_at) as month'), DB::raw('COUNT(DISTINCT patient_profiles.id) as count'))
-        //     ->groupBy(DB::raw('MONTH(appointments.created_at)'))
-        //     ->pluck('count', 'month')
-        //     ->toArray();
+
         $revisitedPatients = DB::table('appointments')
-            ->join('patient_profiles', 'appointments.patient_id', '=', 'patient_profiles.patient_id')
-            ->select(DB::raw('MONTH(appointments.created_at) as month'), DB::raw('COUNT(DISTINCT appointments.patient_id) as count'))
-            ->whereIn('appointments.patient_id', function ($query) {
+            ->select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as count'))
+            ->whereIn('patient_id', function ($query) {
                 $query->select('patient_id')
                     ->from('appointments')
                     ->groupBy('patient_id')
                     ->havingRaw('COUNT(*) > 1');
             })
-            ->groupBy(DB::raw('MONTH(appointments.created_at)'))
+            ->groupBy(DB::raw('MONTH(created_at)'))
             ->pluck('count', 'month')
             ->toArray();
         $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -72,6 +66,19 @@ class HomeController extends Controller
         // Convert the associative arrays to indexed arrays
         $newlyRegisteredData = array_values($newlyRegisteredData);
         $revisitedPatientsData = array_values($revisitedPatientsData);
+        $today = Carbon::today();
+        $tenDaysAgo = $today->copy()->subDays(10);
+
+        $appointmentData = DB::table('appointments')
+            ->select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as total_patients'), DB::raw('SUM(CASE WHEN app_type = 1 THEN 1 ELSE 0 END) as followup_patients'))
+            ->where('created_at', '>=', $tenDaysAgo)
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->orderBy(DB::raw('DATE(created_at)'), 'DESC')
+            ->get();
+
+        $dates = $appointmentData->pluck('date')->toArray();
+        $chartTotalPatients = $appointmentData->pluck('total_patients')->toArray();
+        $chartfollowupPatients = $appointmentData->pluck('followup_patients')->toArray();
         $role = '';
         $totalPatients = 0;
         $totalStaffs = 0;
@@ -123,7 +130,7 @@ class HomeController extends Controller
             }
 
             // echo "<pre>"; print_r($workingDoctors); echo "</pre>";exit;
-            return view($dashboardView, compact('workingDoctors', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months'));
+            return view($dashboardView, compact('workingDoctors', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients'));
 
         } else {
             $countries = Country::all();
@@ -136,7 +143,7 @@ class HomeController extends Controller
             // Set the flash message
             session()->flash('error', 'Please enter clinics and branch details before proceeding.');
 
-            return view('settings.clinics.index', compact('countries', 'states', 'cities', 'clinicDetails', 'data', 'total', 'newlyRegisteredData', 'revisitedPatientsData', 'months'));
+            return view('settings.clinics.index', compact('countries', 'states', 'cities', 'clinicDetails', 'data', 'total', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients'));
 
         }
     }
