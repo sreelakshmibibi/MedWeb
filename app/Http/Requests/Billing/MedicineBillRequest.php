@@ -29,11 +29,11 @@ class MedicineBillRequest extends FormRequest
             'rate.*' => 'numeric|min:0',
             //'unitcost.*' => 'numeric|min:0',
             'total' => 'required|numeric|min:0',
-            'tax' => 'required|numeric|min:0',
+            'medtax' => 'required|numeric|min:0',
             'grandTotal' => 'required|numeric|min:0',
-            'mode_of_payment' => 'required|in:gpay,card,cash',
-            'amountPaid' => 'required|numeric|min:0',
-            'balanceToGiveBack' => 'nullable|numeric|min:0',
+            'medmode_of_payment' => 'required|in:gpay,card,cash',
+            'medamountPaid' => 'required|numeric|min:0',
+            'medbalanceToGiveBack' => 'nullable|numeric|min:0',
         ];
     }
 
@@ -46,11 +46,11 @@ class MedicineBillRequest extends FormRequest
             'quantity.*.numeric' => 'The quantity must be a number.',
             'rate.*.numeric' => 'The rate must be a number.',
             'total.required' => 'The total amount is required.',
-            'tax.required' => 'The tax amount is required.',
+            'medtax.required' => 'The tax amount is required.',
             'grandTotal.required' => 'The grand total amount is required.',
-            'mode_of_payment.required' => 'The mode of payment is required.',
-            'amountPaid.required' => 'The amount paid is required.',
-            'balanceToGiveBack.numeric' => 'The balance to give back must be a number.',
+            'medmode_of_payment.required' => 'The mode of payment is required.',
+            'medamountPaid.required' => 'The amount paid is required.',
+            'medbalanceToGiveBack.numeric' => 'The balance to give back must be a number.',
         ];
     }
 }

@@ -20,7 +20,7 @@
                                     <th class="text-end">Rate</th>
                                 </tr>
                             </thead>
-                            <tbody id="tablebody">
+                            <tbody>
                                 <tr>
                                     <td class="text-start"><input type="checkbox" id="insurance_checkbox1"
                                             name="insurance_checkbox1" class="filled-in chk-col-success" />
