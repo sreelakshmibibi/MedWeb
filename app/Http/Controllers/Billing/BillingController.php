@@ -162,6 +162,7 @@ class BillingController extends Controller
                         // ->whereNot('bill_status', PatientTreatmentBilling::BILL_CANCELLED)
                         ->where('status', 'Y')
                         ->first();
+                    $hasPrescriptionBill = PatientPrescriptionBilling::where('appointment_id', $row->id)->first();
                     // if ($row->app_status == AppointmentStatus::COMPLETED && !empty($billing) && $billing->bill_status == PatientTreatmentBilling::BILL_CANCELLED) {
                     //     $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='generate bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-plus'></i></a>";
                     if ($row->app_status == AppointmentStatus::COMPLETED && !empty($billing) && ($billing->bill_status == PatientTreatmentBilling::BILL_CANCELLED || $billing->bill_status == PatientTreatmentBilling::BILL_GENERATED)) {
@@ -174,7 +175,15 @@ class BillingController extends Controller
                     // if (!empty($billing) && $billing->amount_paid != null && $billing->bill_status != PatientTreatmentBilling::BILL_CANCELLED) {
                     //     $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-success btn-xs me-1' title='Print bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-money-bill-alt'></i></a>";
                     if (!empty($billing) && $billing->amount_paid != null && $billing->bill_status == PatientTreatmentBilling::PAYMENT_DONE) {
-                        $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='Print bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-eye'></i></a>";
+                        $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='View bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-eye'></i></a>";
+                        $buttons[] = '<button type="button" id="printPayment1"
+                            class="waves-effect waves-light btn btn-circle btn-secondary btn-xs me-1"
+                            title="Download & Print Treatment Bill"><i class="fa fa-download"></i></button>';
+                        if ($hasPrescriptionBill) {
+                            $buttons[] = '<button type="button" id="prescPrintPayment1"
+                            class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1"
+                            title="Print Medicine Bill"><i class="fa fa-print"></i></button>';
+                        }
                         if (auth()->user()->hasRole('Admin')) {
                             // $buttons[] = "<a href='" . route('billing.edit', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-warning btn-xs me-1' title='Edit bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-edit'></i></a>";
                             $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-xs' id='btn-cancel-bill' data-bs-toggle='modal' data-bs-target='#modal-cancel-bill' data-id='{$billing->id}' title='cancel'><i class='fa fa-times'></i></button>
