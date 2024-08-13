@@ -162,6 +162,12 @@ use Illuminate\Support\Facades\Crypt;
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     <script>
+        var revisitedPatientsData = @json(array_values($revisitedPatientsData));
+        var newlyRegisteredData = @json(array_values($newlyRegisteredData));
+        var allData = revisitedPatientsData.concat(newlyRegisteredData);
+        var maxValue = Math.max(...allData);
+        var minValue = Math.min(...allData);
+        var tickAmount = Math.ceil(maxValue / 5);
         var options = {
             series: [{
                 name: 'Revisited',
@@ -203,8 +209,15 @@ use Illuminate\Support\Facades\Crypt;
             yaxis: {
                 title: {
                     text: 'Patient Statistics'
+                },
+                tickAmount: maxValue, // Dynamically set tickAmount
+                labels: {
+                    formatter: function(value) {
+                        return Math.floor(value); // Ensure integer values
+                    }
                 }
             },
+
             legend: {
                 show: true,
                 position: 'top',
