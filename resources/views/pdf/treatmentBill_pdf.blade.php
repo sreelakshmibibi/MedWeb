@@ -277,6 +277,14 @@ date_default_timezone_set('Asia/Kolkata');
                                     <td>{{ number_format($patientTreatmentBilling->doctor_discount, 3) }}</td>
                                 </tr>
                                 @endif
+                                @if ($patientTreatmentBilling->previous_outstanding != 0)
+                                        <tr>
+                                            <td colspan="5" class="text-end">Previous Outstanding
+                                            </td>
+
+                                            <td>{{ number_format($patientTreatmentBilling->previous_outstanding, 3) }}</td>
+                                        </tr>
+                                    @endif
                                 @if ($patientTreatmentBilling->tax_percentile != 0 && $patientTreatmentBilling->tax != 0) 
                                 <tr>
                                     <td colspan="5" class="text-end">Tax ({{$patientTreatmentBilling->tax_percentile}}%)</td>
@@ -289,7 +297,7 @@ date_default_timezone_set('Asia/Kolkata');
                                         <h3><b>Total</b></h3>
                                     </td>
                                     <td>
-                                        <h3>{{ session('currency') }}{{ number_format($patientTreatmentBilling->amount_to_be_paid, 2) }}
+                                        <h3>{{ session('currency') }}{{ number_format($patientTreatmentBilling->previous_outstanding + $patientTreatmentBilling->amount_to_be_paid, 2) }}
                                         </h3>
                                     </td>
                                 </tr>

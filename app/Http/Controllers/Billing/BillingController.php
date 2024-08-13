@@ -10,6 +10,7 @@ use App\Models\ClinicBasicDetail;
 use App\Models\ClinicBranch;
 use App\Models\Insurance;
 use App\Models\PatientDetailBilling;
+use App\Models\PatientProfile;
 use App\Models\PatientTreatmentBilling;
 use App\Models\Prescription;
 use App\Models\TreatmentComboOffer;
@@ -98,6 +99,7 @@ class BillingController extends Controller
                 // })
                 ->addColumn('status', function ($row) {
                     $billing = PatientTreatmentBilling::where('appointment_id', $row->id)
+                    ->where('status', 'Y')
                     // ->whereNot('bill_status', PatientTreatmentBilling::BILL_CANCELLED)
                         ->first();
 
@@ -139,16 +141,16 @@ class BillingController extends Controller
                     $base64Id = base64_encode($row->id);
                     $idEncrypted = Crypt::encrypt($base64Id);
                     $billing = PatientTreatmentBilling::where('appointment_id', $row->id)
-                    // ->whereNot('bill_status', PatientTreatmentBilling::BILL_CANCELLED)
+                            ->where('status', 'Y')
                         ->first();
-                    if ($row->app_status == AppointmentStatus::COMPLETED && ! empty($billing) && $billing->bill_status == PatientTreatmentBilling::BILL_CANCELLED) {
+                    if ($row->app_status == AppointmentStatus::COMPLETED && !empty($billing) && ($billing->bill_status == PatientTreatmentBilling::BILL_CANCELLED || $billing->bill_status == PatientTreatmentBilling::BILL_GENERATED)) {
                         $buttons[] = "<a href='".route('billing.create', $idEncrypted)."' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='generate bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->patient->first_name.' '.$row->patient->last_name)."' ><i class='fa fa-plus'></i></a>";
 
                     } elseif ($row->app_status == AppointmentStatus::COMPLETED && empty($billing)) {
                         $buttons[] = "<a href='".route('billing.create', $idEncrypted)."' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='generate bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->patient->first_name.' '.$row->patient->last_name)."' ><i class='fa fa-plus'></i></a>";
                     }
 
-                    if (! empty($billing) && $billing->amount_paid != null && $billing->bill_status != PatientTreatmentBilling::BILL_CANCELLED) {
+                    if (!empty($billing) && $billing->amount_paid != null && $billing->bill_status == PatientTreatmentBilling::PAYMENT_DONE) {
                         $buttons[] = "<a href='".route('billing.create', $idEncrypted)."' class='waves-effect waves-light btn btn-circle btn-success btn-xs me-1' title='Print bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->patient->first_name.' '.$row->patient->last_name)."' ><i class='fa fa-money-bill-alt'></i></a>";
                         if (auth()->user()->hasRole('Admin')) {
                             // $buttons[] = "<a href='" . route('billing.edit', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-warning btn-xs me-1' title='Edit bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-edit'></i></a>";
@@ -196,10 +198,24 @@ class BillingController extends Controller
             ->where('appointment_id', $id)
             ->where('patient_id', $appointment->patient_id)
             ->first();
-        if (! empty($billExists)) {
+        if (!empty($billExists)) {
             $detailBills = PatientDetailBilling::with('treatment')->where('billing_id', $billExists->id)->get();
+            $previousOutStanding = 0;
+            $previousBills = PatientTreatmentBilling::where('patient_id', $appointment->patient_id)
+                            ->where('appointment_id', '<', $appointment->id)
+                            ->where('status', 'Y')
+                            ->get();
 
-            return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills'));
+            foreach ($previousBills as $previousBill) {
+                if ($previousBill->bill_status == PatientTreatmentBilling::PAYMENT_DONE) {
+                    $previousOutStanding += $previousBill->balance_due;
+                }
+                if ($previousBill->bill_status == PatientTreatmentBilling::BILL_GENERATED) {
+                    $previousOutStanding += $previousBill->amount_to_be_paid;
+                }
+                
+            }
+            return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'previousOutStanding'));
         }
         $billingService = new BillingService();
         $treatmentAmounts = $billingService->individualTreatmentAmounts($id, $appointment->patient_id);
@@ -341,7 +357,7 @@ class BillingController extends Controller
         if (! $patientTreatmentBilling) {
             abort(404);
         }
-
+        $patientTreatmentBilling->previous_outstanding = isset($request['previousOutStanding']) ? $request['previousOutStanding'] : 0;
         $patientTreatmentBilling->amount_paid = $request['amountPaid'];
         $patientTreatmentBilling->mode_of_payment = $request['mode_of_payment'];
         $patientTreatmentBilling->consider_for_next_payment = isset($request['consider_for_next_payment']) ? 1 : 0;
@@ -372,7 +388,7 @@ class BillingController extends Controller
         Storage::put($filePath, $pdf->output());
 
         // Redirect to index with PDF file name
-        // return redirect()->route('billing')->with('pdf_file_name', $fileName);
+    //  return redirect()->route('billing')->with('pdf_file_name', $fileName);
         return response()->json(['pdfUrl' => Storage::url($filePath)]);
         // return $pdf->download($bill_patientId);
     }

@@ -182,15 +182,26 @@ use Illuminate\Support\Facades\Session; ?>
                                                     value="{{ number_format($billExists->tax, 3) }}"></td>
                                         </tr>
                                     @endif
+
+                                    @if ($previousOutStanding != 0)
+                                        <tr>
+                                            <td colspan="5" class="text-end">Previous Outstanding
+                                            </td>
+
+                                            <td><input type="text" readonly name="previousOutStanding"
+                                                    class="form-control text-center"
+                                                    value="{{ number_format($previousOutStanding, 3) }}"></td>
+                                        </tr>
+                                    @endif
                                     <tr class="bt-3 border-primary">
                                         <td colspan="5" class="text-end ">
                                             <h3><b>Total</b></h3>
                                         </td>
                                         <td>
-                                            <h3>{{ session('currency') }}{{ number_format($billExists->amount_to_be_paid, 2) }}
+                                            <h3>{{ session('currency') }}{{ number_format($billExists->amount_to_be_paid + $previousOutStanding, 2) }}
                                                 <input type="hidden" name="totaltoPay" id="totalToPay"
                                                     class="form-control text-center"
-                                                    value="{{ $billExists->amount_to_be_paid }}">
+                                                    value="{{ $billExists->amount_to_be_paid  + $previousOutStanding}}">
                                             </h3>
                                         </td>
                                     </tr>
