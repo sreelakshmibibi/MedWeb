@@ -58,14 +58,22 @@ class HomeController extends Controller
             ->pluck('count', 'month')
             ->toArray();
         $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        $defaultArray = array_fill_keys($months, 0);
+        function mapMonthData($data, $months)
+        {
+            $mappedData = array_fill_keys($months, 0); // Initialize with zeros
+            foreach ($data as $monthIndex => $count) {
+                // Adjust for 1-based index in SQL month and 0-based index in PHP array
+                if (isset($months[$monthIndex - 1])) {
+                    $mappedData[$months[$monthIndex - 1]] = $count;
+                }
+            }
 
-        // Ensure all months are represented
-        $newlyRegisteredData = array_replace(array_fill_keys(array_keys($months), 0), $newlyRegistered);
-        $revisitedPatientsData = array_replace(array_fill_keys(array_keys($months), 0), $revisitedPatients);
+            return $mappedData;
+        }
 
-        // Convert the associative arrays to indexed arrays
-        $newlyRegisteredData = array_values($newlyRegisteredData);
-        $revisitedPatientsData = array_values($revisitedPatientsData);
+        $newlyRegisteredData = mapMonthData($newlyRegistered, $months);
+        $revisitedPatientsData = mapMonthData($revisitedPatients, $months);
         $today = Carbon::today();
         $tenDaysAgo = $today->copy()->subDays(10);
 

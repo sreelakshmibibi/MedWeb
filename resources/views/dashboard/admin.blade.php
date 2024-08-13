@@ -165,10 +165,10 @@ use Illuminate\Support\Facades\Crypt;
         var options = {
             series: [{
                 name: 'Revisited',
-                data: @json($revisitedPatientsData)
+                data: @json(array_values($revisitedPatientsData))
             }, {
                 name: 'Newly Registered',
-                data: @json($newlyRegisteredData)
+                data: @json(array_values($newlyRegisteredData))
             }],
             chart: {
                 type: 'bar',
