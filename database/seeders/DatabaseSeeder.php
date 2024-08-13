@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
             TreatmentStatusSeeder::class,
             TreatmentPlanSeeder::class,
             MedicineRouteSeeder::class,
+            CardPaySeeder::class,
             // Other seeders...
         ]);
         $adminUser = User::factory()->create([
