@@ -1,7 +1,9 @@
 <?php
-
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Session; ?>
+use Illuminate\Support\Facades\Session;
+
+date_default_timezone_set('Asia/Kolkata');
+?>
 @extends('layouts.dashboard')
 @section('title', 'Billing')
 @section('content')
@@ -11,214 +13,304 @@ use Illuminate\Support\Facades\Session; ?>
             <div class="content-header">
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Billing :<span class="fs-20 text-info">
-                            {{ $appointment->patient_id}}- {{str_replace('<br>', ' ', $appointment->patient->first_name . ' ' . $appointment->patient->last_name)}}
+                            {{ $appointment->patient_id }}-
+                            {{ str_replace('<br>', ' ', $appointment->patient->first_name . ' ' . $appointment->patient->last_name) }}
                         </span>
                     </h3>
-                    <?php  $base64Id = base64_encode($appointment->id);
-                            $idEncrypted = Crypt::encrypt($base64Id); ?>
-                                
-                            <div>
-                                <?php if (sizeof($prescriptions) > 0 && $isMedicineProvided == 'Y') { ?> 
-                                    <a href="{{ route('medicineBilling.create', ['appointmentId' => $idEncrypted]) }}" class="btn btn-success float-end">Medicine Bill</a> 
-                                <?php } ?>
-                                <a href="{{ route('billing.create', ['appointmentId' => $idEncrypted]) }}" class="btn btn-success float-end">Treatment Bill</a>
-                            </div>
-                        <div>
-                            <button type='button'
-                                class='waves-effect waves-light btn btn-circle btn-info btn-pdf-generate btn-xs me-1'
-                                title='Download' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}'
-                                data-patient-id='{$row->patient->patient_id}' data-bs-target='#modal-download'><i
-                                    class='fa fa-download'></i></button>
-                            <button type='button'
-                                class='waves-effect waves-light btn btn-circle btn-warning buttons-print btn-pdf-generate btn-xs me-1'
-                                title='Print' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}'
-                                data-patient-id='{$row->patient->patient_id}' data-bs-target='#modal-download'><i
-                                    class='fa fa-print'></i></button>
-                            <a type="button" class="waves-effect waves-light btn btn-primary btn-circle btn-xs me-1"
-                                href="{{ route('billing') }}">
-                                <i class="fa-solid fa-angles-left"></i></a>
-                        </div>
+                    <?php
+                    $base64Id = base64_encode($appointment->id);
+                    $idEncrypted = Crypt::encrypt($base64Id);
+                    ?>
+
+                    <div>
+                        <?php if ($hasPrescriptionBill) { ?>
+                        <button type='button' id="prescPrintPayment1"
+                            class='waves-effect waves-light btn btn-warning btn-circle btn-xs me-1'
+                            title='Print Medicine Bill'><i class='fa fa-print'></i></button>
+                        <?php } ?>
+                        <a type="button" class="waves-effect waves-light btn btn-primary btn-circle btn-xs me-1"
+                            href="{{ route('billing') }}" title="back">
+                            <i class="fa-solid fa-angles-left"></i> </a>
                     </div>
+                </div>
                 <div id="error-message-container">
-                    <p id="error-message"
-                        class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fadeOut"
-                        style="display: none;"></p>
+                    <p id="error-message" style="display: none;"
+                        class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fadeOut"></p>
                 </div>
             </div>
-            <form method="post"  id="billingForm"
-            action="{{ route('billing.store') }}" enctype="multipart/form-data">
-            @csrf
-                <section class="content">
-                    <div class=" row invoice-info">
-                        <div class=" col-sm-12 invoice-col mb-15">
-                            <div class="flexbox invoice-details px-1   no-margin">
-                                <div>
-                                    <p class="mb-1"><b>Bill No:</b></p>
-                                    <input type="hidden" id="appointmentId" value="{{ $idEncrypted }}">
-                                    <p class="mb-0"><b>Generated at:</b>{{ date ('d/m/Y H:m:s')}}</p>
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs " role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#treatbilltabcontent" role="tab"
+                        id="treatbilltabtitle">
+                        <span class="hidden-sm-up"><i class="fa-solid fa-file-medical"></i></span>
+                        <span class="hidden-xs-down"><i class="fa-solid fa-file-medical me-10"></i>Treatment Bill</span>
+                    </a>
+                </li>
+
+                <?php if (sizeof($prescriptions) > 0 && $isMedicineProvided == 'Y') { ?>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#medbilltabcontent" role="tab" id="medbilltabtitle">
+                        <span class="hidden-sm-up"><i class="fa-solid fa-capsules"></i> </span>
+                        <span class="hidden-xs-down"><i class="fa-solid fa-capsules me-10"></i>Medicine Bill</span>
+                    </a>
+                </li>
+                <?php } ?>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="treatbilltabcontent" role="tabpanel">
+                    <div class="py-15">
+                        <!-- Main content -->
+                        <form method="post" id="billingForm" action="{{ route('billing.store') }}"
+                            enctype="multipart/form-data">
+                            @csrf
+                            <section class="content">
+                                <div class=" row invoice-info">
+                                    <div class=" col-sm-12 invoice-col mb-15">
+                                        <div class="flexbox invoice-details px-1   no-margin">
+                                            <div>
+                                                <p class="mb-1"><b>Bill No: </b></p>
+                                                <input type="hidden" id="appointmentId" value="{{ $idEncrypted }}">
+                                                <p class="mb-0"><b>Generated at: </b>{{ date('d/m/Y h:i:s A') }}</p>
+                                            </div>
+                                            <div><b>Appointment ID: </b> {{ $appointment->app_id }}</div>
+                                            <div><b>Mobile No.: </b> {{ $appointment->patient->phone }}</div>
+                                            <div class="text-end">
+                                                <p class="mb-1"><b>Payment Due: </b> {{ date('d/m/Y') }}</p>
+                                                <p class="mb-0"><b>Generated by: </b> {{ Auth::user()->name }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div><b>Appointment ID:</b> {{ $appointment->app_id}}</div>
-                                <div><b>Mobile No.:</b> {{ $appointment->patient->phone}}</div>
-                                <div class="text-end">
-                                    <p class="mb-1"><b>Payment Due:</b> {{ date('d/m/Y') }}</p>
-                                    <p class="mb-0"><b>Generated by:</b> {{ Auth::user()->name}}</p>
+                                <div class="row">
+                                    <div class="col-12 table-responsive-sm lh-1">
+                                        <table class="table table-bordered caption-top text-center">
+                                            <caption class="pt-0">Treatment Details</caption>
+                                            <thead class="bg-dark">
+                                                <tr>
+                                                    <th style="width: 5%;">#</th>
+                                                    <th style="width: 45%;">Treatment</th>
+                                                    <th style="width: 10%;">Quantity</th>
+                                                    <th style="width: 15%;">
+                                                        Unit Cost ( {{ session::get('currency') }} )
+                                                    </th>
+                                                    <?php if (empty($insuranceDetails))  { ?>
+                                                    <th style="width: 10%;">Discount ( % )</th>
+                                                    <?php } ?>
+                                                    <th style="width: 15%;">
+                                                        Subtotal ( {{ session::get('currency') }} )
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php $i = 0;
+                                                $treatmentTotal = 0; ?>
+                                                <input type="hidden" value="{{ sizeof($individualTreatmentAmounts) }}"
+                                                    name="treatmentCount">
+                                                <input type="hidden" value="{{ $appointment->id }}" name="appointment_id">
+                                                <input type="hidden" value="{{ $appointment->patient_id }}"
+                                                    name="patient_id">
+                                                @foreach ($individualTreatmentAmounts as $individualTreatmentAmount)
+                                                    <?php
+                                                    $i++;
+                                                    $cost = is_numeric($individualTreatmentAmount['cost']) ? floatval($individualTreatmentAmount['cost']) : 0;
+                                                    $subtotal = is_numeric($individualTreatmentAmount['subtotal']) ? floatval($individualTreatmentAmount['subtotal']) : 0;
+                                                    ?>
+                                                    <tr>
+                                                        <td>{{ $i }}</td>
+                                                        <td class="text-start">
+                                                            {{ $individualTreatmentAmount['treat_name'] }}
+                                                            <input type="hidden" name="treatmentId{{ $i }}"
+                                                                value="{{ $individualTreatmentAmount['treat_id'] }}">
+                                                        </td>
+                                                        <td><input type="text" readonly
+                                                                name="tquantity{{ $i }}"
+                                                                class="form-control text-center"
+                                                                value="{{ $individualTreatmentAmount['quantity'] }}"></td>
+                                                        <!-- Add quantity if available -->
+                                                        <td><input type="text" readonly name="cost{{ $i }}"
+                                                                class="form-control text-center"
+                                                                value="{{ number_format($individualTreatmentAmount['cost'], 3) }}">
+                                                        </td>
+                                                        <?php if (empty($insuranceDetails))  { ?>
+                                                        <td> <input type="text" readonly
+                                                                name="discount_percentage{{ $i }}"
+                                                                class="form-control text-center"
+                                                                value="{{ $individualTreatmentAmount['discount_percentage'] }}">
+                                                        </td>
+                                                        <?php } ?>
+                                                        <td> <input type="text" readonly
+                                                                name="subtotal{{ $i }}"
+                                                                class="form-control text-center"
+                                                                value="{{ number_format($individualTreatmentAmount['subtotal'], 3) }}">
+                                                        </td> <!-- Format the cost -->
+                                                        <?php
+                                                        
+                                                        // $treatmentTotal += number_format($individualTreatmentAmount['subtotal'], 3)
+                                                        $treatmentTotal += $subtotal;
+                                                        ?>
+                                                    </tr>
+                                                @endforeach
+                                                @if ($consultationFees == 1)
+                                                    <tr>
+                                                        <td>{{ ++$i }}</td>
+                                                        <td class="text-start">Consultation Fees
+                                                            <input type="hidden" name="consultationFees"
+                                                                value="Consultation Fees">
+                                                        </td>
+                                                        <td><input type="text" readonly
+                                                                name="consultationFees_quantity"
+                                                                class="form-control text-center" value="1"></td>
+                                                        <!-- Add quantity if available -->
+                                                        <td><input type="text" readonly name="consultationFeesCost"
+                                                                class="form-control text-center"
+                                                                value="{{ number_format($fees, 3) }}"></td>
+                                                        <?php if (empty($insuranceDetails))  {?>
+                                                        <td> <input type="text" readonly
+                                                                name="consultationFeesDiscount"
+                                                                class="form-control text-center" value="0"></td>
+                                                        <?php }?>
+                                                        <td> <input type="text" readonly name="consultationFeesAmount"
+                                                                class="form-control text-center"
+                                                                value="{{ number_format($fees, 3) }}"></td>
+                                                        <!-- Format the cost -->
+                                                        <?php
+                                                        
+                                                        $treatmentTotal += number_format($fees, 3);
+                                                        ?>
+                                                    </tr>
+                                                @endif
+                                            </tbody>
+                                            <tbody>
+                                                <?php if (empty($insuranceDetails)) {
+                                                    $colspan = 5;
+                                                } else {
+                                                    $colspan = 4;
+                                                } ?>
+
+                                                <tr>
+                                                    <td colspan="{{ $colspan }}" class="text-end">
+                                                        Sub - Total amount
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" readonly name="treatment_total_amount"
+                                                            id="treatment_total_amount" class="form-control text-center"
+                                                            value="{{ number_format($treatmentTotal, 3) }}">
+                                                    </td>
+                                                </tr>
+                                                <?php if (sizeof($combOffers) > 0 && empty($insuranceDetails)) { ?>
+                                                <tr>
+                                                    <td colspan="{{ $colspan }}" class="text-end">
+                                                        <a href="#" data-bs-toggle="modal"
+                                                            data-bs-target="#modal-combo">
+                                                            <span class="text-danger">(Select Offer)</span></a>
+
+                                                        <label for="combo_checkbox">Combo offer Discount</label>
+                                                    </td>
+                                                    <?php $treatmentTotal -= $comboOfferDeduction; ?>
+                                                    <td>
+                                                        <input type="text" readonly name="combo_offer_deduction"
+                                                            id ="combo_offer_deduction" class="form-control text-center"
+                                                            value="{{ number_format($comboOfferDeduction, 3) }}">
+                                                    </td>
+                                                </tr>
+                                                <?php  } ?>
+
+                                                @if ($doctorDiscount != 0 && empty($insuranceDetails))
+                                                    <tr>
+                                                        <td colspan="{{ $colspan }}" class="text-end">
+                                                            Doctor Discount ({{ $doctorDiscount }}) %
+                                                        </td>
+                                                        <?php
+                                                        $doctorDisc = $treatmentTotal * ($doctorDiscount / 100);
+                                                        $treatmentTotal = $treatmentTotal - $doctorDisc;
+                                                        ?>
+                                                        <td>
+                                                            <input type="text" readonly name="doctor_discount"
+                                                                id="doctor_discount" class="form-control text-center"
+                                                                value="{{ number_format($doctorDisc, 3) }}">
+                                                        </td>
+                                                    </tr>
+                                                @endif
+                                                @if ($clinicBasicDetails->treatment_tax_included == 'N')
+                                                    <tr>
+                                                        <td colspan="{{ $colspan }}" class="text-end">
+                                                            Tax ({{ $clinicBasicDetails->tax }}%)
+                                                        </td>
+                                                        <?php
+                                                        $taxAmount = $treatmentTotal * ($clinicBasicDetails->tax / 100);
+                                                        $treatmentTotal += $taxAmount; ?>
+                                                        <td>
+                                                            <input type="text" readonly name="tax"
+                                                                class="form-control text-center"
+                                                                value="{{ number_format($taxAmount, 3) }}">
+                                                        </td>
+                                                    </tr>
+                                                @endif
+                                                <tr class="bt-3 border-primary">
+                                                    <td colspan="{{ $colspan }}" class="text-end ">
+                                                        <h3><b>Total</b></h3>
+                                                    </td>
+                                                    <td>
+                                                        <h3>
+                                                            {{ session('currency') }}{{ number_format($treatmentTotal, 2) }}
+                                                            <input type="hidden" name="totaltoPay" id="totalToPay"
+                                                                class="form-control text-center"
+                                                                value="{{ $treatmentTotal }}">
+                                                        </h3>
+                                                    </td>
+                                                </tr>
+                                                <?php if (!empty($insuranceDetails)) { ?>
+                                                <tr>
+                                                    <td colspan="{{ $colspan }}" class="text-end">
+                                                        Insurance paid
+                                                    </td>
+                                                    <?php $treatmentTotal -= $insurance; ?>
+                                                    <td>
+                                                        <input type="text" name="insurance_paid" id ="insurance_paid"
+                                                            class="form-control text-center"
+                                                            value="{{ number_format($insurance, 3) }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="{{ $colspan }}" class="text-end ">
+                                                        Balance Amount to be Paid
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="amount_to_be_paid_insurance"
+                                                            id="amount_to_be_paid_insurance"
+                                                            class="form-control text-center">
+                                                    </td>
+                                                </tr>
+                                                <?php } ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+
+                                <div class="row text-end py-3">
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-primary pull-right">
+                                            <i class="fa fa-credit-card"></i>
+                                            Generate Bill
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </section>
+                        </form>
                     </div>
-                    <div class="row">
-                        <div class="col-12 table-responsive-sm lh-1">
-                            <table class="table table-bordered caption-top text-center">
-                                <caption class="pt-0">Treatment Details</caption>
-                                <tbody>
-                                    <tr>
-                                        <th style="width: 5%;">#</th>
-                                        <th style="width: 45%;">Treatment</th>
-                                        <th style="width: 10%;">Quantity</th>
-                                        <th style="width: 15%;">Unit Cost ( {{session::get('currency')}} )</th>
-                                        <?php if (empty($insuranceDetails))  { ?>
-                                        <th style="width: 10%;">Discount ( % )</th>
-                                       <?php } ?>
-                                        <th style="width: 15%;">Subtotal ( {{session::get('currency')}} )</th>
-                                    </tr>
-                                    <?php $i = 0;
-                                    $treatmentTotal = 0; ?>
-                                    <input type="hidden" value="{{sizeof($individualTreatmentAmounts)}}" name="treatmentCount">
-                                    <input type="hidden" value="{{ $appointment->id }}" name="appointment_id">
-                                    <input type="hidden" value="{{ $appointment->patient_id}}" name="patient_id">
-                                    @foreach ( $individualTreatmentAmounts as $individualTreatmentAmount )
-                                    <?php
-                                    $i++;
-                                    $cost = is_numeric($individualTreatmentAmount['cost']) ? floatval($individualTreatmentAmount['cost']) : 0;
-                                    $subtotal = is_numeric($individualTreatmentAmount['subtotal']) ? floatval($individualTreatmentAmount['subtotal']) : 0;
-                            
-                                    ?>
-                                        <tr>
-                                            <td>{{ $i }}</td>
-                                            <td class="text-start">{{ $individualTreatmentAmount['treat_name'] }}
-                                                <input type="hidden" name="treatmentId{{$i}}" value="{{ $individualTreatmentAmount['treat_id'] }}">
-                                            </td>
-                                            <td><input type="text" readonly name="quantity{{$i}}" class="form-control text-center" value="{{ $individualTreatmentAmount['quantity'] }}"></td> <!-- Add quantity if available -->
-                                            <td><input type="text" readonly name="cost{{$i}}" class="form-control text-center" value="{{ number_format($individualTreatmentAmount['cost'], 3)}}"></td>
-                                            <?php if (empty($insuranceDetails))  { ?>
-                                            <td> <input type="text" readonly name="discount_percentage{{$i}}" class="form-control text-center" value="{{ $individualTreatmentAmount['discount_percentage'] }}"></td>    
-                                            <?php } ?>
-                                            <td> <input type="text" readonly name="subtotal{{$i}}" class="form-control text-center" value="{{ number_format($individualTreatmentAmount['subtotal'], 3) }}"></td> <!-- Format the cost -->
-                                            <?php
+                </div>
 
-                                            // $treatmentTotal += number_format($individualTreatmentAmount['subtotal'], 3)
-                                            $treatmentTotal += $subtotal;
-                                            ?>
-                                        </tr>   
-                                    @endforeach
-                                        @if ($consultationFees == 1) 
-                                        <tr>
-                                        <td>{{ ++$i }}</td>
-                                            <td class="text-start">Consultation Fees
-                                                <input type="hidden" name="consultationFees" value="Consultation Fees">
-                                            </td>
-                                            <td><input type="text" readonly name="consultationFees_quantity" class="form-control text-center" value="1"></td> <!-- Add quantity if available -->
-                                            <td><input type="text" readonly name="consultationFeesCost" class="form-control text-center" value="{{ number_format($fees, 3) }}"></td>
-                                            <?php if (empty($insuranceDetails))  {?>
-                                        <td> <input type="text" readonly name="consultationFeesDiscount" class="form-control text-center" value="0"></td>    
-                                            <?php }?>
-                                            <td> <input type="text" readonly name="consultationFeesAmount" class="form-control text-center" value="{{ number_format($fees, 3) }}"></td> <!-- Format the cost -->
-                                            <?php
-
-                                            $treatmentTotal += number_format($fees, 3)
-                                            ?>
-                                        </tr>  
-                                        @endif
-
-                                    
-                                </tbody>
-                                <tbody>
-                                <?php if (empty($insuranceDetails))  $colspan = 5; else $colspan = 4;?> 
-                                    
-                                    <tr>
-                                        <td colspan="{{$colspan}}" class="text-end">Sub - Total amount</td>
-                                        <td><input type="text" readonly name="treatment_total_amount" id="treatment_total_amount" class="form-control text-center" value="{{ number_format($treatmentTotal, 3) }}"> </td>
-                                    </tr>
-                                    <?php if (sizeof($combOffers) > 0 && empty($insuranceDetails)) { ?>
-                                        <tr>
-                                            <td colspan="{{$colspan}}" class="text-end">
-                                            <a href="#" data-bs-toggle="modal" data-bs-target="#modal-combo">
-                                                <span class="text-danger">(Select Offer)</span></a>
-
-                                            <label for="combo_checkbox">Combo offer Discount</label></td>
-                                            <?php $treatmentTotal -= $comboOfferDeduction; ?>
-                                            <td><input type="text" readonly name="combo_offer_deduction" id ="combo_offer_deduction" class="form-control text-center" value="{{ number_format($comboOfferDeduction, 3) }}"> </td>
-                                        </tr> 
-                                    <?php  } ?>
-                                    <!-- <tr>
-                                        <td colspan="5" class="text-end">Combo Offer</td>
-                                        <td>{{ session('currency') }}</td>
-                                    </tr> -->
-                                      
-                                    @if ($doctorDiscount != 0 &&  empty($insuranceDetails))
-                                    <tr>
-                                        <td colspan="{{$colspan}}" class="text-end">Doctor Discount ({{$doctorDiscount}}) %</td>
-                                        <?php 
-                                        $doctorDisc = $treatmentTotal * ($doctorDiscount/100);
-                                        $treatmentTotal = $treatmentTotal - $doctorDisc;
-                                        ?>
-                                        <td><input type="text" readonly name="doctor_discount" id="doctor_discount" class="form-control text-center" value="{{ number_format($doctorDisc, 3) }}"> </td>
-                                    </tr>
-                                    @endif
-                                    @if ($clinicBasicDetails->treatment_tax_included == 'N') 
-                                    <tr>
-                                        <td colspan="{{$colspan}}" class="text-end">Tax ({{$clinicBasicDetails->tax}}%)</td>
-                                        <?php 
-                                        $taxAmount = $treatmentTotal * ($clinicBasicDetails->tax / 100);
-                                        $treatmentTotal += $taxAmount;?>
-                                        <td><input type="text" readonly name="tax" class="form-control text-center" value="{{ number_format($taxAmount, 3) }}"></td>
-                                    </tr>
-                                    @endif
-                                    <tr class="bt-3 border-primary">
-                                        <td colspan="{{$colspan}}" class="text-end ">
-                                            <h3><b>Total</b></h3>
-                                        </td>
-                                        <td>
-                                            <h3>{{ session('currency') }}{{ number_format($treatmentTotal, 2) }}
-                                            <input type="hidden" name="totaltoPay" id="totalToPay" class="form-control text-center" value="{{ $treatmentTotal }}">
-                                            </h3>
-                                        </td>
-                                    </tr>
-                                    <?php if (!empty($insuranceDetails)) { ?>
-                                        <tr>
-                                            <td colspan="{{$colspan}}" class="text-end">Insurance paid</td>
-                                            <?php $treatmentTotal -= $insurance; ?>
-                                            <td><input type="text"  name="insurance_paid" id ="insurance_paid" class="form-control text-center" value="{{ number_format($insurance, 3) }}"> </td>
-                                        </tr>  
-                                        <tr>
-                                        <td colspan="{{$colspan}}" class="text-end ">Balance Amount to be Paid</td>
-                                        <td><input type="text" name="amount_to_be_paid_insurance" id="amount_to_be_paid_insurance" class="form-control text-center" ></td>
-                                    </tr>
-                                    <?php } ?>
-                                   
-                                    <!-- <tr>
-                                        <td colspan="5" class="text-end ">Amount Paid</td>
-                                        <td><input type="text" name="amountPaid" id="amountPaid" class="form-control text-center" ></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="5" class="text-end ">Balance</td>
-                                        <td><input type="text" name="balanceInsurance" id="balanceInsurance" class="form-control text-center" ></td>
-                                    </tr> -->
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="tab-pane" id="medbilltabcontent" role="tabpanel">
+                    <div class="py-15">
+                        @include('billing.medicine')
                     </div>
-
-                    <div class="row text-end py-3">
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-success pull-right"><i class="fa fa-credit-card"></i>
-                                Generate Bill
-                            </button>
-                        </div>
-                    </div>
-
-                </section>
-            </form>
+                </div>
+            </div>
         </div>
     </div>
 
