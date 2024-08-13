@@ -143,6 +143,7 @@
             $('#clinic_branch_id0, #appdate').change(function() {
                 var branchId = $('#clinic_branch_id0').val();
                 var appDate = $('#appdate').val();
+                $('#doctorNotAvailable').hide();
                 loadDoctors(branchId, appDate);
             });
 
@@ -154,6 +155,7 @@
                 $('#existingAppointmentsError').hide();
                 $('#existAppContainer').hide();
                 $('#existingAppointments').empty();
+                $('#doctorNotAvailable').hide();
                 showExistingAppointments(branchId, appDate, doctorId, patientId, 'store');
 
             });
@@ -281,12 +283,20 @@
                     success: function(data) {
                         // Show/hide the 'alreadyExistsPatient' div based on 'checkAppointmentDate'
 
-
                         // Show/hide the 'existingAppointmentsError' div based on 'checkAllocated'
                         if (data.checkAllocated.length > 0) {
                             $('#existingAppointmentsError').show();
                         } else {
                             $('#existingAppointmentsError').hide();
+                        }
+
+                        if (data.doctorAvailable == true) {
+
+                            $('#doctorNotAvailable').hide();
+                        } else {
+
+                            $('#doctorNotAvailable').show();
+
                         }
 
                         // Handle existing appointments display

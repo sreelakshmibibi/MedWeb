@@ -48,17 +48,30 @@ class StaffListController extends Controller
                 })
                 ->addColumn('role', function ($row) {
                     $role = '';
+                    // if ($row->user->is_doctor) {
+                    //     $role .= '<span class="d-block  badge badge-success-light mb-1">Doctor</span>';
+                    // }
+                    // if ($row->user->is_nurse) {
+                    //     $role .= '<span class="d-block  badge badge-warning-light mb-1">Nurse</span>';
+                    // }
+                    // if ($row->user->is_admin) {
+                    //     $role .= '<span class="d-block  badge badge-primary-light mb-1">Admin</span>';
+                    // }
+                    // if ($row->user->is_reception) {
+                    //     $role .= '<span class="d-block  badge badge-info-light mb-1">Others</span>';
+                    // }
+    
                     if ($row->user->is_doctor) {
-                        $role .= '<span class="d-block  badge badge-success-light mb-1">Doctor</span>';
+                        $role .= '<span class="d-block  badge badge-success mb-1">Doctor</span>';
                     }
                     if ($row->user->is_nurse) {
-                        $role .= '<span class="d-block  badge badge-warning-light mb-1">Nurse</span>';
+                        $role .= '<span class="d-block  badge badge-warning mb-1">Nurse</span>';
                     }
                     if ($row->user->is_admin) {
-                        $role .= '<span class="d-block  badge badge-primary-light mb-1">Admin</span>';
+                        $role .= '<span class="d-block  badge badge-primary mb-1">Admin</span>';
                     }
                     if ($row->user->is_reception) {
-                        $role .= '<span class="d-block  badge badge-info-light mb-1">Others</span>';
+                        $role .= '<span class="d-block  badge badge-info mb-1">Others</span>';
                     }
                     return $role;
                 })
@@ -167,11 +180,23 @@ class StaffListController extends Controller
                 $user->syncRoles(array_keys(array_filter($roles)));
                 $staffProfile->user_id = $user->id;
                 $staffProfile->staff_id = "MEDWEB" . $user->id;
-               
+
                 $staffProfile->fill($request->only([
-                    'aadhaar_no', 'date_of_birth', 'phone', 'gender', 'address1', 'address2',
-                    'city_id', 'state_id', 'country_id', 'pincode', 'date_of_joining', 'qualification',
-                    'department_id', 'years_of_experience', 'designation'
+                    'aadhaar_no',
+                    'date_of_birth',
+                    'phone',
+                    'gender',
+                    'address1',
+                    'address2',
+                    'city_id',
+                    'state_id',
+                    'country_id',
+                    'pincode',
+                    'date_of_joining',
+                    'qualification',
+                    'department_id',
+                    'years_of_experience',
+                    'designation'
                 ]));
 
                 if ($request->add_checkbox == "on") {
@@ -212,19 +237,19 @@ class StaffListController extends Controller
                             DB::commit();
                             if (!isset($request->edit_user_id)) {
                                 $token = Str::random(64);
-                                UserVerify::create([ 'user_id' => $user->id, 'token' => $token ]);
+                                UserVerify::create(['user_id' => $user->id, 'token' => $token]);
                                 $welcomeNotification = new WelcomeVerifyNotification($staffName, $request->email, $password, $token);
                                 $user->notify($welcomeNotification);
                             }
                         } else {
                             DB::rollBack();
-                            return response()->json(['error' => 'Failed to create doctor: Availbilty of time slots required'], 422);
+                            return response()->json(['error' => 'Failed to create doctor: Availbilty of time slots required or please check the slots provided'], 422);
                         }
                     } else {
                         DB::commit();
                         if (!isset($request->edit_user_id)) {
                             $token = Str::random(64);
-                            UserVerify::create([ 'user_id' => $user->id, 'token' => $token ]);
+                            UserVerify::create(['user_id' => $user->id, 'token' => $token]);
                             $welcomeNotification = new WelcomeVerifyNotification($staffName, $request->email, $password, $token);
                             $user->notify($welcomeNotification);
                         }
@@ -313,6 +338,10 @@ class StaffListController extends Controller
         $states = State::all();
         $cities = City::all();
 
+        $totalUniquePatients = 0;
+        $malePatientsCount = 0;
+        $femalePatientsCount = 0;
+
         if ($request->ajax()) {
             $staffId = $request->input('userId');
             $appointments = Appointment::where('doctor_id', $staffId)
@@ -322,7 +351,7 @@ class StaffListController extends Controller
             return DataTables::of($appointments)
                 ->addIndexColumn()
                 ->addColumn('name', function ($row) {
-                    return str_replace("<br>", " ",  ucwords(strtolower($row->patient->first_name)) . " " .  ucwords(strtolower($row->patient->last_name)));
+                    return str_replace("<br>", " ", ucwords(strtolower($row->patient->first_name)) . " " . ucwords(strtolower($row->patient->last_name)));
                 })
                 ->addColumn('branch', function ($row) {
                     if (!$row->branch) {
@@ -335,13 +364,50 @@ class StaffListController extends Controller
                     return $row->patient->phone;
                 })
                 ->addColumn('action', function ($row) {
-                    $button = "<button type='button' class='waves-effect waves-light btn btn-circle btn-info btn-xs'  title='view'><i class='fa fa-eye'></i></button>";
+                    $base64Id = base64_encode($row->id);
+                    $idEncrypted = Crypt::encrypt($base64Id);
+                    // $button = "<button type='button' class='waves-effect waves-light btn btn-circle btn-info btn-xs' title='view'><i class='fa fa-eye'></i></button>";
+                    $button = '<a href="' . route('patient.patient_list.view', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
                     return $button;
                 })
                 ->rawColumns(['action'])
                 ->make(true);
         }
 
-        return view('staff.staff_list.view', compact('name', 'countries', 'states', 'cities', 'userTypes', 'departments', 'staffProfile', 'userDetails', 'availability', 'clinicBranches', 'availabilityCount', 'availability', 'availableBranches'));
+        $appointments = Appointment::where('doctor_id', $staffProfile->user_id)
+            ->with(['patient', 'doctor', 'branch'])
+            ->get();
+
+        // Extract the patients from the appointments
+        $patients = $appointments->pluck('patient')->unique('id');
+
+        // Count the total number of unique patients
+        $totalUniquePatients = $patients->count();
+
+        // Count the number of male and female patients
+        $malePatientsCount = $patients->where('gender', 'M')->count();
+        $femalePatientsCount = $patients->where('gender', 'F')->count();
+
+        return view(
+            'staff.staff_list.view',
+            compact(
+                'name',
+                'countries',
+                'states',
+                'cities',
+                'userTypes',
+                'departments',
+                'staffProfile',
+                'userDetails',
+                'availability',
+                'clinicBranches',
+                'availabilityCount',
+                'availability',
+                'availableBranches',
+                'totalUniquePatients',
+                'malePatientsCount',
+                'femalePatientsCount'
+            )
+        );
     }
 }

@@ -21,6 +21,9 @@ return new class extends Migration
             $table->foreignId('dosage_id')->constrained('dosages')->nullable();
             $table->unsignedInteger('duration');
             $table->string('advice', 50)->nullable();
+            $table->string('dose', 50)->nullable();
+            $table->string('dose_unit', 20)->nullable();
+            $table->foreignId('route_id')->nullable()->constrained('medicine_routes');
             $table->string('remark', 300)->nullable();
             $table->foreignId('prescribed_by')->constrained('users');
             $table->string('finalsave', 5)->default('NO')->nullable();

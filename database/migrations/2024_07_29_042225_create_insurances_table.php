@@ -13,7 +13,22 @@ return new class extends Migration
     {
         Schema::create('insurances', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('patient_id');
+            $table->foreignId('insurance_company_id')->constrained('insurance_companies');
+            $table->string('policy_number');
+            $table->date('policy_end_date');
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('updated_by')->constrained('users');
+            $table->string('status', 2)->default('Y')->nullable();
+            $table->string('insured_name')->nullable();
+            $table->string('insured_dob')->nullable();
             $table->timestamps();
+            $table->softDeletes();
+            $table->foreign('patient_id')
+                ->references('patient_id')
+                ->on('patient_profiles')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
     }
 

@@ -1,12 +1,13 @@
 <!-- Modal -->
-<div class="modal fade" id="modal-download" tabindex="-1" aria-labelledby="modalDownloadLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalDownloadLabel">Request PDF</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="pdfRequestForm" method="POST" action="{{ route('generate.pdf') }}">
+<form id="pdfRequestForm" method="POST" action="{{ route('generate.pdf') }}">
+    <div class="modal fade" id="modal-download" tabindex="-1" aria-labelledby="modalDownloadLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalDownloadLabel">Request PDF</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
                 <div class="modal-body">
                     @csrf
                     <input type="hidden" name="pdf_appointment_id" id="pdf_appointment_id">
@@ -31,29 +32,33 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Generate PDF</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success" id="treatmentDownloadBtn">Generate PDF</button>
+                    <button type="button" class="btn btn-secondary float-end" data-bs-dismiss="modal">Cancel</button>
                 </div>
-            </form>
+
+            </div>
         </div>
     </div>
-</div>
+</form>
 <script>
+    var pdfTeethRoute = "{{ route('fetch.teeth.details', ['patientId' => ':patientId', 'appId' => ':appId']) }}";
     // Show or hide the tooth selection based on the PDF type
     document.getElementById('pdfType').addEventListener('change', function() {
         var toothSelection = document.getElementById('toothSelection');
         if (this.value === 'tooth') {
             toothSelection.classList.remove('d-none');
-            //fetchTeethDetails(document.getElementById('pdf_patient_id').value);
+            var patientId = document.getElementById('pdf_patient_id').value;
+            var appId = document.getElementById('pdf_appointment_id').value;
+            fetchTeethDetails(patientId, appId);
         } else {
             toothSelection.classList.add('d-none');
         }
     });
 
     // Function to fetch teeth details
-    function fetchTeethDetails(patientId) {
+    function fetchTeethDetails(patientId, appId) {
         $.ajax({
-            url: pdfTeethRoute.replace(":patientId", patientId),
+            url: pdfTeethRoute.replace(':patientId', patientId).replace(':appId', appId),
             type: "GET",
             dataType: "json",
             success: function(response) {
@@ -101,10 +106,23 @@
                 var url = window.URL.createObjectURL(response);
                 var a = document.createElement('a');
                 a.href = url;
-                a.download = 'appointment_details.pdf'; // Default file name
+                a.download = 'treatment_summary.pdf'; // Default file name
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
+                // var blob = new Blob([response], {
+                //     type: 'application/pdf'
+                // });
+                // var link = document.createElement('a');
+                // link.href = window.URL.createObjectURL(blob);
+                // link.download = 'treatment_summary.pdf';
+                // document.body.appendChild(link);
+                // link.click();
+                // document.body.removeChild(link);
+                // var printWindow = window.open(link.href, '_blank');
+                // printWindow.onload = function() {
+                //     printWindow.print();
+                // };
             },
             error: function(xhr) {
                 console.error('Error generating PDF:', xhr);

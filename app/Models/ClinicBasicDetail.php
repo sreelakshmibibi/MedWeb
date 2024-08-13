@@ -18,6 +18,9 @@ class ClinicBasicDetail extends Model
     'patient_registration_fees',
     'consultation_fees',
     'consultation_fees_frequency',
+    'currency',
+    'treatment_tax_included',
+    'tax',
     'clinic_type_id',
     'created_by',
     'updated_by'

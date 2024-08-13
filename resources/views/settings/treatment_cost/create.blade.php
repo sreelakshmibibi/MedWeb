@@ -4,7 +4,7 @@
         <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fa fa-kit-medical"></i> Treatment Details</h5>
+                    <h5 class="modal-title"><i class="fa fa-kit-medical"> </i> Treatment Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -19,34 +19,45 @@
                             <div id="treatmentError" class="invalid-feedback"></div>
                         </div>
 
-                        <!-- Treatment Cost -->
-                        <div class="form-group">
-                            <label class="form-label" for="cost">Cost <span class="text-danger">
-                                    *</span></label>
-                            <input class="form-control" type="text" id="treat_cost" name="treat_cost"
-                                placeholder="Treatment Cost">
-                            <div id="treatmentCostError" class="invalid-feedback"></div>
+                        <div class="row">
+                            <!-- Treatment Cost -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="cost">Cost <span class="text-danger">
+                                            *</span></label>
+                                    <input class="form-control" type="text" id="treat_cost" name="treat_cost"
+                                        placeholder="Treatment Cost">
+                                    <div id="treatmentCostError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <!-- Discount Percentage -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="discount">Discount (%)</label>
+                                    <input class="form-control" type="text" id="discount" name="discount"
+                                        placeholder="Discount Percentage">
+                                    <div id="discountError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Discount Percentage -->
-                        <div class="form-group">
-                            <label class="form-label" for="discount">Discount (%)</label>
-                            <input class="form-control" type="text" id="discount" name="discount" placeholder="Discount Percentage">
-                            <div id="discountError" class="invalid-feedback"></div>
-                        </div>
-
-                        <!-- Discount Start Date -->
-                        <div class="form-group">
-                            <label class="form-label" for="discount_from">Discount Start Date</label>
-                            <input class="form-control" type="date" id="discount_from" name="discount_from">
-                            <div id="discountFromError" class="invalid-feedback"></div>
-                        </div>
-
-                        <!-- Discount End Date -->
-                        <div class="form-group">
-                            <label class="form-label" for="discount_to">Discount End Date</label>
-                            <input class="form-control" type="date" id="discount_to" name="discount_to">
-                            <div id="discountToError" class="invalid-feedback"></div>
+                        <div class="row">
+                            <!-- Discount Start Date -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="discount_from">Discount Start Date</label>
+                                    <input class="form-control" type="date" id="discount_from" name="discount_from">
+                                    <div id="discountFromError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <!-- Discount End Date -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="discount_to">Discount End Date</label>
+                                    <input class="form-control" type="date" id="discount_to" name="discount_to">
+                                    <div id="discountToError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Status -->

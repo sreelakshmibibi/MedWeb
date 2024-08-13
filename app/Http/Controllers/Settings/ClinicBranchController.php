@@ -91,6 +91,9 @@ class ClinicBranchController extends Controller
             $consultationFees = $request->input('consultation_fees');
             $consultationFeesFrequency = $request->input('consultation_fees_frequency');
             $patientRegistrationFees = $request->input('patient_registration_fees');
+            $tax = $request->input('treatment_tax');
+            $currency = $request->input('currency');
+            $treatment_tax_included = $request->input('treatment_tax_included');
             // Check if a file for clinic_logo was uploaded
             if ($request->hasFile('clinic_logo')) {
                 $logoPath = $request->file('clinic_logo')->store('clinic-logos', 'public');
@@ -113,7 +116,9 @@ class ClinicBranchController extends Controller
                 $clinic->patient_registration_fees = $patientRegistrationFees;
                 $clinic->consultation_fees = $consultationFees;
                 $clinic->consultation_fees_frequency = $consultationFeesFrequency;
-
+                $clinic->tax = $tax;
+                $clinic->treatment_tax_included = $treatment_tax_included;
+                $clinic->currency = $currency;
                 $clinic->save();
                 $message = "Clinic details updated successfully";
             } else {
@@ -126,7 +131,11 @@ class ClinicBranchController extends Controller
                     'patient_registration_fees' => $request->input('patient_registration_fees'),
                     'consultation_fees' => $request->input('consultation_fees'),
                     'consultation_fees_frequency' => $request->input('consultation_fees_frequency'),
+                    'tax' => $request->input('treatment_tax'),
+                    'currency' => $request->input('currency'),
+                    'treatment_tax_included' => $request->input('treatment_tax_included'),
                     'clinic_type_id' => 1, // Adjust as per your requirements
+                    
                 ]);
                 $message = "Clinic details added successfully";
             }

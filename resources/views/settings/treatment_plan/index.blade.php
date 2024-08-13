@@ -34,11 +34,11 @@
                                 class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center">
                                 <thead class="bg-primary-light">
                                     <tr>
-                                        <th>No</th>
+                                        <th width="10px">No</th>
                                         <th>Plan</th>
-                                        <th>Cost</th>
-                                        <th>Status</th>
-                                        <th width="100px">Action</th>
+                                        <th width="100px">Cost</th>
+                                        <th width="20px">Status</th>
+                                        <th width="80px">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -75,7 +75,7 @@
                 var planId = $(this).data('id');
                 $('#edit_plan_id').val(planId); // Set department ID in the hidden input
                 $.ajax({
-                    url: '{{ url("treatment_plan") }}' + "/" + planId + "/edit",
+                    url: '{{ url('treatment_plan') }}' + "/" + planId + "/edit",
                     method: 'GET',
                     success: function(response) {
                         $('#edit_plan_id').val(response.id);

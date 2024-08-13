@@ -2,10 +2,17 @@
     <h5 class="box-title text-info mb-0 mt-2"><i class="fa-solid fa-prescription me-15"></i>
         Prescription
     </h5>
-    <button id="medicineAddRow" type="button" class="waves-effect waves-light btn btn-sm btn-outline-primary">
-        <i class="fa fa-add"></i>
-        Add
-    </button>
+    <div>
+        {{-- <button id="medicineAddRow" type="button" class="waves-effect waves-light btn btn-sm btn-outline-primary">
+            <i class="fa fa-add"></i>
+            Add
+        </button> --}}
+
+        <a href='#'
+            class='waves-effect waves-light btn btn-circle btn-prescription-pdf-generate btn-warning btn-xs me-1'
+            title='Download & Print Prescription' data-app-id='{{ session('appId') }}'
+            data-patient-id='{{ session('patientId') }}'><i class='fa fa-prescription'></i></a>
+    </div>
 </div>
 <hr class="my-15">
 
@@ -14,105 +21,23 @@
 
         <thead>
             <tr class="bg-primary-light">
-                <th>No</th>
-                <th>Medicine</th>
-                <th>Dosage</th>
-                <th style="width:200px;">Duration</th>
-                <th>Advice</th>
+                <th style="width:1%;">No</th>
+                <th style="width:20%;">Medicine</th>
+                <th style="width:11%;">Dose</th>
+                <th style="width:10%;">Frequency</th>
+                <th style="width:10%;">Duration</th>
+                <th style="width:10%;">Advice</th>
+                <th style="width:10%;">Route</th>
                 <th>Remarks</th>
-                <th>Action</th>
+                <th style="width:10%;">
+                    <button id="medicineAddRow" type="button" class="waves-effect waves-light btn btn-sm btn-primary">
+                        <i class="fa fa-add"></i>
+                        Add Row
+                    </button>
+                </th>
             </tr>
         </thead>
-        {{-- <tbody id="presctablebody">
-            <tr>
-                <td>1</td>
-                <td>
-                    <select class="form-control" id="medicine_id1" name="medicine_id1" style="width: 100%;" required>
-                        @foreach ($medicines as $medicine)
-                            <option value="{{ $medicine->id }}">{{ $medicine->med_name }}</option>
-                        @endforeach
-                    </select>
-                </td>
 
-                <td>
-                    <select class="form-control" id="dosage1" name="dosage1" required style="width: 100%;">
-                        <option value=""> Select a Dosage </option>
-                        @foreach ($dosages as $dosage)
-                            <option value="{{ $dosage->id }}"> {{ $dosage->dos_name }}</option>
-                        @endforeach
-
-                    </select>
-                </td>
-                <td>
-                    <div class="input-group">
-                        <input type="number" class="form-control" id="duration1" name="duration1"
-                            aria-describedby="basic-addon2" required>
-                        <div class="input-group-append">
-                            <span class="input-group-text" id="basic-addon2">days</span>
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <select class="form-control" id="advice1" name="advice1" required style="width: 100%;" required>
-                        <option value="After food">After food</option>
-                        <option value="Before food">Before food</option>
-                    </select>
-                </td>
-                <td>
-                    <input type="text" class="form-control" id="remarks1" name="remarks1" placeholder="remarks">
-                </td>
-                <td>
-                    <!-- <button type="button" id="btnDelete" title="delete row" class="waves-effect waves-light btn btn-danger btn-sm"> <i class="fa fa-trash"></i></button> -->
-                </td>
-            </tr>
-        </tbody> --}}
-        {{-- <tbody id="presctablebody">
-            <!-- Initial Row -->
-            <tr>
-                <td>1</td>
-                <td>
-                    <select class="form-control" id="medicine_id1" name="prescriptions[1][medicine_id]"
-                        style="width: 100%;" required>
-                        <option value=""> Select a Medicine </option>
-                        @foreach ($medicines as $medicine)
-                            <option value="{{ $medicine->id }}">{{ $medicine->med_name }}</option>
-                        @endforeach
-                    </select>
-                </td>
-                <td>
-                    <select class="form-control" id="dosage1" name="prescriptions[1][dosage_id]" required
-                        style="width: 100%;">
-                        <option value=""> Select a Dosage </option>
-                        @foreach ($dosages as $dosage)
-                            <option value="{{ $dosage->id }}"> {{ $dosage->dos_name }}</option>
-                        @endforeach
-                    </select>
-                </td>
-                <td>
-                    <div class="input-group">
-                        <input type="number" class="form-control" id="duration1" name="prescriptions[1][duration]"
-                            aria-describedby="basic-addon2" required>
-                        <div class="input-group-append">
-                            <span class="input-group-text" id="basic-addon2">days</span>
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <select class="form-control" id="advice1" name="prescriptions[1][advice]" required
-                        style="width: 100%;">
-                        <option value="After food">After food</option>
-                        <option value="Before food">Before food</option>
-                    </select>
-                </td>
-                <td>
-                    <input type="text" class="form-control" id="remarks1" name="prescriptions[1][remark]"
-                        placeholder="remarks">
-                </td>
-                <td>
-                    <!-- Empty cell for actions -->
-                </td>
-            </tr>
-        </tbody> --}}
         <tbody id="presctablebody">
             @forelse ($patientPrescriptions as $index => $prescription)
                 <tr>
@@ -130,6 +55,74 @@
                         </select>
                     </td>
                     <td>
+                        <div class="input-group col-12">
+                            <input type="text" class="form-control text-center" id="dose{{ $index + 1 }}"
+                                name="prescriptions[{{ $index + 1 }}][dose]" placeholder="Dose"
+                                value="{{ $prescription->dose ?? '' }}" required
+                                aria-describedby="dose_unit{{ $index + 1 }}">
+                            <select class="form-control input-group-text" id="dose_unit{{ $index + 1 }}"
+                                name="prescriptions[{{ $index + 1 }}][dose_unit]" required>
+                                <option value="" disabled selected>Select unit</option>
+                                <option value="ml"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'ml' ? 'selected' : '' }}>
+                                    ml
+                                </option>
+                                <option value="drops"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'drops' ? 'selected' : '' }}>
+                                    drops</option>
+                                <option value="tab"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'tab' ? 'selected' : '' }}>
+                                    tab</option>
+                                <option value="g"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'g' ? 'selected' : '' }}>
+                                    g
+                                </option>
+                                <option value="mg"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'mg' ? 'selected' : '' }}>
+                                    mg
+                                </option>
+                                <option value="cc"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'cc' ? 'selected' : '' }}>
+                                    cc
+                                </option>
+                                <option value="pills"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'pills' ? 'selected' : '' }}>
+                                    pills</option>
+                                <option value="units"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'units' ? 'selected' : '' }}>
+                                    units</option>
+                                <option value="teaspoon"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'teaspoon' ? 'selected' : '' }}>
+                                    teaspoon</option>
+                                <option value="tablespoon"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'tablespoon' ? 'selected' : '' }}>
+                                    tablespoon</option>
+                                <option value="cup"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'cup' ? 'selected' : '' }}>
+                                    cup</option>
+                                <option value="patch"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'patch' ? 'selected' : '' }}>
+                                    patch</option>
+                                <option value="inhaler"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'inhaler' ? 'selected' : '' }}>
+                                    inhaler</option>
+                                <option value="spray"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'spray' ? 'selected' : '' }}>
+                                    spray</option>
+                                <option value="dropper"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'dropper' ? 'selected' : '' }}>
+                                    dropper</option>
+                                <option value="vial"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'vial' ? 'selected' : '' }}>
+                                    vial</option>
+                                <option value="ampule"
+                                    {{ isset($prescription->dose_unit) && $prescription->dose_unit == 'ampule' ? 'selected' : '' }}>
+                                    ampule</option>
+
+                            </select>
+                        </div>
+                    </td>
+                    <td>
                         <select class="form-control dosage_id_select" id="dosage{{ $index + 1 }}"
                             name="prescriptions[{{ $index + 1 }}][dosage_id]" required style="width: 100%;">
                             <option value=""> Select a Dosage </option>
@@ -142,10 +135,10 @@
                         </select>
                     </td>
                     <td>
-                        <div class="input-group">
-                            <input type="number" class="form-control" id="duration{{ $index + 1 }}"
-                                name="prescriptions[{{ $index + 1 }}][duration]" aria-describedby="basic-addon2"
-                                value="{{ $prescription->duration ?? '' }}" required>
+                        <div class="input-group col-12">
+                            <input type="number" min="1" max="365" class="form-control text-center"
+                                id="duration{{ $index + 1 }}" name="prescriptions[{{ $index + 1 }}][duration]"
+                                aria-describedby="basic-addon2" value="{{ $prescription->duration ?? '' }}" required>
                             <div class="input-group-append">
                                 <span class="input-group-text" id="basic-addon2">days</span>
                             </div>
@@ -161,7 +154,19 @@
                         </select>
                     </td>
                     <td>
-                        <input type="text" class="form-control" id="remarks{{ $index + 1 }}"
+                        <select class="form-control medicine_route_select" id="route{{ $index + 1 }}"
+                            name="prescriptions[{{ $index + 1 }}][route_id]" style="width: 100%;">
+                            {{-- <option value="">Select a Route</option> --}}
+                            @foreach ($medicineRoutes as $route)
+                                <option value="{{ $route->id }}"
+                                    {{ $prescription->route_id == $route->id ? 'selected' : '' }}>
+                                    {{ $route->route_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control text-center" id="remarks{{ $index + 1 }}"
                             name="prescriptions[{{ $index + 1 }}][remark]" placeholder="remarks"
                             value="{{ $prescription->remark ?? '' }}">
                     </td>

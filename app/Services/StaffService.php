@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\DoctorWorkingHour;
 use App\Models\MenuItem;
 use App\Models\WeekDay;
+use DateTime;
 use Illuminate\Http\Request;
 
 class StaffService
@@ -45,17 +46,23 @@ class StaffService
                 $clinic_branch_id = $request->input($clinicBranchKey);
                 $from_time = $request->input($fromKey);
                 $to_time = $request->input($toKey);
-                if ($from_time != null) {
-                    // Create and save DoctorWorkingHour instance
-                    $availability = new DoctorWorkingHour();
-                    $availability->user_id = $userId;
-                    $availability->week_day = $day;
-                    $availability->clinic_branch_id = $clinic_branch_id;
-                    $availability->from_time = $from_time;
-                    $availability->to_time = $to_time;
-                    $availability->status = 'Y';
-                    $l = $availability->save();
-                }
+                $fromDateTime = DateTime::createFromFormat('H:i', $from_time);
+                $toDateTime = DateTime::createFromFormat('H:i', $to_time);
+                if ($from_time != null && $to_time != null ) {
+                    if ($fromDateTime < $toDateTime) {
+                        // Create and save DoctorWorkingHour instance
+                        $availability = new DoctorWorkingHour();
+                        $availability->user_id = $userId;
+                        $availability->week_day = $day;
+                        $availability->clinic_branch_id = $clinic_branch_id;
+                        $availability->from_time = $from_time;
+                        $availability->to_time = $to_time;
+                        $availability->status = 'Y';
+                        $l = $availability->save();
+                    } else {
+                        return 0;
+                    }
+                } 
             }
         }
         return $l;

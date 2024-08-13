@@ -37,7 +37,6 @@
                             <canvas id="barcodeCanvas" class="col-md-4" style=" height:64px;"></canvas>
                         </div>
 
-
                         <div class="form-group">
                             <label class="form-label" for="med_company">Company Name <span class="text-danger">
                                     *</span></label>
@@ -47,7 +46,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="form-label" for="med_price">Price <span class="text-danger">
                                             *</span></label>
@@ -56,7 +55,7 @@
                                     <div id="medPriceError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="form-label" for="expiry_date">Expiring Date <span class="text-danger">
                                             *</span></label>
@@ -64,10 +63,23 @@
                                     <div id="medExpDateError" class="invalid-feedback"></div>
                                 </div>
                             </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label" for="package_type">Packaging Type <span
+                                            class="text-danger">
+                                            *</span></label>
+                                    <select class="form-control" id="package_type" name="package_type">
+                                        <option value="" disabled selected>Select type</option>
+                                        <option value="Strip">Strip</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <div id="medPackageTypeError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="form-label" for="units_per_package">Units per Package <span
                                             class="text-danger">
@@ -78,7 +90,7 @@
                                     <div id="medUnitPerPackError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="form-label" for="package_count">Package Count <span
                                             class="text-danger">
@@ -89,29 +101,13 @@
                                     <div id="medPackageCountError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="form-label" for="total_quantity">Total Quantity</label>
                                     <input class="form-control" type="text" id="total_quantity"
                                         name="total_quantity"
                                         placeholder=" Total number of units available across all packages" readonly>
                                     <div id="medQuantityError" class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="package_type">Packaging Type <span
-                                            class="text-danger">
-                                            *</span></label>
-                                    <select class="form-control" id="package_type" name="package_type">
-                                        <option value="" disabled selected>Select packaging type</option>
-                                        <option value="Strip">Strip</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                    <div id="medPackageTypeError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
@@ -123,27 +119,37 @@
                             <div id="medRemarkError" class="invalid-feedback"></div>
                         </div>
 
-                        <div class="form-group mt-2">
-                            <label class="form-label col-md-6">Stock Status</label>
-                            <input name="stock_status" type="radio" checked class="form-control with-gap"
-                                id="in" value="In Stock">
-                            <label for="in">In Stock</label>
-                            <input name="stock_status" type="radio" class="form-control with-gap" id="out"
-                                value="Out of Stock">
-                            <label for="out">Out of Stock</label>
-                            <div id="medStockStatusError" class="invalid-feedback"></div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label col-md-6">Stock Status</label>
+                                    <div>
+                                        <input name="stock_status" type="radio" checked
+                                            class="form-control with-gap" id="in" value="In Stock">
+                                        <label for="in" class="pe-2">In Stock</label>
+                                        <input name="stock_status" type="radio" class="form-control with-gap"
+                                            id="out" value="Out of Stock">
+                                        <label for="out">Out of Stock</label>
+                                    </div>
+                                    <div id="medStockStatusError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label col-md-6">Active</label>
+                                    <div>
+                                        <input name="status" type="radio" checked class="form-control with-gap"
+                                            id="yes" value="Y">
+                                        <label for="yes" class="pe-2">Yes</label>
+                                        <input name="status" type="radio" class="form-control with-gap"
+                                            id="no" value="N">
+                                        <label for="no">No</label>
+                                    </div>
+                                    <div id="medStatusError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group mt-2">
-                            <label class="form-label col-md-6">Active</label>
-                            <input name="status" type="radio" checked class="form-control with-gap"
-                                id="yes" value="Y">
-                            <label for="yes">Yes</label>
-                            <input name="status" type="radio" class="form-control with-gap" id="no"
-                                value="N">
-                            <label for="no">No</label>
-                            <div id="medStatusError" class="invalid-feedback"></div>
-                        </div>
                     </div>
                 </div>
                 <div class="modal-footer modal-footer-uniform">

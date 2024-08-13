@@ -40,6 +40,8 @@ class TreatmentDetailsRequest extends FormRequest
             $prescriptionCount = count($this->input('prescriptions', []));
 
             $rules['prescriptions.*.medicine_id'] = 'required';
+            $rules['prescriptions.*.dose'] = 'required|numeric';
+            $rules['prescriptions.*.dose_unit'] = 'required';
             $rules['prescriptions.*.dosage_id'] = 'required|exists:dosages,id';
             $rules['prescriptions.*.duration'] = 'required|integer|min:1';
             $rules['prescriptions.*.advice'] = 'required|string';
@@ -72,6 +74,9 @@ class TreatmentDetailsRequest extends FormRequest
             'prescriptions.*.advice.required' => 'The advice field is required for each prescription.',
             'prescriptions.*.remark.string' => 'The remark must be a string.',
             'prescriptions.*.remark.max' => 'The remark may not be greater than 300 characters.',
+            'prescriptions.*.dose.required' => 'The dose field is required.',
+            'prescriptions.*.dose.numeric' => 'The dose must be a number.',
+            'prescriptions.*.dose_unit.required' => 'The dose unit is required.',
         ];
     }
 }

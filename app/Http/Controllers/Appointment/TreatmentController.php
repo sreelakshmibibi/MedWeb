@@ -12,17 +12,19 @@ use App\Models\ComboOfferTreatment;
 use App\Models\Disease;
 use App\Models\Dosage;
 use App\Models\Medicine;
+use App\Models\MedicineRoute;
 use App\Models\PatientProfile;
 use App\Models\Prescription;
 use App\Models\SurfaceCondition;
 use App\Models\Teeth;
+use App\Models\TeethRow;
 use App\Models\ToothExamination;
 use App\Models\ToothScore;
 use App\Models\TreatmentComboOffer;
+use App\Models\TreatmentPlan;
 use App\Models\TreatmentStatus;
 use App\Models\TreatmentType;
 use App\Models\XRayImage;
-use App\Models\TreatmentPlan;
 use App\Services\AnatomyService;
 use App\Services\AppointmentService;
 use App\Services\CommonService;
@@ -86,6 +88,7 @@ class TreatmentController extends Controller
         $appointmentTypes = AppointmentType::all();
         $medicines = Medicine::all();
         $dosages = Dosage::all();
+        $medicineRoutes = MedicineRoute::all();
         $tooth = Teeth::all();
         $toothScores = ToothScore::all();
         $surfaceConditions = SurfaceCondition::all();
@@ -104,7 +107,7 @@ class TreatmentController extends Controller
         ])
             ->where('app_id', $id)
             ->where('status', 'Y')
-            ->get(['id', 'patient_id', 'app_id', 'medicine_id', 'dosage_id', 'duration', 'advice', 'remark', 'prescribed_by']);
+            ->get(['id', 'patient_id', 'app_id', 'medicine_id', 'dosage_id', 'duration', 'advice', 'remark', 'prescribed_by', 'dose', 'dose_unit', 'route_id']);
         $latestFollowup = Appointment::where('app_parent_id', $id)
             ->with('doctor', 'branch')
             ->orderBy('app_date', 'desc')
@@ -138,9 +141,14 @@ class TreatmentController extends Controller
                     return implode(', ', [$address, $row->branch->city->city, $row->branch->state->state]);
                 })
                 ->addColumn('status', function ($row) {
+                    // $statusMap = [
+                    //     TreatmentStatus::COMPLETED => 'badge-success-light',
+                    //     TreatmentStatus::FOLLOWUP => 'badge-warning-light',
+                    // ];
+    
                     $statusMap = [
-                        TreatmentStatus::COMPLETED => 'badge-success-light',
-                        TreatmentStatus::FOLLOWUP => 'badge-warning-light',
+                        TreatmentStatus::COMPLETED => 'fa-circle-check text-success',
+                        TreatmentStatus::FOLLOWUP => 'fa-circle-exclamation text-warning',
                     ];
 
                     // Ensure $row->toothExamination is not null and properly loaded
@@ -152,7 +160,8 @@ class TreatmentController extends Controller
                     //$btnClass = isset($statusMap[$treatmentStatusId]) ? $statusMap[$treatmentStatusId] : 'badge-secondary';
                     $statusWords = TreatmentStatus::statusToWords($treatmentStatusId);
 
-                    return "<span class='btn-sm badge {$btnClass}'>{$statusWords}</span>";
+                    // return "<span class='btn-sm d-block badge {$btnClass}'>{$statusWords}</span>";
+                    return "<i class='fa-solid {$btnClass} fs-16' title='{$statusWords}'></i>";
                 })
                 ->addColumn('treat_date', function ($row) {
                     return $row->app_date;
@@ -163,29 +172,49 @@ class TreatmentController extends Controller
                     if ($row->toothExamination->isEmpty()) {
                         return '';
                     }
-
                     $teethData = $row->toothExamination->map(function ($examination) {
                         if ($examination->teeth) {
                             $teethName = $examination->teeth->teeth_name;
                             $teethImage = $examination->teeth->teeth_image;
 
+                            return $teethName;
                             //return '<div>'.$teethName.'<br><img src="'.asset($teethImage).'" alt="'.$teethName.'" width="50" height="50"></div>';
+                        } elseif ($examination->tooth_id == null && $examination->row_id != null) {
+                            // Use TeethRow constants for descriptions
+                            switch ($examination->row_id) {
+                                case TeethRow::Row1:
+                                    $teethName = 'Row : ' . TeethRow::Row_1_Desc;
+                                    break;
+                                case TeethRow::Row2:
+                                    $teethName = 'Row : ' . TeethRow::Row_2_Desc;
+                                    break;
+                                case TeethRow::Row3:
+                                    $teethName = 'Row : ' . TeethRow::Row_3_Desc;
+                                    break;
+                                case TeethRow::Row4:
+                                    $teethName = 'Row : ' . TeethRow::Row_4_Desc;
+                                    break;
+                                default:
+                                    $teethName = '';
+                                    break;
+                            }
+
                             return $teethName;
                         }
 
                         return '';
-                    })->implode('<br>');
+                    })->implode(',<br>');
 
                     return $teethData;
                 })
                 ->addColumn('problem', function ($row) {
-                    return $row->toothExamination ? $row->toothExamination->pluck('chief_complaint')->implode(', ') : '';
+                    return $row->toothExamination ? $row->toothExamination->pluck('chief_complaint')->implode(',') : '';
                 })
                 ->addColumn('disease', function ($row) {
-                    // Ensure $row->toothExamination is not null and properly loaded
-                    return $row->toothExamination->isNotEmpty()
-                        ? $row->toothExamination->first()->disease->name ?? 'No Disease'
-                        : 'No Disease';
+
+                    return $row->toothExamination ? $row->toothExamination->map(function ($examination) {
+                        return $examination->disease ? $examination->disease->name : 'No Disease';
+                    })->implode(', ') : '';
                 })
                 ->addColumn('remarks', function ($row) {
                     return $row->toothExamination ? $row->toothExamination->pluck('remarks')->implode(', ') : '';
@@ -193,20 +222,19 @@ class TreatmentController extends Controller
                 ->addColumn('treatment', function ($row) {
                     return $row->toothExamination ? $row->toothExamination->map(function ($examination) {
                         return $examination->treatment ? $examination->treatment->treat_name : '';
-                    })->implode(', ') : '';
+                    })->filter()->implode(', ') // Use comma and <br> to separate treatments
+                        : '';
                 })
                 ->addColumn('action', function ($row) use ($patientName) {
 
                     $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
-                    $teethNames = $row->toothExamination->map(function ($examination) {
-                        return $examination->teeth ? $examination->teeth->teeth_name : '';
-                    })->filter()->implode(', ');
-
                     $buttons = [];
                     // Check if the appointment date is less than the selected date
                     if ($row->app_status == AppointmentStatus::COMPLETED) {
-                        $buttons[] = "<a href='" . route('treatment', $row->id) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='" . e($row->id) . "' data-parent-id='" . e($parent_id) . "' data-patient-id='" . e($row->patient_id) . "' data-patient-name='" . e($patientName) . "' target='_blank'><i class='fa-solid fa-eye'></i></a>";
-                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-pdf-generate btn-xs me-1' title='follow up' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}' data-tooth-id='{$teethNames}' data-patient-id='{$row->patient_id}' data-patient-name='" . e($patientName) . "' data-bs-target='#modal-download'><i class='fa fa-download'></i></button>";
+                        $base64Id = base64_encode($row->id);
+                        $idEncrypted = Crypt::encrypt($base64Id);
+                        $buttons[] = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='" . e($row->id) . "' data-parent-id='" . e($parent_id) . "' data-patient-id='" . e($row->patient_id) . "' data-patient-name='" . e($patientName) . "' target='_blank'><i class='fa-solid fa-eye'></i></a>";
+                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-secondary btn-treatment-pdf-generate btn-xs' title='Download Treatment Summary' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient_id}'  data-bs-target='#modal-download'><i class='fa fa-download'></i></button>";
                     }
 
                     return implode('', $buttons);
@@ -216,7 +244,7 @@ class TreatmentController extends Controller
                 ->make(true);
         }
 
-        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases', 'previousAppointments', 'clinicBranches', 'appointmentTypes', 'workingDoctors', 'medicines', 'dosages', 'patientPrescriptions', 'appAction', 'doctorDiscount', 'latestFollowup', 'plans', 'toothIds'));
+        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases', 'previousAppointments', 'clinicBranches', 'appointmentTypes', 'workingDoctors', 'medicines', 'dosages', 'patientPrescriptions', 'appAction', 'doctorDiscount', 'latestFollowup', 'plans', 'toothIds', 'medicineRoutes'));
 
     }
 
@@ -300,11 +328,13 @@ class TreatmentController extends Controller
             DB::beginTransaction();
             $checkExists = [];
             if (in_array($request->row_id, [1, 2, 3, 4])) {
+                
                 $checkExists = ToothExamination::where('row_id', $request->row_id)
                     ->where('patient_id', $request->patient_id)
                     ->where('app_id', $request->app_id)
                     ->where('status', 'Y')
                     ->get();
+                    
             } else {
                 $checkExists = ToothExamination::where('tooth_id', $request->tooth_id)
                     ->where('patient_id', $request->patient_id)
@@ -313,7 +343,7 @@ class TreatmentController extends Controller
                     ->get();
             }
 
-            if (!empty($checkExists)) {
+            if (!$checkExists->isEmpty()) {
                 foreach ($checkExists as $check) {
                     $check->status = 'N';
                     $check->save();
@@ -412,7 +442,6 @@ class TreatmentController extends Controller
     {
         // Retrieve patient_id from the query parameters
         $patientId = $request->query('patient_id');
-        echo $patientId;
         // Fetch ToothExamination data with related teeth and treatment details
         $toothExaminations = ToothExamination::with([
             'teeth:id,teeth_name,teeth_image',
@@ -720,9 +749,12 @@ class TreatmentController extends Controller
                     $prescriptionData->patient_id = $patientId;
                     $prescriptionData->app_id = $appId;
                     $prescriptionData->medicine_id = $medicineId;
+                    $prescriptionData->dose = $prescription['dose'];
+                    $prescriptionData->dose_unit = $prescription['dose_unit'];
                     $prescriptionData->dosage_id = $prescription['dosage_id'];
                     $prescriptionData->duration = $prescription['duration'];
                     $prescriptionData->advice = $prescription['advice'];
+                    $prescriptionData->route_id = $prescription['route_id'];
                     $prescriptionData->remark = $prescription['remark'];
                     $prescriptionData->prescribed_by = auth()->user()->id;
                     $prescriptionData->created_by = auth()->user()->id;

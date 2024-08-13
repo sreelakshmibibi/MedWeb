@@ -36,6 +36,11 @@
                 "_token": "{{ csrf_token() }}"
             },
             success: function(response) {
+                if (historyStepAdded == true) {
+                    getDentalTable(3);
+                } else {
+                    getDentalTable(2);
+                }
                 $('#successMessage').text('Teeth exam details deleted successfully');
                 $('#successMessage').fadeIn().delay(3000)
                     .fadeOut(); // Show for 3 seconds

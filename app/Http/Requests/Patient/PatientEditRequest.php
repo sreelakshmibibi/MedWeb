@@ -22,7 +22,99 @@ class PatientEditRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        // return [
+        //     'title' => [
+        //         'required',
+        //         'string',
+        //         'max:10',
+        //     ],
+        //     'firstname' => [
+        //         'required',
+        //         'string',
+        //         'min:3',
+        //         'max:255',
+        //     ],
+        //     'lastname' => [
+        //         'required',
+        //         'string',
+        //         'max:255',
+        //     ],
+        //     'gender' => [
+        //         'required',
+        //         'string',
+        //         'max:10',
+        //     ],
+        //     'date_of_birth' => [
+        //         'required',
+        //         'date',
+        //         'before:today',
+        //         'after:'.now()->subYears(130)->format('Y-m-d'),
+        //     ],
+        //     'aadhaar_no' => [
+        //         'nullable',
+        //         'digits:12',
+        //         Rule::unique('patient_profiles')->ignore($this->edit_patient_id, 'id'),
+        //     ],
+        //     'email' => [
+        //         'nullable',
+        //         'string',
+        //         'email',
+        //         'max:255',
+        //     ],
+        //     'phone' => [
+        //         'required',
+        //         'numeric',
+        //         'digits_between:10,15',
+        //     ],
+        //     'alter_phone' => [
+        //         'nullable',
+        //         'numeric',
+        //         'digits_between:10,15',
+        //     ],
+        //     'address1' => [
+        //         'required',
+        //         'string',
+        //         'min:3',
+        //         'max:255',
+        //     ],
+        //     'address2' => [
+        //         'required',
+        //         'string',
+        //         'min:3',
+        //         'max:255',
+        //     ],
+        //     'country_id' => [
+        //         'required',
+        //         'integer',
+        //         'exists:countries,id',
+        //     ],
+        //     'state_id' => [
+        //         'required',
+        //         'integer',
+        //         'exists:states,id',
+        //     ],
+        //     'city_id' => [
+        //         'required',
+        //         'integer',
+        //         'exists:cities,id',
+        //     ],
+        //     'pincode' => [
+        //         'required',
+        //         'digits_between:3,10',
+        //     ],
+        //     'blood_group' => [
+        //         'nullable',
+        //         'string',
+        //         'in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+        //     ],
+        //     'marital_status' => ['nullable', 'string', 'max:20'],
+        //     // 'smoking_status' => ['nullable', 'string', 'max:50'],
+        //     // 'alcoholic_status' => ['nullable', 'string', 'max:30'],
+        //     // 'diet' => ['nullable', 'string', 'max:20'],
+        //     // 'allergies' => ['nullable', 'string', 'max:500'],
+        //     // 'pregnant' => ['nullable', 'string'],
+        // ];
+        $rules = [
             'title' => [
                 'required',
                 'string',
@@ -108,12 +200,19 @@ class PatientEditRequest extends FormRequest
                 'in:A+,A-,B+,B-,AB+,AB-,O+,O-',
             ],
             'marital_status' => ['nullable', 'string', 'max:20'],
-            // 'smoking_status' => ['nullable', 'string', 'max:50'],
-            // 'alcoholic_status' => ['nullable', 'string', 'max:30'],
-            // 'diet' => ['nullable', 'string', 'max:20'],
-            // 'allergies' => ['nullable', 'string', 'max:500'],
-            // 'pregnant' => ['nullable', 'string'],
         ];
+
+        if ($this->input('policy_number') || $this->input('insurance_company_id')) {
+            $rules['policy_number'] = ['required', 'string', 'max:255'];
+            $rules['insurance_company_id'] = ['required', 'exists:insurance_companies,id'];
+            $rules['policy_end_date'] = ['required', 'date', 'after_or_equal:today'];
+            $rules['status'] = ['required', 'in:Y,N'];
+            // 'insured_name' => 'nullable|string|max:255',
+            // 'insured_dob' => 'nullable|date|before:today',
+        }
+
+        return $rules;
+
     }
 
     public function messages()
@@ -168,15 +267,15 @@ class PatientEditRequest extends FormRequest
             'blood_group.in' => 'The blood group must be one of the following types: A+, A-, B+, B-, AB+, AB-, O+, O-',
             'marital_status.string' => 'The marital status must be a string.',
             'marital_status.max' => 'The marital status may not be greater than 20 characters.',
-            // 'smoking_status.string' => 'The smoking status must be a string.',
-            // 'smoking_status.max' => 'The smoking status may not be greater than 50 characters.',
-            // 'alcoholic_status.string' => 'The alcoholic status must be a string.',
-            // 'alcoholic_status.max' => 'The alcoholic status may not be greater than 30 characters.',
-            // 'diet.string' => 'The diet must be a string.',
-            // 'diet.max' => 'The diet may not be greater than 20 characters.',
-            // 'allergies.string' => 'The allergies must be a string.',
-            // 'allergies.max' => 'The allergies may not be greater than 500 characters.',
-            // 'pregnant.string' => 'The pregnant field must be a string.',
+            'policy_number.required' => 'The policy number field is required.',
+            'policy_number.unique' => 'The policy number has already been taken.',
+            'insurance_company_id.required' => 'The insurance company field is required.',
+            'insurance_company_id.exists' => 'The selected insurance company is invalid.',
+            'policy_end_date.required' => 'The policy end date field is required.',
+            'policy_end_date.date' => 'The policy end date is not a valid date.',
+            'policy_end_date.after_or_equal' => 'The policy end date must be a date after or equal to today.',
+            'status.required' => 'The status field is required.',
+            'status.in' => 'The status must be either Y or N.',
         ];
     }
 }

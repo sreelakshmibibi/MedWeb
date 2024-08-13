@@ -118,7 +118,6 @@
 
             $(document).on('click', '.btn-warning', function() {
                 var staffId = $(this).data('id');
-                console.log(staffId);
                 $('#modal-status').modal('show');
             });
             $('#btn-confirm-status').click(function() {
@@ -145,6 +144,60 @@
                     }
                 });
             });
+
+            var totalUniquePatients = @json($totalUniquePatients);
+            var malePatientsCount = @json($malePatientsCount);
+            var femalePatientsCount = @json($femalePatientsCount);
+
+            var options = {
+                // series: [400, 500],
+                series: [femalePatientsCount, malePatientsCount],
+                chart: {
+                    type: 'donut',
+                    width: 186,
+                },
+                dataLabels: {
+                    enabled: false,
+                },
+                colors: ['#5156be', '#c8c9ee'],
+                legend: {
+                    show: false,
+                },
+
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            size: '75%',
+                            labels: {
+                                show: true,
+                                total: {
+                                    showAlways: true,
+                                    show: true
+                                }
+                            },
+                        }
+                    }
+                },
+                labels: ["Woman", "Man"],
+                responsive: [{
+                    breakpoint: 1600,
+                    options: {
+                        chart: {
+                            width: 175,
+                        }
+                    }
+                }, {
+                    breakpoint: 500,
+                    options: {
+                        chart: {
+                            width: 200,
+                        }
+                    }
+                }]
+            };
+
+            var chart = new ApexCharts(document.querySelector("#patientschart"), options);
+            chart.render();
         });
     </script>
 @endsection

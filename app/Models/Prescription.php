@@ -21,6 +21,9 @@ class Prescription extends Model
         'dosage_id',
         'duration',
         'advice',
+        'dose',
+        'dose_unit',
+        'route_id',
         'remark',
         'prescribed_by',
         'finalsave',
@@ -83,5 +86,10 @@ class Prescription extends Model
     public function prescribedBy()
     {
         return $this->belongsTo(User::class, 'prescribed_by', 'id');
+    }
+
+    public function route()
+    {
+        return $this->belongsTo(MedicineRoute::class, 'route_id', 'id');
     }
 }

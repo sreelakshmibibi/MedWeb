@@ -29,7 +29,12 @@
                                 @include('patient.patient_list.edit_personal_info')
                             </section>
 
-                            <!--Education-->
+                            <?php if ($clinicDetails->clinic_insurance_available == 'Y') { ?>
+                            <h6 class="tabHeading">Insurance</h6>
+                            <section class="tabSection">
+                                @include('patient.patient_list.insurance')
+                            </section>
+                            <?php } ?>
                             {{-- <h6 class="tabHeading">Appointment</h6>
                             <section class="tabSection">
                                 @include('patient.patient_list.edit_appointment')
@@ -57,7 +62,7 @@
             $("#patientform .actions ul li:last-child a").addClass("bg-success btn btn-success");
 
             var today = new Date().toISOString().split('T')[0];
-            document.getElementById('regdate').setAttribute('min', today);
+            //document.getElementById('regdate').setAttribute('min', today);
 
             // Initializations
             var initialSelectedStateId = '{{ $patientProfile->state_id }}';

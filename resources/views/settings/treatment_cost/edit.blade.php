@@ -6,7 +6,7 @@
         <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fa fa-kit-medical"></i> Edit Treatment Details</h5>
+                    <h5 class="modal-title"><i class="fa fa-kit-medical"> </i> Edit Treatment Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -21,40 +21,56 @@
                             <div id="editTreatmentError" class="invalid-feedback"></div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="form-label" for="cost">Cost <span class="text-danger">
-                                    *</span></label>
-                            <input class="form-control" type="text" id="edit_treatment_cost" name="treat_cost"
-                                placeholder="Treatment Cost" autocomplete="off">
-                            <div id="editTreatmentCostError" class="invalid-feedback"></div>
+                        <div class="row">
+                            <!-- Treatment Cost -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="cost">Cost <span class="text-danger">
+                                            *</span></label>
+                                    <input class="form-control" type="text" id="edit_treatment_cost"
+                                        name="treat_cost" placeholder="Treatment Cost" autocomplete="off">
+                                    <div id="editTreatmentCostError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <!-- Discount Percentage -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="discount_percentage">Discount Percentage</label>
+                                    <input class="form-control" type="text" id="edit_discount_percentage"
+                                        name="discount" placeholder="Discount Percentage" autocomplete="off">
+                                    <div id="editDiscountPercentageError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="form-label" for="discount_percentage">Discount Percentage</label>
-                            <input class="form-control" type="text" id="edit_discount_percentage" name="discount" placeholder="Discount Percentage" autocomplete="off">
-                            <div id="editDiscountPercentageError" class="invalid-feedback"></div>
+                        <div class="row">
+                            <!-- Discount Start Date -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="discount_from">Discount From</label>
+                                    <input class="form-control" type="date" id="edit_discount_from"
+                                        name="discount_from" placeholder="Discount From" autocomplete="off">
+                                    <div id="editDiscountFromError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <!-- Discount End Date -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="discount_to">Discount To</label>
+                                    <input class="form-control" type="date" id="edit_discount_to" name="discount_to"
+                                        placeholder="Discount To" autocomplete="off">
+                                    <div id="editDiscountToError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
                         </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="discount_from">Discount From</label>
-                            <input class="form-control" type="date" id="edit_discount_from" name="discount_from" placeholder="Discount From" autocomplete="off">
-                            <div id="editDiscountFromError" class="invalid-feedback"></div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="discount_to">Discount To</label>
-                            <input class="form-control" type="date" id="edit_discount_to" name="discount_to" placeholder="Discount To" autocomplete="off">
-                            <div id="editDiscountToError" class="invalid-feedback"></div>
-                        </div>
-
 
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6">Active</label>
                             <div>
-                                <input name="status" type="radio" class="form-control-input" id="edit_yes"
+                                <input name="status" type="radio" class="form-control with-gap" id="edit_yes"
                                     value="Y">
                                 <label class="form-check-label" for="edit_yes">Yes</label>
-                                <input name="status" type="radio" class="form-control-input" id="edit_no"
+                                <input name="status" type="radio" class="form-control with-gap" id="edit_no"
                                     value="N">
                                 <label class="form-check-label" for="edit_no">No</label>
                             </div>
@@ -64,7 +80,8 @@
                 </div>
                 <div class="modal-footer modal-footer-uniform">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success float-end" id="updateTreatmentCostBtn">Update</button>
+                    <button type="button" class="btn btn-success float-end"
+                        id="updateTreatmentCostBtn">Update</button>
                 </div>
             </div>
         </div>

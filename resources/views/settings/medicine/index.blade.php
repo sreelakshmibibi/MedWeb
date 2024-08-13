@@ -44,8 +44,8 @@
                                         <th>Expiry Date</th>
                                         <th>Total Quantity</th>
                                         <th>Packaging Type</th>
-                                        <th>Stock Status</th>
-                                        <th width="100px">Action</th>
+                                        <th width="20px">Stock Status</th>
+                                        <th width="80px">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -92,7 +92,13 @@
                     },
                     {
                         data: 'med_bar_code',
-                        name: 'med_bar_code'
+                        name: 'med_bar_code',
+                        render: function(data, type, row) {
+                            if (!data) {
+                                data = '-';
+                            }
+                            return data;
+                        }
                     },
                     {
                         data: 'med_name',
@@ -100,11 +106,23 @@
                     },
                     {
                         data: 'med_company',
-                        name: 'med_company'
+                        name: 'med_company',
+                        render: function(data, type, row) {
+                            if (!data) {
+                                data = '-';
+                            }
+                            return data;
+                        }
                     },
                     {
                         data: 'med_price',
-                        name: 'med_price'
+                        name: 'med_price',
+                        render: function(data, type, row) {
+                            if (!data) {
+                                data = '-';
+                            }
+                            return data;
+                        }
                     },
                     {
                         data: 'expiry_date',
@@ -116,6 +134,8 @@
                                 var month = ("0" + (date.getMonth() + 1)).slice(-2);
                                 var year = date.getFullYear();
                                 return day + '-' + month + '-' + year;
+                            } else {
+                                data = '-';
                             }
                             return data;
                         }
@@ -123,11 +143,23 @@
 
                     {
                         data: 'total_quantity',
-                        name: 'total_quantity'
+                        name: 'total_quantity',
+                        render: function(data, type, row) {
+                            if (!data) {
+                                data = '-';
+                            }
+                            return data;
+                        }
                     },
                     {
                         data: 'package_type',
-                        name: 'package_type'
+                        name: 'package_type',
+                        render: function(data, type, row) {
+                            if (!data) {
+                                data = '-';
+                            }
+                            return data;
+                        }
                     },
                     // {
                     //     data: 'stock_status',

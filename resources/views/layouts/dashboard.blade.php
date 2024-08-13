@@ -63,6 +63,8 @@
     <script src="{{ asset('assets/vendor_components/OwlCarousel2/dist/owl.carousel.js') }}"></script>
     <script src="{{ asset('assets/vendor_components/flexslider/jquery.flexslider.js') }}"></script>
 
+    <script src="{{ asset('js/pages/statistic.js') }}"></script>
+
     <!-- MedWeb App -->
     <script src="{{ asset('js/jquery.smartmenus.js') }}"></script>
     <script src="{{ asset('js/menus.js') }}"></script>

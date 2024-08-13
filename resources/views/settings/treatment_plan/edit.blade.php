@@ -20,21 +20,20 @@
                         </div>
                         <!--Claim types-->
                         <div class="form-group">
-                                <label class="form-label" for="edit_cost">Cost <span
-                                        class="text-danger">
-                                        *</span></label>
-                                        <input class="form-control" type="text" id="edit_cost" name="cost" required
-                                        minlength="3" placeholder="Plan" autocomplete="off">
-                                <div id="costError" class="invalid-feedback"></div>
+                            <label class="form-label" for="edit_cost">Cost <span class="text-danger">
+                                    *</span></label>
+                            <input class="form-control" type="text" id="edit_cost" name="cost" required
+                                minlength="3" placeholder="Plan" autocomplete="off">
+                            <div id="costError" class="invalid-feedback"></div>
                         </div>
-                
+
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6">Active</label>
                             <div>
-                                <input name="status" type="radio" class="form-control-input" id="edit_yes"
+                                <input name="status" type="radio" class="form-control with-gap" id="edit_yes"
                                     value="Y">
                                 <label class="form-check-label" for="edit_yes">Yes</label>
-                                <input name="status" type="radio" class="form-control-input" id="edit_no"
+                                <input name="status" type="radio" class="form-control with-gap" id="edit_no"
                                     value="N">
                                 <label class="form-check-label" for="edit_no">No</label>
                             </div>
@@ -134,7 +133,7 @@
 
             // Fetch department details via AJAX
             $.ajax({
-                url: '{{ url("treatment_plan") }}' + "/" + planId + "/edit",
+                url: '{{ url('treatment_plan') }}' + "/" + planId + "/edit",
                 method: 'GET',
                 success: function(response) {
                     // Populate form fields

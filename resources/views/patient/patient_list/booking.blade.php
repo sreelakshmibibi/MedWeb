@@ -96,6 +96,12 @@
                             </div>
                         </div>
                         <div class="row">
+                            <div style="display:none" id="doctorNotAvailable">
+                                <span class="text-danger">Sorry, the doctor is not available at the selected time.
+                                    Please choose another time.</span>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div style="display:none" id="alreadyExistsPatient">
                                 <span class="text-danger">Already exists appointment for the selected date!</span>
                             </div>
@@ -352,6 +358,7 @@
             $('#existingAppointments').empty();
             $('#existingAppointments').hide();
             $('#alreadyExistsPatient').hide();
+            $('#doctorNotAvailable').hide();
             $('#clinic_branch_id').removeClass('is-invalid');
             $('#clinicError').text('');
             $('#doctor_id').removeClass('is-invalid');
@@ -397,6 +404,7 @@
         $('#existingAppointments').empty();
         $('#existingAppointments').hide();
         $('#alreadyExistsPatient').hide();
+        $('#doctorNotAvailable').hide();
         loadDoctors(branchId, appDate);
 
 
@@ -437,6 +445,7 @@
         $('#existingAppointmentsError').hide();
         $('#existAppContainer').hide();
         $('#existingAppointments').empty();
+        $('#doctorNotAvailable').hide();
         showExistingAppointments(branchId, appDate, doctorId, 'store');
 
     });
@@ -472,6 +481,11 @@
                         $('#existingAppointmentsError').show();
                     } else {
                         $('#existingAppointmentsError').hide();
+                    }
+                    if (data.doctorAvailable == true) {
+                        $('#doctorNotAvailable').hide();
+                    } else {
+                        $('#doctorNotAvailable').show();
                     }
                     if (data.existingAppointments.length > 0) {
 

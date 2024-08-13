@@ -134,4 +134,9 @@ class PatientProfile extends Model
                 $query->where('app_id', $lastAppointmentId);
             });
     }
+
+    public function prescriptions()
+    {
+        return $this->hasMany(Prescription::class, 'patient_id', 'patient_id');
+    }
 }

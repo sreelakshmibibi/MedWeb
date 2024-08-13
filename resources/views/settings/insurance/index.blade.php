@@ -34,11 +34,11 @@
                                 class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center">
                                 <thead class="bg-primary-light">
                                     <tr>
-                                        <th>No</th>
+                                        <th width="10px">No</th>
                                         <th>Company</th>
-                                        <th>Claim Type</th>
-                                        <th>Status</th>
-                                        <th width="100px">Action</th>
+                                        <th width="200px">Claim Type</th>
+                                        <th width="20px">Status</th>
+                                        <th width="80px">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -75,7 +75,7 @@
                 var insuranceId = $(this).data('id');
                 $('#edit_insurance_id').val(insuranceId); // Set department ID in the hidden input
                 $.ajax({
-                    url: '{{ url("insurance") }}' + "/" + insuranceId + "/edit",
+                    url: '{{ url('insurance') }}' + "/" + insuranceId + "/edit",
                     method: 'GET',
                     success: function(response) {
                         $('#edit_insurance_id').val(response.id);

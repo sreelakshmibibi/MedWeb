@@ -36,12 +36,12 @@
                                     <tr>
                                         <th width="10px">No</th>
                                         <th>Treatment Name</th>
-                                        <th>Cost</th>
-                                        <th>Discount (%)</th>
-                                        <th>Discount From</th>
-                                        <th>Discount To</th>
+                                        <th width="100px">Cost</th>
+                                        <th width="100px">Discount (%)</th>
+                                        <th width="80px">From</th>
+                                        <th width="80px">To</th>
                                         <th width="20px">Status</th>
-                                        <th width="100px">Action</th>
+                                        <th width="80px">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>

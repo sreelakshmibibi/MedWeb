@@ -1,6 +1,6 @@
 <!--appointment-->
 <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="form-group">
             <label class="form-label" for="clinic_branch_id0">Branch <span class="text-danger">
                     *</span></label>
@@ -20,7 +20,7 @@
         </div>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="form-group">
             <label class="form-label" for="appdate">Appointment Date & Time <span class="text-danger">
                     *</span></label>
@@ -58,13 +58,31 @@
     </div>
     <div class="col-md-2">
         <div class="form-group">
-            <label class="form-label" for="rdoctor">Referrerd Doctor</label>
-            <input type="text" class="form-control" id="rdoctor" name="rdoctor" placeholder="Enter doctor name">
+            <label class="form-label" for="regfee">Registration Fee</label>
+            <input type="text" class="form-control" id="regfee" name="regfee" placeholder="Registration Fee"
+                value="{{ $registrationFees }}" readonly>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label class="form-label" for="paymode">Payment Mode <span class="text-danger">
+                    *</span></label>
+            <select class="form-select" id="paymode" name="paymode">
+                <option value="">Select</option>
+                <option value="Cash">Cash</option>
+                <option value="Card">Card</option>
+                <option value="GPay">GPay</option>
+            </select>
         </div>
     </div>
 
 </div>
-
+<div class="row">
+    <div style="display:none" id="doctorNotAvailable">
+        <span class="text-danger">Sorry, the doctor is not available at the selected time.
+            Please choose another time.</span>
+    </div>
+</div>
 <div class="row mb-3">
     <div style="display:none" id="existingAppointmentsError" class="text-danger">
         <span class="text-danger">Appointments already exists for the selected time!</span>
@@ -93,7 +111,8 @@
     </div>
 
     <div class="form-group col-md-2 d-flex flex-wrap align-content-end">
-        <input type="text" class="form-control" id="temperature" name="temperature" placeholder="Temperature in °F">
+        <input type="text" class="form-control" id="temperature" name="temperature"
+            placeholder="Temperature in °F">
     </div>
 
     <div class="form-group col-md-2 d-flex flex-wrap align-content-end">
@@ -173,5 +192,9 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="form-group col-md-2 d-flex flex-wrap align-content-end">
+        <input type="text" class="form-control" id="rdoctor" name="rdoctor" placeholder="Referred Doctor">
     </div>
 </div>

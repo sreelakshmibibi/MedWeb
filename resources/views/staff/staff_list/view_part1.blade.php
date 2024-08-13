@@ -22,8 +22,13 @@
                 </div>
 
                 <div class="d-flex align-items-center">
-                    <img src="{{ asset('storage/' . $staffProfile->photo) }}" alt="photo"
-                        class="bg-success-light rounded10 me-20 align-self-end h-100">
+                    @if ($staffProfile->photo != '')
+                        <img src="{{ asset('storage/' . $staffProfile->photo) }}" alt="photo"
+                            class="bg-success-light rounded10 me-20 align-self-end h-100">
+                    @else
+                        <img src="{{ asset('images/svg-icon/user.svg') }}" alt="photo"
+                            class="bg-primary rounded10 me-20 align-self-end h-100">
+                    @endif
 
                     <div class="d-flex flex-column flex-grow-1">
                         <a href="#"
@@ -326,17 +331,17 @@
                 <div class="box">
                     <div class="box-body px-0 text-center py-3">
                         <div style="min-height: 156px;">
-                            <div id="chart124"></div>
+                            <div id="patientschart"></div>
                         </div>
                         <div class="mt-15 d-inline-block">
                             <div class="text-start mb-10">
                                 <span class="badge badge-xl badge-dot badge-primary me-15"></span> Woman
-                                44%
+                                {{ ($femalePatientsCount / $totalUniquePatients) * 100 }}%
                             </div>
                             <div class="text-start">
                                 <span class="badge badge-xl badge-dot badge-primary-light me-15"></span>
                                 Man
-                                55%
+                                {{ ($malePatientsCount / $totalUniquePatients) * 100 }}%
                             </div>
                         </div>
                     </div>

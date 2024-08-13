@@ -3,17 +3,23 @@
 use App\Http\Controllers\Appointment\AppointmentController;
 use App\Http\Controllers\Appointment\TreatmentController;
 use App\Http\Controllers\Auth\StaffVerificationController;
+use App\Http\Controllers\Billing\BillingController;
 use App\Http\Controllers\HelperController;
-use App\Http\Controllers\Settings\InsuranceController;
+use App\Http\Controllers\MedicineBillController;
 use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
 use App\Http\Controllers\Settings\ClinicBranchController;
 use App\Http\Controllers\Settings\ComboOfferController;
 use App\Http\Controllers\Settings\DepartmentController;
 use App\Http\Controllers\Settings\DiseaseController;
+use App\Http\Controllers\Settings\InsuranceController;
 use App\Http\Controllers\Settings\MedicineController;
+use App\Http\Controllers\Settings\MenuItemController;
+use App\Http\Controllers\Settings\PermissionController;
+use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\TreatmentCostController;
 use App\Http\Controllers\Settings\TreatmentPlanController;
+use App\Http\Controllers\Settings\UserController;
 use App\Http\Controllers\Staff\StaffListController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -37,14 +43,53 @@ Auth::routes(['verify' => true]);
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+Route::group(['middleware' => ['role:Superadmin|Admin']], function () {
+
+    Route::resource('/permissions', PermissionController::class);
+    Route::get('/permissions/{permissionId}/delete', [PermissionController::class, 'destroy']);
+
+    //Route::resource('/roles', RoleController::class);
+    Route::resource('roles', RoleController::class)->names([
+        'index' => 'roles.index',
+        'create' => 'roles.create',
+        'store' => 'roles.store',
+        'show' => 'roles.show',
+        'edit' => 'roles.edit',
+        'update' => 'roles.update',
+        'destroy' => 'roles.destroy',
+    ]);
+    Route::get('/roles/{roleId}/delete', [RoleController::class, 'destroy']);
+    Route::get('/roles/{roleId}/give-permissions', [RoleController::class, 'addPermissionToRole']);
+    Route::put('/roles/{roleId}/give-permissions', [RoleController::class, 'givePermissionToRole']);
+    Route::resource('users', UserController::class);
+    Route::get('users/{userId}/delete', [UserController::class, 'destroy']);
+
+});
+Route::group(['middleware' => ['role:Superadmin']], function () {
+    Route::resource('menu_items', MenuItemController::class, [
+        'names' => [
+            'index' => 'menu_items.index',
+            'create' => 'menu_items.create',
+            'store' => 'menu_items.store',
+            'show' => 'menu_items.show',
+            'edit' => 'menu_items.edit',
+            'update' => 'menu_items.update',
+            'destroy' => 'menu_items.destroy',
+        ],
+    ]);
+});
+
 Route::get('/get-states/{countryId}', [HelperController::class, 'getStates'])->name('get.states');
 Route::get('/get-cities/{stateId}', [HelperController::class, 'getCities'])->name('get.cities');
 Route::get('/session-data', [HelperController::class, 'getSessionData']);
 Route::get('/fetch-doctors/{branchId}', [PatientListController::class, 'fetchDoctors'])->name('get.doctors');
 Route::get('/fetch-existingAppoinmtents/{branchId}', [PatientListController::class, 'fetchExistingAppointments'])->name('get.exisitingAppointments');
 Route::get('/fetch-ExistingExamination/{toothId}/{appId}/{patientId}', [TreatmentController::class, 'fetchExistingExamination'])->name('get.toothExamination');
-Route::post('/generate-pdf', [HelperController::class, 'generatePdf'])->name('generate.pdf');
-Route::get('/fetch-teeth-details/{patientId}', [HelperController::class, 'fetchTeethDetails'])->name('fetch.teeth.details');
+Route::post('/generate-pdf', [HelperController::class, 'generateTreatmentPdf'])->name('generate.pdf');
+Route::get('/fetch-teeth-details/{patientId}/{appId}', [HelperController::class, 'fetchTeethDetails'])->name('fetch.teeth.details');
+Route::post('/download-prescription', [HelperController::class, 'generatePrescriptionPdf'])->name('download.prescription');
+Route::get('/print-prescription', [HelperController::class, 'printPrescription'])->name('print.prescription');
+Route::post('/download-patientidcard', [HelperController::class, 'generatePatientIDCardPdf'])->name('download.patientidcard');
 
 Route::get('/clinic', [ClinicBranchController::class, 'index'])->name('settings.clinic');
 Route::post('/clinic/create', [ClinicBranchController::class, 'create'])->name('settings.clinic.create');
@@ -145,3 +190,24 @@ Route::get('/appointment/fetchtreatment/{appointment}', [TreatmentController::cl
 Route::get('/appointment/fetchTreatmentCharge/{appointment}', [TreatmentController::class, 'showCharge'])->name('treatment.showCharge');
 Route::delete('/treatment/{toothExamId}', [TreatmentController::class, 'destroy'])->name('treatment.destroy');
 Route::post('/treatment/details/store', [TreatmentController::class, 'storeDetails'])->name('treatment.details.store');
+
+Route::get('/billing', [BillingController::class, 'index'])->name('billing');
+Route::get('/billing/add/{appointmentId}', [BillingController::class, 'create'])->name('billing.create');
+Route::post('/billing/combo/{appointmentId}', [BillingController::class, 'comboOffer'])->name('billing.combo');
+Route::post('/billing/store', [BillingController::class, 'store'])->name('billing.store');
+Route::post('/billing/payment', [BillingController::class, 'payment'])->name('billing.payment');
+Route::post('/billing/paymentReceipt', [BillingController::class, 'paymentReceipt'])->name('billing.paymentReceipt');
+Route::get('/print-receipt/{fileName}', [HelperController::class, 'printReceipt'])->name('print.receipt');
+Route::get('/billing/{billing}/edit', [BillingController::class, 'edit'])->name('billing.edit');
+Route::post('/billing/update', [BillingController::class, 'update'])->name('billing.update');
+Route::post('/billing/{billing}', [BillingController::class, 'destroy'])->name('billing.destroy');
+
+Route::get('/medicineBilling', [MedicineBillController::class, 'index'])->name('medicineBilling');
+Route::get('/medicineBilling/add/{appointmentId}', [MedicineBillController::class, 'create'])->name('medicineBilling.create');
+Route::post('/medicineBilling/store', [MedicineBillController::class, 'store'])->name('medicineBilling.store');
+Route::post('/medicineBilling/paymentReceipt', [MedicineBillController::class, 'paymentReceipt'])->name('medicineBilling.paymentReceipt');
+Route::post('/medicineBilling/combo/{appointmentId}', [MedicineBillController::class, 'comboOffer'])->name('medicineBilling.combo');
+Route::post('/medicineBilling/payment', [MedicineBillController::class, 'payment'])->name('medicineBilling.payment');
+Route::get('/medicineBilling/{billing}/edit', [MedicineBillController::class, 'edit'])->name('medicineBilling.edit');
+Route::post('/medicineBilling/update', [MedicineBillController::class, 'update'])->name('medicineBilling.update');
+Route::post('/medicineBilling/{billing}', [MedicineBillController::class, 'destroy'])->name('medicineBilling.destroy');

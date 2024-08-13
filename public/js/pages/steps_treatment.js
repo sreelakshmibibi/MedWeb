@@ -55,36 +55,45 @@ function getDentalTable(stepIndex) {
                         if (toothExaminations && toothExaminations.length > 0) {
                             toothExaminations.forEach(function (exam, index) {
                                 var viewDocumentsButton = "";
+                                var rowName = null;
+                                if (exam.row_id != null) {
+                                    if (exam.row_id == 1) {
+                                        rowName = row1;
+                                    } else if (exam.row_id == 2) {
+                                        rowName = row2;
+                                    } else if (exam.row_id == 3) {
+                                        rowName = row3;
+                                    } else if (exam.row_id == 4) {
+                                        rowName = row4;
+                                    }
+                                }
                                 teethName = exam.tooth_id
                                     ? exam.teeth.teeth_name
                                     : exam.row_id;
                                 teethNameDisplay = exam.tooth_id
                                     ? exam.teeth.teeth_name
-                                    : "Row " + exam.row_id;
-                                console.log(appId, teethName, patientId);
+                                    : "Row : " + rowName;
+                                teethType = exam.tooth_id ? "Teeth" : "Row";
                                 // Check if there are x-ray images
                                 if (
                                     exam.x_ray_images &&
                                     exam.x_ray_images.length > 0
                                 ) {
-                                    console.log(appId, teethName, patientId);
                                     viewDocumentsButton = `
                 <button type="button" id="xraybtn" class="waves-effect waves-light btn btn-circle btn-info btn-xs"
                     data-bs-toggle="modal" data-bs-target="#modal-documents" data-id="${exam.id}" data-appointment-id="${appId}"
-                    data-teeth-name="${teethName}" data-patient-id="${patientId}" title="View documents">
+                    data-teeth-name="${teethName}" data-teeth-type="${teethType}" data-patient-id="${patientId}" title="View documents">
                     <i class="fa-solid fa-file-archive"></i>
                 </button>
             `;
                                 }
                                 if (appAction != "Show") {
-                                    actionButtons = `<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-treat-view btn-xs me-1' title='View' data-bs-toggle='modal' data-id='${teethName}' data-bs-target='#modal-teeth'><i class='fa fa-eye'></i></button>
-                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-treat-edit btn-xs me-1' title='Edit' data-bs-toggle='modal' data-id='${teethName}' data-bs-target='#modal-teeth'><i class='fa fa-pencil'></i></button>
-                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-treat-delete btn-xs me-1' title='Delete' data-bs-toggle='modal' data-id='${
-                                        exam.id
-                                    }' data-bs-target='#modal-delete'><i class='fa-solid fa-trash'></i></button>
+                                    actionButtons = `<button type='button' class='waves-effect waves-light btn btn-circle btn-primary btn-treat-view btn-xs me-1' title='View' data-bs-toggle='modal' data-id='${teethName}' data-teeth-type="${teethType}" data-bs-target='#modal-teeth'><i class='fa fa-eye'></i></button>
+                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-treat-edit btn-xs me-1' title='Edit' data-bs-toggle='modal' data-id='${teethName}' data-teeth-type="${teethType}" data-bs-target='#modal-teeth'><i class='fa fa-pencil'></i></button>
+                                    <button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-treat-delete btn-xs me-1' title='Delete' data-bs-toggle='modal' data-id='${exam.id}'  data-bs-target='#modal-delete'><i class='fa-solid fa-trash'></i></button>
                                     `;
                                 } else {
-                                    actionButtons = `<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-treat-view btn-xs me-1' title='View' data-bs-toggle='modal' data-id='${teethName}' data-bs-target='#modal-teeth'><i class='fa fa-eye'></i></button>`;
+                                    actionButtons = `<button type='button' class='waves-effect waves-light btn btn-circle btn-primary btn-treat-view btn-xs me-1' title='View' data-bs-toggle='modal' data-id='${teethName}' data-teeth-type="${teethType}" data-bs-target='#modal-teeth'><i class='fa fa-eye'></i></button>`;
                                 }
                                 var row = `
                                 <tr>
@@ -192,6 +201,9 @@ function handlePrescription(isChecked) {
         $(".advice_select").select2({
             width: "100%",
         });
+        $(".medicine_route_select").select2({
+            width: "100%",
+        });
     } else {
         $(".wizard-content .wizard > .steps > ul > li.presc_class").attr(
             "style",
@@ -203,6 +215,7 @@ function handlePrescription(isChecked) {
         $(".medicine_id_select").select2("destroy");
         $(".dosage_id_select").select2("destroy");
         $(".advice_select").select2("destroy");
+        $(".medicine_route_select").select2("destroy");
     }
 }
 
@@ -256,8 +269,6 @@ function getTreatmentTable(stepIndex) {
                 },
                 dataType: "json",
                 success: function (response) {
-                    console.log("Success response:", response);
-
                     var tableBody = $("#chargetablebody");
                     tableBody.empty(); // Clear any existing rows
 
@@ -286,15 +297,17 @@ function getTreatmentTable(stepIndex) {
                             var row = `
                                 <tr>
                                     <td>${index + 1}</td>
-                                    <td>${
+                                    <td style="text-align:left;">${
                                         exam.treatment.treat_name
-                                    } (${treatCost.toFixed(2)})</td>
+                                    } (${currency} ${treatCost.toFixed(3)})</td>
                                     <td>${
                                         treatDiscount != null
                                             ? treatDiscount
                                             : 0
                                     } %</td>
-                                    <td>${discountCost.toFixed(2)}</td>
+                                    <td>${currency} ${discountCost.toFixed(
+                                3
+                            )}</td>
                                 </tr>
                             `;
                             tableBody.append(row);
@@ -320,6 +333,7 @@ function getTreatmentTable(stepIndex) {
             console.error("Error fetching session data:", xhr);
         });
 }
+
 // Function to update total charge based on discount
 function updateTotalCharge(totalCost, discountPercentage = 0) {
     // If discount percentage is null or undefined, default to 0
@@ -328,7 +342,7 @@ function updateTotalCharge(totalCost, discountPercentage = 0) {
     }
 
     var discountedAmount = totalCost * (1 - discountPercentage / 100);
-    var totalAmount = discountedAmount.toFixed(2);
+    var totalAmount = discountedAmount.toFixed(3);
 
     var tableChargeBody = $("#totalChargeBody");
     tableChargeBody.empty(); // Clear any existing rows
@@ -336,13 +350,13 @@ function updateTotalCharge(totalCost, discountPercentage = 0) {
     var row = `
         <tr class="bt-3 border-primary">
             <th colspan="3" class="text-end">Total Rate</th>
-            <td colspan="1">${totalCost.toFixed(2)}</td>
+            <td colspan="1">${currency} ${totalCost.toFixed(3)}</td>
         </tr>
         <tr>
             <th colspan="3" class="text-end">Doctor Discount (if any)</th>
             <td colspan="1">
                 <div class="input-group">
-                    <input type="text" class="form-control" id="discount1" name="discount1" aria-describedby="basic-addon2" value="${discountPercentage}">
+                    <input type="text" style="text-align:right;" class="form-control" id="discount1" name="discount1" aria-describedby="basic-addon2" value="${discountPercentage}">
                     <div class="input-group-append">
                         <span class="input-group-text" id="basic-addon2">%</span>
                     </div>
@@ -351,15 +365,14 @@ function updateTotalCharge(totalCost, discountPercentage = 0) {
         </tr>
         <tr class="bg-primary">
             <th colspan="3" class="text-end fs-18 fw-600">Total Amount</th>
-            <td colspan="1" class="fs-18 fw-600">${totalAmount}</td>
+            <td colspan="1" class="fs-18 fw-600">${currency} ${totalAmount}</td>
         </tr>
     `;
     tableChargeBody.append(row);
 
     // Set focus back to the discount input field after updating
     var discountInput = $("#discount1");
-    var discountValue = discountInput.val();
-    discountInput.focus().val("").val(discountValue);
+    discountInput.focus().val("").val(discountPercentage);
 }
 
 // Event listener for discount input change
@@ -371,10 +384,13 @@ $(document).on("input", "#discount1", function () {
 
     // If the input value is numeric or empty, update the total charge
     var discountPercentage = parseFloat(numericValue);
-    if (!isNaN(discountPercentage) || discountValue === "") {
+    if (!isNaN(discountPercentage) || numericValue === "") {
         // Fetch current total cost from the UI
         var currentTotalCost = parseFloat(
-            $("#totalChargeBody .bt-3.border-primary td:last-child").text()
+            $("#totalChargeBody .bt-3.border-primary td:last-child")
+                .text()
+                .replace("₹", "")
+                .trim()
         );
 
         // Check if currentTotalCost is NaN or not a valid number
@@ -503,7 +519,6 @@ $("#treatmentform").steps({
             storeRoute = $("#updateRoute").data("url");
         }
 
-        console.log("stepjs :" + formDataTreatment);
         $.ajax({
             url: "/treatment/details/store",
             type: "POST",
@@ -534,7 +549,6 @@ $("#treatmentform").steps({
             error: function (xhr) {
                 if (xhr.responseJSON && xhr.responseJSON.errors) {
                     // Validation error occurred
-                    console.log(xhr.responseJSON.errors); // Log the validation errors to console
                     var errorMessage = "<ul>"; // Start an unordered list for error messages
 
                     // Loop through the errors and concatenate them into list items
@@ -548,9 +562,7 @@ $("#treatmentform").steps({
                     $("#error-message").show();
                 } else if (xhr.responseJSON && xhr.responseJSON.error) {
                     // Other server-side error occurred
-                    console.log(xhr.responseJSON.error); // Log the server error message to console
 
-                    // Display error message on the page
                     $("#error-message").text(xhr.responseJSON.error);
                     $("#error-message").show(); // Show the error message element
                 } else {
@@ -578,10 +590,13 @@ $("#treatmentform").steps({
         errorPlacement: function (error, element) {
             if (
                 $(element).hasClass("select2-hidden-accessible") ||
-                $(element).hasClass("select2") ||
-                $(element).parent().hasClass("input-group")
+                $(element).hasClass("select2")
             ) {
                 error.insertAfter($(element).siblings());
+            } else if ($(element).parent().hasClass("input-group")) {
+                var parentElement = $(element).parent();
+                var lastChild = parentElement.children().last();
+                error.insertAfter(lastChild);
             } else {
                 error.insertAfter(element);
             }
