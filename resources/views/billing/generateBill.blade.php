@@ -198,10 +198,10 @@ use Illuminate\Support\Facades\Session; ?>
                                             <h3><b>Total</b></h3>
                                         </td>
                                         <td>
-                                            <h3>{{ session('currency') }}{{ number_format($billExists->amount_to_be_paid + $previousOutStanding, 2) }}
+                                            <h3>{{ session('currency') }}{{ number_format($billExists->amount_to_be_paid, 2) }}
                                                 <input type="hidden" name="totaltoPay" id="totalToPay"
                                                     class="form-control text-center"
-                                                    value="{{ $billExists->amount_to_be_paid  + $previousOutStanding}}">
+                                                    value="{{ $billExists->amount_to_be_paid}}">
                                             </h3>
                                         </td>
                                     </tr>

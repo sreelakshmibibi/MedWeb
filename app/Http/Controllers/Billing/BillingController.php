@@ -201,20 +201,23 @@ class BillingController extends Controller
         if (!empty($billExists)) {
             $detailBills = PatientDetailBilling::with('treatment')->where('billing_id', $billExists->id)->get();
             $previousOutStanding = 0;
-            $previousBills = PatientTreatmentBilling::where('patient_id', $appointment->patient_id)
-                            ->where('appointment_id', '<', $appointment->id)
-                            ->where('status', 'Y')
-                            ->get();
+            $previousBill = PatientTreatmentBilling::where('patient_id',  $appointment->patient_id)
+                ->where('appointment_id', '<', $appointment->id)
+                ->where('status', 'Y')
+                ->orderBy('appointment_id', 'desc') // Order by descending to get the most recent previous appointment
+                ->first(); // Get the first result which will be the closest previous appointment
 
-            foreach ($previousBills as $previousBill) {
+            // Check if a previous appointment was found
+            if ($previousBill) {
                 if ($previousBill->bill_status == PatientTreatmentBilling::PAYMENT_DONE) {
                     $previousOutStanding += $previousBill->balance_due;
                 }
                 if ($previousBill->bill_status == PatientTreatmentBilling::BILL_GENERATED) {
                     $previousOutStanding += $previousBill->amount_to_be_paid;
                 }
-                
-            }
+               
+            } 
+           
             return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'previousOutStanding'));
         }
         $billingService = new BillingService();
@@ -352,12 +355,12 @@ class BillingController extends Controller
     {
         $billId = base64_decode(Crypt::decrypt($request['billId']));
         $appointmentId = base64_decode(Crypt::decrypt($request['appointmentId']));
-        $patientId = $request['patientId'];
         $patientTreatmentBilling = PatientTreatmentBilling::findOrFail($billId);
         if (! $patientTreatmentBilling) {
             abort(404);
         }
         $patientTreatmentBilling->previous_outstanding = isset($request['previousOutStanding']) ? $request['previousOutStanding'] : 0;
+        $patientTreatmentBilling->amount_to_be_paid = $request['totaltoPay'];
         $patientTreatmentBilling->amount_paid = $request['amountPaid'];
         $patientTreatmentBilling->mode_of_payment = $request['mode_of_payment'];
         $patientTreatmentBilling->consider_for_next_payment = isset($request['consider_for_next_payment']) ? 1 : 0;
