@@ -184,11 +184,12 @@ class BillingController extends Controller
                             class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1"
                             title="Print Medicine Bill"><i class="fa fa-print"></i></button>';
                         }
-                        if (auth()->user()->hasRole('Admin')) {
-                            // $buttons[] = "<a href='" . route('billing.edit', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-warning btn-xs me-1' title='Edit bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-edit'></i></a>";
-                            $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-xs' id='btn-cancel-bill' data-bs-toggle='modal' data-bs-target='#modal-cancel-bill' data-id='{$billing->id}' title='cancel'><i class='fa fa-times'></i></button>
-                            ";
-                        }
+                        
+                    }
+                    if (auth()->user()->hasRole('Admin') && !empty($billing) &&  ($billing->bill_status == PatientTreatmentBilling::PAYMENT_DONE || $billing->bill_status == PatientTreatmentBilling::BILL_GENERATED)) {
+                        // $buttons[] = "<a href='" . route('billing.edit', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-warning btn-xs me-1' title='Edit bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-edit'></i></a>";
+                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-xs' id='btn-cancel-bill' data-bs-toggle='modal' data-bs-target='#modal-cancel-bill' data-id='{$billing->id}' title='cancel'><i class='fa fa-times'></i></button>
+                        ";
                     }
 
                     return implode('', $buttons);

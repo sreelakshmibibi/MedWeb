@@ -25,6 +25,9 @@ return new class extends Migration
             $table->decimal('tax', 10, 3)->nullable();
             $table->decimal('amount_to_be_paid', 10, 3)->nullable();
             $table->string('mode_of_payment')->nullable();
+            $table->decimal('gpay', 10, 3)->nullable();
+            $table->decimal('cash', 10, 3)->nullable();
+            $table->decimal('card', 10, 3)->nullable();
             $table->decimal('bank_tax', 10, 3)->nullable();
             $table->decimal('amount_paid', 10, 3)->nullable();
             $table->decimal('balance_due' , 10, 3)->nullable();
@@ -33,6 +36,9 @@ return new class extends Migration
             $table->char('consider_for_next_payment')->nullable();
             $table->integer('bill_status')->nullable();
             $table->string('bill_delete_reason')->nullable();
+            $table->dateTime('bill_paid_date')->nullable();
+            $table->string('due_covered_bill_no')->nullable();
+            $table->dateTime('due_covered_date')->nullable();
             $table->char('status')->default('Y');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');

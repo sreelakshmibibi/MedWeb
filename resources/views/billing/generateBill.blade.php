@@ -351,7 +351,7 @@ date_default_timezone_set('Asia/Kolkata');
                                                         <label class="form-check-label me-2"
                                                             for="mode_of_payment_gpay">Gpay</label>
                                                         <input type="text" name="gpaycash" id="gpaycash"
-                                                            class="form-control  w-50 " style="display: none;">
+                                                            class="form-control  w-100 " style="display: none;">
                                                         &nbsp;
                                                         <!-- Checkbox for Cash -->
                                                         <input type="checkbox" class="filled-in chk-col-success"
@@ -361,7 +361,7 @@ date_default_timezone_set('Asia/Kolkata');
                                                         <label class="form-check-label me-2"
                                                             for="mode_of_payment_cash">Cash</label>
                                                         <input type="text" name="cash" id="cash"
-                                                            class="form-control  w-50" style="display: none;">
+                                                            class="form-control  w-100" style="display: none;">
                                                         &nbsp;
                                                         <!-- Checkbox for Card -->
                                                         <input type="checkbox" class="filled-in chk-col-success"
@@ -371,7 +371,7 @@ date_default_timezone_set('Asia/Kolkata');
                                                         <label class="form-check-label me-2"
                                                             for="mode_of_payment_card">Card</label>
                                                         <input type="text" name="cardcash" id="cardcash"
-                                                            class="form-control  w-50 " style="display: none;">
+                                                            class="form-control  w-100 " style="display: none;">
                                                         <select class="ms-2 form-select w-150" id="machine"
                                                             name="machine" style="display: none;">
                                                             <option value="">Select Machine</option>
@@ -381,11 +381,8 @@ date_default_timezone_set('Asia/Kolkata');
                                                         <span class="error-message text-danger" id="modeError"></span>
                                                     </td>
 
-                                                    <td><input type="text" readonly name="tax"
-                                                            class="form-control text-center"
-                                                            value="{{ number_format($billExists->tax, 3) }}"></td>
-
-                                                    <td class="text-end ">Paid Amount</td>
+                                                    
+                                                    <td colspan="2" class="text-end ">Paid Amount</td>
                                                     <td><input type="text" name="amountPaid" id="amountPaid"
                                                             class="form-control text-center"
                                                             value="<?php if ($billExists->amount_paid != null) {
