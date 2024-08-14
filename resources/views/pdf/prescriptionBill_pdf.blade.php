@@ -10,7 +10,8 @@ date_default_timezone_set('Asia/Kolkata');
     <title>Prescription</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            /* font-family: Arial, sans-serif; */
+            font-family: 'DejaVu Sans', Helvetica;
             color: #000;
             padding: 0;
             margin: 0;
@@ -61,18 +62,37 @@ date_default_timezone_set('Asia/Kolkata');
             color: #333;
         }
 
+        .heading {
+            font-size: 13px;
+        }
+
         .subheading {
             margin-bottom: 2px;
             text-decoration: underline;
             /* font-size: 15px; */
             font-size: 12px;
+            margin-top: 2px;
         }
+
+        .total,
+        .total h4 {
+            font-size: 11px;
+            margin-top: 2px;
+            margin-bottom: 2px;
+        }
+
+        h4 {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
 
         .info-table,
         .prescription-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            /* margin-bottom: 20px; */
+            margin-bottom: 4px;
         }
 
         .info-table td,
@@ -88,12 +108,24 @@ date_default_timezone_set('Asia/Kolkata');
 
         .prescription-table {
             border: 1px solid #ddd;
+            border: none;
+        }
+
+        .prescription-table thead,
+        .tbodypart {
+            border-bottom: 1px solid #ddd;
         }
 
         .prescription-table td,
         .prescription-table th {
-            border: 1px solid #ddd;
+            /* border: 1px solid #ddd; */
             text-align: center;
+        }
+
+        .linestyle {
+            border: none;
+            border-bottom: 1px solid #666;
+            margin-bottom: 4px;
         }
 
         .details {
@@ -166,7 +198,64 @@ date_default_timezone_set('Asia/Kolkata');
         </div>
     </div>
     <div class="pdfbody">
-        <h4 class="subheading">Patient Information</h4>
+        <h3 class="heading">
+            <center>Medicine Bill</center>
+        </h3>
+
+        <table class="info-table">
+            <tr>
+                <td style="width: 15%;"><strong>Patient ID: </strong></td>
+                <td style="width: 35%;">{{ $patient->patient_id ?? 'N/A' }}</td>
+
+                <td style="width: 50%; text-align:right;"><strong>Bill
+                        No: </strong>{{ $patientTreatmentBilling->bill_id }}
+                </td>
+            </tr>
+
+            <tr>
+                <td style="width: 15%;"><strong>Name: </strong></td>
+                <td style="width: 35%;">{{ str_replace('<br>', ' ', $patient->first_name) }}
+                    {{ $patient->last_name ?? 'N/A' }}</td>
+
+                <td style="width: 50%; text-align:right;"><strong>Bill Date: </strong>
+                    {{ \Carbon\Carbon::parse($patientTreatmentBilling->created_at)->format('d-m-Y') }}
+                </td>
+            </tr>
+
+            <tr>
+                <td style="width: 15%;"><strong>Age: </strong></td>
+                <td style="width: 35%;">
+                    {{-- {{ isset($patient->date_of_birth) ? $commonService->calculateAge($patient->date_of_birth) : 'N/A' }} --}}
+                    {{ isset($patient->date_of_birth) ? (preg_match('/(\d+) years/', $commonService->calculateAge($patient->date_of_birth), $matches) ? $matches[1] : 'N/A') : 'N/A' }}
+                </td>
+                <td style="width: 50%; text-align:right;"><strong>App_Date: </strong>
+                    {{ isset($appointment->app_date) ? \Carbon\Carbon::parse($appointment->app_date)->format('d-m-Y') : 'N/A' }}
+                </td>
+            </tr>
+
+            <tr>
+                <td style="width: 15%;"><strong>Gender: </strong></td>
+                <td style="width: 35%;">
+                    @if ($patient->gender === 'M')
+                        Male
+                    @elseif($patient->gender === 'F')
+                        Female
+                    @elseif($patient->gender === 'O')
+                        Others
+                    @else
+                        N/A
+                    @endif
+                </td>
+                <td style="width: 50%; text-align:right;"><strong>Doctor: </strong>
+                    {{ str_replace('<br>', ' ', $appointment->doctor->name) ?? 'N/A' }}
+                </td>
+            </tr>
+        </table>
+
+        <hr class="linestyle" />
+
+
+        {{-- <h4 class="subheading">Patient Information</h4>
         <table class="info-table">
             <tr>
                 <td style="width: 15%;"><strong>Patient ID:</strong></td>
@@ -207,9 +296,9 @@ date_default_timezone_set('Asia/Kolkata');
                     {{ isset($appointment->app_date) ? \Carbon\Carbon::parse($appointment->app_date)->format('d-m-Y') : 'N/A' }}
                 </td>
             </tr>
-        </table>
+        </table> --}}
 
-        <h4 class="subheading">Bill</h4>
+        <h4 class="subheading">Bill Details</h4>
         @if ($billDetails->isEmpty())
             <p>No Prescription available.</p>
         @else
@@ -223,12 +312,12 @@ date_default_timezone_set('Asia/Kolkata');
                         <th>SubTotal ({{ $clinicDetails->currency }})</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="tbodypart">
                     <?php $i = 0; ?>
                     @foreach ($billDetails as $billDetail)
                         <?php $medicine = null; ?>
                         <tr>
-                            <td>{{ ++$i }}</td>
+                            <td>{{ ++$i }}.</td>
                             <?php if ($billDetail->medicine_id != null) {
                                 $medicine = $billDetail->medicine->med_name;
                             } ?>
@@ -241,56 +330,63 @@ date_default_timezone_set('Asia/Kolkata');
                     @endforeach
                 </tbody>
 
-                <tbody>
+                <tbody class="tbodypart">
                     <tr>
-                        <td colspan="4" class="text-end">Sub - Total amount</td>
-                        <td><input type="text" readonly name="treatmenttotal" id="treatmenttotal"
+                        <td colspan="4" style="text-align: right;">Sub_Total amount</td>
+                        <td>
+                            {{ $currency }}{{ number_format($patientPrescriptionBilling->prescription_total_amount, 3) }}
+                            {{-- <input type="text" readonly name="treatmenttotal" id="treatmenttotal"
                                 class="form-control text-center"
-                                value="{{ number_format($patientPrescriptionBilling->prescription_total_amount, 3) }}">
+                                value="{{ number_format($patientPrescriptionBilling->prescription_total_amount, 3) }}"> --}}
                         </td>
                     </tr>
 
                     @if ($patientPrescriptionBilling->tax_percentile != 0 && $patientPrescriptionBilling->tax != 0)
                         <tr>
-                            <td colspan="4" class="text-end">Tax
+                            <td colspan="4" style="text-align: right;">Tax
                                 ({{ $patientPrescriptionBilling->tax_percentile }}%)
                             </td>
 
                             <td>{{ number_format($patientPrescriptionBilling->tax, 3) }}</td>
                         </tr>
                     @endif
-                    <tr class="bt-3 border-primary">
-                        <td colspan="4" class="text-end ">
-                            <h3><b>Total</b></h3>
-                        </td>
-                        <td>
-                            <h3>{{ session('currency') }}{{ number_format($patientPrescriptionBilling->amount_to_be_paid, 2) }}
-                            </h3>
-                        </td>
+                </tbody>
+
+                <tbody class="tbodypart">
+                    <tr class="total">
+                        <th colspan="4" style="text-align: right;">
+                            <h4>Total</h4>
+                        </th>
+                        <th>
+                            <h4>{{ $currency }}{{ number_format($patientPrescriptionBilling->amount_to_be_paid, 2) }}
+                            </h4>
+                        </th>
                     </tr>
                     <tr>
-                        <td colspan="2">
-                            <span class="text-bold">Mode of Payment : </span>
+                        <td colspan="2" rowspan="4" style="text-align: left;">
+                            Mode of Payment :
                             @if ($patientPrescriptionBilling->gpay > 0)
                                 <span class="text-bold">Gpay : {{ $patientPrescriptionBilling->gpay }}</span>
                             @endif
+                            <br>
                             @if ($patientPrescriptionBilling->cash > 0)
                                 <span class="text-bold">Cash : {{ $patientPrescriptionBilling->cash }}</span>
                             @endif
+                            <br>
                             @if ($patientPrescriptionBilling->card > 0)
                                 <span class="text-bold">Card : {{ $patientPrescriptionBilling->card }}</span>
                             @endif
                         </td>
 
-                        <td colspan="2" class="text-end ">Paid Amount</td>
-                        <td>{{ $patientPrescriptionBilling->amount_paid }}
+                        <td colspan="2" style="text-align: right;">Paid Amount</td>
+                        <td>{{ $currency }}{{ $patientPrescriptionBilling->amount_paid }}
                         </td>
                     </tr>
 
                     @if ($patientPrescriptionBilling->balance_given)
                         <tr>
-                            <td colspan="4" class="text-end">Balance Given</td>
-                            <td>{{ $patientPrescriptionBilling->balance_given }}</td>
+                            <td colspan="2" style="text-align: right;">Balance Given</td>
+                            <td>{{ $currency }}{{ $patientPrescriptionBilling->balance_given }}</td>
                         </tr>
                     @endif
                 </tbody>
@@ -298,7 +394,10 @@ date_default_timezone_set('Asia/Kolkata');
         @endif
     </div>
 
-
+    <div class="details">
+        <span class="details-label"> Billed
+            By<br>{{ str_replace('<br>', ' ', $patientPrescriptionBilling->billedBy->name ?? 'Unknown') ?? 'N/A' }}</span>
+    </div>
 
     <div class="footer">
         <div class="footer_text1">Developed by Serieux</div>

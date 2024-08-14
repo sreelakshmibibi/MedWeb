@@ -90,6 +90,11 @@ header('Content-Type: text/html; charset=UTF-8');
             margin-bottom: 2px;
         }
 
+        h4 {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
         .info-table,
         .treatmentbill-table {
             width: 100%;
@@ -325,7 +330,7 @@ header('Content-Type: text/html; charset=UTF-8');
                         </tr>
                     @endif
 
-                    
+
                     @if ($patientTreatmentBilling->tax_percentile != 0 && $patientTreatmentBilling->tax != 0)
                         <tr>
                             <td colspan="5" style="text-align: right;">Tax
@@ -335,15 +340,15 @@ header('Content-Type: text/html; charset=UTF-8');
                         </tr>
                     @endif
                     @if ($patientTreatmentBilling->previous_outstanding != 0)
-                    <tr>
-                        <th colspan="5" style="text-align: right;">
-                            <h4>Current Bill Total</h4>
-                        </th>
-                        <th>
-                            <h4>{{ $currency }}{{ number_format($patientTreatmentBilling->amount_to_be_paid - $patientTreatmentBilling->previous_outstanding , 2) }}
-                            </h4>
-                        </th>
-                    </tr>
+                        <tr>
+                            <th colspan="5" style="text-align: right;">
+                                <h4>Current Bill Total</h4>
+                            </th>
+                            <th>
+                                <h4>{{ $currency }}{{ number_format($patientTreatmentBilling->amount_to_be_paid - $patientTreatmentBilling->previous_outstanding, 2) }}
+                                </h4>
+                            </th>
+                        </tr>
                         <tr>
                             <td colspan="5" style="text-align: right;">Previous Outstanding</td>
                             <td>{{ number_format($patientTreatmentBilling->previous_outstanding, 3) }}</td>
@@ -351,7 +356,7 @@ header('Content-Type: text/html; charset=UTF-8');
                     @endif
                 </tbody>
 
-                <tbody>
+                <tbody class="tbodypart">
                     <tr class="total">
                         <th colspan="5" style="text-align: right;">
                             <h4>Total amount to be paid</h4>
@@ -362,11 +367,17 @@ header('Content-Type: text/html; charset=UTF-8');
                         </th>
                     </tr>
                     <tr>
-                        <td colspan="3" style="text-align: left;">
-                            Mode of Payment: 
-                            <br> <?php if ($patientTreatmentBilling->gpay != null) { echo "GPay : ".$currency.$patientTreatmentBilling->gpay;}?>
-                            <br> <?php if ($patientTreatmentBilling->cash != null) { echo "Cash : ".$currency.$patientTreatmentBilling->cash;}?>
-                            <br> <?php if ($patientTreatmentBilling->card != null) { echo "Card : ".$currency.$patientTreatmentBilling->card;}?>
+                        <td colspan="3" rowspan="4" style="text-align: left;">
+                            Mode of Payment:
+                            <br> <?php if ($patientTreatmentBilling->gpay != null) {
+                                echo 'GPay : ' . $currency . $patientTreatmentBilling->gpay;
+                            } ?>
+                            <br> <?php if ($patientTreatmentBilling->cash != null) {
+                                echo 'Cash : ' . $currency . $patientTreatmentBilling->cash;
+                            } ?>
+                            <br> <?php if ($patientTreatmentBilling->card != null) {
+                                echo 'Card : ' . $currency . $patientTreatmentBilling->card;
+                            } ?>
                         </td>
 
                         <td colspan="2" style="text-align: right;">Paid Amount</td>
@@ -375,16 +386,16 @@ header('Content-Type: text/html; charset=UTF-8');
                     </tr>
                     @if ($patientTreatmentBilling->consider_for_next_payment)
                         <tr>
-                            <td colspan="5" style="text-align: right;">
+                            <td colspan="2" style="text-align: right;">
                                 <?php if ($patientTreatmentBilling->balance_due < 0) {?> Advance Payment<?php } ?>
-                                <?php if ($patientTreatmentBilling->balance_due > 0) {?> Balance Due<?php } ?>
+                                <?php if ($patientTreatmentBilling->balance_due >= 0) {?> Balance Due<?php } ?>
                             </td>
                             <td>{{ $currency }}{{ $patientTreatmentBilling->balance_due }}</td>
                         </tr>
                     @endif
                     @if ($patientTreatmentBilling->balance_given)
                         <tr>
-                            <td colspan="5" style="text-align: right;">Balance Given</td>
+                            <td colspan="2" style="text-align: right;">Balance Given</td>
                             <td>{{ $currency }}{{ $patientTreatmentBilling->balance_to_give_back }}</td>
                         </tr>
                     @endif
@@ -394,7 +405,8 @@ header('Content-Type: text/html; charset=UTF-8');
     </div>
 
     <div class="details">
-       <span class="details-label"> Billed By<br>{{ str_replace("<br>", " ", $patientTreatmentBilling->billedBy->name ?? 'Unknown' ) ?? 'N/A' }}</span>
+        <span class="details-label"> Billed
+            By<br>{{ str_replace('<br>', ' ', $patientTreatmentBilling->billedBy->name ?? 'Unknown') ?? 'N/A' }}</span>
     </div>
 
     <div class="footer">

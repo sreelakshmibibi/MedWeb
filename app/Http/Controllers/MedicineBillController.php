@@ -99,7 +99,7 @@ class MedicineBillController extends Controller
 
             // Store prescription details
             foreach ($request->quantity as $index => $quantity) {
-                if ($quantity > 0 && $request->rate[$index] > 0 && ! empty($request->medicine_checkbox[$index])) {
+                if ($quantity > 0 && $request->rate[$index] > 0 && !empty($request->medicine_checkbox[$index])) {
                     PrescriptionDetailBilling::create([
                         'bill_id' => $billing->id,
                         'medicine_id' => $request->medicine_checkbox[$index],
@@ -119,18 +119,18 @@ class MedicineBillController extends Controller
             // Rollback the transaction on error
             DB::rollBack();
 
-            return redirect()->back()->with('error', 'Failed to create bill: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Failed to create bill: ' . $e->getMessage());
         }
     }
 
     public function generateBillId()
     {
         $yearMonth = date('Ym'); // Year and Month
-        $latestBill = PatientPrescriptionBilling::where('bill_id', 'like', $yearMonth.'%')
+        $latestBill = PatientPrescriptionBilling::where('bill_id', 'like', $yearMonth . '%')
             ->orderBy('bill_id', 'desc')
             ->first();
         $lastBillId = $latestBill ? intval(substr($latestBill->bill_id, -4)) : 0;
-        $newBillId = $yearMonth.str_pad($lastBillId + 1, 4, '0', STR_PAD_LEFT);
+        $newBillId = $yearMonth . str_pad($lastBillId + 1, 4, '0', STR_PAD_LEFT);
 
         return $newBillId;
     }
@@ -149,7 +149,7 @@ class MedicineBillController extends Controller
         if ($clinicDetails->clinic_logo == '') {
             $clinicLogo = 'public/images/logo-It.png';
         } else {
-            $clinicLogo = 'storage/'.$clinicDetails->clinic_logo;
+            $clinicLogo = 'storage/' . $clinicDetails->clinic_logo;
         }
         $pdf = Pdf::loadView('pdf.prescriptionBill_pdf', [
             'billDetails' => $billDetails,
@@ -158,11 +158,12 @@ class MedicineBillController extends Controller
             'patient' => $appointment->patient,
             'clinicDetails' => $clinicDetails,
             'clinicLogo' => $clinicLogo,
+            'currency' => $clinicDetails->currency,
         ])->setPaper('A5', 'portrait');
-        $bill_patientId = 'prescriptionbill_'.$appointment->patient_id.'_'.date('Y-m-d').'.pdf';
+        $bill_patientId = 'prescriptionbill_' . $appointment->patient_id . '_' . date('Y-m-d') . '.pdf';
         // Save PDF to storage
-        $fileName = 'prescriptionBilling_report_'.$bill_patientId;
-        $filePath = 'public/pdfs/'.$fileName;
+        $fileName = 'prescriptionBilling_report_' . $bill_patientId;
+        $filePath = 'public/pdfs/' . $fileName;
         // Storage::put($filePath, $pdf->output());
 
         // // Return PDF file URL
