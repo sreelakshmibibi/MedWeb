@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Appointment\AppointmentController;
+use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Appointment\TreatmentController;
 use App\Http\Controllers\Auth\StaffVerificationController;
 use App\Http\Controllers\Billing\BillingController;
@@ -211,3 +212,5 @@ Route::post('/medicineBilling/payment', [MedicineBillController::class, 'payment
 Route::get('/medicineBilling/{billing}/edit', [MedicineBillController::class, 'edit'])->name('medicineBilling.edit');
 Route::post('/medicineBilling/update', [MedicineBillController::class, 'update'])->name('medicineBilling.update');
 Route::post('/medicineBilling/{billing}', [MedicineBillController::class, 'destroy'])->name('medicineBilling.destroy');
+
+Route::get('/report', [ReportController::class, 'index'])->name('report');
