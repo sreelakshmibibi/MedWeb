@@ -12,7 +12,7 @@
                     <div class="container-fluid">
                         <!-- Treatment Name -->
                         <div class="form-group">
-                            <label class="form-label" for="treatment">Treatment Name <span class="text-danger">
+                            <label class="form-label" for="treat_name">Treatment Name <span class="text-danger">
                                     *</span></label>
                             <input class="form-control" type="text" id="treat_name" name="treat_name"
                                 placeholder="Treatment Name">
@@ -23,7 +23,7 @@
                             <!-- Treatment Cost -->
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="cost">Cost <span class="text-danger">
+                                    <label class="form-label" for="treat_cost">Cost <span class="text-danger">
                                             *</span></label>
                                     <input class="form-control" type="text" id="treat_cost" name="treat_cost"
                                         placeholder="Treatment Cost">

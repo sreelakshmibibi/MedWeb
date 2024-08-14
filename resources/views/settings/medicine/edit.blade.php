@@ -14,7 +14,7 @@
                     <div class="container-fluid">
 
                         <div class="form-group">
-                            <label class="form-label" for="name">Medicine Name <span class="text-danger">
+                            <label class="form-label" for="edit_med_name">Medicine Name <span class="text-danger">
                                     *</span></label>
                             <input class="form-control" type="text" id="edit_med_name" name="med_name"
                                 placeholder="Medicine Name">
