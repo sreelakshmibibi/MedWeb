@@ -367,8 +367,9 @@ class BillingController extends Controller
             }
             
         }
+        $cardPay = CardPay::where('status', "Y")->get();
         // if (!empty($insuranceDetails)) {
-        return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction', 'insuranceDetails', 'hasPrescriptionBill', 'prescriptionBillDetails'));
+        return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction', 'insuranceDetails', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay'));
         // }
         //  else {
         //     return view('billing.generateBill', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction'));
