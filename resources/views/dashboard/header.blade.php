@@ -43,7 +43,7 @@
                                 <form>
                                     <div class="input-group">
                                         <input type="search" class="form-control" placeholder="Search"
-                                            aria-label="Search" aria-describedby="button-addon2">
+                                            id="searchheader" aria-label="Search" aria-describedby="button-addon2">
                                         <div class="input-group-append">
                                             <button class="btn" type="submit" id="button-addon3"><i
                                                     class="icon-Search"><span class="path1"></span><span

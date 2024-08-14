@@ -30,7 +30,7 @@
                 <div class="box">
                     <div class="box-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover table-striped mb-0 border-2 data-table">
+                            <table class="table table-bordered table-hover table-striped mb-0 data-table">
                                 <thead class="bg-primary-light text-center">
                                     <tr>
                                         <th width="10px">No</th>
@@ -55,9 +55,9 @@
     @include('settings.department.edit')
     @include('settings.department.delete')
 
-@endsection
+    {{-- @endsection
 
-@section('scripts')
+@section('scripts') --}}
 
     <script>
         var departmentUrl = "{{ route('settings.department') }}";
@@ -68,7 +68,6 @@
 
     <script type="text/javascript">
         jQuery(function($) {
-
             $(document).on('click', '.btn-edit', function() {
                 var departmentId = $(this).data('id');
                 $('#edit_department_id').val(departmentId); // Set department ID in the hidden input
