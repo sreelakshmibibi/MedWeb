@@ -97,12 +97,36 @@ $("#patientform").steps({
                 if (routeReturn == null) {
                     routeReturn = $("#updateRoute").data("patientlist-route");
                 }
+                if (response.success) {
+                    // Create a Blob from the base64-encoded PDF data
+                    var blob = new Blob([new Uint8Array(atob(response.pdf).split("").map(function (c) { return c.charCodeAt(0) }))], { type: "application/pdf" });
+
+                    // Create an object URL for the Blob
+                    var url = URL.createObjectURL(blob);
+
+                    // Create a link element and click it to start the download
+                    var a = document.createElement("a");
+                    a.href = url;
+                    a.download = "registration_fee_bill.pdf";
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+
+                    // Optionally, redirect to another route
+                    var routeReturn = $("#storeRoute").data("patientlist-route") || $("#updateRoute").data("patientlist-route");
+                    window.location.href = routeReturn + "?success_message=" + encodeURIComponent("Patient added successfully.");
+                } else {
+                    // Handle any other success messages
+                    var message = "Patient added successfully.";
+                    var routeReturn = $("#storeRoute").data("patientlist-route") || $("#updateRoute").data("patientlist-route");
+                    window.location.href = routeReturn + "?success_message=" + encodeURIComponent(message);
+                }
 
                 // Redirect to the stafflist route
-                window.location.href =
-                    routeReturn +
-                    "?success_message=" +
-                    encodeURIComponent(message);
+                // window.location.href =
+                //     routeReturn +
+                //     "?success_message=" +
+                //     encodeURIComponent(message);
             },
             error: function (xhr) {
                 if (xhr.responseJSON && xhr.responseJSON.errors) {
