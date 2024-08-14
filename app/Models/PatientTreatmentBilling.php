@@ -20,7 +20,7 @@ class PatientTreatmentBilling extends Model
     const BILL_CANCELLED_WORDS = "Bill Cancelled";
     
 
-    protected $fillable = [ 'bill_id', 'appointment_id', 'app_id','patient_id', 'treatment_total_amount','combo_offer_deduction', 'mode_of_payment', 'previous_outstanding', 'doctor_discount', 'amount_to_be_paid', 'amount_paid', 'balance_due', 'balance_to_give_back', 'balance_given', 'consider_for_next_payment' ,'tax','tax_percentile', 'mode_of_payment', 'bank_tax', 'insurance_paid', 'gpay', 'cash', 'card', 'bill_paid_date', 'due_covered_bill_no', 'due_covered_date','status','bill_status', 'bill_delete_reason','created_by', 'updated_by' ]; 
+    protected $fillable = [ 'bill_id', 'appointment_id', 'app_id','patient_id', 'treatment_total_amount','combo_offer_deduction', 'mode_of_payment', 'previous_outstanding', 'doctor_discount', 'amount_to_be_paid', 'amount_paid', 'balance_due', 'balance_to_give_back', 'balance_given', 'consider_for_next_payment' ,'tax','tax_percentile', 'card_pay_id', 'bank_tax', 'insurance_paid', 'gpay', 'cash', 'card', 'bill_paid_date', 'due_covered_bill_no', 'due_covered_date','status','bill_status', 'bill_delete_reason','created_by', 'updated_by' ]; 
 
     protected $dates = ['deleted_at'];
 

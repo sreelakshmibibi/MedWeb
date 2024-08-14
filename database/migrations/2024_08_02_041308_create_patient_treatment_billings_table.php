@@ -24,10 +24,10 @@ return new class extends Migration
             $table->float('tax_percentile')->nullable();
             $table->decimal('tax', 10, 3)->nullable();
             $table->decimal('amount_to_be_paid', 10, 3)->nullable();
-            $table->string('mode_of_payment')->nullable();
             $table->decimal('gpay', 10, 3)->nullable();
             $table->decimal('cash', 10, 3)->nullable();
             $table->decimal('card', 10, 3)->nullable();
+            $table->foreignId('card_pay_id')->nullable()->constrained('card_pays');
             $table->decimal('bank_tax', 10, 3)->nullable();
             $table->decimal('amount_paid', 10, 3)->nullable();
             $table->decimal('balance_due' , 10, 3)->nullable();

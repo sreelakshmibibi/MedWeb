@@ -92,28 +92,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("billingForm");
-    const amountPaidInput = form.querySelector("#amountPaid");
-    const totalToPayInput = form.querySelector("#totalToPay");
-    const balanceDueInput = form.querySelector("#balance");
-    const balanceToGiveBackInput = form.querySelector("#balanceToGiveBack");
-
-    function updateBalances() {
-        const amountPaid = parseFloat(amountPaidInput.value) || 0;
-        const totalToPay = parseFloat(totalToPayInput.value) || 0;
-
-        const balanceDue = totalToPay - amountPaid;
-        const balanceToGiveBack =
-            amountPaid > totalToPay ? amountPaid - totalToPay : 0;
-
-        balanceDueInput.value = balanceDue.toFixed(3);
-        balanceToGiveBackInput.value = balanceToGiveBack.toFixed(3);
-    }
-
-    amountPaidInput.addEventListener("input", updateBalances);
-});
-
-document.addEventListener("DOMContentLoaded", function () {
     const totalToPayElement = document.getElementById("totalToPay");
     const insurancePaidElement = document.getElementById("insurance_paid");
     const amountToBePaidElement = document.getElementById(
@@ -389,3 +367,51 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
         });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Function to calculate the total amount paid
+    function calculateAmountPaid() {
+        // Get values from input fields and parse them as floats
+        var gpaycash = parseFloat(document.getElementById('gpaycash').value) || 0;
+        var cardcash = parseFloat(document.getElementById('cardcash').value) || 0;
+        var cash = parseFloat(document.getElementById('cash').value) || 0;
+        
+        // Calculate the total
+        var totalAmountPaid = gpaycash + cardcash + cash;
+
+        // Update the amountPaid field
+        document.getElementById('amountPaid').value = totalAmountPaid.toFixed(2);
+        
+        // Calculate and update balance and balanceToGiveBack
+        updateBalances(totalAmountPaid);
+    }
+
+    // Function to update balance and balanceToGiveBack
+    const form = document.getElementById("billingForm");
+    const amountPaidInput = form.querySelector("#amountPaid");
+    const totalToPayInput = form.querySelector("#totalToPay");
+    const balanceDueInput = form.querySelector("#balance");
+    const balanceToGiveBackInput = form.querySelector("#balanceToGiveBack");
+
+    function updateBalances() {
+        const amountPaid = parseFloat(amountPaidInput.value) || 0;
+        const totalToPay = parseFloat(totalToPayInput.value) || 0;
+
+        const balanceDue = totalToPay - amountPaid;
+        const balanceToGiveBack =
+            amountPaid > totalToPay ? amountPaid - totalToPay : 0;
+
+        balanceDueInput.value = balanceDue.toFixed(3);
+        balanceToGiveBackInput.value = balanceToGiveBack.toFixed(3);
+    }
+
+    // Add event listeners to the input fields
+    document.getElementById('gpaycash').addEventListener('input', calculateAmountPaid);
+    document.getElementById('cardcash').addEventListener('input', calculateAmountPaid);
+    document.getElementById('cash').addEventListener('input', calculateAmountPaid);
+    document.getElementById('amountPaid').addEventListener('input', function() {
+        updateBalances(parseFloat(this.value) || 0);
+    });
+});
+
+

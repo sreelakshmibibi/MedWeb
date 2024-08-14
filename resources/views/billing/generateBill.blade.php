@@ -375,8 +375,9 @@ date_default_timezone_set('Asia/Kolkata');
                                                         <select class="ms-2 form-select w-150" id="machine"
                                                             name="machine" style="display: none;">
                                                             <option value="">Select Machine</option>
-                                                            <option value="1">Machine 1</option>
-                                                            <option value="2">Machine 2</option>
+                                                            @foreach ($cardPay as $machine)
+                                                                <option value="{{$machine->id}}">{{ $machine->card_name}}</option>
+                                                            @endforeach
                                                         </select>
                                                         <span class="error-message text-danger" id="modeError"></span>
                                                     </td>

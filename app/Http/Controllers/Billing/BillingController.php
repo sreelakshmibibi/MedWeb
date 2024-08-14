@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\AppointmentStatus;
 use App\Models\AppointmentType;
+use App\Models\CardPay;
 use App\Models\ClinicBasicDetail;
 use App\Models\ClinicBranch;
 use App\Models\Insurance;
@@ -351,8 +352,9 @@ class BillingController extends Controller
                 }
 
             }
+            $cardPay = CardPay::where('status', 'Y')->get();
 
-            return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'previousOutStanding', 'clinicBasicDetails', 'isMedicineProvided', 'medicineTotal', 'prescriptions', 'hasPrescriptionBill', 'prescriptionBillDetails'));
+            return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'previousOutStanding', 'clinicBasicDetails', 'isMedicineProvided', 'medicineTotal', 'prescriptions', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay'));
 
         }
         // if (!empty($insuranceDetails)) {
@@ -436,8 +438,8 @@ class BillingController extends Controller
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            // print_r($e->getMessage());
-            // exit;
+            print_r($e->getMessage());
+            exit;
             return redirect()->back()->with('error', 'Failed to create bill: ' . $e->getMessage());
         }
     }
