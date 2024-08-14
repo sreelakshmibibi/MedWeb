@@ -40,6 +40,7 @@ return new class extends Migration
             $table->string('due_covered_bill_no')->nullable();
             $table->dateTime('due_covered_date')->nullable();
             $table->char('status')->default('Y');
+            $table->foreignId('billed_by')->constrained('users');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
             $table->timestamps();

@@ -24,6 +24,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -487,6 +488,7 @@ class BillingController extends Controller
             $patientTreatmentBilling->balance_given = isset($request['balance_given']) ? 1 : 0;
             $patientTreatmentBilling->bill_status = PatientTreatmentBilling::PAYMENT_DONE;
             $patientTreatmentBilling->bill_paid_date = Carbon::now();
+            $patientTreatmentBilling->billed_by = Auth::user()->id;
             
             // Log the update attempt
             Log::create([
