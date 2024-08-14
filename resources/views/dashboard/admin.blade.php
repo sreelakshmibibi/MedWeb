@@ -255,7 +255,7 @@ use Illuminate\Support\Facades\Crypt;
 
         // Transform all dates in the array
         const formattedDates = dates.map(formatDate);
-        alert(formattedDates)
+
         var options = {
             series: [{
                 name: 'Total Patient',
