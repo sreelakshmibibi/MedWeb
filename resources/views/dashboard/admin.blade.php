@@ -159,7 +159,7 @@ use Illuminate\Support\Facades\Crypt;
     </div>
     <!-- /.content-wrapper -->
     <!-- ./wrapper -->
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script> --}}
 
     <script>
         var revisitedPatientsData = @json(array_values($revisitedPatientsData));
@@ -240,6 +240,22 @@ use Illuminate\Support\Facades\Crypt;
         var chart = new ApexCharts(document.querySelector("#monthly_patient_count"), options);
         chart.render();
 
+        const dates = @json($dates);
+
+        // Function to convert yyyy-mm-dd to dd MMM yyyy
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const options = {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            };
+            return new Intl.DateTimeFormat('en-GB', options).format(date);
+        }
+
+        // Transform all dates in the array
+        const formattedDates = dates.map(formatDate);
+        alert(formattedDates)
         var options = {
             series: [{
                 name: 'Total Patient',
@@ -265,7 +281,8 @@ use Illuminate\Support\Facades\Crypt;
             dataLabels: {
                 enabled: false,
             },
-            labels: @json($dates),
+            // labels: @json($dates),
+            labels: formattedDates,
             xaxis: {
                 type: 'datetime'
             },

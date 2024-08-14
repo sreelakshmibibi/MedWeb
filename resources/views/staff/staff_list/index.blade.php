@@ -96,7 +96,11 @@
                         data: 'photo',
                         name: 'photo',
                         render: function(data, type, full, meta) {
-                            data = "{{ asset('storage/') }}/" + data;
+                            if (data) {
+                                data = "{{ asset('storage/') }}/" + data;
+                            } else {
+                                data = "{{ asset('images/svg-icon/user.svg') }}";
+                            }
                             return '<img src="' + data +
                                 '" height="50" style="border-radius:50%;"/>';
                         },

@@ -6,7 +6,7 @@
         <div class="container-full">
             <div class="content-header">
                 <div id="successMessage" style="display:none;" class="alert alert-success">
-                    
+
                 </div>
 
                 <div class="d-flex align-items-center justify-content-between">
@@ -60,8 +60,9 @@
                     table.ajax.reload();
                 },
             });
-            var initialDate = $("#billing_paginator").datepaginator("getDate");
-            selectedDate = moment(initialDate).format("YYYY-MM-DD")
+            // var initialDate = $("#billing_paginator").datepaginator("getDate");
+            // selectedDate = moment(initialDate).format("YYYY-MM-DD")
+            selectedDate = moment().format("YYYY-MM-DD");
         });
 
         jQuery(function($) {
@@ -175,6 +176,5 @@
                 }
             });
         });
-
     </script>
 @endsection
