@@ -38,4 +38,9 @@ class PatientTreatmentBilling extends Model
         });
     }
 
+    public function billedBy()
+    {
+        return $this->belongsTo(User::class, 'billed_by');
+    }
+
 }

@@ -581,7 +581,7 @@ class BillingController extends Controller
     {
         $billId = base64_decode(Crypt::decrypt($request->input('billId')));
         $appointmentId = base64_decode(Crypt::decrypt($request['appointmentId']));
-        $patientTreatmentBilling = PatientTreatmentBilling::findOrFail($billId);
+        $patientTreatmentBilling = PatientTreatmentBilling::with('billedBy')->findOrFail($billId);
 
         // Generate PDF
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])

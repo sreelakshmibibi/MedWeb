@@ -394,7 +394,7 @@ header('Content-Type: text/html; charset=UTF-8');
     </div>
 
     <div class="details">
-        <span class="details-label">{{ str_replace('<br>', ' ', $appointment->doctor->name) ?? 'N/A' }}</span>
+       <span class="details-label"> Billed By<br>{{ str_replace("<br>", " ", $patientTreatmentBilling->billedBy->name ?? 'Unknown' ) ?? 'N/A' }}</span>
     </div>
 
     <div class="footer">
