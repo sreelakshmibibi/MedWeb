@@ -131,33 +131,37 @@ class BillingService
         }
     }
 
-    public function getOffers(array $selectedTreatmentIds, $selectedOffer)
+    public function getOffers(array $selectedTreatmentIds = [], $selectedOffer)
     {
 
-        return TreatmentComboOffer::with('treatments')
-            ->where('status', 'Y')
-            ->whereDate('offer_from', '<=', date('Y-m-d'))
-            ->whereDate('offer_to', '>=', date('Y-m-d'))
-            ->get()
-            ->filter(function ($combOffer) use ($selectedTreatmentIds) {
-                // Get treatment IDs for the combo offer
-                $comboOfferTreatmentIds = $combOffer->treatments->pluck('id')->toArray();
+        if ($selectedTreatmentIds != []) {
+            return TreatmentComboOffer::with('treatments')
+                ->where('status', 'Y')
+                ->whereDate('offer_from', '<=', date('Y-m-d'))
+                ->whereDate('offer_to', '>=', date('Y-m-d'))
+                ->get()
+                ->filter(function ($combOffer) use ($selectedTreatmentIds) {
+                    // Get treatment IDs for the combo offer
+                    $comboOfferTreatmentIds = $combOffer->treatments->pluck('id')->toArray();
 
-                // Check if all treatment IDs in the combo offer are present in the selected treatments
-                return empty(array_diff($comboOfferTreatmentIds, $selectedTreatmentIds));
-            })
-            ->mapWithKeys(function ($combOffer) use ($selectedOffer) {
-                return [
-                    $combOffer->id => [
-                        'id' => $combOffer->id,
-                        'selected' => $combOffer->id == $selectedOffer ? 1 : 0,
-                        'treatment' => $combOffer->treatments->pluck('treat_name')->implode(', '),
-                        'treatment_ids' => $combOffer->treatments->pluck('id')->toArray(),
-                        'cost' => number_format((float) $combOffer->treatments->sum('treat_cost'), 3, '.', ','),
-                        'offer' => number_format((float) $combOffer->offer_amount, 3, '.', ','),
-                    ]
-                ];
-            });
+                    // Check if all treatment IDs in the combo offer are present in the selected treatments
+                    return empty(array_diff($comboOfferTreatmentIds, $selectedTreatmentIds));
+                })
+                ->mapWithKeys(function ($combOffer) use ($selectedOffer) {
+                    return [
+                        $combOffer->id => [
+                            'id' => $combOffer->id,
+                            'selected' => $combOffer->id == $selectedOffer ? 1 : 0,
+                            'treatment' => $combOffer->treatments->pluck('treat_name')->implode(', '),
+                            'treatment_ids' => $combOffer->treatments->pluck('id')->toArray(),
+                            'cost' => number_format((float) $combOffer->treatments->sum('treat_cost'), 3, '.', ','),
+                            'offer' => number_format((float) $combOffer->offer_amount, 3, '.', ','),
+                        ]
+                    ];
+                });
+            } else {
+                return [];
+            }
     }
 
     public function savePatientDetailBilling($billingId, $request, $index)
