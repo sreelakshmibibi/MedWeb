@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Billing\MedicineBillRequest;
 use App\Models\Appointment;
+use App\Models\CardPay;
 use App\Models\ClinicBasicDetail;
 use App\Models\ClinicBranch;
 use App\Models\PatientPrescriptionBilling;
@@ -13,7 +14,7 @@ use App\Services\BillingService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class MedicineBillController extends Controller
@@ -31,6 +32,7 @@ class MedicineBillController extends Controller
      */
     public function create($appointmentId)
     {
+        $cardPay = CardPay::where('status', 'Y')->get();
         // print_r($request->all());exit;
         $id = base64_decode(Crypt::decrypt($appointmentId));
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])
@@ -55,116 +57,90 @@ class MedicineBillController extends Controller
         }
 
         // Pass variables to the view
-        return view('billing.medicine', compact('appointment', 'clinicBasicDetails', 'isMedicineProvided', 'prescriptions', 'medicineTotal', 'hasPrescriptionBill', 'prescriptionBillDetails'));
+        return view('billing.medicine', compact('appointment', 'clinicBasicDetails', 'isMedicineProvided', 'prescriptions', 'medicineTotal', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(MedicineBillRequest $request)
-    // public function store(Request $request)
     {
-        Log::info('Request Data: ', $request->all());
-        Log::info('appId: ' . $request->appointmentId);
-
         // Generate a unique bill_id
         $bill_id = $this->generateBillId();
+        // Decode and decrypt the appointmentId
         $appId = base64_decode(Crypt::decrypt($request->appointmentId));
-        print_r($appId);
+        $gpayAmount = $request->medgpay ?? 0;
+        $cashAmount = $request->medcash ?? 0;
+        $cardAmount = $request->medcard ?? 0;
+        $cardPayId = $request->medmachine ?? null;
+
+        DB::beginTransaction();
+
         try {
             // Create the billing record
             $billing = PatientPrescriptionBilling::create([
                 'bill_id' => $bill_id,
                 'appointment_id' => $appId,
-                'patient_id' => $request->patientId, // Ensure patient_id is included in the request
+                'patient_id' => $request->patientId,
                 'prescription_total_amount' => $request->total,
                 'tax_percentile' => $request->medtax,
                 'tax' => $request->grandTotal - $request->total,
-                // 'discount' => $request->discount ?? 0,
                 'amount_to_be_paid' => $request->grandTotal,
-                'mode_of_payment' => $request->medmode_of_payment,
+                'gpay' => $gpayAmount,
+                'cash' => $cashAmount,
+                'card' => $cardAmount,
+                'card_pay_id' => $cardPayId,
                 'amount_paid' => $request->medamountPaid,
                 'balance_given' => $request->medbalanceToGiveBack,
                 'status' => 'Y',
                 'created_by' => auth()->user()->id,
                 'updated_by' => auth()->user()->id,
             ]);
-        } catch (\Exception $e) {
-            print_r($e->getMessage());
-            exit;
-        }
-        // Store prescription details
-        foreach ($request->quantity as $index => $quantity) {
-            if ($quantity > 0 && $request->rate[$index] > 0 && !empty($request->medicine_checkbox[$index])) {
-                PrescriptionDetailBilling::create([
-                    'bill_id' => $billing->id,
-                    'medicine_id' => $request->medicine_checkbox[$index], // Ensure medicine_id is included in the request
-                    'quantity' => $quantity,
-                    'cost' => $request->unitcost[$index],
-                    // 'discount' => $request->discount[$index] ?? 0,
-                    'amount' => $request->rate[$index] ?? 0,
-                    'created_by' => auth()->user()->id,
-                    'updated_by' => auth()->user()->id,
-                    'status' => 'Y',
-                ]);
+
+            // Store prescription details
+            foreach ($request->quantity as $index => $quantity) {
+                if ($quantity > 0 && $request->rate[$index] > 0 && ! empty($request->medicine_checkbox[$index])) {
+                    PrescriptionDetailBilling::create([
+                        'bill_id' => $billing->id,
+                        'medicine_id' => $request->medicine_checkbox[$index],
+                        'quantity' => $quantity,
+                        'cost' => $request->unitcost[$index],
+                        'amount' => $request->rate[$index] ?? 0,
+                        'created_by' => auth()->user()->id,
+                        'updated_by' => auth()->user()->id,
+                        'status' => 'Y',
+                    ]);
+                }
             }
+            DB::commit();
+
+            return redirect()->route('billing')->with('success', 'Billing recorded successfully!');
+        } catch (\Exception $e) {
+            // Rollback the transaction on error
+            DB::rollBack();
+
+            return redirect()->back()->with('error', 'Failed to create bill: '.$e->getMessage());
         }
-
-        return redirect()->route('billing')->with('success', 'Billing recorded successfully!');
-        // } catch (\Exception $e) {
-        //     print_r($e->getMessage());
-        //     exit;
-        //     return redirect()->back()->with('error', 'Failed to create bill: ' . $e->getMessage());
-        // }
-        // $patientPrescriptionBilling = PatientPrescriptionBilling::findOrFail($bill_id);
-
-        // // Generate PDF
-        // $appointment = Appointment::with(['patient', 'doctor', 'branch'])
-        //     ->find($appId);
-        // $billDetails = PrescriptionDetailBilling::with('medicine')->where('bill_id', $bill_id)->get();
-        // $clinicDetails = ClinicBasicDetail::first();
-        // if ($clinicDetails->clinic_logo == '') {
-        //     $clinicLogo = 'public/images/logo-It.png';
-        // } else {
-        //     $clinicLogo = 'storage/'.$clinicDetails->clinic_logo;
-        // }
-        // $pdf = Pdf::loadView('pdf.prescriptionBill_pdf', [
-        //     'billDetails' => $billDetails,
-        //     'patientPrescriptionBilling' => $patientPrescriptionBilling,
-        //     'appointment' => $appointment,
-        //     'patient' => $appointment->patient,
-        //     'clinicDetails' => $clinicDetails,
-        //     'clinicLogo' => $clinicLogo,
-        // ])->setPaper('A5', 'portrait');
-        // $bill_patientId = 'prescriptionbill_'.$appointment->patient_id.'_'.date('Y-m-d').'.pdf';
-        // // Save PDF to storage
-        // $fileName = 'prescriptionBilling_report_'.$bill_patientId;
-        // $filePath = 'public/pdfs/'.$fileName;
-        // Storage::put($filePath, $pdf->output());
-
-        // // Return PDF file URL
-        // return response()->json(['pdfUrl' => Storage::url($filePath)]);
-
     }
 
     public function generateBillId()
     {
         $yearMonth = date('Ym'); // Year and Month
-        $latestBill = PatientPrescriptionBilling::where('bill_id', 'like', $yearMonth . '%')
+        $latestBill = PatientPrescriptionBilling::where('bill_id', 'like', $yearMonth.'%')
             ->orderBy('bill_id', 'desc')
             ->first();
         $lastBillId = $latestBill ? intval(substr($latestBill->bill_id, -4)) : 0;
-        $newBillId = $yearMonth . str_pad($lastBillId + 1, 4, '0', STR_PAD_LEFT);
+        $newBillId = $yearMonth.str_pad($lastBillId + 1, 4, '0', STR_PAD_LEFT);
 
         return $newBillId;
     }
 
     public function paymentReceipt(Request $request)
     {
+
         $billId = base64_decode(Crypt::decrypt($request->input('medbillId')));
         $appointmentId = base64_decode(Crypt::decrypt($request['appointmentId']));
         $patientPrescriptionBilling = PatientPrescriptionBilling::findOrFail($billId);
-
         // Generate PDF
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])
             ->find($appointmentId);
@@ -173,7 +149,7 @@ class MedicineBillController extends Controller
         if ($clinicDetails->clinic_logo == '') {
             $clinicLogo = 'public/images/logo-It.png';
         } else {
-            $clinicLogo = 'storage/' . $clinicDetails->clinic_logo;
+            $clinicLogo = 'storage/'.$clinicDetails->clinic_logo;
         }
         $pdf = Pdf::loadView('pdf.prescriptionBill_pdf', [
             'billDetails' => $billDetails,
@@ -183,10 +159,10 @@ class MedicineBillController extends Controller
             'clinicDetails' => $clinicDetails,
             'clinicLogo' => $clinicLogo,
         ])->setPaper('A5', 'portrait');
-        $bill_patientId = 'prescriptionbill_' . $appointment->patient_id . '_' . date('Y-m-d') . '.pdf';
+        $bill_patientId = 'prescriptionbill_'.$appointment->patient_id.'_'.date('Y-m-d').'.pdf';
         // Save PDF to storage
-        $fileName = 'prescriptionBilling_report_' . $bill_patientId;
-        // $filePath = 'public/pdfs/'.$fileName;
+        $fileName = 'prescriptionBilling_report_'.$bill_patientId;
+        $filePath = 'public/pdfs/'.$fileName;
         // Storage::put($filePath, $pdf->output());
 
         // // Return PDF file URL

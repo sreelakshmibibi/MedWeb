@@ -83,7 +83,14 @@ if ($hasPrescriptionBill) {
                         </tr>
                     </thead>
                     <tbody id="tablebody">
-                        <?php $i = 0; ?>
+                        <?php $i = 0;
+                        $paidAmount = '';
+                        $modeOfPayment = '';
+                        $gpayAmount = '';
+                        $cashAmount = '';
+                        $cardAmount = '';
+                        $machineId = '';
+                        $balanceGiven = ''; ?>
                         @foreach ($prescriptions as $prescription)
                             @php
                                 $i++;
@@ -94,6 +101,11 @@ if ($hasPrescriptionBill) {
                                 $rateValue = '';
                                 $paidAmount = '';
                                 $modeOfPayment = '';
+                                $gpayAmount = '';
+                                $cashAmount = '';
+                                $cardAmount = '';
+                                $machineId = '';
+                                $balanceGiven = '';
 
                                 // Check if prescription bill details contain this medicine
                                 $billDetail = $prescriptionBillDetails->firstWhere(
@@ -108,7 +120,11 @@ if ($hasPrescriptionBill) {
                                 }
                                 if ($hasPrescriptionBill) {
                                     $paidAmount = $hasPrescriptionBill->amount_paid;
-                                    $modeOfPayment = $hasPrescriptionBill->mode_of_payment;
+                                    $gpayAmount = $hasPrescriptionBill->gpay;
+                                    $cashAmount = $hasPrescriptionBill->cash;
+                                    $cardAmount = $hasPrescriptionBill->card;
+                                    $machineId = $hasPrescriptionBill->card_pay_id;
+                                    $balanceGiven = $hasPrescriptionBill->balance_given;
                                 }
                             @endphp
                             <tr class="{{ $isOutOfStock ? 'bg-light text-muted' : '' }}">
@@ -216,20 +232,42 @@ if ($hasPrescriptionBill) {
                             </td>
                         </tr>
                         <tr>
+
                             <td colspan="4" class="text-start">
-                                <span class="text-bold">Mode of Payment : </span>
-                                <input type="radio" class="form-control with-gap" name="medmode_of_payment"
-                                    id="medmode_of_payment_gpay" value="gpay" <?php if ($modeOfPayment == "gpay") { ?> checked
+                                <span class="text-bold me-2">Mode of Payment:</span>
+
+                                <!-- Checkbox for Gpay -->
+                                <input type="checkbox" class="filled-in chk-col-success" id="medmode_of_payment_gpay"
+                                    name="medmode_of_payment[]" value="gpay" <?php if ($gpayAmount >0) { ?> checked
                                     <?php } ?>>
-                                <label class=" me-2" for="medmode_of_payment_gpay">Gpay</label>
-                                <input type="radio" class="form-control with-gap" name="medmode_of_payment"
-                                    id="medmode_of_payment_card" value="card" <?php if ($modeOfPayment == "card") { ?> checked
+                                <label class="form-check-label me-2" for="medmode_of_payment_gpay">Gpay</label>
+                                <input type="text" name="medgpay" id="medgpay" class="form-control  w-100 "
+                                    style="display: none;" value="{{ $gpayAmount }}">
+                                &nbsp;
+                                <!-- Checkbox for Cash -->
+                                <input type="checkbox" class="filled-in chk-col-success" id="medmode_of_payment_cash"
+                                    name="medmode_of_payment[]" value="cash" <?php if ($cashAmount >0) { ?> checked
                                     <?php } ?>>
-                                <label class=" me-2" for="medmode_of_payment_card">Card</label>
-                                <input type="radio" class="form-control with-gap" name="medmode_of_payment"
-                                    id="medmode_of_payment_cash" value="cash" <?php if ($modeOfPayment == "cash") { ?> checked
+                                <label class="form-check-label me-2" for="medmode_of_payment_cash">Cash</label>
+                                <input type="text" name="medcash" id="medcash" class="form-control  w-100"
+                                    style="display: none;" value="{{ $cashAmount }}">
+                                &nbsp;
+                                <!-- Checkbox for Card -->
+                                <input type="checkbox" class="filled-in chk-col-success" id="medmode_of_payment_card"
+                                    name="medmode_of_payment[]" value="card" <?php if ($cardAmount >0) { ?> checked
                                     <?php } ?>>
-                                <label class=" me-2" for="medmode_of_payment_cash">Cash</label>
+                                <label class="form-check-label me-2" for="medmode_of_payment_card">Card</label>
+                                <input type="text" name="medcard" id="medcard" class="form-control  w-100 "
+                                    style="display: none;" value="{{ $cardAmount }}">
+                                <select class="ms-2 form-select w-150" id="medmachine" name="medmachine"
+                                    style="display: none;">
+                                    <option value="">Select Machine</option>
+                                    @foreach ($cardPay as $machine)
+                                        <option value="{{ $machine->id }}"
+                                            {{ $machine->id == $machineId ? 'selected' : '' }}>
+                                            {{ $machine->card_name }}</option>
+                                    @endforeach
+                                </select>
                                 <span class="text-danger" id="prescModePaymentError">
                                     @error('medmode_of_payment')
                                         {{ $message }}
@@ -241,7 +279,7 @@ if ($hasPrescriptionBill) {
                             <td>
                                 <input type="text" name="medamountPaid" id="medamountPaid"
                                     {{ $paidAmount ? 'readonly' : '' }} class="form-control text-center"
-                                    value="{{ $paidAmount }}" required>
+                                    value="{{ $paidAmount }}" required readonly>
                                 <span id="prescAmountPaidError" class="error-message text-danger">
                                     @error('medamountPaid')
                                         {{ $message }}
@@ -252,7 +290,7 @@ if ($hasPrescriptionBill) {
                         <tr>
                             <td colspan="4" class="text-start">
                                 <input type="checkbox" name="medbalance_given" id="medbalance_given"
-                                    class="filled-in chk-col-success">
+                                    class="filled-in chk-col-success" <?php if ($balanceGiven >0) { ?> checked <?php } ?>>
                                 <label class="form-check-label" for="medbalance_given">Balance Given</label>
                                 <span class="error-message text-danger" id="prescCheckError"></span>
                             </td>
@@ -290,7 +328,7 @@ if ($hasPrescriptionBill) {
 </form>
 
 <script>
-    var receiptRoute = "{{ route('medicineBilling.paymentReceipt') }}";
+    var prescriptionReceiptRoute = "{{ route('medicineBilling.paymentReceipt') }}";
     var billingRoute = "{{ route('billing') }}";
 </script>
 <script src="{{ asset('js/prescription_billing.js') }}"></script>

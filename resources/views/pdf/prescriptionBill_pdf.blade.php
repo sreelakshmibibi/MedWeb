@@ -271,7 +271,15 @@ date_default_timezone_set('Asia/Kolkata');
                     <tr>
                         <td colspan="2">
                             <span class="text-bold">Mode of Payment : </span>
-                            <span class="text-bold">{{ $patientPrescriptionBilling->mode_of_payment }}</span>
+                            @if ($patientPrescriptionBilling->gpay > 0)
+                                <span class="text-bold">Gpay : {{ $patientPrescriptionBilling->gpay }}</span>
+                            @endif
+                            @if ($patientPrescriptionBilling->cash > 0)
+                                <span class="text-bold">Cash : {{ $patientPrescriptionBilling->cash }}</span>
+                            @endif
+                            @if ($patientPrescriptionBilling->card > 0)
+                                <span class="text-bold">Card : {{ $patientPrescriptionBilling->card }}</span>
+                            @endif
                         </td>
 
                         <td colspan="2" class="text-end ">Paid Amount</td>
