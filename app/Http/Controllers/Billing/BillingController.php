@@ -265,7 +265,7 @@ class BillingController extends Controller
         $billingService = new BillingService();
         $treatmentAmounts = $billingService->individualTreatmentAmounts($id, $appointment->patient_id);
         $individualTreatmentAmounts = $treatmentAmounts['individualTreatmentAmounts'];
-        $selectedTreatments = $treatmentAmounts['selectedTreatmentIds'];
+        $selectedTreatments = $treatmentAmounts['selectedTreatmentIds'] != null ? $treatmentAmounts['selectedTreatmentIds'] : [];
         $totalCost = $treatmentAmounts['totalCost'];
         // Fetch the doctor discount from the appointment
         $insuranceApproved = 0;
