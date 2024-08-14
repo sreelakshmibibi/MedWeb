@@ -217,16 +217,44 @@ date_default_timezone_set('Asia/Kolkata');
                                                         </td>
                                                     </tr>
                                                 @endif
+                                                @if ($previousOutStanding != 0)
+                                                    <tr>
+                                                        <td colspan="5" class="text-end ">
+                                                            Current Bill Total
+                                                        </td>
+                                                        <td> <?php if ($billExists->amount_paid == null) { ?>
+                                                            {{ session('currency') }}{{ number_format($billExists->amount_to_be_paid  , 3) }}
+                                                            <?php }  else { ?>
+                                                                {{ session('currency') }}{{ number_format($billExists->amount_paid - $previousOutStanding  , 3) }}
+                                                                <?php } ?>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="5" class="text-end">Previous Outstanding
+                                                        </td>
+
+                                                        <td><input type="text" readonly name="previousOutStanding"
+                                                                class="form-control text-center"
+                                                                value="{{ number_format($previousOutStanding, 3) }}"></td>
+                                                    </tr>
+                                                @endif
                                                 <tr class="bt-3 border-primary">
                                                     <td colspan="5" class="text-end ">
                                                         <h3><b>Total</b></h3>
                                                     </td>
                                                     <td>
                                                         <h3>
-                                                            {{ session('currency') }}{{ number_format($billExists->amount_to_be_paid, 2) }}
+                                                        <?php if ($billExists->amount_paid == null) { ?>
+                                                            {{ session('currency') }}{{ number_format($billExists->amount_to_be_paid + $previousOutStanding, 3) }}
                                                             <input type="hidden" name="totaltoPay" id="totalToPay"
                                                                 class="form-control text-center"
-                                                                value="{{ $billExists->amount_to_be_paid }}">
+                                                                value="{{ $billExists->amount_to_be_paid + $previousOutStanding}}">
+                                                        <?php }  else { ?>
+                                                            {{ session('currency') }}{{ number_format($billExists->amount_to_be_paid, 3) }}
+                                                            <input type="hidden" name="totaltoPay" id="totalToPay"
+                                                                class="form-control text-center"
+                                                                value="{{ $billExists->amount_to_be_paid}}">
+                                                            <?php } ?>
                                                         </h3>
                                                     </td>
                                                 </tr>
@@ -259,16 +287,7 @@ date_default_timezone_set('Asia/Kolkata');
                                                 </tr> --}}
 
 
-                                                @if ($previousOutStanding != 0)
-                                                    <tr>
-                                                        <td colspan="5" class="text-end">Previous Outstanding
-                                                        </td>
-
-                                                        <td><input type="text" readonly name="previousOutStanding"
-                                                                class="form-control text-center"
-                                                                value="{{ number_format($previousOutStanding, 3) }}"></td>
-                                                    </tr>
-                                                @endif
+                                                
                                                 {{-- <tr class="bt-3 border-primary">
                                                     <td colspan="5" class="text-end ">
                                                         <h3><b>Total</b></h3>
@@ -346,37 +365,41 @@ date_default_timezone_set('Asia/Kolkata');
                                                         <!-- Checkbox for Gpay -->
                                                         <input type="checkbox" class="filled-in chk-col-success"
                                                             id="mode_of_payment_gpay" name="mode_of_payment[]"
-                                                            value="gpay" <?php if ($billExists->mode_of_payment == 'gpay') { ?> checked
+                                                            value="gpay" <?php if ($billExists->gpay != null) { ?> checked
                                                             <?php } ?>>
                                                         <label class="form-check-label me-2"
                                                             for="mode_of_payment_gpay">Gpay</label>
                                                         <input type="text" name="gpaycash" id="gpaycash"
-                                                            class="form-control  w-100 " style="display: none;">
+                                                            class="form-control  w-100 " style="display: none;" value="<?php if ($billExists->gpay != null) { echo $billExists->gpay;
+                                                             } ?>">
                                                         &nbsp;
                                                         <!-- Checkbox for Cash -->
                                                         <input type="checkbox" class="filled-in chk-col-success"
                                                             id="mode_of_payment_cash" name="mode_of_payment[]"
-                                                            value="cash" <?php if ($billExists->mode_of_payment == 'cash') { ?> checked
+                                                            value="cash" <?php if ($billExists->cash != null) { ?> checked
                                                             <?php } ?>>
                                                         <label class="form-check-label me-2"
                                                             for="mode_of_payment_cash">Cash</label>
                                                         <input type="text" name="cash" id="cash"
-                                                            class="form-control  w-100" style="display: none;">
+                                                            class="form-control  w-100" style="display: none;" value="<?php if ($billExists->cash != null) { echo $billExists->cash;
+                                                             } ?>">
                                                         &nbsp;
                                                         <!-- Checkbox for Card -->
                                                         <input type="checkbox" class="filled-in chk-col-success"
                                                             id="mode_of_payment_card" name="mode_of_payment[]"
-                                                            value="card" <?php if ($billExists->mode_of_payment =='card') { ?> checked
+                                                            value="card" <?php if ($billExists->card != null) { ?> checked
                                                             <?php } ?>>
                                                         <label class="form-check-label me-2"
                                                             for="mode_of_payment_card">Card</label>
                                                         <input type="text" name="cardcash" id="cardcash"
-                                                            class="form-control  w-100 " style="display: none;">
+                                                            class="form-control  w-100 " style="display: none;" value="<?php if ($billExists->card != null) { echo $billExists->card;
+                                                             } ?>">
                                                         <select class="ms-2 form-select w-150" id="machine"
-                                                            name="machine" style="display: none;">
+                                                            name="machine" style="display: none;" >
                                                             <option value="">Select Machine</option>
                                                             @foreach ($cardPay as $machine)
-                                                                <option value="{{$machine->id}}">{{ $machine->card_name}}</option>
+                                                                <option value="{{$machine->id}}" <?php if ($billExists->card_pay_id == $machine->id) { ?> selected
+                                                             <?php } ?>>{{ $machine->card_name}}</option>
                                                             @endforeach
                                                         </select>
                                                         <span class="error-message text-danger" id="modeError"></span>
@@ -384,7 +407,7 @@ date_default_timezone_set('Asia/Kolkata');
 
                                                     
                                                     <td colspan="2" class="text-end ">Paid Amount</td>
-                                                    <td><input type="text" name="amountPaid" id="amountPaid"
+                                                    <td><input type="text" readonly name="amountPaid" id="amountPaid"
                                                             class="form-control text-center"
                                                             value="<?php if ($billExists->amount_paid != null) {
                                                                 echo $billExists->amount_paid;
@@ -404,7 +427,7 @@ date_default_timezone_set('Asia/Kolkata');
                                                     </td>
 
                                                     <td colspan="2" class="text-end ">Balance Due</td>
-                                                    <td><input type="text" name="balance" id="balance"
+                                                    <td><input type="text" name="balance" id="balance" readonly
                                                             class="form-control text-center" value="<?php if ($billExists->balance_due != null) {
                                                                 echo $billExists->balance_due;
                                                             } ?>">
@@ -420,7 +443,7 @@ date_default_timezone_set('Asia/Kolkata');
                                                         <span class="error-message text-danger" id="checkError"></span>
                                                     </td>
                                                     <td colspan="2" class="text-end">Balance to Give Back</td>
-                                                    <td><input type="text" name="balanceToGiveBack"
+                                                    <td><input type="text" name="balanceToGiveBack" readonly
                                                             id="balanceToGiveBack" class="form-control text-center"
                                                             value="<?php if ($billExists->balance_to_give_back != null) {
                                                                 echo $billExists->balance_to_give_back;

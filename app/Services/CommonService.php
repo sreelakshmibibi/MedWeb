@@ -131,6 +131,77 @@ class CommonService
         return $appId;
     }
 
+    public function numberToWords($number) {
+        $dictionary = [
+            0 => 'zero', 1 => 'one', 2 => 'two', 3 => 'three', 4 => 'four', 5 => 'five',
+            6 => 'six', 7 => 'seven', 8 => 'eight', 9 => 'nine', 10 => 'ten', 11 => 'eleven',
+            12 => 'twelve', 13 => 'thirteen', 14 => 'fourteen', 15 => 'fifteen', 16 => 'sixteen',
+            17 => 'seventeen', 18 => 'eighteen', 19 => 'nineteen', 20 => 'twenty', 30 => 'thirty',
+            40 => 'forty', 50 => 'fifty', 60 => 'sixty', 70 => 'seventy', 80 => 'eighty', 90 => 'ninety',
+            100 => 'hundred', 1000 => 'thousand', 1000000 => 'million', 1000000000 => 'billion'
+        ];
+    
+        if (!is_numeric($number)) return false;
+    
+        $number = (float)$number;
+    
+        if ($number < 0) return 'negative ' . $this->numberToWords(abs($number));
+    
+        $string = '';
+        $fraction = '';
+    
+        if (strpos($number, '.') !== false) {
+            list($number, $fraction) = explode('.', $number);
+            $fraction = rtrim($fraction, '0'); // Remove trailing zeros
+        }
+    
+        switch (true) {
+            case $number < 21:
+                $string = $dictionary[$number];
+                break;
+            case $number < 100:
+                $tens = floor($number / 10) * 10;
+                $units = $number % 10;
+                $string = $dictionary[$tens];
+                if ($units) $string .= '-' . $dictionary[$units];
+                break;
+            case $number < 1000:
+                $hundreds = floor($number / 100);
+                $remainder = $number % 100;
+                $string = $dictionary[$hundreds] . ' hundred';
+                if ($remainder) $string .= ' and ' . $this->numberToWords($remainder);
+                break;
+            case $number < 1000000:
+                $thousands = floor($number / 1000);
+                $remainder = $number % 1000;
+                $string = $this->numberToWords($thousands) . ' thousand';
+                if ($remainder) $string .= ' ' . $this->numberToWords($remainder);
+                break;
+            case $number < 1000000000:
+                $millions = floor($number / 1000000);
+                $remainder = $number % 1000000;
+                $string = $this->numberToWords($millions) . ' million';
+                if ($remainder) $string .= ' ' . $this->numberToWords($remainder);
+                break;
+            default:
+                $billions = floor($number / 1000000000);
+                $remainder = $number % 1000000000;
+                $string = $this->numberToWords($billions) . ' billion';
+                if ($remainder) $string .= ' ' . $this->numberToWords($remainder);
+                break;
+        }
+    
+        if ($fraction) {
+            $string .= ' point';
+            foreach (str_split($fraction) as $digit) {
+                $string .= ' ' . $dictionary[$digit];
+            }
+        }
+    
+        return $string;
+    }
+    
+
 
     // Other common methods can be added here
 }

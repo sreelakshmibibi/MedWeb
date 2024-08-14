@@ -188,7 +188,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Get the form and its inputs
                 const form = document.getElementById("billingForm");
                 const modeOfPayment = form.querySelector(
-                    'input[name="mode_of_payment"]:checked'
+                    'input[name="mode_of_payment[]"]:checked'
                 );
                 const amountPaid = form.querySelector(
                     'input[name="amountPaid"]'

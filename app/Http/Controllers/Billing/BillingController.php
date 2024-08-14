@@ -10,6 +10,7 @@ use App\Models\CardPay;
 use App\Models\ClinicBasicDetail;
 use App\Models\ClinicBranch;
 use App\Models\Insurance;
+use App\Models\Log;
 use App\Models\PatientDetailBilling;
 use App\Models\PatientProfile;
 use App\Models\PatientTreatmentBilling;
@@ -20,6 +21,7 @@ use App\Models\TreatmentComboOffer;
 use App\Services\BillingService;
 use App\Services\CommonService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -175,7 +177,7 @@ class BillingController extends Controller
 
                     // if (!empty($billing) && $billing->amount_paid != null && $billing->bill_status != PatientTreatmentBilling::BILL_CANCELLED) {
                     //     $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-success btn-xs me-1' title='Print bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-money-bill-alt'></i></a>";
-                    if (!empty($billing) && $billing->amount_paid != null && $billing->bill_status == PatientTreatmentBilling::PAYMENT_DONE) {
+                    if (!empty($billing) &&  $billing->bill_status == PatientTreatmentBilling::PAYMENT_DONE) {
                         $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='View bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-eye'></i></a>";
                         $buttons[] = '<button type="button" id="printPayment1"
                             class="waves-effect waves-light btn btn-circle btn-secondary btn-xs me-1"
@@ -353,9 +355,16 @@ class BillingController extends Controller
 
             }
             $cardPay = CardPay::where('status', 'Y')->get();
-
-            return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'previousOutStanding', 'clinicBasicDetails', 'isMedicineProvided', 'medicineTotal', 'prescriptions', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay'));
-
+            if ($billExists->bill_status = PatientTreatmentBilling::BILL_GENERATED) {
+                return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'previousOutStanding', 'clinicBasicDetails', 'isMedicineProvided', 'medicineTotal', 'prescriptions', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay'));
+            } else if ($billExists->bill_status = PatientTreatmentBilling::PAYMENT_DONE){
+                return redirect()->route('billing.paymentReceipt')->with([
+                    'billId' => $billExists->id,
+                    'appointmentId' => $appointment->id,
+                    
+                ]);
+            }
+            
         }
         // if (!empty($insuranceDetails)) {
         return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction', 'insuranceDetails', 'hasPrescriptionBill', 'prescriptionBillDetails'));
@@ -414,7 +423,7 @@ class BillingController extends Controller
             $treatmentBill->bill_id = $biilingId;
             $treatmentBill->amount_to_be_paid = $amountToBePaid;
             $treatmentBill->tax_percentile = $clinicBasicDetails->tax;
-            $treatmentBill->bill_status = PatientTreatmentBilling::BILL_GENERATED;
+            $treatmentBill->bill_status = $amountToBePaid > 0 ?  PatientTreatmentBilling::BILL_GENERATED : PatientTreatmentBilling::PAYMENT_DONE;
             $treatmentSave = $treatmentBill->save();
 
             if ($treatmentSave) {
@@ -429,7 +438,14 @@ class BillingController extends Controller
                 $billingService->saveAdditionalCharges($treatmentBill->id, $inputs);
 
                 DB::commit();
+               if ($treatmentBill->bill_status = PatientTreatmentBilling::PAYMENT_DONE){
+                    // return redirect()->route('billing.paymentReceipt')->with([
+                    //     'billId' =>  Crypt::encrypt(base64_encode($treatmentBill->id)),
+                    //     'appointmentId' => Crypt::encrypt(base64_encode($treatmentBill->appointment_id)),
 
+                    // ]);
+                    return redirect()->route('billing')->with('success', 'Bill created successfully.');
+                }
                 return redirect()->back()->with('success', 'Bill created successfully.');
             } else {
                 DB::rollBack();
@@ -438,56 +454,122 @@ class BillingController extends Controller
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            print_r($e->getMessage());
-            exit;
             return redirect()->back()->with('error', 'Failed to create bill: ' . $e->getMessage());
         }
     }
 
     public function payment(Request $request)
-    {
-        $billId = base64_decode(Crypt::decrypt($request['billId']));
-        $appointmentId = base64_decode(Crypt::decrypt($request['appointmentId']));
-        $patientTreatmentBilling = PatientTreatmentBilling::findOrFail($billId);
-        if (!$patientTreatmentBilling) {
-            abort(404);
-        }
-        $patientTreatmentBilling->previous_outstanding = isset($request['previousOutStanding']) ? $request['previousOutStanding'] : 0;
-        $patientTreatmentBilling->amount_to_be_paid = $request['totaltoPay'];
-        $patientTreatmentBilling->amount_paid = $request['amountPaid'];
-        $patientTreatmentBilling->mode_of_payment = $request['mode_of_payment'];
-        $patientTreatmentBilling->consider_for_next_payment = isset($request['consider_for_next_payment']) ? 1 : 0;
-        $patientTreatmentBilling->balance_due = $request['balance'];
-        $patientTreatmentBilling->balance_to_give_back = $request['balanceToGiveBack'];
-        $patientTreatmentBilling->balance_given = isset($request['balance_given']) ? 1 : 0;
-        $patientTreatmentBilling->bill_status = PatientTreatmentBilling::PAYMENT_DONE;
-        $patientTreatmentBilling->save();
-        $appointment = Appointment::with(['patient', 'doctor', 'branch'])
-            ->find($appointmentId);
-        $billDetails = PatientDetailBilling::with('treatment')->where('billing_id', $billId)->get();
-        $clinicDetails = ClinicBasicDetail::first();
-        if ($clinicDetails->clinic_logo == '') {
-            $clinicLogo = 'public/images/logo-It.png';
-        } else {
-            $clinicLogo = 'storage/' . $clinicDetails->clinic_logo;
-        }
-        $pdf = Pdf::loadView('pdf.treatmentBill_pdf', [
-            'billDetails' => $billDetails,
-            'patientTreatmentBilling' => $patientTreatmentBilling,
-            'appointment' => $appointment,
-            'patient' => $appointment->patient,
-            'clinicDetails' => $clinicDetails,
-            'clinicLogo' => $clinicLogo,
-            'currency' => $clinicDetails->currency,
-        ])->setPaper('A5', 'portrait');
-        $fileName = 'bill_' . $appointment->patient_id . '_' . date('Y-m-d') . '.pdf';
-        $filePath = 'public/pdfs/' . $fileName;
-        Storage::put($filePath, $pdf->output());
+    { 
+            DB::beginTransaction();
 
-        // Redirect to index with PDF file name
-        //  return redirect()->route('billing')->with('pdf_file_name', $fileName);
-        return response()->json(['pdfUrl' => Storage::url($filePath)]);
-        // return $pdf->download($bill_patientId);
+        try {
+            $billId = base64_decode(Crypt::decrypt($request['billId']));
+            $appointmentId = base64_decode(Crypt::decrypt($request['appointmentId']));
+            $appointment = Appointment::with(['patient', 'doctor', 'branch'])
+                ->find($appointmentId);
+            $patientTreatmentBilling = PatientTreatmentBilling::findOrFail($billId);
+            
+            if (!$patientTreatmentBilling) {
+                throw new \Exception('Bill not found.');
+            }
+
+            // Update billing information
+            $patientTreatmentBilling->previous_outstanding = isset($request['previousOutStanding']) ? $request['previousOutStanding'] : 0;
+            $patientTreatmentBilling->amount_to_be_paid = $request['totaltoPay'];
+            $patientTreatmentBilling->amount_paid = $request['amountPaid'];
+            $patientTreatmentBilling->card_pay_id = $request['machine'];
+            $patientTreatmentBilling->gpay = $request['gpaycash'];
+            $patientTreatmentBilling->card = $request['cardcash'];
+            $patientTreatmentBilling->cash = $request['cash'];
+            $patientTreatmentBilling->consider_for_next_payment = isset($request['balance_given']) ? 0 : 1;
+            $patientTreatmentBilling->balance_due = $request['balance'];
+            $patientTreatmentBilling->balance_to_give_back = $request['balanceToGiveBack'];
+            $patientTreatmentBilling->balance_given = isset($request['balance_given']) ? 1 : 0;
+            $patientTreatmentBilling->bill_status = PatientTreatmentBilling::PAYMENT_DONE;
+            $patientTreatmentBilling->bill_paid_date = Carbon::now();
+            
+            // Log the update attempt
+            Log::create([
+                'log_type' => 'INFO',
+                'message' => 'Attempting to update PatientTreatmentBilling',
+                'context' => [
+                    'billId' => $billId,
+                    'amountPaid' => $request['amountPaid']
+                ]
+            ]);
+
+            $i = $patientTreatmentBilling->save();
+
+            if ($i && $patientTreatmentBilling->previous_outstanding != 0) {
+                $previousBill = PatientTreatmentBilling::where('patient_id', $appointment->patient_id)
+                    ->where('appointment_id', '<', $appointment->id)
+                    ->where('status', 'Y')
+                    ->orderBy('appointment_id', 'desc')
+                    ->first();
+                if (!empty($previousBill)) {
+                    $previousBill->due_covered_bill_no = $patientTreatmentBilling->bill_id;
+                    $previousBill->due_covered_date = Carbon::now();
+                    
+                    if ($previousBill->save()) {
+                        Log::create([
+                            'log_type' => 'INFO',
+                            'message' => 'Previous bill updated successfully',
+                            'context' => ['previousBillId' => $previousBill->id]
+                        ]);
+                        DB::commit();
+                    } else {
+                        throw new \Exception('Failed to update outstanding bill.');
+                    }
+                }
+            } else if ($i) {
+                Log::create([
+                    'log_type' => 'INFO',
+                    'message' => 'Bill updated successfully',
+                    'context' => ['billId' => $billId]
+                ]);
+                DB::commit();
+            } else {
+                throw new \Exception('Failed to pay bill.');
+            }
+
+            $appointment = Appointment::with(['patient', 'doctor', 'branch'])->find($appointmentId);
+            $billDetails = PatientDetailBilling::with('treatment')->where('billing_id', $billId)->get();
+            $clinicDetails = ClinicBasicDetail::first();
+            $clinicLogo = $clinicDetails->clinic_logo ? 'storage/' . $clinicDetails->clinic_logo : 'public/images/logo-It.png';
+
+            $pdf = Pdf::loadView('pdf.treatmentBill_pdf', [
+                'billDetails' => $billDetails,
+                'patientTreatmentBilling' => $patientTreatmentBilling,
+                'appointment' => $appointment,
+                'patient' => $appointment->patient,
+                'clinicDetails' => $clinicDetails,
+                'clinicLogo' => $clinicLogo,
+                'currency' => $clinicDetails->currency,
+            ])->setPaper('A5', 'portrait');
+            
+            $fileName = 'bill_' . $appointment->patient_id . '_' . date('Y-m-d') . '.pdf';
+            $filePath = 'public/pdfs/' . $fileName;
+            Storage::put($filePath, $pdf->output());
+
+            // Log PDF generation
+            Log::create([
+                'log_type' => 'INFO',
+                'message' => 'PDF generated',
+                'context' => ['filePath' => $filePath]
+            ]);
+
+            return response()->json(['pdfUrl' => Storage::url($filePath)]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Log the error
+            Log::create([
+                'log_type' => 'ERROR',
+                'message' => 'Payment process failed',
+                'context' => ['error' => $e->getMessage()]
+            ]);
+            return redirect()->back()->with('error', 'Failed to pay bill: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -509,9 +591,13 @@ class BillingController extends Controller
         } else {
             $clinicLogo = 'storage/' . $clinicDetails->clinic_logo;
         }
+        // $commonService = new CommonService();
+
+        // $patientTreatmentBillingWords = $commonService->numberToWords($patientTreatmentBilling->amount_paid);
         $pdf = Pdf::loadView('pdf.treatmentBill_pdf', [
             'billDetails' => $billDetails,
             'patientTreatmentBilling' => $patientTreatmentBilling,
+            // 'patientTreatmentBillingWords' => $patientTreatmentBillingWords,
             'appointment' => $appointment,
             'patient' => $appointment->patient,
             'clinicDetails' => $clinicDetails,
