@@ -208,7 +208,7 @@ date_default_timezone_set('Asia/Kolkata');
                 <td style="width: 35%;">{{ $patient->patient_id ?? 'N/A' }}</td>
 
                 <td style="width: 50%; text-align:right;"><strong>Bill
-                        No: </strong>{{ $patientTreatmentBilling->bill_id }}
+                        No: </strong>{{ $patientPrescriptionBilling->bill_id }}
                 </td>
             </tr>
 
@@ -218,7 +218,7 @@ date_default_timezone_set('Asia/Kolkata');
                     {{ $patient->last_name ?? 'N/A' }}</td>
 
                 <td style="width: 50%; text-align:right;"><strong>Bill Date: </strong>
-                    {{ \Carbon\Carbon::parse($patientTreatmentBilling->created_at)->format('d-m-Y') }}
+                    {{ \Carbon\Carbon::parse($patientPrescriptionBilling->created_at)->format('d-m-Y') }}
                 </td>
             </tr>
 
@@ -396,7 +396,7 @@ date_default_timezone_set('Asia/Kolkata');
 
     <div class="details">
         <span class="details-label"> Billed
-            By<br>{{ str_replace('<br>', ' ', $patientPrescriptionBilling->billedBy->name ?? 'Unknown') ?? 'N/A' }}</span>
+            By<br>{{ str_replace('<br>', ' ', $patientPrescriptionBilling->createdBy->name ?? 'Unknown') ?? 'N/A' }}</span>
     </div>
 
     <div class="footer">
