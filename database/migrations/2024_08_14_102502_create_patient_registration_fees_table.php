@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('patient_registration_fees', function (Blueprint $table) {
             $table->id();
+            $table->string('bill_id')->unique();
             $table->unsignedBigInteger('patient_id');
-            $table->decimal('amount', 10, 2);
+            $table->decimal('amount', 10, 2)->nullable();
             $table->timestamp('paid_at')->nullable();
             $table->string('payment_method')->nullable();
             $table->foreignId('created_by')->constrained('users');

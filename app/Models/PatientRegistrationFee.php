@@ -13,6 +13,7 @@ class PatientRegistrationFee extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'bill_id',
         'patient_id',
         'amount',
         'paid_at',
