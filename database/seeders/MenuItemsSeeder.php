@@ -53,6 +53,8 @@ class MenuItemsSeeder extends Seeder
             'create menu item',
             'update menu item',
             'delete menu item',
+            'generate bill',
+            'receive payment'
         ];
 
         foreach ($permissions as $permission) {
@@ -83,6 +85,8 @@ class MenuItemsSeeder extends Seeder
             'view user',
             'create user',
             'update user',
+            'generate bill',
+            'receive payment'
         ];
 
         $admin->syncPermissions($adminPermissions);
@@ -109,6 +113,7 @@ class MenuItemsSeeder extends Seeder
             'view_dashboard',
             'manage_appointments',
             'patient_list',
+            'receive payment',
         ]);
 
         // Create menu items

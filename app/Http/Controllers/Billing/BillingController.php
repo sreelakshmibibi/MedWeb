@@ -440,13 +440,17 @@ class BillingController extends Controller
                 $billingService->saveAdditionalCharges($treatmentBill->id, $inputs);
 
                 DB::commit();
-               if ($treatmentBill->bill_status = PatientTreatmentBilling::PAYMENT_DONE){
+               if ($treatmentBill->bill_status == PatientTreatmentBilling::PAYMENT_DONE){
                     // return redirect()->route('billing.paymentReceipt')->with([
                     //     'billId' =>  Crypt::encrypt(base64_encode($treatmentBill->id)),
                     //     'appointmentId' => Crypt::encrypt(base64_encode($treatmentBill->appointment_id)),
 
                     // ]);
                     return redirect()->route('billing')->with('success', 'Bill created successfully.');
+                } else if ($treatmentBill->bill_status == PatientTreatmentBilling::BILL_GENERATED){
+                    if (Auth::user()->hasPermissionTo('receive payment')) {
+                        return redirect()->back()->with('success', 'Bill created successfully.');
+                    }
                 }
                 return redirect()->back()->with('success', 'Bill created successfully.');
             } else {
