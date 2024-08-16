@@ -1,14 +1,15 @@
 <?php
 
 use App\Http\Controllers\Appointment\AppointmentController;
-use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Appointment\TreatmentController;
 use App\Http\Controllers\Auth\StaffVerificationController;
 use App\Http\Controllers\Billing\BillingController;
+use App\Http\Controllers\Billing\PaymentController;
 use App\Http\Controllers\HelperController;
 use App\Http\Controllers\MedicineBillController;
 use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
+use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Settings\ClinicBranchController;
 use App\Http\Controllers\Settings\ComboOfferController;
 use App\Http\Controllers\Settings\DepartmentController;
@@ -212,5 +213,10 @@ Route::post('/medicineBilling/payment', [MedicineBillController::class, 'payment
 Route::get('/medicineBilling/{billing}/edit', [MedicineBillController::class, 'edit'])->name('medicineBilling.edit');
 Route::post('/medicineBilling/update', [MedicineBillController::class, 'update'])->name('medicineBilling.update');
 Route::post('/medicineBilling/{billing}', [MedicineBillController::class, 'destroy'])->name('medicineBilling.destroy');
+
+Route::get('/duepayment', [PaymentController::class, 'index'])->name('duePayment');
+Route::get('/search-patient', [PaymentController::class, 'searchPatient'])->name('duePayment.searchPatient');
+Route::post('/pay-due', [PaymentController::class, 'payDue'])->name('duePayment.due');
+Route::post('/duepayment/paymentReceipt', [PaymentController::class, 'paymentReceipt'])->name('duePayment.paymentReceipt');
 
 Route::get('/report', [ReportController::class, 'index'])->name('report');

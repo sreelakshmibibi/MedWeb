@@ -54,7 +54,7 @@ class MenuItemsSeeder extends Seeder
             'update menu item',
             'delete menu item',
             'generate bill',
-            'receive payment'
+            'receive payment',
         ];
 
         foreach ($permissions as $permission) {
@@ -86,7 +86,7 @@ class MenuItemsSeeder extends Seeder
             'create user',
             'update user',
             'generate bill',
-            'receive payment'
+            'receive payment',
         ];
 
         $admin->syncPermissions($adminPermissions);
@@ -159,7 +159,7 @@ class MenuItemsSeeder extends Seeder
 
         $billing = MenuItem::create([
             'name' => 'Billing',
-            'url' => '\billing',
+            'url' => '/billing',
             'route_name' => 'billing',
             'icon' => 'icon-Settings-1',
             'order_no' => 6,
@@ -171,6 +171,11 @@ class MenuItemsSeeder extends Seeder
             'route_name' => '#',
             'icon' => 'fa-solid fa-gear',
             'order_no' => 7,
+        ]);
+
+        $billingSubmenus = $billing->children()->createMany([
+            ['name' => 'Treatment Billing', 'url' => '/billing', 'route_name' => 'billing', 'icon' => 'icon-Commit', 'order_no' => 1],
+            ['name' => 'Outstanding Billing', 'url' => '/duepayment', 'route_name' => 'duePayment', 'icon' => 'icon-Commit', 'order_no' => 12],
         ]);
 
         $settingSubmenus = $settings->children()->createMany([
@@ -215,6 +220,9 @@ class MenuItemsSeeder extends Seeder
         $billing->roles()->attach([$superadmin->id, $admin->id]);
 
         // Attach roles to submenu items
+        foreach ($billingSubmenus as $submenu) {
+            $submenu->roles()->attach([$superadmin->id, $admin->id, $doctor->id]);
+        }
         foreach ($settingSubmenus as $submenu) {
             $submenu->roles()->attach([$superadmin->id, $admin->id]);
         }
