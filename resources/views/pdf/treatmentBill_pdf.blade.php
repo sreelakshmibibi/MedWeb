@@ -264,9 +264,9 @@ header('Content-Type: text/html; charset=UTF-8');
         <hr class="linestyle" />
 
         <h4 class="subheading">Bill Details</h4>
-        @if ($billDetails->isEmpty())
-            <p>No Treatment available.</p>
-        @else
+        @if ($billDetails->isEmpty() &&  $patientTreatmentBilling->previous_outstanding == 0)
+            <p>No Treatment/outstanding bill available.</p>
+        @elseif (!$billDetails->isEmpty()  || $patientTreatmentBilling->previous_outstanding != 0)
             <table class="treatmentbill-table">
                 <thead>
                     <tr>
@@ -280,23 +280,29 @@ header('Content-Type: text/html; charset=UTF-8');
                 </thead>
                 <tbody class="tbodypart">
                     <?php $i = 0; ?>
-                    @foreach ($billDetails as $billDetail)
-                        <?php $treatment = null; ?>
-                        <tr>
-                            <td>{{ ++$i }}.</td>
-                            <?php if ($billDetail->treatment_id != null) {
-                                $treatment = $billDetail->treatment->treat_name;
-                            } else {
-                                $treatment = $billDetail->consultation_registration;
-                            } ?>
-                            <td style="text-align:left;">{{ $treatment ?? '' }}</td>
-                            <td>{{ $billDetail->quantity ?? '' }}</td>
-                            <td>{{ $billDetail->cost ?? '' }}</td>
-                            <td>{{ $billDetail->discount ?? '' }}</td>
-                            <td>{{ $billDetail->amount ?? '' }}</td>
+                    @if (!$billDetails->isEmpty())
+                        @foreach ($billDetails as $billDetail)
+                            <?php $treatment = null; ?>
+                            <tr>
+                                <td>{{ ++$i }}.</td>
+                                <?php if ($billDetail->treatment_id != null) {
+                                    $treatment = $billDetail->treatment->treat_name;
+                                } else {
+                                    $treatment = $billDetail->consultation_registration;
+                                } ?>
+                                <td style="text-align:left;">{{ $treatment ?? '' }}</td>
+                                <td>{{ $billDetail->quantity ?? '' }}</td>
+                                <td>{{ $billDetail->cost ?? '' }}</td>
+                                <td>{{ $billDetail->discount ?? '' }}</td>
+                                <td>{{ $billDetail->amount ?? '' }}</td>
 
+                            </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td colspan="6">No Treatments done</td>
                         </tr>
-                    @endforeach
+                    @endif
                 </tbody>
 
                 <tbody class="tbodypart">

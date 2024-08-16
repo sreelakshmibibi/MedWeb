@@ -6,6 +6,7 @@ use App\Models\Appointment;
 use App\Models\AppointmentStatus;
 use App\Models\MenuItem;
 use App\Models\PatientDetailBilling;
+use App\Models\PatientTreatmentBilling;
 use App\Models\ToothExamination;
 use App\Models\TreatmentComboOffer;
 use Carbon\Carbon;
@@ -195,6 +196,29 @@ class BillingService
                 $patientDetailBilling->save();
             }
         }
+    }
+
+    public function previousOutstanding($appointmentId, $patientId)
+    {;
+        
+        $previousOutStanding = 0;
+        $previousBill = PatientTreatmentBilling::where('patient_id', $patientId)
+            ->where('appointment_id', '<', $appointmentId)
+            ->where('status', 'Y')
+            ->orderBy('appointment_id', 'desc') // Order by descending to get the most recent previous appointment
+            ->first(); // Get the first result which will be the closest previous appointment
+
+        // Check if a previous appointment was found
+        if ($previousBill) {
+            if ($previousBill->bill_status == PatientTreatmentBilling::PAYMENT_DONE) {
+                $previousOutStanding += $previousBill->balance_due;
+            }
+            if ($previousBill->bill_status == PatientTreatmentBilling::BILL_GENERATED) {
+                $previousOutStanding += $previousBill->amount_to_be_paid;
+            }
+
+        }
+        return $previousOutStanding;
     }
 
 }
