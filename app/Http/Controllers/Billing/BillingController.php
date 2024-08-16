@@ -460,6 +460,8 @@ class BillingController extends Controller
             }
         } catch (\Exception $e) {
             DB::rollBack();
+            print_r($e->getMessage());
+            exit;
             return redirect()->back()->with('error', 'Failed to create bill: ' . $e->getMessage());
         }
     }
