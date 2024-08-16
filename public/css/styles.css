@@ -18,6 +18,9 @@
 .footer-wrapper {
     width: 96%;
 }
+.dashboardchart {
+    height: 250px;
+}
 @media (max-width: 857px) {
     .dental-chart {
         transform: scale(0.8);
@@ -79,6 +82,9 @@
         padding-right: 0;
         gap: 0;
         top: 1.5rem;
+    }
+    .staffview_header {
+        width: 100%;
     }
 }
 

@@ -55,7 +55,7 @@ $(function () {
         ],
     };
 
-    // var chart = new ApexCharts(document.querySelector("#chart124"), options);
+    var chart = new ApexCharts(document.querySelector("#chart124"), options);
     // chart.render();
 
     var datepaginator = (function () {
@@ -130,14 +130,14 @@ $(function () {
         },
     };
 
-    // var chart = new ApexCharts(document.querySelector("#chart432"), options);
-    // chart.render();
+    var chart = new ApexCharts(document.querySelector("#chart432"), options);
+    chart.render();
 
     var options = {
         series: [
             {
                 name: "Total",
-                data: [4, 5, 7, 6, 1, 8, 3, 6, 2, 5],
+                data: [4, 5, 7, 6, 1, 8, 3, 6, 2, 5, 1, 5, 8, 2],
             },
         ],
         chart: {
@@ -177,6 +177,10 @@ $(function () {
                 "14:00",
                 "15:00",
                 "16:00",
+                "17:00",
+                "18:00",
+                "19:00",
+                "20:00",
             ],
         },
 
@@ -212,7 +216,7 @@ $(function () {
     var options = {
         series: [
             {
-                name: "Groth",
+                name: "Growth",
                 data: [28, 39, 23, 36, 45, 32, 43],
             },
         ],

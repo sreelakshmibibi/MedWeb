@@ -221,4 +221,8 @@ Route::post('/duepayment/paymentReceipt', [PaymentController::class, 'paymentRec
 
     Route::get('/report', [ReportController::class, 'index'])->name('report');
 
+Route::get('/appointments-by-hour', [App\Http\Controllers\HomeController::class, 'getAppointmentsByHour'])->name('appointments-by-hour');
+Route::get('/appointments-by-month', [App\Http\Controllers\HomeController::class, 'getAppointmentsByMonth'])->name('appointments-by-month');
+
+
 });

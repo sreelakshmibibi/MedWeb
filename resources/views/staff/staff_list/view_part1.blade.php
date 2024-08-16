@@ -21,7 +21,7 @@
                     {{ $staffProfile->designation }}
                 </div>
 
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center staffview_header">
                     @if ($staffProfile->photo != '')
                         <img src="{{ asset('storage/' . $staffProfile->photo) }}" alt="photo"
                             class="bg-success-light rounded10 me-20 align-self-end h-100">
@@ -333,15 +333,22 @@
                         <div style="min-height: 156px;">
                             <div id="patientschart"></div>
                         </div>
+                        @php
+                            if ($totalUniquePatients != 0) {
+                                $woman = number_format(($femalePatientsCount / $totalUniquePatients) * 100, 2);
+                                $man = number_format(($malePatientsCount / $totalUniquePatients) * 100, 2);
+                            }
+                        @endphp
+
                         <div class="mt-15 d-inline-block">
                             <div class="text-start mb-10">
                                 <span class="badge badge-xl badge-dot badge-primary me-15"></span> Woman
-                                {{ ($femalePatientsCount / $totalUniquePatients) * 100 }}%
+                                {{ $woman ? $woman : '-' }}%
                             </div>
                             <div class="text-start">
                                 <span class="badge badge-xl badge-dot badge-primary-light me-15"></span>
                                 Man
-                                {{ ($malePatientsCount / $totalUniquePatients) * 100 }}%
+                                {{ $man ? $man : '-' }}%
                             </div>
                         </div>
                     </div>
