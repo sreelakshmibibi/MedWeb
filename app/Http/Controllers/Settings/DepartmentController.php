@@ -17,16 +17,18 @@ class DepartmentController extends Controller
 {
     protected $commonService;
 
-    // public function __construct(CommonService $commonService)
-    // {
-    //     $this->commonService = $commonService;
-    // }
+    public function __construct()
+    {
+        $this->middleware('permission:departments', ['only' => ['index', 'create', 'store', 'update', 'edit', 'destroy']]);
+        
+    }
 
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
+        
         if ($request->ajax()) {
 
             $departments = Department::orderBy('department', 'asc')->get();
@@ -59,14 +61,6 @@ class DepartmentController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(DepartmentRequest $request)
@@ -89,14 +83,6 @@ class DepartmentController extends Controller
             return redirect()->back()->with('error', 'Failed to create department: ' . $e->getMessage());
         }
 
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**
