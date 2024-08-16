@@ -133,10 +133,15 @@ class HomeController extends Controller
 
             $staffDetails = StaffProfile::where('user_id', $user->id)->first();
             $username = str_replace('<br>', ' ', $user->name);
-
-            $appointments = Appointment::where('doctor_id', $staffDetails->user_id)
-                ->with(['patient', 'doctor', 'branch'])
+            $appointments = null;
+            if ($user->is_doctor) {
+                $appointments = Appointment::where('doctor_id', $user->id)
+                    ->with(['patient', 'doctor', 'branch'])
+                    ->get();
+            } else {
+                $appointments = Appointment::with(['patient', 'doctor', 'branch'])
                 ->get();
+            }
 
             // Extract the patients from the appointments
             $patients = $appointments->pluck('patient')->unique('id');
@@ -152,14 +157,22 @@ class HomeController extends Controller
             // Count the number of male and female patients
             $newPatientsCount = $appointmentstype->where('app_type', '2')->count();
             $followupPatientsCount = $appointmentstype->where('app_type', '1')->count();
-
-            $currentappointments = Appointment::where('doctor_id', $staffDetails->user_id)
+            $currentappointments = null;
+            if ($user->is_doctor) {
+                $currentappointments = Appointment::where('doctor_id', $user->id)
                 ->where('app_status', 1)
                 ->orderBy('token_no') // Order by token_no to get the first three
                 ->limit(3) // Limit the results to the first three
                 ->with(['patient', 'doctor', 'branch']) // Eager load relationships
                 ->get();
 
+            } else {
+                $currentappointments = Appointment::where('app_status', 1)
+                ->orderBy('token_no') // Order by token_no to get the first three
+                ->limit(3) // Limit the results to the first three
+                ->with(['patient', 'doctor', 'branch']) // Eager load relationships
+                ->get();
+            }
             if ($user->is_admin) {
                 $role = 'Admin';
                 $dashboardView = 'dashboard.admin';

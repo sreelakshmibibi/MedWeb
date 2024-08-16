@@ -214,15 +214,15 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/medicineBilling/update', [MedicineBillController::class, 'update'])->name('medicineBilling.update');
     Route::post('/medicineBilling/{billing}', [MedicineBillController::class, 'destroy'])->name('medicineBilling.destroy');
 
-Route::get('/duepayment', [PaymentController::class, 'index'])->name('duePayment');
-Route::get('/search-patient', [PaymentController::class, 'searchPatient'])->name('duePayment.searchPatient');
-Route::post('/pay-due', [PaymentController::class, 'payDue'])->name('duePayment.due');
-Route::post('/duepayment/paymentReceipt', [PaymentController::class, 'paymentReceipt'])->name('duePayment.paymentReceipt');
+    Route::get('/duepayment', [PaymentController::class, 'index'])->name('duePayment');
+    Route::get('/search-patient', [PaymentController::class, 'searchPatient'])->name('duePayment.searchPatient');
+    Route::post('/pay-due', [PaymentController::class, 'payDue'])->name('duePayment.due');
+    Route::post('/duepayment/paymentReceipt', [PaymentController::class, 'paymentReceipt'])->name('duePayment.paymentReceipt');
 
     Route::get('/report', [ReportController::class, 'index'])->name('report');
 
-Route::get('/appointments-by-hour', [App\Http\Controllers\HomeController::class, 'getAppointmentsByHour'])->name('appointments-by-hour');
-Route::get('/appointments-by-month', [App\Http\Controllers\HomeController::class, 'getAppointmentsByMonth'])->name('appointments-by-month');
+    Route::get('/appointments-by-hour', [App\Http\Controllers\HomeController::class, 'getAppointmentsByHour'])->name('appointments-by-hour');
+    Route::get('/appointments-by-month', [App\Http\Controllers\HomeController::class, 'getAppointmentsByMonth'])->name('appointments-by-month');
 
 
 });

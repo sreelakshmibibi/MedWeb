@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\Crypt;
             <section class="content">
                 <div class="row">
                     @php
+                        $woman = 0;
+                        $man = 0;
+                        $new = 0;
+                        $followup = 0;
                         if ($totalUniquePatients != 0) {
                             $woman = number_format(($femalePatientsCount / $totalUniquePatients) * 100, 2);
                             $man = number_format(($malePatientsCount / $totalUniquePatients) * 100, 2);
