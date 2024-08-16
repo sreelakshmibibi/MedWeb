@@ -338,23 +338,23 @@ class BillingController extends Controller
         // }
         if (!empty($billExists)) {
             $detailBills = PatientDetailBilling::with('treatment')->where('billing_id', $billExists->id)->get();
-            $previousOutStanding = 0;
-            $previousBill = PatientTreatmentBilling::where('patient_id', $appointment->patient_id)
-                ->where('appointment_id', '<', $appointment->id)
-                ->where('status', 'Y')
-                ->orderBy('appointment_id', 'desc') // Order by descending to get the most recent previous appointment
-                ->first(); // Get the first result which will be the closest previous appointment
+            $previousOutStanding = $billingService->previousOutstanding($appointment->id, $appointment->patient_id);
+            // $previousBill = PatientTreatmentBilling::where('patient_id', $appointment->patient_id)
+            //     ->where('appointment_id', '<', $appointment->id)
+            //     ->where('status', 'Y')
+            //     ->orderBy('appointment_id', 'desc') // Order by descending to get the most recent previous appointment
+            //     ->first(); // Get the first result which will be the closest previous appointment
 
-            // Check if a previous appointment was found
-            if ($previousBill) {
-                if ($previousBill->bill_status == PatientTreatmentBilling::PAYMENT_DONE) {
-                    $previousOutStanding += $previousBill->balance_due;
-                }
-                if ($previousBill->bill_status == PatientTreatmentBilling::BILL_GENERATED) {
-                    $previousOutStanding += $previousBill->amount_to_be_paid;
-                }
+            // // Check if a previous appointment was found
+            // if ($previousBill) {
+            //     if ($previousBill->bill_status == PatientTreatmentBilling::PAYMENT_DONE) {
+            //         $previousOutStanding += $previousBill->balance_due;
+            //     }
+            //     if ($previousBill->bill_status == PatientTreatmentBilling::BILL_GENERATED) {
+            //         $previousOutStanding += $previousBill->amount_to_be_paid;
+            //     }
 
-            }
+            // }
             $cardPay = CardPay::where('status', 'Y')->get();
             if ($billExists->bill_status = PatientTreatmentBilling::BILL_GENERATED) {
                 return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'previousOutStanding', 'clinicBasicDetails', 'isMedicineProvided', 'medicineTotal', 'prescriptions', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay'));
@@ -425,7 +425,9 @@ class BillingController extends Controller
             $treatmentBill->bill_id = $biilingId;
             $treatmentBill->amount_to_be_paid = $amountToBePaid;
             $treatmentBill->tax_percentile = $clinicBasicDetails->tax;
-            $treatmentBill->bill_status = $amountToBePaid > 0 ?  PatientTreatmentBilling::BILL_GENERATED : PatientTreatmentBilling::PAYMENT_DONE;
+            $billingService = new BillingService();
+            $previousOutStanding = $billingService->previousOutstanding($inputs['appointment_id'], $inputs['patient_id']);
+            $treatmentBill->bill_status = ($amountToBePaid > 0 || $previousOutStanding > 0)?  PatientTreatmentBilling::BILL_GENERATED : PatientTreatmentBilling::PAYMENT_DONE;
             $treatmentSave = $treatmentBill->save();
 
             if ($treatmentSave) {
