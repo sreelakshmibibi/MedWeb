@@ -210,6 +210,19 @@ document.addEventListener("DOMContentLoaded", function () {
                     $("#modeError").text("Please select a mode of payment.");
                     isValid = 0;
                 }
+                
+                const cardCashInput = form.querySelector('input[name="cardcash"]');
+                const machineSelect = form.querySelector('select[name="machine"]');
+                const cardChecked = form.querySelector('input[id="mode_of_payment_card"]');
+            
+                const cardCash = parseFloat(cardCashInput.value) || 0;
+                const machine = machineSelect.value > 0 ? machineSelect.value : 0;
+                const cardCheckedValue = cardChecked.checked;
+        
+                if (cardCheckedValue  && cardCash > 0 && machine == 0) {
+                    $("#modeError").text('Please select a machine when cash is entered.');
+                    isValid = 0;
+                } 
 
                 // Check if amount paid is not null or empty
                 if (
@@ -368,50 +381,81 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 });
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener("DOMContentLoaded", function() {
     // Function to calculate the total amount paid
     function calculateAmountPaid() {
         // Get values from input fields and parse them as floats
-        var gpaycash = parseFloat(document.getElementById('gpaycash').value) || 0;
-        var cardcash = parseFloat(document.getElementById('cardcash').value) || 0;
-        var cash = parseFloat(document.getElementById('cash').value) || 0;
+        let gpaycash = parseFloat(document.getElementById('gpaycash').value);
+        let cardcash = parseFloat(document.getElementById('cardcash').value);
+        let cash = parseFloat(document.getElementById('cash').value);
         
+        if (isNaN(gpaycash) || gpaycash < 0) {
+            $("#modeError").text('GPay amount should be a valid positive number. ');
+        } else if (isNaN(cardcash) || cardcash < 0) {
+            $("#modeError").text('Card amount should be a valid positive number. ');
+        } else if (isNaN(cash) || cash < 0) {
+            $("#modeError").text('Cash amount should be a valid positive number. ');
+        } else {
+            $("#modeError").text('');
+        }
         // Calculate the total
-        var totalAmountPaid = gpaycash + cardcash + cash;
-
+        const totalAmountPaid = gpaycash + cardcash + cash;
+        if (isNaN(totalAmountPaid)) {
+            $("#paidAmountError").text('Paid amount should be a valid number. ');
+        } else {
+            $("#paidAmountError").text('');
+        }
         // Update the amountPaid field
-        document.getElementById('amountPaid').value = totalAmountPaid.toFixed(2);
+        document.getElementById('amountPaid').value = totalAmountPaid.toFixed(3);
         
         // Calculate and update balance and balanceToGiveBack
-        updateBalances(totalAmountPaid);
+        updateBalances();
     }
 
     // Function to update balance and balanceToGiveBack
-    const form = document.getElementById("billingForm");
-    const amountPaidInput = form.querySelector("#amountPaid");
-    const totalToPayInput = form.querySelector("#totalToPay");
-    const balanceDueInput = form.querySelector("#balance");
-    const balanceToGiveBackInput = form.querySelector("#balanceToGiveBack");
-
     function updateBalances() {
-        const amountPaid = parseFloat(amountPaidInput.value) || 0;
-        const totalToPay = parseFloat(totalToPayInput.value) || 0;
+        const amountPaid = parseFloat(document.getElementById('amountPaid').value) || 0;
+        const totalToPay = parseFloat(document.getElementById('totalToPay').value) || 0;
 
         const balanceDue = totalToPay - amountPaid;
-        const balanceToGiveBack =
-            amountPaid > totalToPay ? amountPaid - totalToPay : 0;
+        const balanceToGiveBack = amountPaid > totalToPay ? amountPaid - totalToPay : 0;
 
-        balanceDueInput.value = balanceDue.toFixed(3);
-        balanceToGiveBackInput.value = balanceToGiveBack.toFixed(3);
+        document.getElementById('balance').value = balanceDue.toFixed(2);
+        document.getElementById('balanceToGiveBack').value = balanceToGiveBack.toFixed(2);
+    }
+
+    // Function to handle checkbox changes
+    function handleCheckboxChange() {
+        const gpayChecked = document.getElementById("mode_of_payment_gpay").checked;
+        const cashChecked = document.getElementById("mode_of_payment_cash").checked;
+        const cardChecked = document.getElementById("mode_of_payment_card").checked;
+
+        document.getElementById('gpaycash').style.display = gpayChecked ? "inline" : "none";
+        document.getElementById('cash').style.display = cashChecked ? "inline" : "none";
+        document.getElementById('cardcash').style.display = cardChecked ? "inline" : "none";
+        document.getElementById('machine').style.display = cardChecked ? "inline" : "none"; // Example for machine select box
+
+        // Reset values and recalculate
+        if (!gpayChecked) document.getElementById('gpaycash').value = 0;
+        if (!cashChecked) document.getElementById('cash').value = 0;
+        if (!cardChecked) document.getElementById('cardcash').value = 0;
+        
+        calculateAmountPaid();
     }
 
     // Add event listeners to the input fields
     document.getElementById('gpaycash').addEventListener('input', calculateAmountPaid);
     document.getElementById('cardcash').addEventListener('input', calculateAmountPaid);
     document.getElementById('cash').addEventListener('input', calculateAmountPaid);
-    document.getElementById('amountPaid').addEventListener('input', function() {
-        updateBalances(parseFloat(this.value) || 0);
+
+    // Add event listeners to the checkboxes to update the amounts when they are checked/unchecked
+    document.querySelectorAll('input[name="mode_of_payment[]"]').forEach(function(checkbox) {
+        checkbox.addEventListener('change', handleCheckboxChange);
     });
+    
+    // Initial call to set the correct state on page load
+    handleCheckboxChange();
 });
+
 
 
