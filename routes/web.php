@@ -214,3 +214,6 @@ Route::post('/medicineBilling/update', [MedicineBillController::class, 'update']
 Route::post('/medicineBilling/{billing}', [MedicineBillController::class, 'destroy'])->name('medicineBilling.destroy');
 
 Route::get('/report', [ReportController::class, 'index'])->name('report');
+
+Route::get('/appointments-by-hour', [App\Http\Controllers\HomeController::class, 'getAppointmentsByHour'])->name('appointments-by-hour');
+Route::get('/appointments-by-month', [App\Http\Controllers\HomeController::class, 'getAppointmentsByMonth'])->name('appointments-by-month');

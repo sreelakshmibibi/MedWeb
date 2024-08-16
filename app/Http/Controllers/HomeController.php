@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Appointment;
 
 use App\Models\City;
 use App\Models\ClinicBasicDetail;
@@ -114,22 +115,58 @@ class HomeController extends Controller
         $totalDoctors = 0;
         $totalOthers = 0;
         $totalTreatments = 0;
+
+        $totalUniquePatients = 0;
+        $malePatientsCount = 0;
+        $femalePatientsCount = 0;
+        $newPatientsCount = 0;
+        $followupPatientsCount = 0;
         if ($hasBranches && $hasClinics) {
+            $doctorAvailabilityService = new DoctorAvaialbilityService();
+            $currentDayName = Carbon::now()->englishDayOfWeek;
+            $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors(null, $currentDayName);
+            $totalPatients = PatientProfile::where('status', 'Y')->count(); // Replace with your actual logic to get the total
+            $totalStaffs = StaffProfile::where('status', 'Y')->count();
+            $totalDoctors = StaffProfile::where('status', 'Y')->whereNot('license_number', null)->count();
+            $totalOthers = $totalStaffs - $totalDoctors;
+            $totalTreatments = ToothExamination::distinct('treatment_id')->count('treatment_id');
+
+            $staffDetails = StaffProfile::where('user_id', $user->id)->first();
+            $username = str_replace('<br>', ' ', $user->name);
+
+            $appointments = Appointment::where('doctor_id', $staffDetails->user_id)
+                ->with(['patient', 'doctor', 'branch'])
+                ->get();
+
+            // Extract the patients from the appointments
+            $patients = $appointments->pluck('patient')->unique('id');
+            // Extract the patients from the appointments
+            $appointmentstype = $appointments->unique('patient_id');
+
+            // Count the total number of unique patients
+            $totalUniquePatients = $patients->count();
+
+            // Count the number of male and female patients
+            $malePatientsCount = $patients->where('gender', 'M')->count();
+            $femalePatientsCount = $patients->where('gender', 'F')->count();
+            // Count the number of male and female patients
+            $newPatientsCount = $appointmentstype->where('app_type', '2')->count();
+            $followupPatientsCount = $appointmentstype->where('app_type', '1')->count();
+
+            $currentappointments = Appointment::where('doctor_id', $staffDetails->user_id)
+                ->where('app_status', 1)
+                ->orderBy('token_no') // Order by token_no to get the first three
+                ->limit(3) // Limit the results to the first three
+                ->with(['patient', 'doctor', 'branch']) // Eager load relationships
+                ->get();
+
             if ($user->is_admin) {
                 $role = 'Admin';
-                $doctorAvailabilityService = new DoctorAvaialbilityService();
-                $currentDayName = Carbon::now()->englishDayOfWeek;
-                $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors(null, $currentDayName);
-                $totalPatients = PatientProfile::where('status', 'Y')->count(); // Replace with your actual logic to get the total
-                $totalStaffs = StaffProfile::where('status', 'Y')->count();
-                $totalDoctors = StaffProfile::where('status', 'Y')->whereNot('license_number', null)->count();
-                $totalOthers = $totalStaffs - $totalDoctors;
                 $dashboardView = 'dashboard.admin';
-                $totalTreatments = ToothExamination::distinct('treatment_id')->count('treatment_id');
 
             } elseif ($user->is_doctor) {
                 $role = 'Doctor';
-                $dashboardView = 'dashboard.admin';
+                $dashboardView = 'dashboard.doctor';
             } elseif ($user->is_nurse) {
                 $role = 'Nurse';
                 $dashboardView = 'dashboard.nurse';
@@ -146,8 +183,8 @@ class HomeController extends Controller
 
             // return view($dashboardView);
 
-            $staffDetails = StaffProfile::where('user_id', $user->id)->first();
-            $username = str_replace('<br>', ' ', $user->name);
+            // $staffDetails = StaffProfile::where('user_id', $user->id)->first();
+            // $username = str_replace('<br>', ' ', $user->name);
 
             session(['username' => $username]);
             session(['role' => $role]);
@@ -156,10 +193,11 @@ class HomeController extends Controller
 
             if ($staffDetails) {
                 session(['staffPhoto' => $staffDetails->photo]);
+                session(['staffId' => $staffDetails->id]);
             }
 
             // echo "<pre>"; print_r($workingDoctors); echo "</pre>";exit;
-            return view($dashboardView, compact('workingDoctors', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients'));
+            return view($dashboardView, compact('workingDoctors', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients', 'totalUniquePatients', 'malePatientsCount', 'femalePatientsCount', 'newPatientsCount', 'followupPatientsCount', 'currentappointments'));
 
         } else {
             $countries = Country::all();
@@ -176,4 +214,56 @@ class HomeController extends Controller
 
         }
     }
+
+    // controller method to fetch appointment counts per hour
+    public function getAppointmentsByHour()
+    {
+        $appointments = DB::table('appointments')
+            ->select(DB::raw('HOUR(app_time) as hour'), DB::raw('COUNT(*) as count'))
+            ->whereDate('app_date', '=', now()->toDateString()) // Filter by the current date or your desired date
+            ->groupBy('hour')
+            ->orderBy('hour')
+            ->get();
+
+        return response()->json($appointments);
+    }
+
+    public function getAppointmentsByMonth()
+    {
+        // Get the current month and year
+        $currentMonth = now()->month;
+        $currentYear = now()->year;
+
+        // Calculate the start and end months for the range
+        $startMonth = $currentMonth - 3;
+        $endMonth = $currentMonth + 3;
+
+        // Adjust the year if crossing year boundaries
+        if ($startMonth <= 0) {
+            $startMonth += 12;
+            $startYear = $currentYear - 1;
+        } else {
+            $startYear = $currentYear;
+        }
+
+        if ($endMonth > 12) {
+            $endMonth -= 12;
+            $endYear = $currentYear + 1;
+        } else {
+            $endYear = $currentYear;
+        }
+
+        // Fetch appointment counts within the range
+        $appointments = DB::table('appointments')
+            ->select(DB::raw('MONTH(app_date) as month'), DB::raw('COUNT(*) as count'))
+            ->whereBetween(DB::raw('MONTH(app_date)'), [$startMonth, $endMonth])
+            ->whereBetween(DB::raw('YEAR(app_date)'), [$startYear, $endYear])
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        return response()->json($appointments);
+    }
+
+
 }
