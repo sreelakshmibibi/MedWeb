@@ -117,7 +117,7 @@ header('Content-Type: text/html; charset=UTF-8');
         .treatmentbill-table {
             border: 1px solid #ddd;
             border: none;
-
+            border-bottom: 1px solid #ddd;
         }
 
         .treatmentbill-table thead,
@@ -356,7 +356,7 @@ header('Content-Type: text/html; charset=UTF-8');
                     @endif
                 </tbody>
 
-                <tbody class="tbodypart">
+                <tbody>
                     <tr class="total">
                         <th colspan="5" style="text-align: right;">
                             <h4>Total amount to be paid</h4>
