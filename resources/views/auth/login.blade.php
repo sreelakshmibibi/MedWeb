@@ -2,9 +2,9 @@
 @section('title', 'Login')
 @section('content')
     {{-- <div class="container h-p100"> --}}
-    <div class="row align-items-center justify-content-md-center h-p100">
+    <div class="row align-items-center justify-content-md-center justify-content-center h-p100">
 
-        <div class="col-12">
+        <div class="col-10 col-md-12">
             <div class="row justify-content-center g-0">
                 <div class="col-lg-4 col-md-5 col-12">
                     <div class="bg-white rounded10 shadow-lg">
@@ -79,22 +79,22 @@
                                 </div>
                             </form>
                             <!-- <div class="text-center">
-                                                                            <p class="mt-15 mb-0">Don't have an account? <a href="{{ route('register') }}"
-                                                                                    class="text-warning ms-5">Sign Up</a></p>
-                                                                        </div> -->
+                                                                                    <p class="mt-15 mb-0">Don't have an account? <a href="{{ route('register') }}"
+                                                                                            class="text-warning ms-5">Sign Up</a></p>
+                                                                                </div> -->
                         </div>
                     </div>
                     <!-- <div class="text-center">
-                                                                    <p class="mt-20 text-white">- Sign With -</p>
-                                                                    <p class="gap-items-2 mb-20">
-                                                                        <a class="btn btn-social-icon btn-round btn-facebook" href="#"><i
-                                                                                class="fa-brands fa-facebook"></i></a>
-                                                                        <a class="btn btn-social-icon btn-round btn-twitter" href="#"><i
-                                                                                class="fa-brands fa-twitter"></i></a>
-                                                                        <a class="btn btn-social-icon btn-round btn-instagram" href="#"><i
-                                                                                class="fa-brands fa-instagram"></i></a>
-                                                                    </p>
-                                                                </div> -->
+                                                                            <p class="mt-20 text-white">- Sign With -</p>
+                                                                            <p class="gap-items-2 mb-20">
+                                                                                <a class="btn btn-social-icon btn-round btn-facebook" href="#"><i
+                                                                                        class="fa-brands fa-facebook"></i></a>
+                                                                                <a class="btn btn-social-icon btn-round btn-twitter" href="#"><i
+                                                                                        class="fa-brands fa-twitter"></i></a>
+                                                                                <a class="btn btn-social-icon btn-round btn-instagram" href="#"><i
+                                                                                        class="fa-brands fa-instagram"></i></a>
+                                                                            </p>
+                                                                        </div> -->
                 </div>
             </div>
         </div>

@@ -20,7 +20,7 @@ use App\Models\Appointment;
                     <div class="container-fluid">
 
                         <div class="row exam_toothdiv" style="display: none;">
-                            <div class="col-md-3 ">
+                            <div class="col-lg-4 ">
                                 <div class="dparts-wrapper" id="incisors_canines" style="display: none;">
                                     <div class="dparts part-left" title="Mesial" id="part-left"></div>
                                     <div class="dparts part-top" title="Buccal" id="part-top"></div>
@@ -36,7 +36,7 @@ use App\Models\Appointment;
                                     <div class="dparts dpart-center" title="Occulusal" id="dpart-center"></div>
                                 </div>
                             </div>
-                            <div class="col-md-9">
+                            <div class="col-lg-8">
                                 <div class="row">
                                     <div class="col-md-4 ps-2">
                                         <div class="form-group">
@@ -207,7 +207,7 @@ use App\Models\Appointment;
                         </div>
                         <hr class="exam_toothdiv" style="display: none;" />
                         <div class=" row exam_toothdiv" style="display: none;">
-                            <div class="col-md-3 tooth_partsdiv" id="Buccal" style="display: none;">
+                            <div class="col-md-6 col-lg-3 tooth_partsdiv" id="Buccal" style="display: none;">
                                 <div class="form-group">
                                     <label class="form-label" for="buccal_condn">Buccal <span class="text-danger">
                                             *</span></label>
@@ -221,7 +221,7 @@ use App\Models\Appointment;
                                     <div id="buccal_condnError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-3 tooth_partsdiv" id="Palatal" style="display: none;">
+                            <div class="col-md-6 col-lg-3 tooth_partsdiv" id="Palatal" style="display: none;">
                                 <div class="form-group">
                                     <label class="form-label" for="palatal_condn">Palatal <span class="text-danger">
                                             *</span></label>
@@ -235,7 +235,7 @@ use App\Models\Appointment;
                                     <div id="palatal_condnError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-3 tooth_partsdiv" id="Mesial" style="display: none;">
+                            <div class="col-md-6 col-lg-3 tooth_partsdiv" id="Mesial" style="display: none;">
                                 <div class="form-group">
                                     <label class="form-label" for="mesial_condn">Mesial <span class="text-danger">
                                             *</span></label>
@@ -249,7 +249,7 @@ use App\Models\Appointment;
                                     <div id="mesial_condnError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-3 tooth_partsdiv" id="Distal" style="display: none;">
+                            <div class="col-md-6 col-lg-3 tooth_partsdiv" id="Distal" style="display: none;">
                                 <div class="form-group">
                                     <label class="form-label" for="distal_condn">Distal <span class="text-danger">
                                             *</span></label>
@@ -263,7 +263,7 @@ use App\Models\Appointment;
                                     <div id="distal_condnError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-3 tooth_partsdiv" id="Occulusal" style="display: none;">
+                            <div class="col-md-6 col-lg-3 tooth_partsdiv" id="Occulusal" style="display: none;">
                                 <div class="form-group">
                                     <label class="form-label" for="occulusal_condn">Occulusal <span
                                             class="text-danger">
@@ -278,7 +278,7 @@ use App\Models\Appointment;
                                     <div id="occulusal_condnError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-3 ">
+                            <div class="col-md-6 col-lg-3 ">
                                 <div class="form-group">
                                     <label class="form-label" for="lingual_condn">Lingual</label>
                                     <select class="form-select" id="lingual_condn" name="lingual_condn">
@@ -291,7 +291,7 @@ use App\Models\Appointment;
                                     <div id="lingual_condnError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-3 ">
+                            <div class="col-md-6 col-lg-3 ">
                                 <div class="form-group">
                                     <label class="form-label" for="labial_condn">Labial</label>
                                     <select class="form-select" id="labial_condn" name="labial_condn">

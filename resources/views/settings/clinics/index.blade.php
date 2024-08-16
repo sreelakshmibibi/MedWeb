@@ -49,7 +49,7 @@
                             <!-- Main content -->
                             <section class="content ">
                                 <div class="row d-flex justify-content-between">
-                                    <div class="col-md-6 col-lg-6 col-12">
+                                    <div class="col-md-8 col-lg-6 col-12">
                                         <div class="box">
                                             <div class="box-body pb-0">
                                                 <div class="form-group">
@@ -264,7 +264,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-4 col-lg-6 col-12">
                                         @include('settings.clinics.branch')
                                     </div>
                                 </div>

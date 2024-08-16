@@ -14,8 +14,14 @@ use Illuminate\Support\Facades\Session;
                             <?= Session::get('patientId') ?>- <?= Session::get('patientName') ?>
                         </span>
                     </h3>
-                    <a type="button" class="waves-effect waves-light btn btn-primary" href="{{ route('appointment') }}">
-                        <i class="fa-solid fa-angles-left"></i> Back</a>
+                    {{-- <a type="button" class="waves-effect waves-light btn btn-primary" href="{{ route('appointment') }}">
+                        <i class="fa-solid fa-angles-left"></i> Back</a> --}}
+                    <a type="button" class="waves-effect waves-light btn btn-primary" title="Back"
+                        href="{{ route('appointment') }}">
+                        <span class="hidden-sm-up"><i class="fa-solid fa-angles-left"></i></span>
+                        <span class="hidden-xs-down"><i class="fa-solid fa-angles-left"></i> Back</span>
+                    </a>
+
                 </div>
                 <div id="error-message-container">
                     <p id="error-message"

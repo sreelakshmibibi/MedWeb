@@ -10,10 +10,10 @@ $commonService = new CommonService();
     <div class="col-xl-8 col-12 ps-0">
         <div class="box flex-grow-1 mb-3" style="border-radius: 0px; /*height: 364px;*/">
             <div class="box-body bb-1" style="border-radius: 0px; ">
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center treat_personal_info_div">
                     <img src="{{ asset('images/svg-icon/user.svg') }}" alt="photo"
-                        class="bg-success rounded10 me-20 align-self-end h-100">
-                    <div class="d-flex flex-column flex-grow-1">
+                        class="bg-success rounded10 me-20 align-self-end h-100 treat_patient_photo">
+                    <div class="d-flex flex-column flex-grow-1 treat_patient_info">
                         <a href="#" class="box-title text-muted fw-500 fs-18 mb-2 hover-primary">
                             <?= str_replace('<br>', ' ', $appointment->patient->first_name . ' ' . $appointment->patient->last_name) ?><br>
                             <?= $appointment->patient->patient_id ?>
@@ -44,7 +44,7 @@ $commonService = new CommonService();
                             echo $age; ?>
                         </span>
                     </div>
-                    <div class=" d-flex flex-wrap  flex-column b-0 w-150">
+                    <div class=" d-flex flex-wrap flex-column b-0 w-150 treat_patient_info">
                         <p class="mb-1" style="word-break: break-all;"><i class="fa-solid fa-envelope text-muted">
                             </i>
                             <span class="text-gray ps-10">
@@ -76,7 +76,7 @@ $commonService = new CommonService();
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row treat_other_info_div">
                 <div class="col be-1 pe-0">
                     <div class="box flex-grow-1 mb-0 no-border" style="border-radius: 0px; /*height: 195px;*/">
                         <div class="box-body ">

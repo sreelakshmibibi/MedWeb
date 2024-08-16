@@ -97,8 +97,9 @@ header('Content-Type: text/html; charset=UTF-8');
         }
 
         .regbill-table {
-            border: 1px solid #ddd;
-            border-collapse: collapse;
+            /* border: 1px solid #ddd;
+            border-collapse: collapse; */
+            border: none;
         }
 
         .regbill-table thead,
@@ -109,7 +110,7 @@ header('Content-Type: text/html; charset=UTF-8');
         .regbill-table td,
         .regbill-table th {
             text-align: center;
-            padding: 4px;
+            /* padding: 4px; */
         }
 
         .linestyle {
@@ -233,6 +234,49 @@ header('Content-Type: text/html; charset=UTF-8');
                 <thead>
                     <tr>
                         <th>#</th>
+                        <th>Category</th>
+                        <th>Amount ({{ $currency }})</th>
+                    </tr>
+                </thead>
+                <tbody class="tbodypart">
+                    <?php $i = 0; ?>
+                    @foreach ($billDetails as $billDetail)
+                        <tr>
+                            <td>{{ ++$i }}.</td>
+                            <td style="text-align:left;">Registration Fee</td>
+                            <td>{{ $billDetail->amount ?? '' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+                <tbody class="tbodypart">
+                    @foreach ($billDetails as $billDetail)
+                        <tr class="total">
+                            <th colspan="2" style="text-align:right;">
+                                <h4>Total</h4>
+                            </th>
+                            <th>
+                                <h4>{{ $currency }}{{ $billDetail->amount ?? '' }}</h4>
+                            </th>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align:right;">Mode of Payment:</td>
+                            <td>{{ $billDetail->payment_method ?? '' }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align:right;">Paid Date:</td>
+                            <td>
+                                {{-- {{ $billDetail->paid_at ?? '' }} --}}
+                                {{ \Carbon\Carbon::parse($billDetail->paid_at ?? now())->format('d-m-Y') }}
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            {{--            
+            <table class="regbill-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
                         <th>Registration Fee ({{ $currency }})</th>
                         <th>Mode of Payment</th>
                         <th>Paid Date</th>
@@ -251,7 +295,7 @@ header('Content-Type: text/html; charset=UTF-8');
                         </tr>
                     @endforeach
                 </tbody>
-            </table>
+            </table> --}}
         @endif
     </div>
 
