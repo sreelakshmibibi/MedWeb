@@ -109,6 +109,7 @@ date_default_timezone_set('Asia/Kolkata');
         .prescription-table {
             border: 1px solid #ddd;
             border: none;
+            border-bottom: 1px solid #ddd;
         }
 
         .prescription-table thead,
@@ -352,7 +353,7 @@ date_default_timezone_set('Asia/Kolkata');
                     @endif
                 </tbody>
 
-                <tbody class="tbodypart">
+                <tbody>
                     <tr class="total">
                         <th colspan="4" style="text-align: right;">
                             <h4>Total</h4>
