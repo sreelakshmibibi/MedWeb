@@ -248,7 +248,7 @@ header('Content-Type: text/html; charset=UTF-8');
                         </tr>
                     @endforeach
                 </tbody>
-                <tbody class="tbodypart">
+                <tbody>
                     @foreach ($billDetails as $billDetail)
                         <tr class="total">
                             <th colspan="2" style="text-align:right;">
