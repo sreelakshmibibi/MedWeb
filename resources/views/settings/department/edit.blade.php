@@ -8,7 +8,9 @@
                     <h5 class="modal-title"><i class="fa fa-briefcase"></i> Edit Department Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-
+                <div id="errorMessage" style="display:none;" class="alert alert-danger">
+                </div>
+                
                 <div class="modal-body">
                     <div class="container-fluid">
                         <div class="form-group">
@@ -76,16 +78,25 @@
                 success: function(response) {
                     // If successful, hide modal and show success message
                     $('#modal-edit').modal('hide');
-                    $('#successMessage').text('Department updated successfully');
-                    $('#successMessage').fadeIn().delay(3000)
+                     if (response.success) {
+                        $('#successMessage').text(response.success);
+                        $('#successMessage').fadeIn().delay(3000)
                         .fadeOut(); // Show for 3 seconds
+                    }
+                    
                     // location.reload(); // Refresh the page or update the table as needed
                     table.ajax.reload();
                 },
                 error: function(xhr) {
+                    console.log(xhr.responseJSON.error);
+                    if (xhr.responseJSON.error) {
+                        $('#errorMessage').text(xhr.responseJSON.error);
+                        $('#errorMessage').fadeIn().delay(3000)
+                        .fadeOut(); 
+                    }
                     // If error, update modal to show errors
                     var errors = xhr.responseJSON.errors;
-
+                   
                     if (errors.hasOwnProperty('department')) {
                         $('#edit_department').addClass('is-invalid');
                         $('#edit_department').next('.invalid-feedback').text(errors
