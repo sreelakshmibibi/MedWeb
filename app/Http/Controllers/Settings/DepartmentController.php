@@ -77,9 +77,15 @@ class DepartmentController extends Controller
             // Save the department
             $i = $department->save();
             if ($i) {
+                if ($request->ajax()) {
+                    return response()->json(['success' => 'Department created successfully.']);
+                }
                 return redirect()->back()->with('success', 'Department created successfully');
             }
         } catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json(['error' => 'Department not created.'. $e->getMessage()]);
+            }
             return redirect()->back()->with('error', 'Failed to create department: ' . $e->getMessage());
         }
 
@@ -124,7 +130,7 @@ class DepartmentController extends Controller
             // Handle any unexpected errors
             // Return JSON response for AJAX request
             if ($request->ajax()) {
-                return response()->json(['error' => 'Failed to update department. Please try again.'], 500);
+                return response()->json(['error' => 'Failed to update department. Please try again.'.$e->getMessage()], 500);
             }
 
             // Redirect back with error message for non-AJAX request

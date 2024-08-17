@@ -7,7 +7,9 @@
                     <h5 class="modal-title"><i class="fa fa-briefcase"></i> Department Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-
+                <div id="errorMessagecreate" style="display:none;" class="alert alert-danger">
+                </div>
+                
                 <div class="modal-body">
                     <div class="container-fluid">
                         <!-- Department Name -->
@@ -86,14 +88,25 @@
                 dataType: 'json',
                 success: function(response) {
                     // If successful, hide modal and show success message
-                    $('#modal-right').modal('hide');
-                    $('#successMessage').text('Department created successfully');
-                    $('#successMessage').fadeIn().delay(3000)
-                        .fadeOut(); // Show for 3 seconds
+                    if (response.success) {
+                        $('#successMessage').text(response.success);
+                        $('#successMessage').fadeIn().delay(3000)
+                            .fadeOut(); // Show for 3 seconds
+                            $('#modal-right').modal('hide');
+                            table.ajax.reload();
+                    
+                    }
+                    if (response.error) {
+                        $('#errorMessagecreate').text(response.error);
+                        $('#errorMessagecreate').fadeIn().delay(3000)
+                        .fadeOut(); 
+                    }
+                    
                     // location.reload();
-                    table.ajax.reload();
+                  
                 },
                 error: function(xhr) {
+                    
                     // If error, update modal to show errors
                     var errors = xhr.responseJSON.errors;
 
