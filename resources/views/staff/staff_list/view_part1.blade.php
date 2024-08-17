@@ -164,8 +164,9 @@
             <div class="box-body doctor-section pt-0" style="display: none;">
                 <h4>About</h4>
                 <p>@php echo str_replace('<br>', ' ', $userDetails->name); @endphp is an experienced dentist specializing in {{ $staffProfile->specialization }},
-                    with over 15
-                    years of practice in {{ $staffProfile->years_of_experience }}. He qualified
+                    with
+                    {{-- over 15 years of  --}}
+                    practice in {{ $staffProfile->years_of_experience }}. He qualified
                     {{ $staffProfile->qualification }} and is dedicated to providing
                     compassionate care and achieving optimal oral health outcomes for his patients.</p>
                 <ul class="flexbox flex-justified text-center p-0">

@@ -18,6 +18,9 @@
 .footer-wrapper {
     width: 96%;
 }
+.dashboardpatients {
+    height: 218px;
+}
 .dashboardchart {
     height: 250px;
 }

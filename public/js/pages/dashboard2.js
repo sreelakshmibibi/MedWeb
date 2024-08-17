@@ -131,7 +131,7 @@ $(function () {
     };
 
     var chart = new ApexCharts(document.querySelector("#chart432"), options);
-    chart.render();
+    // chart.render();
 
     var options = {
         series: [

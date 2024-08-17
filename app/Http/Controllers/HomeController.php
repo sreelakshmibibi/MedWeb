@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Appointment;
 
+use Illuminate\Support\Facades\Crypt;
 use App\Models\City;
 use App\Models\ClinicBasicDetail;
 use App\Models\ClinicBranch;
@@ -131,7 +132,7 @@ class HomeController extends Controller
             $totalOthers = $totalStaffs - $totalDoctors;
             $totalTreatments = ToothExamination::distinct('treatment_id')->count('treatment_id');
 
-            $staffDetails = StaffProfile::where('user_id', $user->id)->first();
+            $staffProfile = StaffProfile::where('user_id', $user->id)->first();
             $username = str_replace('<br>', ' ', $user->name);
             $appointments = null;
             if ($user->is_doctor) {
@@ -140,7 +141,7 @@ class HomeController extends Controller
                     ->get();
             } else {
                 $appointments = Appointment::with(['patient', 'doctor', 'branch'])
-                ->get();
+                    ->get();
             }
 
             // Extract the patients from the appointments
@@ -160,18 +161,18 @@ class HomeController extends Controller
             $currentappointments = null;
             if ($user->is_doctor) {
                 $currentappointments = Appointment::where('doctor_id', $user->id)
-                ->where('app_status', 1)
-                ->orderBy('token_no') // Order by token_no to get the first three
-                ->limit(3) // Limit the results to the first three
-                ->with(['patient', 'doctor', 'branch']) // Eager load relationships
-                ->get();
+                    ->where('app_status', 1)
+                    ->orderBy('token_no') // Order by token_no to get the first three
+                    ->limit(3) // Limit the results to the first three
+                    ->with(['patient', 'doctor', 'branch']) // Eager load relationships
+                    ->get();
 
             } else {
                 $currentappointments = Appointment::where('app_status', 1)
-                ->orderBy('token_no') // Order by token_no to get the first three
-                ->limit(3) // Limit the results to the first three
-                ->with(['patient', 'doctor', 'branch']) // Eager load relationships
-                ->get();
+                    ->orderBy('token_no') // Order by token_no to get the first three
+                    ->limit(3) // Limit the results to the first three
+                    ->with(['patient', 'doctor', 'branch']) // Eager load relationships
+                    ->get();
             }
             if ($user->is_admin) {
                 $role = 'Admin';
@@ -196,21 +197,27 @@ class HomeController extends Controller
 
             // return view($dashboardView);
 
-            // $staffDetails = StaffProfile::where('user_id', $user->id)->first();
-            // $username = str_replace('<br>', ' ', $user->name);
-
             session(['username' => $username]);
             session(['role' => $role]);
             session(['currency' => $clinicsData->currency]);
             session(['treatmentTax' => $clinicsData->treatment_tax_included]);
 
-            if ($staffDetails) {
-                session(['staffPhoto' => $staffDetails->photo]);
-                session(['staffId' => $staffDetails->id]);
+            // Initialize $idEncrypted
+            $idEncrypted = '';
+            $staffId = '';
+            if ($staffProfile) {
+                session(['staffPhoto' => $staffProfile->photo]);
+                $staffId = $staffProfile->id;
+
+                $base64Id = base64_encode($staffId);
+                $idEncrypted = Crypt::encrypt($base64Id);
             }
 
-            // echo "<pre>"; print_r($workingDoctors); echo "</pre>";exit;
-            return view($dashboardView, compact('workingDoctors', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients', 'totalUniquePatients', 'malePatientsCount', 'femalePatientsCount', 'newPatientsCount', 'followupPatientsCount', 'currentappointments'));
+            // echo "<pre>";
+            // print_r($workingDoctors);
+            // echo "</pre>";
+            // exit;
+            return view($dashboardView, compact('workingDoctors', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients', 'totalUniquePatients', 'malePatientsCount', 'femalePatientsCount', 'newPatientsCount', 'followupPatientsCount', 'currentappointments', 'idEncrypted'));
 
         } else {
             $countries = Country::all();
@@ -241,42 +248,64 @@ class HomeController extends Controller
         return response()->json($appointments);
     }
 
+    // public function getAppointmentsByMonth()
+    // {
+    //     // Get the current month and year
+    //     $currentMonth = now()->month;
+    //     $currentYear = now()->year;
+
+    //     // Calculate the start and end months for the range
+    //     $startMonth = $currentMonth - 3;
+    //     $endMonth = $currentMonth + 3;
+
+    //     // Adjust the year if crossing year boundaries
+    //     if ($startMonth <= 0) {
+    //         $startMonth += 12;
+    //         $startYear = $currentYear - 1;
+    //     } else {
+    //         $startYear = $currentYear;
+    //     }
+
+    //     if ($endMonth > 12) {
+    //         $endMonth -= 12;
+    //         $endYear = $currentYear + 1;
+    //     } else {
+    //         $endYear = $currentYear;
+    //     }
+
+    //     // Fetch appointment counts within the range
+    //     $appointments = DB::table('appointments')
+    //         ->select(DB::raw('MONTH(app_date) as month'), DB::raw('COUNT(*) as count'))
+    //         ->whereBetween(DB::raw('MONTH(app_date)'), [$startMonth, $endMonth])
+    //         ->whereBetween(DB::raw('YEAR(app_date)'), [$startYear, $endYear])
+    //         ->groupBy('month')
+    //         ->orderBy('month')
+    //         ->get();
+
+    //     return response()->json($appointments);
+    // }
+
     public function getAppointmentsByMonth()
     {
         // Get the current month and year
         $currentMonth = now()->month;
         $currentYear = now()->year;
 
-        // Calculate the start and end months for the range
-        $startMonth = $currentMonth - 3;
-        $endMonth = $currentMonth + 3;
-
-        // Adjust the year if crossing year boundaries
-        if ($startMonth <= 0) {
-            $startMonth += 12;
-            $startYear = $currentYear - 1;
-        } else {
-            $startYear = $currentYear;
-        }
-
-        if ($endMonth > 12) {
-            $endMonth -= 12;
-            $endYear = $currentYear + 1;
-        } else {
-            $endYear = $currentYear;
-        }
+        // Calculate the start month and year (6 months before the current month)
+        $startDate = now()->subMonths(6)->startOfMonth();
+        $endDate = now()->endOfMonth(); // This is the current month
 
         // Fetch appointment counts within the range
         $appointments = DB::table('appointments')
             ->select(DB::raw('MONTH(app_date) as month'), DB::raw('COUNT(*) as count'))
-            ->whereBetween(DB::raw('MONTH(app_date)'), [$startMonth, $endMonth])
-            ->whereBetween(DB::raw('YEAR(app_date)'), [$startYear, $endYear])
-            ->groupBy('month')
-            ->orderBy('month')
+            ->whereBetween('app_date', [$startDate, $endDate])
+            ->groupBy(DB::raw('MONTH(app_date)'))
+            ->orderBy(DB::raw('MONTH(app_date)'))
             ->get();
 
         return response()->json($appointments);
     }
+
 
 
 }

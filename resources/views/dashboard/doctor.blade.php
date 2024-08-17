@@ -92,7 +92,7 @@ use Illuminate\Support\Facades\Crypt;
                             </div>
                         </div>
                         <div class="box">
-                            <div class="box-body p-15">
+                            <div class="box-body p-15 dashboardpatients">
                                 @foreach ($currentappointments as $currentappointment)
                                     <div class="mb-10 d-flex justify-content-between align-items-center">
                                         <div class="fw-600 min-w-120">
@@ -308,6 +308,82 @@ use Illuminate\Support\Facades\Crypt;
                     chart.render();
                 });
 
+            // fetch('/appointments-by-month')
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         // Log data to inspect structure
+            //         console.log(data);
+
+            //         // Get the current month and year
+            //         const now = new Date();
+            //         const currentMonth = now.getMonth(); // 0-based index (0 for January)
+            //         const months = [];
+            //         const counts = [];
+
+            //         // Initialize months and counts
+            //         for (let i = -3; i <= 3; i++) {
+            //             const monthIndex = (currentMonth + i + 12) % 12; // Calculate month index
+            //             const monthName = new Date(2020, monthIndex).toLocaleString('default', {
+            //                 month: 'short'
+            //             }); // Get month name
+            //             months.push(monthName);
+            //             counts.push(0); // Initialize count to 0
+            //         }
+
+            //         // Populate counts array based on the fetched data
+            //         data.forEach(item => {
+            //             const monthIndex = item.month - 1; // Convert month to 0-based index
+            //             const relativeIndex = (monthIndex - currentMonth + 12) %
+            //                 12; // Calculate relative index
+            //             if (relativeIndex >= -3 && relativeIndex <= 3) {
+            //                 counts[relativeIndex + 3] = item.count; // Set count for the month
+            //             }
+            //         });
+
+            //         // Log the final counts and months to check
+            //         console.log(months);
+            //         console.log(counts);
+
+            //         // Chart options
+            //         var options = {
+            //             series: [{
+            //                 name: "Growth",
+            //                 data: counts,
+            //             }, ],
+            //             chart: {
+            //                 height: 205,
+            //                 type: "area",
+            //                 toolbar: {
+            //                     show: false,
+            //                 },
+            //             },
+            //             colors: ["#05825f"],
+            //             dataLabels: {
+            //                 enabled: false,
+            //             },
+            //             stroke: {
+            //                 curve: "smooth",
+            //             },
+            //             grid: {
+            //                 borderColor: "#e7e7e7",
+            //             },
+            //             xaxis: {
+            //                 categories: months,
+            //             },
+            //             legend: {
+            //                 show: false,
+            //             },
+            //         };
+
+            //         // Render the chart
+            //         var chart = new ApexCharts(
+            //             document.querySelector("#dashboardoverview_trend"),
+            //             options
+            //         );
+            //         chart.render();
+            //     })
+            //     .catch(error => console.error('Error fetching data:', error));
+
             fetch('/appointments-by-month')
                 .then(response => response.json())
                 .then(data => {
@@ -320,8 +396,8 @@ use Illuminate\Support\Facades\Crypt;
                     const months = [];
                     const counts = [];
 
-                    // Initialize months and counts
-                    for (let i = -3; i <= 3; i++) {
+                    // Initialize months and counts for 6 months before and including the current month
+                    for (let i = -6; i <= 0; i++) {
                         const monthIndex = (currentMonth + i + 12) % 12; // Calculate month index
                         const monthName = new Date(2020, monthIndex).toLocaleString('default', {
                             month: 'short'
@@ -335,8 +411,8 @@ use Illuminate\Support\Facades\Crypt;
                         const monthIndex = item.month - 1; // Convert month to 0-based index
                         const relativeIndex = (monthIndex - currentMonth + 12) %
                         12; // Calculate relative index
-                        if (relativeIndex >= -3 && relativeIndex <= 3) {
-                            counts[relativeIndex + 3] = item.count; // Set count for the month
+                        if (relativeIndex >= -6 && relativeIndex <= 0) {
+                            counts[relativeIndex + 6] = item.count; // Set count for the month
                         }
                     });
 
@@ -349,7 +425,7 @@ use Illuminate\Support\Facades\Crypt;
                         series: [{
                             name: "Growth",
                             data: counts,
-                        }, ],
+                        }],
                         chart: {
                             height: 205,
                             type: "area",
