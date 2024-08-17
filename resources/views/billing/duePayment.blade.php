@@ -32,7 +32,201 @@ use Illuminate\Support\Facades\Session;
             </div>
 
             <section class="content">
-                <div class="row">
+                <form id="searchPatientForm">
+                    <div class="box ">
+                        <div class="box-body ">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="name">Name</label>
+                                        <input type="text" id="name" name="name" class="form-control"
+                                            placeholder="Enter patient name">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="phone">Phone Number</label>
+                                        <input type="text" id="phone" name="phone" class="form-control"
+                                            placeholder="Enter phone number">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="patientId">Patient ID</label>
+                                        <input type="text" id="patientId" name="patientId" class="form-control"
+                                            placeholder="Enter patient ID">
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div>
+                                <span class="text-danger text-center" id="duePatientNotfoundError">
+
+                                </span>
+                            </div>
+                        </div>
+                        <div class="box-footer d-flex justify-content-between text-end">
+                            <div>
+                                <div id="treatmentBillPage" style="display:none;">
+
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-success" id="searchPatientButton">
+                                <i class="fa fa-search"></i> Search
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                {{-- <div>
+                    <span class="text-danger text-center" id="duePatientNotfoundError">
+
+                    </span>
+                </div> --}}
+
+                {{-- <div id="treatmentBillPage" style="display:none;">
+
+                </div> --}}
+                {{-- <div class="box-body bb-1"> --}}
+                <div id="patientInfo" style="display:none;">
+                    <form id="payDueForm" action="{{ route('duePayment.due') }}" method="POST">
+                        @csrf
+                        <h4 class="text-warning">Patient Details</h4>
+                        <table class="table table-bordered text-center" id="dueTable">
+                            <thead class="bg-dark">
+                                <tr>
+                                    <th style="width:20%;">Patient ID</th>
+                                    <th style="width:40%;">Patient Name</th>
+                                    <th style="width:20%;">Phone</th>
+                                    <th style="width:20%;" class="text-center">Due Amount
+                                        ({{ $clinicDetails->currency }})</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td id="patientIdDisplay"></td>
+                                    <td class="text-start" id="patientName"></td>
+                                    <td id="patientPhone"></td>
+                                    <td><input type="text" class="form-control text-center" id="dueAmount"
+                                            name="dueAmount" aria-describedby="basic-addon2" readonly></td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bt-3 border-primary">
+                                    <td colspan="3" class="text-end ">
+                                        <h3><b>Total</b></h3>
+                                    </td>
+                                    {{-- <tr>
+                                    <th colspan="3" class="text-end">Total</th> --}}
+                                    <td><input type="text" class="form-control text-center" id="dueTotal"
+                                            name="dueTotal" aria-describedby="basic-addon2" readonly>
+                                        <span class="text-danger" id="dueTotalError">
+                                            @error('dueTotal')
+                                                {{ $message }}
+                                            @enderror
+                                        </span>
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <td colspan="2" class="text-start">
+                                        <span class="text-bold me-2">Mode of Payment:</span>
+
+                                        <!-- Checkbox for Gpay -->
+                                        <input type="checkbox" class="filled-in chk-col-success"
+                                            id="duemode_of_payment_gpay" name="duemode_of_payment[]" value="gpay">
+                                        <label class="form-check-label me-2" for="duemode_of_payment_gpay">Gpay</label>
+                                        <input type="text" name="duegpay" id="duegpay" class="form-control  w-100 "
+                                            style="display: none;">
+                                        &nbsp;
+                                        <!-- Checkbox for Cash -->
+                                        <input type="checkbox" class="filled-in chk-col-success"
+                                            id="duemode_of_payment_cash" name="duemode_of_payment[]" value="cash">
+                                        <label class="form-check-label me-2" for="duemode_of_payment_cash">Cash</label>
+                                        <input type="text" name="duecash" id="duecash" class="form-control  w-100"
+                                            style="display: none;">
+                                        &nbsp;
+                                        <!-- Checkbox for Card -->
+                                        <input type="checkbox" class="filled-in chk-col-success"
+                                            id="duemode_of_payment_card" name="duemode_of_payment[]" value="card">
+                                        <label class="form-check-label me-2" for="duemode_of_payment_card">Card</label>
+                                        <input type="text" name="duecard" id="duecard" class="form-control  w-100 "
+                                            style="display: none;">
+                                        <select class="ms-2 form-select w-150" id="duemachine" name="duemachine"
+                                            style="display: none;">
+                                            <option value="">Select Machine</option>
+                                            @foreach ($cardPay as $machine)
+                                                <option value="{{ $machine->id }}">
+                                                    {{ $machine->card_name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <span class="text-danger" id="dueModePaymentError">
+                                            @error('duemode_of_payment')
+                                                {{ $message }}
+                                            @enderror
+                                        </span>
+                                    </td>
+
+                                    <td class="text-end ">Paid Amount</td>
+                                    <td>
+                                        <input type="text" name="dueAmountPaid" id="dueAmountPaid"
+                                            class="form-control text-center" required readonly>
+                                        <span id="dueAmountPaidError" class="error-message text-danger">
+                                            @error('dueAmountPaid')
+                                                {{ $message }}
+                                            @enderror
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="text-start">
+                                        <input type="checkbox" name="dueBalance_given" id="dueBalance_given"
+                                            class="filled-in chk-col-success">
+                                        <label class="form-check-label" for="dueBalance_given">Balance
+                                            Given</label>
+                                        <span class="error-message text-danger" id="dueCheckError"></span>
+                                    </td>
+                                    <td class="text-end">Balance to Give Back</td>
+                                    <td><input type="text" name="dueBalanceToGiveBack" id="dueBalanceToGiveBack"
+                                            class="form-control text-center" readonly>
+                                        <span class="text-danger" id="dueBalanceToGiveBackError">
+                                            @error('dueBalanceToGiveBack')
+                                                {{ $message }}
+                                            @enderror
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Pay Button -->
+
+                        <input type="hidden" id="patientIdInput" name="patientIdInput">
+                        <input type="hidden" id="appInput" name="appInput">
+                        <input type="hidden" id="treatmentBillInput" name="treatmentBillInput">
+                        <input type="hidden" id="dueBillInput" name="dueBillInput">
+                        <div class="row text-end py-3">
+                            <div class="d-flex justify-content-end ">
+
+                                <button type="button" class="btn btn-success pull-right" name="dueSubmitPayment"
+                                    id="dueSubmitPayment"><i class="fa fa-credit-card"></i>
+                                    Pay Due
+                                </button>
+
+                                <button type="button" class="btn btn-warning pull-right" name="duePrintPayment"
+                                    id="duePrintPayment"><i class="fa fa-print"></i>
+                                    Print Receipt
+                                </button>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                {{-- </div> --}}
+
+                {{-- <div class="row">
                     <div class="col-xl-8 col-12">
                         <div class="box">
                             <div class="box-body bb-1" style="border-radius: 0px;">
@@ -86,16 +280,16 @@ use Illuminate\Support\Facades\Session;
                                                     <td id="patientName"></td>
                                                     <td id="patientPhone"></td>
                                                     <td><input type="text" class="form-control text-center"
-                                                            id="dueAmount" name="dueAmount" aria-describedby="basic-addon2"
-                                                            readonly></td>
+                                                            id="dueAmount" name="dueAmount"
+                                                            aria-describedby="basic-addon2" readonly></td>
                                                 </tr>
                                             </tbody>
                                             <tbody>
                                                 <tr>
                                                     <th colspan="3" class="text-end">Total</th>
                                                     <th><input type="text" class="form-control text-center"
-                                                            id="dueTotal" name="dueTotal" aria-describedby="basic-addon2"
-                                                            readonly>
+                                                            id="dueTotal" name="dueTotal"
+                                                            aria-describedby="basic-addon2" readonly>
                                                         <span class="text-danger" id="dueTotalError">
                                                             @error('dueTotal')
                                                                 {{ $message }}
@@ -212,7 +406,7 @@ use Illuminate\Support\Facades\Session;
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </section>
         </div>
     </div>
@@ -256,22 +450,26 @@ use Illuminate\Support\Facades\Session;
                                 if (dueBillDetails.gpay > 0) {
                                     document.getElementById('duemode_of_payment_gpay').checked = true;
                                     document.getElementById('duegpay').value = dueBillDetails.gpay;
-                                    document.getElementById('duegpay').style.display = 'block';
+                                    // document.getElementById('duegpay').style.display = 'block';
+                                    document.getElementById('duegpay').style.display = 'inline';
                                     document.getElementById('duegpay').readOnly = true;
                                 }
                                 if (dueBillDetails.cash > 0) {
                                     document.getElementById('duemode_of_payment_cash').checked = true;
                                     document.getElementById('duecash').value = dueBillDetails.cash;
-                                    document.getElementById('duecash').style.display = 'block';
+                                    // document.getElementById('duecash').style.display = 'block';
+                                    document.getElementById('duecash').style.display = 'inline';
                                     document.getElementById('duecash').readOnly = true;
                                 }
                                 if (dueBillDetails.card > 0) {
                                     document.getElementById('duemode_of_payment_card').checked = true;
                                     document.getElementById('duecard').value = dueBillDetails.card;
-                                    document.getElementById('duecard').style.display = 'block';
+                                    // document.getElementById('duecard').style.display = 'block';
+                                    document.getElementById('duecard').style.display = 'inline';
                                     document.getElementById('duecard').readOnly = true;
                                     document.getElementById('duemachine').value = dueBillDetails.card_pay_id;
-                                    document.getElementById('duemachine').style.display = 'block';
+                                    // document.getElementById('duemachine').style.display = 'block';
+                                    document.getElementById('duemachine').style.display = 'inline';
                                 }
                                 if (dueBillDetails.balance_given > 0) {
                                     document.getElementById('dueBalance_given').checked = true;
@@ -317,7 +515,7 @@ use Illuminate\Support\Facades\Session;
                             document.getElementById('treatmentBillPage').appendChild(button);
                         }
                     } else {
-                        document.getElementById('duePatientNotfoundError').innerText = 'Patient not found.';
+                        document.getElementById('duePatientNotfoundError').innerText = 'Patient not found!';
                         document.getElementById('patientInfo').style.display = 'none';
                         document.getElementById('treatmentBillPage').style.display = 'none';
                     }

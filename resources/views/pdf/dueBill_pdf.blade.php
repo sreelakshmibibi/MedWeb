@@ -97,8 +97,9 @@ header('Content-Type: text/html; charset=UTF-8');
         }
 
         .regbill-table {
-            border: 1px solid #ddd;
-            border-collapse: collapse;
+            /* border: 1px solid #ddd;
+            border-collapse: collapse; */
+            border: none;
         }
 
         .regbill-table thead,
@@ -109,7 +110,7 @@ header('Content-Type: text/html; charset=UTF-8');
         .regbill-table td,
         .regbill-table th {
             text-align: center;
-            padding: 4px;
+            /* padding: 4px; */
         }
 
         .linestyle {
@@ -233,20 +234,20 @@ header('Content-Type: text/html; charset=UTF-8');
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Category</th>
+                        <th colspan="2">Category</th>
                         <th>Amount ({{ $currency }})</th>
                     </tr>
                 </thead>
                 <tbody class="tbodypart">
                     <tr>
                         <td>1.</td>
-                        <td style="text-align:left;">Outstanding Amount</td>
+                        <td colspan="2" style="text-align:left;">Outstanding Amount</td>
                         <td>{{ $billDetails->total_amount ?? '' }}</td>
                     </tr>
                 </tbody>
-                <tbody class="tbodypart">
+                <tbody>
                     <tr class="total">
-                        <th colspan="2" style="text-align: right;">
+                        <th colspan="3" style="text-align: right;">
                             <h4>Total</h4>
                         </th>
                         <th>
@@ -254,8 +255,8 @@ header('Content-Type: text/html; charset=UTF-8');
                         </th>
                     </tr>
                     <tr>
-                        <td style="text-align: left;">
-                            Mode of Payment :
+                        <td rowspan="4" colspan="2" style="text-align: left;">
+                            Mode of Payment :<br />
                             @if ($billDetails->gpay > 0)
                                 <span class="text-bold">Gpay : {{ $billDetails->gpay }}</span>
                             @endif
@@ -275,7 +276,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
                     @if ($billDetails->balance_given)
                         <tr>
-                            <td colspan="2" style="text-align: right;">Balance Given</td>
+                            <td style="text-align: right;">Balance Given</td>
                             <td>{{ $currency }}{{ $billDetails->balance_given }}</td>
                         </tr>
                     @endif

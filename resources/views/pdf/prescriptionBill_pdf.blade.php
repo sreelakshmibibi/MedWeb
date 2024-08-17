@@ -109,7 +109,6 @@ date_default_timezone_set('Asia/Kolkata');
         .prescription-table {
             border: 1px solid #ddd;
             border: none;
-            border-bottom: 1px solid #ddd;
         }
 
         .prescription-table thead,

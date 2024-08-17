@@ -117,7 +117,6 @@ header('Content-Type: text/html; charset=UTF-8');
         .treatmentbill-table {
             border: 1px solid #ddd;
             border: none;
-            border-bottom: 1px solid #ddd;
         }
 
         .treatmentbill-table thead,
@@ -264,9 +263,9 @@ header('Content-Type: text/html; charset=UTF-8');
         <hr class="linestyle" />
 
         <h4 class="subheading">Bill Details</h4>
-        @if ($billDetails->isEmpty() &&  $patientTreatmentBilling->previous_outstanding == 0)
+        @if ($billDetails->isEmpty() && $patientTreatmentBilling->previous_outstanding == 0)
             <p>No Treatment/outstanding bill available.</p>
-        @elseif (!$billDetails->isEmpty()  || $patientTreatmentBilling->previous_outstanding != 0)
+        @elseif (!$billDetails->isEmpty() || $patientTreatmentBilling->previous_outstanding != 0)
             <table class="treatmentbill-table">
                 <thead>
                     <tr>
