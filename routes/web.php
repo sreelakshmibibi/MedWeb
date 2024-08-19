@@ -231,10 +231,10 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::get('/appointments-by-month', [App\Http\Controllers\HomeController::class, 'getAppointmentsByMonth'])->name('appointments-by-month');
 
 
-    Route::get('/leave', [LeaveController::class, 'index'])->name('settings.leave');
-    Route::post('/leave/store', [LeaveController::class, 'store'])->name('settings.leave.store');
-    Route::get('/leave/{leave}/edit', [LeaveController::class, 'edit'])->name('settings.leave.edit');
-    Route::post('/leave/{leave}/update', [LeaveController::class, 'update'])->name('settings.leave.update');
-    Route::delete('/leave/{leave}', [LeaveController::class, 'destroy'])->name('settings.leave.destroy');
-    Route::get('/leaveapproval', [LeaveController::class, 'view'])->name('staff.leave');
+    Route::get('/leave', [LeaveController::class, 'index'])->name('leave');
+    Route::post('/leave/store', [LeaveController::class, 'store'])->name('leave.store');
+    Route::get('/leave/{leave}/edit', [LeaveController::class, 'edit'])->name('leave.edit');
+    Route::post('/leave/{leave}/update', [LeaveController::class, 'update'])->name('leave.update');
+    Route::delete('/leave/{leave}', [LeaveController::class, 'destroy'])->name('leave.destroy');
+    Route::get('/leaveapproval', [LeaveController::class, 'view'])->name('leave.approve');
 });

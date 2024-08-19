@@ -73,7 +73,7 @@
             table = $(".data-table").DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('staff.leave') }}",
+                ajax: "{{ route('leave.approve') }}",
                 columns: [{
                         data: "DT_RowIndex",
                         name: "DT_RowIndex",

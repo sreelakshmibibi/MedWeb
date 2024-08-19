@@ -27,6 +27,8 @@ class MenuItemsSeeder extends Seeder
             'manage_appointments',
             'staff_list',
             'staff_details',
+            'apply leave',
+            'approve leave',
             'patient_list',
             'patient_details',
             'patients',
@@ -88,7 +90,9 @@ class MenuItemsSeeder extends Seeder
             'update user',
             'generate bill',
             'receive payment',
-            'reports'
+            'reports',
+            'apply leave',
+            'approve leave',
         ];
 
         $admin->syncPermissions($adminPermissions);
@@ -103,12 +107,14 @@ class MenuItemsSeeder extends Seeder
             'staff_list',
             'insurance',
             'treatment_plan',
+            'apply leave',
         ]);
 
         $nurse->syncPermissions([
             'view_dashboard',
             'patient_list',
             'patient_details',
+            'apply leave',
         ]);
 
         $reception->syncPermissions([
@@ -116,6 +122,7 @@ class MenuItemsSeeder extends Seeder
             'manage_appointments',
             'patient_list',
             'receive payment',
+            'apply leave',
         ]);
 
         // Create menu items
@@ -199,7 +206,7 @@ class MenuItemsSeeder extends Seeder
 
         $staffSubmenus = $staffs->children()->createMany([
             ['name' => 'Staff List', 'url' => '/staff_list', 'route_name' => 'staff.staff_list', 'icon' => 'icon-Commit', 'order_no' => 1],
-            ['name' => 'Staff Details', 'url' => '#', 'route_name' => '#', 'icon' => 'icon-Commit', 'order_no' => 2],
+            ['name' => 'Leave', 'url' => '/leave', 'route_name' => 'leave', 'icon' => 'icon-Commit', 'order_no' => 2],
         ]);
 
         $patientSubmenus = $patients->children()->createMany([
@@ -233,7 +240,7 @@ class MenuItemsSeeder extends Seeder
         }
         // Fetching the created submenus
         $staffList = $staffSubmenus->where('name', 'Staff List')->first();
-        $staffDetails = $staffSubmenus->where('name', 'Staff Details')->first();
+        $staffDetails = $staffSubmenus->where('name', 'Leave')->first();
         foreach ($patientSubmenus as $submenu) {
             $submenu->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $nurse->id, $reception->id]);
         }
