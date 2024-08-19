@@ -189,7 +189,9 @@ $(function () {
         options
     );
     // chart.render();
-
+    $(".inner-user-div33").slimScroll({
+        height: "230px",
+    });
     $(".inner-user-div3").slimScroll({
         height: "310px",
     });

@@ -69,6 +69,10 @@ $(function () {
         datepaginator.init();
     });
 
+    $(".inner-user-div2").slimScroll({
+        height: "138px",
+    });
+
     $(".inner-user-div4").slimScroll({
         height: "315px",
     });

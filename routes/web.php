@@ -16,6 +16,7 @@ use App\Http\Controllers\Settings\DepartmentController;
 use App\Http\Controllers\Settings\DiseaseController;
 use App\Http\Controllers\Settings\InsuranceController;
 use App\Http\Controllers\Settings\MedicineController;
+use App\Http\Controllers\Settings\LeaveController;
 use App\Http\Controllers\Settings\MenuItemController;
 use App\Http\Controllers\Settings\PermissionController;
 use App\Http\Controllers\Settings\RoleController;
@@ -225,4 +226,10 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::get('/appointments-by-month', [App\Http\Controllers\HomeController::class, 'getAppointmentsByMonth'])->name('appointments-by-month');
 
 
+    Route::get('/leave', [LeaveController::class, 'index'])->name('settings.leave');
+    Route::post('/leave/store', [LeaveController::class, 'store'])->name('settings.leave.store');
+    Route::get('/leave/{leave}/edit', [LeaveController::class, 'edit'])->name('settings.leave.edit');
+    Route::post('/leave/{leave}/update', [LeaveController::class, 'update'])->name('settings.leave.update');
+    Route::delete('/leave/{leave}', [LeaveController::class, 'destroy'])->name('settings.leave.destroy');
+    Route::get('/leaveapproval', [LeaveController::class, 'view'])->name('staff.leave');
 });

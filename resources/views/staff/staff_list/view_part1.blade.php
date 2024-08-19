@@ -1,3 +1,9 @@
+@php
+    if ($totalUniquePatients != 0) {
+        $woman = number_format(($femalePatientsCount / $totalUniquePatients) * 100, 2);
+        $man = number_format(($malePatientsCount / $totalUniquePatients) * 100, 2);
+    }
+@endphp
 <div class="row">
     <div class="col-xl-8 col-12">
         <div class="box">
@@ -334,22 +340,16 @@
                         <div style="min-height: 156px;">
                             <div id="patientschart"></div>
                         </div>
-                        @php
-                            if ($totalUniquePatients != 0) {
-                                $woman = number_format(($femalePatientsCount / $totalUniquePatients) * 100, 2);
-                                $man = number_format(($malePatientsCount / $totalUniquePatients) * 100, 2);
-                            }
-                        @endphp
 
                         <div class="mt-15 d-inline-block">
                             <div class="text-start mb-10">
                                 <span class="badge badge-xl badge-dot badge-primary me-15"></span> Woman
-                                {{ $woman ? $woman : '-' }}%
+                                {{ isset($woman) ? $woman : '-' }}%
                             </div>
                             <div class="text-start">
                                 <span class="badge badge-xl badge-dot badge-primary-light me-15"></span>
                                 Man
-                                {{ $man ? $man : '-' }}%
+                                {{ isset($man) ? $man : '-' }}%
                             </div>
                         </div>
                     </div>

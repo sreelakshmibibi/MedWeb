@@ -1,3 +1,6 @@
+@php
+    $role = session('role');
+@endphp
 @extends('layouts.dashboard')
 @section('title', 'Staff')
 @section('content')
@@ -19,7 +22,7 @@
                 @endif
                 <div id="successMessage" style="display:none;" class="alert alert-success">
                 </div>
-                @if ($userDetails->is_admin)
+                @if ($role == 'Admin')
                     <div class="d-flex align-items-center justify-content-between">
                         <h3 class="page-title">Staff Details</h3>
                         <div>

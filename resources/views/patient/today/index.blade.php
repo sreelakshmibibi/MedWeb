@@ -153,7 +153,7 @@
                 {
                     data: 'status',
                     name: 'status',
-                    orderable: false,
+                    orderable: true,
                     searchable: true
                 },
                 {

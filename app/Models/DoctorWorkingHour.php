@@ -10,7 +10,7 @@ class DoctorWorkingHour extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id','clinic_branch_id', 'week_day', 'from_time', 'to_time', 'status', 'created_by', 'updated_by'];
+    protected $fillable = ['user_id', 'clinic_branch_id', 'week_day', 'from_time', 'to_time', 'status', 'created_by', 'updated_by'];
 
     protected static function booted()
     {
@@ -29,5 +29,13 @@ class DoctorWorkingHour extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Define the relationship with the Appointment model.
+     */
+    public function appointment()
+    {
+        return $this->belongsTo(Appointment::class, 'doctor_id', 'user_id');
     }
 }

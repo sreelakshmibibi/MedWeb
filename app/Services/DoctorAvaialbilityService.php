@@ -87,7 +87,28 @@ class DoctorAvaialbilityService
             $query->where('clinic_branch_id', $branchId);
         }
 
-        return $query->with('user')->get();
+        // return $query->with('user')->get();
+        // return $query->with(['user', 'appointment'])->get();
+        // return $query->with([
+        //     'user',
+        //     'appointment' => function ($query) {
+        //         $query->selectRaw('doctor_id, count(*) as appointments_count')
+        //             ->groupBy('doctor_id');
+        //     }
+        // ])->get();
+        // Count appointments for each working doctor
+        $workingDoctors = $query->with('user')->get();
+        foreach ($workingDoctors as $doctor) {
+            $doctor->appointments_count = Appointment::where('doctor_id', $doctor->user_id)
+                ->whereDate('app_date', today()) // Assuming appointments are filtered by today’s date
+                ->count();
+            $doctor->appointments_completed_count = Appointment::where('doctor_id', $doctor->user_id)
+                ->where('app_status', 5)
+                ->whereDate('app_date', today()) // Assuming appointments are filtered by today’s date
+                ->count();
+        }
+
+        return $workingDoctors;
     }
 
     public function getExistingAppointments($branchId, $appDate, $doctorId)
@@ -169,6 +190,6 @@ class DoctorAvaialbilityService
             ->whereTime('to_time', '>=', $time)
             ->first();
 
-        return ! is_null($workingHour);
+        return !is_null($workingHour);
     }
 }

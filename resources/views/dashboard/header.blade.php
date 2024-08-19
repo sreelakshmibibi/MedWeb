@@ -4,7 +4,7 @@
     $username = session('username');
     $role = session('role');
     $staffPhoto = session('staffPhoto');
-    $idEncrypted = isset($idEncrypted) ? $idEncrypted : '';
+    $pstaffidEncrypted = isset($pstaffidEncrypted) ? $pstaffidEncrypted : '';
 @endphp
 <header class="main-header">
     <div class="inside-header">
@@ -92,9 +92,9 @@
 
                         <ul class="dropdown-menu animated flipInX">
                             <li class="user-body">
-                                @if ($idEncrypted)
+                                @if ($pstaffidEncrypted)
                                     <a class="dropdown-item"
-                                        href="{{ route('staff.staff_list.view', $idEncrypted) }}"><i
+                                        href="{{ route('staff.staff_list.view', $pstaffidEncrypted) }}"><i
                                             class="ti-user text-muted me-2"></i> Profile</a>
                                 @else
                                     <a class="dropdown-item" href="#"><i class="ti-user text-muted me-2"></i>

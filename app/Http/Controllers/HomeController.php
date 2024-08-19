@@ -104,10 +104,20 @@ class HomeController extends Controller
             ->select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as total_patients'), DB::raw('SUM(CASE WHEN app_type = 1 THEN 1 ELSE 0 END) as followup_patients'))
             ->where('created_at', '>=', $tenDaysAgo)
             ->groupBy(DB::raw('DATE(created_at)'))
-            ->orderBy(DB::raw('DATE(created_at)'), 'DESC')
+            // ->orderBy(DB::raw('DATE(created_at)'), 'DESC')
+            ->orderBy(DB::raw('DATE(created_at)'), 'ASC')
             ->get();
 
         $dates = $appointmentData->pluck('date')->toArray();
+        // Convert dates to 'dd MMM YYYY' format
+        // $formattedData = $appointmentData->map(function ($item) {
+        //     $item->date = Carbon::parse($item->date)->format('d M Y'); // Format date
+        //     return $item;
+        // });
+
+        // // If you need to get the dates as an array
+        // $dates = $formattedData->pluck('date')->toArray();
+
         $chartTotalPatients = $appointmentData->pluck('total_patients')->toArray();
         $chartfollowupPatients = $appointmentData->pluck('followup_patients')->toArray();
         $role = '';
@@ -120,6 +130,8 @@ class HomeController extends Controller
         $totalUniquePatients = 0;
         $malePatientsCount = 0;
         $femalePatientsCount = 0;
+        $childrenCount = 0;
+        $otherCount = 0;
         $newPatientsCount = 0;
         $followupPatientsCount = 0;
         if ($hasBranches && $hasClinics) {
@@ -155,13 +167,28 @@ class HomeController extends Controller
             // Count the number of male and female patients
             $malePatientsCount = $patients->where('gender', 'M')->count();
             $femalePatientsCount = $patients->where('gender', 'F')->count();
-            // Count the number of male and female patients
+
+            // Count the number of children and other patients
+            // Get the current date
+            $today = Carbon::now()->toDateString();
+
+            $childrenCount = $patients->filter(function ($patient) use ($today) {
+                $age = Carbon::parse($patient->date_of_birth)->diffInYears($today);
+                return $age <= 18;
+            })->count();
+            $otherCount = $patients->filter(function ($patient) use ($today) {
+                $age = Carbon::parse($patient->date_of_birth)->diffInYears($today);
+                return $age > 18;
+            })->count();
+
+
             $newPatientsCount = $appointmentstype->where('app_type', '2')->count();
             $followupPatientsCount = $appointmentstype->where('app_type', '1')->count();
             $currentappointments = null;
             if ($user->is_doctor) {
                 $currentappointments = Appointment::where('doctor_id', $user->id)
                     ->where('app_status', 1)
+                    ->whereDate('app_date', today())
                     ->orderBy('token_no') // Order by token_no to get the first three
                     ->limit(3) // Limit the results to the first three
                     ->with(['patient', 'doctor', 'branch']) // Eager load relationships
@@ -169,6 +196,7 @@ class HomeController extends Controller
 
             } else {
                 $currentappointments = Appointment::where('app_status', 1)
+                    ->whereDate('app_date', today())
                     ->orderBy('token_no') // Order by token_no to get the first three
                     ->limit(3) // Limit the results to the first three
                     ->with(['patient', 'doctor', 'branch']) // Eager load relationships
@@ -183,10 +211,10 @@ class HomeController extends Controller
                 $dashboardView = 'dashboard.doctor';
             } elseif ($user->is_nurse) {
                 $role = 'Nurse';
-                $dashboardView = 'dashboard.nurse';
+                $dashboardView = 'dashboard.reception';
             } else {
                 $role = 'User';
-                $dashboardView = 'dashboard.user';
+                $dashboardView = 'dashboard.reception';
             }
 
             //for logo and name as per user entry
@@ -203,21 +231,22 @@ class HomeController extends Controller
             session(['treatmentTax' => $clinicsData->treatment_tax_included]);
 
             // Initialize $idEncrypted
-            $idEncrypted = '';
+            $pstaffidEncrypted = '';
             $staffId = '';
             if ($staffProfile) {
                 session(['staffPhoto' => $staffProfile->photo]);
                 $staffId = $staffProfile->id;
 
                 $base64Id = base64_encode($staffId);
-                $idEncrypted = Crypt::encrypt($base64Id);
+                $pstaffidEncrypted = Crypt::encrypt($base64Id);
             }
 
             // echo "<pre>";
             // print_r($workingDoctors);
             // echo "</pre>";
             // exit;
-            return view($dashboardView, compact('workingDoctors', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients', 'totalUniquePatients', 'malePatientsCount', 'femalePatientsCount', 'newPatientsCount', 'followupPatientsCount', 'currentappointments', 'idEncrypted'));
+
+            return view($dashboardView, compact('workingDoctors', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients', 'totalUniquePatients', 'malePatientsCount', 'femalePatientsCount', 'newPatientsCount', 'followupPatientsCount', 'currentappointments', 'pstaffidEncrypted', 'childrenCount', 'otherCount'));
 
         } else {
             $countries = Country::all();
