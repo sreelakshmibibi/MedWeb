@@ -11,6 +11,12 @@ use Yajra\DataTables\DataTables as DataTables;
 
 class TreatmentCostController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:treatment_cost', ['only' => ['index', 'store', 'update', 'edit', 'destroy']]);
+        
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -48,14 +54,6 @@ class TreatmentCostController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(TreatmentCostRequest $request)
@@ -79,14 +77,6 @@ class TreatmentCostController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to create treatment cost : '.$e->getMessage());
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(TreatmentType $treatmentType)
-    {
-        //
     }
 
     /**

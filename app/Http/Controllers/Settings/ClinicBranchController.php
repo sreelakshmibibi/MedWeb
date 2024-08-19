@@ -16,6 +16,11 @@ use Yajra\DataTables\DataTables;
 
 class ClinicBranchController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:clinics', ['only' => ['index', 'create', 'store', 'update', 'edit', 'destroy']]);
+        
+    }
     /**
      * Display a listing of the resource.m
      */
@@ -188,13 +193,6 @@ class ClinicBranchController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.

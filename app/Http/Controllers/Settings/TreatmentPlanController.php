@@ -11,12 +11,11 @@ use Yajra\DataTables\DataTables;
 class TreatmentPlanController extends Controller
 {
     protected $commonService;
-
-    // public function __construct(CommonService $commonService)
-    // {
-    //     $this->commonService = $commonService;
-    // }
-
+    public function __construct()
+    {
+        $this->middleware('permission:treatment_plan', ['only' => ['index', 'store', 'update', 'edit', 'destroy']]);
+        
+    }
     /**
      * Display a listing of the resource.
      */
@@ -54,14 +53,6 @@ class TreatmentPlanController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(TreatmentPlanRequest $request)
@@ -85,14 +76,6 @@ class TreatmentPlanController extends Controller
             return redirect()->back()->with('error', 'Failed to add plan : ' . $e->getMessage());
         }
 
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**

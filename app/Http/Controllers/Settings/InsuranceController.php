@@ -11,11 +11,11 @@ use Yajra\DataTables\DataTables;
 class InsuranceController extends Controller
 {
     protected $commonService;
-
-    // public function __construct(CommonService $commonService)
-    // {
-    //     $this->commonService = $commonService;
-    // }
+    public function __construct()
+    {
+        $this->middleware('permission:insurance', ['only' => ['index', 'create', 'store', 'update', 'edit', 'destroy']]);
+        
+    }
 
     /**
      * Display a listing of the resource.
@@ -53,13 +53,6 @@ class InsuranceController extends Controller
         return view('settings.insurance.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -85,14 +78,6 @@ class InsuranceController extends Controller
             return redirect()->back()->with('error', 'Failed to add insurance company : ' . $e->getMessage());
         }
 
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**

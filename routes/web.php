@@ -234,7 +234,7 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::get('/leave', [LeaveController::class, 'index'])->name('leave');
     Route::post('/leave/store', [LeaveController::class, 'store'])->name('leave.store');
     Route::get('/leave/{leave}/edit', [LeaveController::class, 'edit'])->name('leave.edit');
-    Route::post('/leave/{leave}/update', [LeaveController::class, 'update'])->name('leave.update');
+    Route::post('/leave/update', [LeaveController::class, 'update'])->name('leave.update');
     Route::delete('/leave/{leave}', [LeaveController::class, 'destroy'])->name('leave.destroy');
     Route::get('/leaveapproval', [LeaveController::class, 'view'])->name('leave.approve');
 });
