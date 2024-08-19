@@ -58,3 +58,24 @@ document
 document
     .getElementById("searchdiseasebtn")
     .addEventListener("click", toggleDiseaseDiv);
+
+// Function to ensure non-negative numbers
+function enforcePositiveNumbers(event) {
+    const input = event.target;
+    if (input.value < 0) {
+        input.value = '';
+    }
+}
+
+// Add event listeners to input fields
+document.getElementById('ageFrom').addEventListener('input', enforcePositiveNumbers);
+document.getElementById('ageTo').addEventListener('input', enforcePositiveNumbers);
+
+document.getElementById('sAgeTo').addEventListener('input', enforcePositiveNumbers);
+document.getElementById('sAgeFrom').addEventListener('input', enforcePositiveNumbers);
+
+document.getElementById('pAgeFrom').addEventListener('input', enforcePositiveNumbers);
+document.getElementById('pAgeTo').addEventListener('input', enforcePositiveNumbers);
+
+
+

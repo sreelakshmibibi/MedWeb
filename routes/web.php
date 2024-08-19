@@ -221,6 +221,11 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/duepayment/paymentReceipt', [PaymentController::class, 'paymentReceipt'])->name('duePayment.paymentReceipt');
 
     Route::get('/report', [ReportController::class, 'index'])->name('report');
+    Route::post('/report/collection', [ReportController::class, 'collection'])->name('report.collection');
+    Route::post('/report/income', [ReportController::class, 'income'])->name('report.income');
+    Route::post('/report/service', [ReportController::class, 'service'])->name('report.service');
+    Route::post('/report/patient', [ReportController::class, 'patient'])->name('report.patient');
+    Route::post('/report/disease', [ReportController::class, 'disease'])->name('report.disease');
 
     Route::get('/appointments-by-hour', [App\Http\Controllers\HomeController::class, 'getAppointmentsByHour'])->name('appointments-by-hour');
     Route::get('/appointments-by-month', [App\Http\Controllers\HomeController::class, 'getAppointmentsByMonth'])->name('appointments-by-month');
