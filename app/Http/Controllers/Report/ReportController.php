@@ -9,6 +9,7 @@ use App\Models\AppointmentType;
 use App\Models\ClinicBranch;
 use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
+use App\Services\ReportService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -23,22 +24,73 @@ class ReportController extends Controller
      */
     public function index(Request $request)
     {
-
-        return view('report.index');
+        $reportService = new ReportService();
+        $treatments = $reportService->getTreatments();
+        $treatmentPlans = $reportService->getTreatmentPlans();
+        $diseases = $reportService->getDiseases();
+        $doctors = $reportService->getDoctors();
+        $branches = $reportService->getBranches();
+        $staffs = $reportService->getStaff();
+        $billStaffs = $reportService->getBillStaff();
+        $comboOffers = $reportService->getComboOffers();
+        $years = $reportService->getYears();
+        return view('report.index', compact('treatments', 'treatmentPlans', 'diseases', 'doctors', 'branches', 'staffs', 'billStaffs', 'comboOffers', 'years'));
     }
 
+
+
     /**
-     * Store a newly created resource in storage.
+     * Report Collection.
      */
-    public function store(Request $request)
+    public function collection(Request $request)
     {
+        echo "collection";
+        exit;
+    }
+
+     /**
+     * Report Collection.
+     */
+    public function income(Request $request)
+    {
+        echo "income";
+        exit;
 
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Report Collection.
      */
+    public function service(Request $request)
+    {
+        echo "service";
+        exit;
+    }
+
+    /**
+     * Report Collection.
+     */
+    public function patient(Request $request)
+    {
+        echo "patient";
+        exit;
+    }
+
+    /**
+     * Report Collection.
+     */
+    public function disease(Request $request)
+    {
+        echo "disease";
+        exit;
+
+    }
 
 
+
+    
+
+
+    
 
 }

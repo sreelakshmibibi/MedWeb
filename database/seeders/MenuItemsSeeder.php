@@ -55,6 +55,7 @@ class MenuItemsSeeder extends Seeder
             'delete menu item',
             'generate bill',
             'receive payment',
+            'reports'
         ];
 
         foreach ($permissions as $permission) {
@@ -87,6 +88,7 @@ class MenuItemsSeeder extends Seeder
             'update user',
             'generate bill',
             'receive payment',
+            'reports'
         ];
 
         $admin->syncPermissions($adminPermissions);
@@ -151,8 +153,8 @@ class MenuItemsSeeder extends Seeder
 
         $reports = MenuItem::create([
             'name' => 'Reports',
-            'url' => '#',
-            'route_name' => '#',
+            'url' => '/report',
+            'route_name' => 'report',
             'icon' => 'fa-solid fa-file-lines',
             'order_no' => 5,
         ]);

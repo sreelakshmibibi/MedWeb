@@ -1,121 +1,137 @@
-<div class="box no-border mb-2">
-    <div class="box-header p-0">
-        <div class="d-flex align-items-center justify-content-between">
-            <h4 class="box-title ">
-                Income Report
-            </h4>
+<form method="post" action="{{ route('report.income')}}">
+@csrf
+    <div class="box no-border mb-2">
+        <div class="box-header p-0">
+            <div class="d-flex align-items-center justify-content-between">
+                <h4 class="box-title ">
+                    Income Report
+                </h4>
 
-            <button type='button'
-                class='waves-effect waves-light btn btn-circle btn-secondary btn-treatment-pdf-generate btn-xs mt-0 mb-2'
-                title='Download & Print Treatment Summary'><i class='fa fa-download'></i></button>
+                <button type='button'
+                    class='waves-effect waves-light btn btn-circle btn-secondary btn-treatment-pdf-generate btn-xs mt-0 mb-2'
+                    title='Download & Print Treatment Summary'><i class='fa fa-download'></i></button>
+            </div>
+        </div>
+        <div class="box-body px-0 ">
+            <div class="row">
+                <p class="text-warning">
+                    * Select <b class="text-decoration-underline">From & To</b> or <b
+                        class="text-decoration-underline">Month & Year</b> or
+                    <b class="text-decoration-underline">Year Only</b> for getting
+                    corresponding reports
+                </p>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label class="form-label" for="fromdate">From </label>
+                        <input type="date" class="form-control" id="fromdate" name="fromdate"
+                            value="<?php echo date('Y-m-d'); ?>" required>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label class="form-label" for="todate">To </label>
+                        <input type="date" class="form-control" id="todate" name="todate" value="<?php echo date('Y-m-d'); ?>"
+                            required>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label class="form-label" for="month">Month</label>
+                        <select class="form-control " type="text" id="month" name="month">
+                            <option value="">All</option>
+                            <option value="01">January</option>
+                            <option value="02">February</option>
+                            <option value="03">March</option>
+                            <option value="04">April</option>
+                            <option value="05">May</option>
+                            <option value="06">June</option>
+                            <option value="07">July</option>
+                            <option value="08">August</option>
+                            <option value="09">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label class="form-label" for="year">Year</label>
+                        <select class="form-control " type="text" id="year" name="year">
+                            <option value="">All</option>
+                            @for( $i=0; $i<sizeof($years); $i++)
+                            <option value="{{$years[$i]}}" <?php if ($years[$i] == date('Y')) { echo "selected";} ?> >{{$years[$i]}}</option>
+                            @endfor
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="box-footer p-3 px-0 text-end bb-1" style="border-radius: 0px;">
+            <button type="submit" class="btn btn-success" id="searchincomebtn">
+                <i class="fa fa-search"></i> Search
+            </button>
         </div>
     </div>
-    <div class="box-body px-0 ">
-        <div class="row">
-            <p class="text-warning">
-                * Select <b class="text-decoration-underline">From & To</b> or <b
-                    class="text-decoration-underline">Month & Year</b> or
-                <b class="text-decoration-underline">Year Only</b> for getting
-                corresponding reports
-            </p>
+    <div class="incomediv" style="display: none">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped mb-0 data-table text-center">
+                <thead class="bg-primary-light">
+                    <tr>
+                        <th width="10px">No</th>
+                        <th>Patient ID</th>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Phone Number</th>
+                        <th>Last Appointment Date</th>
+                        <th>Upcoming (if any)</th>
+                        <th width="20px">Status</th>
+                        <th width="170px">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td width="10px">1</td>
+                        <td>Patient ID</td>
+                        <td>Name</td>
+                        <td>Gender</th>
+                        <td>Phone Number</th>
+                        <td>Last Appointment Date</td>
+                        <td>Upcoming (if any)</td>
+                        <td width="20px">Status</td>
+                        <td width="170px">Action</td>
+                    </tr>
+                    <tr>
+                        <td width="10px">1</td>
+                        <td>Patient ID</td>
+                        <td>Name</td>
+                        <td>Gender</th>
+                        <td>Phone Number</th>
+                        <td>Last Appointment Date</td>
+                        <td>Upcoming (if any)</td>
+                        <td width="20px">Status</td>
+                        <td width="170px">Action</td>
+                    </tr>
+                    <tr>
+                        <td width="10px">1</td>
+                        <td>Patient ID</td>
+                        <td>Name</td>
+                        <td>Gender</th>
+                        <td>Phone Number</th>
+                        <td>Last Appointment Date</td>
+                        <td>Upcoming (if any)</td>
+                        <td width="20px">Status</td>
+                        <td width="170px">Action</td>
+                    </tr>
+
+                </tbody>
+            </table>
         </div>
-        <div class="row">
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label class="form-label" for="fromdate">From </label>
-                    <input type="date" class="form-control" id="fromdate" name="fromdate"
-                        value="<?php echo date('Y-m-d'); ?>" required>
-                </div>
-            </div>
-
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label class="form-label" for="todate">To </label>
-                    <input type="date" class="form-control" id="todate" name="todate" value="<?php echo date('Y-m-d'); ?>"
-                        required>
-                </div>
-            </div>
-
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label class="form-label" for="month">Month</label>
-                    <select class="form-control " type="text" id="month" name="month">
-                        <option value="">All</option>
-                        <option value="1">Admin</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label class="form-label" for="year">Year</label>
-                    <select class="form-control " type="text" id="year" name="year">
-                        <option value="">All</option>
-                        <option value="1">Admin</option>
-                    </select>
-                </div>
-            </div>
-
-        </div>
     </div>
-    <div class="box-footer p-3 px-0 text-end bb-1" style="border-radius: 0px;">
-        <button type="submit" class="btn btn-success" id="searchincomebtn">
-            <i class="fa fa-search"></i> Search
-        </button>
-    </div>
-</div>
-<div class="incomediv" style="display: none">
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover table-striped mb-0 data-table text-center">
-            <thead class="bg-primary-light">
-                <tr>
-                    <th width="10px">No</th>
-                    <th>Patient ID</th>
-                    <th>Name</th>
-                    <th>Gender</th>
-                    <th>Phone Number</th>
-                    <th>Last Appointment Date</th>
-                    <th>Upcoming (if any)</th>
-                    <th width="20px">Status</th>
-                    <th width="170px">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td width="10px">1</td>
-                    <td>Patient ID</td>
-                    <td>Name</td>
-                    <td>Gender</th>
-                    <td>Phone Number</th>
-                    <td>Last Appointment Date</td>
-                    <td>Upcoming (if any)</td>
-                    <td width="20px">Status</td>
-                    <td width="170px">Action</td>
-                </tr>
-                <tr>
-                    <td width="10px">1</td>
-                    <td>Patient ID</td>
-                    <td>Name</td>
-                    <td>Gender</th>
-                    <td>Phone Number</th>
-                    <td>Last Appointment Date</td>
-                    <td>Upcoming (if any)</td>
-                    <td width="20px">Status</td>
-                    <td width="170px">Action</td>
-                </tr>
-                <tr>
-                    <td width="10px">1</td>
-                    <td>Patient ID</td>
-                    <td>Name</td>
-                    <td>Gender</th>
-                    <td>Phone Number</th>
-                    <td>Last Appointment Date</td>
-                    <td>Upcoming (if any)</td>
-                    <td width="20px">Status</td>
-                    <td width="170px">Action</td>
-                </tr>
-
-            </tbody>
-        </table>
-    </div>
-</div>
+</form>
