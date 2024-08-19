@@ -44,7 +44,6 @@ class DepartmentController extends Controller
                     return $btn1;
                 })
                 ->addColumn('action', function ($row) {
-
                     $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
                         data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
                         <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-del btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">

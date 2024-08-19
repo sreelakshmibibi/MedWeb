@@ -11,6 +11,11 @@ use Yajra\DataTables\DataTables as DataTables;
 
 class ComboOfferController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:combo_offers', ['only' => ['index', 'store', 'update', 'edit', 'destroy']]);
+        
+    }
     /**
      * Display a listing of the resource.
      */
@@ -57,13 +62,6 @@ class ComboOfferController extends Controller
         return view('settings.combo_offer.index', compact('treatments'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -93,13 +91,6 @@ class ComboOfferController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(TreatmentComboOffer $treatmentComboOffer)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.

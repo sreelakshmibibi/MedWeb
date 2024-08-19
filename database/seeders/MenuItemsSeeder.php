@@ -26,7 +26,7 @@ class MenuItemsSeeder extends Seeder
             'view_dashboard',
             'manage_appointments',
             'staff_list',
-            'staff_details',
+            'leave',
             'apply leave',
             'approve leave',
             'patient_list',
@@ -34,6 +34,7 @@ class MenuItemsSeeder extends Seeder
             'patients',
             'clinics',
             'departments',
+            'diseases',
             'medicines',
             'treatment_cost',
             'combo_offers',
@@ -47,6 +48,7 @@ class MenuItemsSeeder extends Seeder
             'create permission',
             'update permission',
             'delete permission',
+            'users',
             'view user',
             'create user',
             'update user',
@@ -57,7 +59,8 @@ class MenuItemsSeeder extends Seeder
             'delete menu item',
             'generate bill',
             'receive payment',
-            'reports'
+            'reports',
+            'change user status',
         ];
 
         foreach ($permissions as $permission) {
@@ -70,12 +73,13 @@ class MenuItemsSeeder extends Seeder
             'view_dashboard',
             'manage_appointments',
             'staff_list',
-            'staff_details',
+            'leave',
             'patient_list',
             'patient_details',
             'patients',
             'clinics',
             'departments',
+            'diseases',
             'medicines',
             'treatment_cost',
             'combo_offers',
@@ -93,7 +97,9 @@ class MenuItemsSeeder extends Seeder
             'reports',
             'apply leave',
             'approve leave',
+            'change user status',
         ];
+
 
         $admin->syncPermissions($adminPermissions);
 
@@ -105,6 +111,7 @@ class MenuItemsSeeder extends Seeder
             'patients',
             'medicines',
             'staff_list',
+            'leave',
             'insurance',
             'treatment_plan',
             'apply leave',
@@ -114,6 +121,7 @@ class MenuItemsSeeder extends Seeder
             'view_dashboard',
             'patient_list',
             'patient_details',
+            'leave',
             'apply leave',
         ]);
 
@@ -122,6 +130,7 @@ class MenuItemsSeeder extends Seeder
             'manage_appointments',
             'patient_list',
             'receive payment',
+            'leave',
             'apply leave',
         ]);
 

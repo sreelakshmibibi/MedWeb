@@ -25,10 +25,21 @@ use Yajra\DataTables\DataTables;
 use Illuminate\Support\Str;
 use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
 class StaffListController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:staff_list', ['only' => ['index']]);
+        $this->middleware('permission:view user', ['only' => ['view']]);
+        $this->middleware('permission:create user', ['only' => ['create', 'store']]);
+        $this->middleware('permission:update user', ['only' => ['update', 'edit']]);
+        $this->middleware('permission:delete user', ['only' => ['destroy']]);
+        $this->middleware('permission:change user status', ['only' => ['changeStatus']]);
+        
+    }
     /**
      * Display a listing of the resource.
      */
@@ -48,19 +59,6 @@ class StaffListController extends Controller
                 })
                 ->addColumn('role', function ($row) {
                     $role = '';
-                    // if ($row->user->is_doctor) {
-                    //     $role .= '<span class="d-block  badge badge-success-light mb-1">Doctor</span>';
-                    // }
-                    // if ($row->user->is_nurse) {
-                    //     $role .= '<span class="d-block  badge badge-warning-light mb-1">Nurse</span>';
-                    // }
-                    // if ($row->user->is_admin) {
-                    //     $role .= '<span class="d-block  badge badge-primary-light mb-1">Admin</span>';
-                    // }
-                    // if ($row->user->is_reception) {
-                    //     $role .= '<span class="d-block  badge badge-info-light mb-1">Others</span>';
-                    // }
-    
                     if ($row->user->is_doctor) {
                         $role .= '<span class="d-block  badge badge-success mb-1">Doctor</span>';
                     }
@@ -87,10 +85,20 @@ class StaffListController extends Controller
                 ->addColumn('action', function ($row) {
                     $base64Id = base64_encode($row->id);
                     $idEncrypted = Crypt::encrypt($base64Id);
-                    $btn = '<a href="' . route('staff.staff_list.view', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
-                    $btn .= '<a href="' . route('staff.staff_list.edit', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
-                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
-                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete"><i class="fa-solid fa-trash"></i></button>';
+                    $btn = null;
+                    if (Auth::user()->hasPermissionTo('view user')) {
+                        $btn = '<a href="' . route('staff.staff_list.view', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
+                    }
+                    if (Auth::user()->hasPermissionTo('update user')) {
+                        $btn .= '<a href="' . route('staff.staff_list.edit', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
+                    
+                    }
+                    if (Auth::user()->hasPermissionTo('change user status')) {
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
+                    }
+                    if (Auth::user()->hasPermissionTo('delete user')) { 
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete"><i class="fa-solid fa-trash"></i></button>';
+                    }
                     return $btn;
                 })
                 ->rawColumns(['name', 'role', 'status', 'action'])

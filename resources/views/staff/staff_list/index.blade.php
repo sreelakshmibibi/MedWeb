@@ -23,9 +23,10 @@
                     <h3 class="page-title">Staff List</h3>
                     {{-- <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
                         data-bs-target="#modal-right"> <i class="fa fa-add"></i> Add New</button> --}}
-                    <a type="button" class="waves-effect waves-light btn btn-primary"
+                    @if (Auth::user()->hasPermissionTo('create user')) 
+                        <a type="button" class="waves-effect waves-light btn btn-primary"
                         href="{{ route('staff.staff_list.create') }}"> <i class="fa fa-add"></i> Add New</a>
-
+                    @endif
                 </div>
             </div>
 

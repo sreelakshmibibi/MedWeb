@@ -22,7 +22,7 @@
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Leave Details</h3>
                     <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
-                        data-bs-target="#modal-right"> <i class="fa fa-add"></i> Add New</button>
+                        data-bs-target="#modal-right"> <i class="fa fa-add"></i> Apply Leave</button>
                 </div>
             </div>
 
@@ -35,17 +35,18 @@
                                 <thead class="bg-primary-light">
                                     <tr>
                                         <th width="10px">No</th>
-                                        <th>Leave Type</th>
-                                        <th>From</th>
-                                        <th>To</th>
-                                        <th>Days</th>
-                                        <th>Reason</th>
+                                        @if (Auth::user()->can('approve leave'))
+                                            <th width="20%">Staff</th>
+                                        @endif
+                                        <th width="15%">Leave Type</th>
+                                        <th width="25%">Dates (Days)</th>
+                                        <th width="30%">Reason</th>
                                         <th width="20px">Status</th>
                                         <th width="80px">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Populate table rows with department data -->
+                                    <!-- Populate table rows with leave data -->
                                 </tbody>
                             </table>
                         </div>
@@ -70,7 +71,7 @@
             table = $(".data-table").DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('settings.medicine') }}",
+                ajax: "{{ route('leave') }}",
                 columns: [{
                         data: "DT_RowIndex",
                         name: "DT_RowIndex",
@@ -81,26 +82,26 @@
                             return meta.row + 1; // Adding 1 to start counting from 1
                         },
                     },
+                    <?php if (Auth::user()->can('approve leave')) { ?>
                     {
-                        data: "Leave Type",
-                        name: "Leave Type",
+                        data:"staff",
+                        name:"staff",
+                        className: "text-left",
+                    },
+                    <?php  } ?>
+                    {
+                        data: "leave_type",
+                        name: "leave_type",
                         className: "text-left",
                     },
                     {
-                        data: "from",
-                        name: "from",
+                        data: "leave_applied_dates",
+                        name: "leave_applied_dates",
                     },
+                   
                     {
-                        data: "to",
-                        name: "to",
-                    },
-                    {
-                        data: "Days",
-                        name: "Days",
-                    },
-                    {
-                        data: "Reason",
-                        name: "Reason",
+                        data: "leave_reason",
+                        name: "leave_reason",
                         className: "text-left",
                     },
                     {
@@ -118,5 +119,58 @@
                 ],
             });
         });
+        jQuery(function($) {
+            $(document).on('click', '.btn-edit', function() {
+                var leaveId = $(this).data('id');
+                $('#edit_leave_id').val(leaveId); // Set department ID in the hidden input
+                $.ajax({
+                    url: '{{ url("leave") }}' + "/" + leaveId + "/edit",
+                    method: 'GET',
+                    success: function(response) {
+                        $('#editleave_id').val(response.id);
+                        $('#editleave_type').val(response.leave_type);
+                        $('#editleave_from').val(response.leave_from);
+                        $('#editleave_to').val(response.leave_to);
+                        $('#editreason').val(response.leave_reason);
+                        // $('#modal-edit').modal('show');
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+
+            $(document).on('click', '.btn-danger', function() {
+                console.log('hi');
+                var leaveId = $(this).data('id');
+                $('#delete_leave_id').val(leaveId); // Set department ID in the hidden input
+                $('#modal-delete').modal('show');
+            });
+
+            $('#btn-confirm-delete').click(function() {
+                var leaveId = $('#delete_leave_id').val();
+                var url = "{{ route('leave.destroy', ':leave') }}";
+                url = url.replace(':leave', leaveId);
+                $.ajax({
+                    type: 'DELETE',
+                    url: url,
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        table.draw(); // Refresh DataTable
+                        $('#successMessage').text('Leave applicaton deleted successfully');
+                        $('#successMessage').fadeIn().delay(3000)
+                            .fadeOut(); // Show for 3 seconds
+                    },
+                    error: function(xhr) {
+                        $('#modal-delete').modal('hide');
+                        swal("Error!", xhr.responseJSON.message, "error");
+                    }
+                });
+            });
+        });
+
+
     </script>
 @endsection
