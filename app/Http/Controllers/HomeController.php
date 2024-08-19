@@ -140,7 +140,9 @@ class HomeController extends Controller
             $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors(null, $currentDayName);
             $totalPatients = PatientProfile::where('status', 'Y')->count(); // Replace with your actual logic to get the total
             $totalStaffs = StaffProfile::where('status', 'Y')->count();
-            $totalDoctors = StaffProfile::where('status', 'Y')->whereNot('license_number', null)->count();
+            // $totalDoctors = StaffProfile::where('status', 'Y')->whereNot('license_number', null)->count();
+            $totalDoctors = StaffProfile::where('status', 'Y')->whereNot('specialization', null)->count();
+
             $totalOthers = $totalStaffs - $totalDoctors;
             $totalTreatments = ToothExamination::distinct('treatment_id')->count('treatment_id');
 

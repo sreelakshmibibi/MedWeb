@@ -20,6 +20,7 @@
 }
 .dashboardpatients {
     height: 218px;
+    overflow: scroll;
 }
 .dashboardchart {
     height: 250px;
@@ -88,6 +89,22 @@
     }
     .staffview_header {
         width: 100%;
+    }
+    .invoice-details {
+        flex-direction: column;
+        gap: 0.1rem;
+        gap: 0.2rem;
+    }
+    .invoice-details.flexbox > * {
+        margin-left: 0;
+    }
+    .doctodaydash {
+        flex-direction: column;
+        gap: 2px;
+    }
+    .dashboarddoclistdiv {
+        flex-direction: column;
+        gap: 2px;
     }
 }
 

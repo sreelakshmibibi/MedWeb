@@ -51,10 +51,10 @@ use Illuminate\Support\Facades\Crypt;
                                     <div class="box-body">
                                         <h4>New Patients</h4>
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <h2 class="fs-40 my-0">{{ $newPatientsCount }}</h2>
+                                            <h2 class="fs-40 my-0 countnm">{{ $newPatientsCount }}</h2>
                                             <div>
                                                 <span
-                                                    class="badge badge-pill 
+                                                    class="badge badge-pill
                                                 {{ $newPatientsCount >= $followupPatientsCount ? 'badge-success-light' : 'badge-danger-light' }}">
                                                     <i
                                                         class="fa me-10 {{ $newPatientsCount >= $followupPatientsCount ? 'fa-angle-up' : 'fa-angle-down' }}"></i>
@@ -67,7 +67,7 @@ use Illuminate\Support\Facades\Crypt;
                                     <div class="box-body">
                                         <h4>Old Patients</h4>
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <h2 class="fs-40 my-0">{{ $followupPatientsCount }}</h2>
+                                            <h2 class="fs-40 my-0 countnm">{{ $followupPatientsCount }}</h2>
                                             <div>
                                                 <span
                                                     class="badge badge-pill {{ $followupPatientsCount >= $newPatientsCount ? 'badge-success-light' : 'badge-danger-light' }}">
@@ -100,7 +100,7 @@ use Illuminate\Support\Facades\Crypt;
                                                 <?= date('g:i A', strtotime($currentappointment->app_time)) ?>
                                             </div>
                                             <div
-                                                class="w-p100 p-10 rounded10 justify-content-between align-items-center d-flex bg-lightest">
+                                                class="w-p100 p-10 rounded10 justify-content-between align-items-center d-flex bg-lightest doctodaydash">
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <span title="Token No"
                                                         class="me-10 avatar bg-primary-light rounded-circle b-1 text-bold">
@@ -114,7 +114,7 @@ use Illuminate\Support\Facades\Crypt;
                                                             <?= $currentappointment->app_id ?></p>
                                                     </div>
                                                 </div>
-                                                <div>
+                                                <div class="d-flex dashboardbtnwrapper">
                                                     <a href=''
                                                         class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1'
                                                         title='treatment'><i class='fa-solid fa-stethoscope'></i></a>

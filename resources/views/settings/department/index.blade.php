@@ -21,8 +21,13 @@
                 @endif
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Department Details</h3>
+                    {{-- <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#modal-right"> <i class="fa fa-add"></i> Add New</button> --}}
                     <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
-                        data-bs-target="#modal-right"> <i class="fa fa-add"></i> Add New</button>
+                        data-bs-target="#modal-right" title="Add New">
+                        <span class="hidden-sm-up">Add New</span>
+                        <span class="hidden-xs-down"><i class="fa fa-add"></i> Add New</span>
+                    </button>
                 </div>
             </div>
 
@@ -30,7 +35,7 @@
                 <div class="box">
                     <div class="box-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover table-striped mb-0 data-table">
+                            <table width="100%" class="table table-bordered table-hover table-striped mb-0 data-table">
                                 <thead class="bg-primary-light text-center">
                                     <tr>
                                         <th width="10px">No</th>

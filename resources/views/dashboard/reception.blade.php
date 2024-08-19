@@ -51,7 +51,7 @@ use Illuminate\Support\Facades\Crypt;
                                     <div class="box-body">
                                         <h4>New Patients</h4>
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <h2 class="fs-40 my-0">{{ $newPatientsCount }}</h2>
+                                            <h2 class="fs-40 my-0 countnm">{{ $newPatientsCount }}</h2>
                                             <div>
                                                 <span
                                                     class="badge badge-pill 
@@ -67,7 +67,7 @@ use Illuminate\Support\Facades\Crypt;
                                     <div class="box-body">
                                         <h4>Old Patients</h4>
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <h2 class="fs-40 my-0">{{ $followupPatientsCount }}</h2>
+                                            <h2 class="fs-40 my-0 countnm">{{ $followupPatientsCount }}</h2>
                                             <div>
                                                 <span
                                                     class="badge badge-pill {{ $followupPatientsCount >= $newPatientsCount ? 'badge-success-light' : 'badge-danger-light' }}">
@@ -92,7 +92,7 @@ use Illuminate\Support\Facades\Crypt;
 
                                     @if ($workingDoctors->isNotEmpty())
                                         @foreach ($workingDoctors as $workingDoctor)
-                                            <div class="d-flex align-items-center mb-30">
+                                            <div class="d-flex align-items-center mb-30 dashboarddoclistdiv">
                                                 <div class="me-15">
                                                     @if ($workingDoctor->user->staffProfile->photo != '')
                                                         <img src="{{ asset('storage/' . $workingDoctor->user->staffProfile->photo) }}"

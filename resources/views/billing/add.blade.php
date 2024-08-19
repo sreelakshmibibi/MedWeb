@@ -22,7 +22,7 @@ date_default_timezone_set('Asia/Kolkata');
                     $idEncrypted = Crypt::encrypt($base64Id);
                     ?>
 
-                    <div>
+                    <div class="d-flex hbuttondiv">
                         <?php if ($hasPrescriptionBill) { ?>
                         <button type='button' id="prescPrintPayment1"
                             class='waves-effect waves-light btn btn-warning btn-circle btn-xs me-1'
