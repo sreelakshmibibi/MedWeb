@@ -6,7 +6,7 @@
         <div class="container-full">
             <div class="content-header">
                 <div id="successMessage" style="display:none;" class="alert alert-success">
-                    
+
                 </div>
 
                 <div class="d-flex align-items-center justify-content-between">
@@ -60,8 +60,9 @@
                     table.ajax.reload();
                 },
             });
-            var initialDate = $("#billing_paginator").datepaginator("getDate");
-            selectedDate = moment(initialDate).format("YYYY-MM-DD")
+            // var initialDate = $("#billing_paginator").datepaginator("getDate");
+            // selectedDate = moment(initialDate).format("YYYY-MM-DD")
+            selectedDate = moment().format("YYYY-MM-DD");
         });
 
         jQuery(function($) {
@@ -176,5 +177,47 @@
             });
         });
 
+        $(document).on('click', '.printTreatmentBillbtn', function() {
+            // $('.printTreatmentBillbtn').click(function() {
+            var billId = $(this).data('id');
+            var appointmentId = $(this).data('appid');
+            var receiptRoute = "{{ route('billing.paymentReceipt') }}";
+            // AJAX request to generate the PDF
+            fetch('/billing/paymentReceipt', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document
+                            .querySelector('meta[name="csrf-token"]')
+                            .getAttribute("content"),
+                    },
+                    body: JSON.stringify({
+                        billId: billId,
+                        appointmentId: appointmentId,
+                    }),
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.pdfUrl) {
+                        // Open the PDF in a new window and trigger print dialog
+                        var printWindow = window.open(data.pdfUrl, "_blank");
+                        printWindow.addEventListener("load", function() {
+                            printWindow.print();
+                        });
+
+                        // Redirect after printing
+                        printWindow.addEventListener("afterprint", function() {
+                            window.location.href = "{{ route('billing') }}";
+                        });
+                    } else {
+                        alert("Failed to generate PDF.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
+        });
+
+        $(document).on('click', '.printMedicineBillbtn', function() {});
     </script>
 @endsection

@@ -152,6 +152,8 @@ class PatientListRequest extends FormRequest
             'allergies' => ['nullable', 'string'],
             'pregnant' => ['nullable', 'string'],
             'temperature' => ['nullable', 'numeric', 'min:90', 'max:110'],
+            'paymode' => ['nullable', 'string', 'in:Cash,Card,GPay'],
+            'regfee' => ['nullable', 'numeric', 'min:0'],
         ];
     }
 

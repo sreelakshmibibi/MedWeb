@@ -1,6 +1,11 @@
 var table; // Define table variable in the global scope
 
 jQuery(function ($) {
+    // Check if DataTable is already initialized
+    if ($.fn.DataTable.isDataTable(".data-table")) {
+        // Destroy existing DataTable instance
+        $(".data-table").DataTable().destroy();
+    }
     table = $(".data-table").DataTable({
         processing: true,
         serverSide: true,

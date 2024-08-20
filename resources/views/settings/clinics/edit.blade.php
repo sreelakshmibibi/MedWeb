@@ -33,7 +33,7 @@
                         </div>
 
                         <div class="form-group mt-2">
-                            <label class="form-label col-md-6" for="branch">Is main branch?</label>
+                            <label class="form-label col-md-6" for="edit_yes">Is main branch?</label>
                             <input name="edit_branch_active" type="radio" class="form-control with-gap" id="edit_yes"
                                 value="Y">
                             <label for="edit_yes">Yes</label>
@@ -44,7 +44,7 @@
                         </div>
 
                         <div class="form-group mt-2">
-                            <label class="form-label col-md-6" for="branch">Is medicine provided?</label>
+                            <label class="form-label col-md-6" for="edit_medicine_yes">Is medicine provided?</label>
                             <input name="edit_is_medicine_provided" type="radio" class="form-control with-gap"
                                 id="edit_medicine_yes" value="Y">
                             <label for="edit_medicine_yes">Yes</label>

@@ -33,7 +33,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="doctor">Doctor</label>
+                                    <label class="form-label" for="edit_doctor">Doctor</label>
                                     <input type="text" class="form-control" id="edit_doctor" name="edit_doctor"
                                         required style="width: 100%;" readonly>
 

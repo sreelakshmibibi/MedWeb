@@ -51,10 +51,10 @@ use Illuminate\Support\Facades\Session;
                     <div class="col-xl-8 col-12">
                         <div class="box">
                             <div class="box-body bb-1" style="border-radius: 0px;">
-                                <div class="d-flex align-items-center">
+                                <div class="d-flex align-items-center treat_personal_info_div">
                                     <img src="{{ asset('images/svg-icon/user.svg') }}" alt="photo"
-                                        class="bg-success rounded10 me-20 align-self-end h-100">
-                                    <div class="d-flex flex-column flex-grow-1">
+                                        class="bg-success rounded10 me-20 align-self-end h-100 treat_patient_photo">
+                                    <div class="d-flex flex-column flex-grow-1 treat_patient_info">
                                         <a href="#" class="box-title text-muted fw-500 fs-18 mb-2 hover-primary">
                                             <?= str_replace('<br>', ' ', $patientProfile->first_name . ' ' . $patientProfile->last_name) ?><br>
                                             <?= $patientProfile->patient_id ?>
@@ -81,7 +81,7 @@ use Illuminate\Support\Facades\Session;
                                             echo $age; ?>
                                         </span>
                                     </div>
-                                    <div class="d-flex flex-wrap flex-column b-0 w-150">
+                                    <div class="d-flex flex-wrap flex-column b-0 w-150 treat_patient_info">
                                         <p class="mb-1" style="word-break: break-all;"><i
                                                 class="fa-solid fa-envelope text-muted">
                                             </i>

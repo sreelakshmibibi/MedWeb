@@ -14,7 +14,8 @@
                     <div class="container-fluid">
 
                         <div class="form-group">
-                            <label class="form-label" for="treatment">Treatment Name <span class="text-danger">
+                            <label class="form-label" for="edit_treatment_name">Treatment Name <span
+                                    class="text-danger">
                                     *</span></label>
                             <input class="form-control" type="text" id="edit_treatment_name" name="treat_name"
                                 placeholder="Treatment Name" autocomplete="off">
@@ -25,7 +26,7 @@
                             <!-- Treatment Cost -->
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="cost">Cost <span class="text-danger">
+                                    <label class="form-label" for="edit_treatment_cost">Cost <span class="text-danger">
                                             *</span></label>
                                     <input class="form-control" type="text" id="edit_treatment_cost"
                                         name="treat_cost" placeholder="Treatment Cost" autocomplete="off">
@@ -35,7 +36,7 @@
                             <!-- Discount Percentage -->
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="discount_percentage">Discount Percentage</label>
+                                    <label class="form-label" for="edit_discount_percentage">Discount Percentage</label>
                                     <input class="form-control" type="text" id="edit_discount_percentage"
                                         name="discount" placeholder="Discount Percentage" autocomplete="off">
                                     <div id="editDiscountPercentageError" class="invalid-feedback"></div>
@@ -47,7 +48,7 @@
                             <!-- Discount Start Date -->
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="discount_from">Discount From</label>
+                                    <label class="form-label" for="edit_discount_from">Discount From</label>
                                     <input class="form-control" type="date" id="edit_discount_from"
                                         name="discount_from" placeholder="Discount From" autocomplete="off">
                                     <div id="editDiscountFromError" class="invalid-feedback"></div>
@@ -56,7 +57,7 @@
                             <!-- Discount End Date -->
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="discount_to">Discount To</label>
+                                    <label class="form-label" for="edit_discount_to">Discount To</label>
                                     <input class="form-control" type="date" id="edit_discount_to" name="discount_to"
                                         placeholder="Discount To" autocomplete="off">
                                     <div id="editDiscountToError" class="invalid-feedback"></div>

@@ -18,7 +18,7 @@
     </div>
     <div class="col-md-3">
         <div class="form-group">
-            <label class="form-label" for="department">Department <span class="text-danger">
+            <label class="form-label" for="department_id">Department <span class="text-danger">
                     *</span></label>
             <select class="select2" id="department_id" name="department_id" required
                 data-placeholder="Select a Department" style="width: 100%;">

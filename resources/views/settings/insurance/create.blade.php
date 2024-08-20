@@ -12,7 +12,7 @@
                     <div class="container-fluid">
                         <!-- Department Name -->
                         <div class="form-group">
-                            <label class="form-label" for="name">Company Name <span class="text-danger">
+                            <label class="form-label" for="company_name">Company Name <span class="text-danger">
                                     *</span></label>
                             <input class="form-control" type="text" id="company_name" name="company_name"
                                 placeholder="Company Name">

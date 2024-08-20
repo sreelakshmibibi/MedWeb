@@ -18,9 +18,11 @@ use App\Models\History;
 use App\Models\Insurance;
 use App\Models\InsuranceCompany;
 use App\Models\PatientProfile;
+use App\Models\PatientRegistrationFee;
 use App\Models\State;
 use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -50,6 +52,7 @@ class PatientListController extends Controller
                         $name1 = "<a href='#' class='waves-effect waves-light btn-patientidcard-pdf-generate' title='download patient ID' data-app-id='{$row->latestAppointment->id}'
     data-patient-id='{$row->patient_id}'>" . $row->patient_id . '</i></a>';
                     }
+
                     return $name1;
                 })
                 ->addColumn('name', function ($row) {
@@ -166,6 +169,7 @@ class PatientListController extends Controller
         $appointmentStatuses = AppointmentStatus::all(); // Get all appointment statuses
         $clinic = ClinicBasicDetail::first();
         $registrationFees = $clinic->patient_registration_fees;
+
         return view('patient.patient_list.add', compact('countries', 'states', 'cities', 'clinicBranches', 'workingDoctors', 'appointmentStatuses', 'registrationFees'));
 
     }
@@ -346,8 +350,55 @@ class PatientListController extends Controller
                         }
 
                     }
-
+                    $bill_id = $this->generateBillId();
+                    $registrationFee = PatientRegistrationFee::create([
+                        'bill_id' => $bill_id,
+                        'patient_id' => $patient->patient_id,
+                        'amount' => $request->input('regfee'),
+                        'paid_at' => now(),
+                        'payment_method' => $request->input('paymode'),
+                        'status' => 'Y',
+                        'created_by' => auth()->user()->id,
+                        'updated_by' => auth()->user()->id,
+                    ]);
                     DB::commit();
+                    if ($registrationFee) {
+                        // In your controller
+                        //$registrationFees = PatientRegistrationFee::where('patient_id', $patient->patient_id)->get();
+                        $registrationFees = PatientRegistrationFee::with('createdBy')->where('patient_id', $patient->patient_id)->get();
+
+                        $patient1 = PatientProfile::with([
+                            'country:id,country',
+                            'state:id,state',
+                            'city:id,city',
+                        ])
+                            ->where('patient_id', $patient->patient_id)
+                            ->first();
+                        $appointmentDetails = Appointment::with(['patient', 'doctor', 'branch'])
+                            ->find($appointment->id);
+                        $clinicDetails = ClinicBasicDetail::first();
+                        if ($clinicDetails->clinic_logo == '') {
+                            $clinicLogo = 'public/images/logo-It.png';
+                        } else {
+                            $clinicLogo = 'storage/' . $clinicDetails->clinic_logo;
+                        }
+                        // Generate the bill
+                        $pdf = PDF::loadView('pdf.registrationBill_pdf', [
+                            'billDetails' => $registrationFees,
+                            'patient' => $patient1,
+                            'appointment' => $appointmentDetails,
+                            'clinicDetails' => $clinicDetails,
+                            'clinicLogo' => $clinicLogo,
+                            'currency' => $clinicDetails->currency,
+                        ])->setPaper('A5', 'portrait');
+                        
+
+                        // Return the PDF as a download
+                        return response()->json([
+                            'success' => true,
+                            'pdf' => base64_encode($pdf->output()), // Encode the PDF as base64
+                        ]);
+                    }
 
                     return redirect()->route('patient.patient_list')->with('success', 'Patient and appointment added successfully');
 
@@ -374,6 +425,18 @@ class PatientListController extends Controller
 
     }
 
+    public function generateBillId()
+    {
+        $yearMonth = date('Ym'); // Year and Month
+        $latestBill = PatientRegistrationFee::where('bill_id', 'like', $yearMonth . '%')
+            ->orderBy('bill_id', 'desc')
+            ->first();
+        $lastBillId = $latestBill ? intval(substr($latestBill->bill_id, -4)) : 0;
+        $newBillId = $yearMonth . str_pad($lastBillId + 1, 4, '0', STR_PAD_LEFT);
+
+        return $newBillId;
+    }
+
     /**
      * Display the specified resource.
      */
@@ -391,6 +454,7 @@ class PatientListController extends Controller
         $history = $patientProfile->history;
         Session::put('patientId', $patientProfile->patient_id);
         Session::put('appId', $patientProfile->lastAppointment->id);
+
         // Return a view with the PatientProfile data
         return view('patient.patient_list.view_patient', compact('patientProfile', 'appointment', 'history'));
     }

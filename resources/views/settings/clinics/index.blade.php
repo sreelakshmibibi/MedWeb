@@ -49,11 +49,11 @@
                             <!-- Main content -->
                             <section class="content ">
                                 <div class="row d-flex justify-content-between">
-                                    <div class="col-md-6 col-lg-6 col-12">
+                                    <div class="col-md-8 col-lg-6 col-12">
                                         <div class="box">
                                             <div class="box-body pb-0">
                                                 <div class="form-group">
-                                                    <label class="form-label" for="name">Clinic Name <span
+                                                    <label class="form-label" for="clinic_name">Clinic Name <span
                                                             class="text-danger">
                                                             *</span></label>
                                                     <input class="form-control @error('clinic_name') is-invalid @enderror"
@@ -68,7 +68,7 @@
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label class="form-label" for="website">Website</label>
+                                                            <label class="form-label" for="clinic_website">Website</label>
                                                             <input
                                                                 class="form-control @error('clinic_website') is-invalid @enderror"
                                                                 type="url" id="clinic_website" name="clinic_website"
@@ -82,7 +82,7 @@
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label class="form-label" for="name">
+                                                            <label class="form-label" for="yes">
                                                                 Is Insurance available?<span class="text-danger">*</span>
                                                             </label>
                                                             <div>
@@ -109,14 +109,11 @@
                                                 <div class="row">
                                                     <div class="col-md-4">
                                                         <div class="form-group">
-                                                            <label class="form-label"
-                                                                for="tax">Tax (%)
+                                                            <label class="form-label" for="tax">Tax (%)
                                                                 <span class="text-danger">
                                                                     *</span></label>
-                                                            <input
-                                                                class="form-control @error('tax') is-invalid @enderror"
-                                                                type="text" id="tax"
-                                                                name="treatment_tax"
+                                                            <input class="form-control @error('tax') is-invalid @enderror"
+                                                                type="text" id="tax" name="treatment_tax"
                                                                 placeholder="Tax" <?php if($clinicDetails) { ?>
                                                                 value="{{ old('tax', $clinicDetails->tax) }}"
                                                                 <?php }?>>
@@ -127,24 +124,26 @@
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div class="form-group">
-                                                            <label class="form-label" for="treatment_tax">Treatment Tax Included
+                                                            <label class="form-label"
+                                                                for="treatment_tax_included">Treatment Tax Included
                                                                 <span class="text-danger">
                                                                     *</span></label>
                                                             <select
                                                                 class="form-control @error('treatment_tax_included') is-invalid @enderror"
                                                                 type="text" id="treatment_tax_included"
-                                                                name="treatment_tax_included" >
-                                                                    <option value="Y"
-                                                                     <?php if($clinicDetails) { 
-                                                                         if($clinicDetails->treatment_tax_included == 'Y') 
-                                                                        echo "selected";
-                                                                 }?>>Yes</option>
-                                                                    <option value="N" <?php if($clinicDetails) { 
-                                                                         if($clinicDetails->treatment_tax_included == 'N') 
-                                                                        echo "selected";
-                                                                 }?>>No</option>
+                                                                name="treatment_tax_included">
+                                                                <option value="Y" <?php if ($clinicDetails) {
+                                                                    if ($clinicDetails->treatment_tax_included == 'Y') {
+                                                                        echo 'selected';
+                                                                    }
+                                                                } ?>>Yes</option>
+                                                                <option value="N" <?php if ($clinicDetails) {
+                                                                    if ($clinicDetails->treatment_tax_included == 'N') {
+                                                                        echo 'selected';
+                                                                    }
+                                                                } ?>>No</option>
                                                             </select>
-                                                                
+
                                                             @error('treatment_tax_included')
                                                                 <div class="invalid-feedback">{{ $message }}</div>
                                                             @enderror
@@ -152,26 +151,27 @@
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div class="form-group">
-                                                            <label class="form-label"
-                                                                for="currency">Currency<span class="text-danger">
+                                                            <label class="form-label" for="currency">Currency<span
+                                                                    class="text-danger">
                                                                     *</span></label>
-                                                                    <select
+                                                            <select
                                                                 class="form-control @error('currency') is-invalid @enderror"
-                                                                type="text" id="currency"
-                                                                name="currency" >
-                                                                    <option value="₹"
-                                                                     <?php if($clinicDetails) { 
-                                                                         if($clinicDetails->currency == '₹') 
-                                                                        echo "selected";
-                                                                 }?>>₹</option>
-                                                                    <option value="$" <?php if($clinicDetails) { 
-                                                                         if($clinicDetails->currency == '$') 
-                                                                        echo "selected";
-                                                                 }?>>$</option>
-                                                                 <option value="OMR" <?php if($clinicDetails) { 
-                                                                         if($clinicDetails->currency == 'OMR') 
-                                                                        echo "selected";
-                                                                 }?>>OMR</option>
+                                                                type="text" id="currency" name="currency">
+                                                                <option value="₹" <?php if ($clinicDetails) {
+                                                                    if ($clinicDetails->currency == '₹') {
+                                                                        echo 'selected';
+                                                                    }
+                                                                } ?>>₹</option>
+                                                                <option value="$" <?php if ($clinicDetails) {
+                                                                    if ($clinicDetails->currency == '$') {
+                                                                        echo 'selected';
+                                                                    }
+                                                                } ?>>$</option>
+                                                                <option value="OMR" <?php if ($clinicDetails) {
+                                                                    if ($clinicDetails->currency == 'OMR') {
+                                                                        echo 'selected';
+                                                                    }
+                                                                } ?>>OMR</option>
                                                             </select>
                                                             @error('currency')
                                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -238,7 +238,7 @@
                                                 <div class="row">
                                                     <div class="col-lg-10">
                                                         <div class="form-group ">
-                                                            <label class="form-label" for="logo">Logo</label>
+                                                            <label class="form-label" for="clinic_logo">Logo</label>
                                                             <input
                                                                 class="form-control @error('clinic_logo') is-invalid @enderror"
                                                                 type="file" id="clinic_logo" name="clinic_logo"
@@ -264,7 +264,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-4 col-lg-6 col-12">
                                         @include('settings.clinics.branch')
                                     </div>
                                 </div>

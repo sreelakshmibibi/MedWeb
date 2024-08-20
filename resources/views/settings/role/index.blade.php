@@ -9,8 +9,15 @@
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Roles and Permissions</h3>
 
-                    <a type="button" class="waves-effect waves-light btn btn-primary" href="{{ route('home') }}">
-                        <i class="fa-solid fa-angles-left"></i> Back</a>
+                    {{-- <a type="button" class="waves-effect waves-light btn btn-primary" href="{{ route('home') }}">
+                        <i class="fa-solid fa-angles-left"></i> Back</a> --}}
+                    <a type="button" title="Back" class="waves-effect waves-light btn btn-primary"
+                        href="{{ route('home') }}">
+                        <span class="hidden-sm-up">Back</span>
+                        <span class="hidden-xs-down"><i class="fa-solid fa-angles-left"></i> Back</span>
+                    </a>
+
+                    </button>
                 </div>
             </div>
 

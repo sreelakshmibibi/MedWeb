@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Appointment;
 
+use Illuminate\Support\Facades\Crypt;
 use App\Models\City;
 use App\Models\ClinicBasicDetail;
 use App\Models\ClinicBranch;
@@ -46,26 +48,55 @@ class HomeController extends Controller
             ->pluck('count', 'month')
             ->toArray();
 
+        $newlyRegisteredPatients = DB::table('patient_profiles')
+            ->select('patient_id')
+            ->whereMonth('created_at', now()->month)
+            ->pluck('patient_id')
+            ->toArray();
+
+        $firstVisits = DB::table('appointments')
+            ->select('patient_id', DB::raw('MIN(created_at) as first_visit_date'))
+            ->whereIn('patient_id', $newlyRegisteredPatients)
+            ->groupBy('patient_id')
+            ->pluck('first_visit_date', 'patient_id')
+            ->toArray();
+
+        $firstVisitDates = array_values($firstVisits);
+
         $revisitedPatients = DB::table('appointments')
             ->select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as count'))
-            ->whereIn('patient_id', function ($query) {
+            ->whereIn('patient_id', function ($query) use ($newlyRegisteredPatients) {
                 $query->select('patient_id')
                     ->from('appointments')
                     ->groupBy('patient_id')
-                    ->havingRaw('COUNT(*) > 1');
+                    ->havingRaw('COUNT(*) > 1')
+                    ->whereNotIn('patient_id', $newlyRegisteredPatients);
+            })
+            ->orWhere(function ($query) use ($newlyRegisteredPatients, $firstVisitDates) {
+                $query->whereIn('patient_id', $newlyRegisteredPatients)
+                    ->whereNotIn('created_at', $firstVisitDates); // Exclude first visit
             })
             ->groupBy(DB::raw('MONTH(created_at)'))
             ->pluck('count', 'month')
             ->toArray();
+
         $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        $defaultArray = array_fill_keys($months, 0);
+        function mapMonthData($data, $months)
+        {
+            $mappedData = array_fill_keys($months, 0); // Initialize with zeros
+            foreach ($data as $monthIndex => $count) {
+                // Adjust for 1-based index in SQL month and 0-based index in PHP array
+                if (isset($months[$monthIndex - 1])) {
+                    $mappedData[$months[$monthIndex - 1]] = $count;
+                }
+            }
 
-        // Ensure all months are represented
-        $newlyRegisteredData = array_replace(array_fill_keys(array_keys($months), 0), $newlyRegistered);
-        $revisitedPatientsData = array_replace(array_fill_keys(array_keys($months), 0), $revisitedPatients);
+            return $mappedData;
+        }
 
-        // Convert the associative arrays to indexed arrays
-        $newlyRegisteredData = array_values($newlyRegisteredData);
-        $revisitedPatientsData = array_values($revisitedPatientsData);
+        $newlyRegisteredData = mapMonthData($newlyRegistered, $months);
+        $revisitedPatientsData = mapMonthData($revisitedPatients, $months);
         $today = Carbon::today();
         $tenDaysAgo = $today->copy()->subDays(10);
 
@@ -73,10 +104,20 @@ class HomeController extends Controller
             ->select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as total_patients'), DB::raw('SUM(CASE WHEN app_type = 1 THEN 1 ELSE 0 END) as followup_patients'))
             ->where('created_at', '>=', $tenDaysAgo)
             ->groupBy(DB::raw('DATE(created_at)'))
-            ->orderBy(DB::raw('DATE(created_at)'), 'DESC')
+            // ->orderBy(DB::raw('DATE(created_at)'), 'DESC')
+            ->orderBy(DB::raw('DATE(created_at)'), 'ASC')
             ->get();
 
         $dates = $appointmentData->pluck('date')->toArray();
+        // Convert dates to 'dd MMM YYYY' format
+        // $formattedData = $appointmentData->map(function ($item) {
+        //     $item->date = Carbon::parse($item->date)->format('d M Y'); // Format date
+        //     return $item;
+        // });
+
+        // // If you need to get the dates as an array
+        // $dates = $formattedData->pluck('date')->toArray();
+
         $chartTotalPatients = $appointmentData->pluck('total_patients')->toArray();
         $chartfollowupPatients = $appointmentData->pluck('followup_patients')->toArray();
         $role = '';
@@ -85,28 +126,97 @@ class HomeController extends Controller
         $totalDoctors = 0;
         $totalOthers = 0;
         $totalTreatments = 0;
+
+        $totalUniquePatients = 0;
+        $malePatientsCount = 0;
+        $femalePatientsCount = 0;
+        $childrenCount = 0;
+        $otherCount = 0;
+        $newPatientsCount = 0;
+        $followupPatientsCount = 0;
         if ($hasBranches && $hasClinics) {
+            $doctorAvailabilityService = new DoctorAvaialbilityService();
+            $currentDayName = Carbon::now()->englishDayOfWeek;
+            $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors(null, $currentDayName);
+            $totalPatients = PatientProfile::where('status', 'Y')->count(); // Replace with your actual logic to get the total
+            $totalStaffs = StaffProfile::where('status', 'Y')->count();
+            // $totalDoctors = StaffProfile::where('status', 'Y')->whereNot('license_number', null)->count();
+            $totalDoctors = StaffProfile::where('status', 'Y')->whereNot('specialization', null)->count();
+
+            $totalOthers = $totalStaffs - $totalDoctors;
+            $totalTreatments = ToothExamination::distinct('treatment_id')->count('treatment_id');
+
+            $staffProfile = StaffProfile::where('user_id', $user->id)->first();
+            $username = str_replace('<br>', ' ', $user->name);
+            $appointments = null;
+            if ($user->is_doctor) {
+                $appointments = Appointment::where('doctor_id', $user->id)
+                    ->with(['patient', 'doctor', 'branch'])
+                    ->get();
+            } else {
+                $appointments = Appointment::with(['patient', 'doctor', 'branch'])
+                    ->get();
+            }
+
+            // Extract the patients from the appointments
+            $patients = $appointments->pluck('patient')->unique('id');
+            // Extract the patients from the appointments
+            $appointmentstype = $appointments->unique('patient_id');
+
+            // Count the total number of unique patients
+            $totalUniquePatients = $patients->count();
+
+            // Count the number of male and female patients
+            $malePatientsCount = $patients->where('gender', 'M')->count();
+            $femalePatientsCount = $patients->where('gender', 'F')->count();
+
+            // Count the number of children and other patients
+            // Get the current date
+            $today = Carbon::now()->toDateString();
+
+            $childrenCount = $patients->filter(function ($patient) use ($today) {
+                $age = Carbon::parse($patient->date_of_birth)->diffInYears($today);
+                return $age <= 18;
+            })->count();
+            $otherCount = $patients->filter(function ($patient) use ($today) {
+                $age = Carbon::parse($patient->date_of_birth)->diffInYears($today);
+                return $age > 18;
+            })->count();
+
+
+            $newPatientsCount = $appointmentstype->where('app_type', '2')->count();
+            $followupPatientsCount = $appointmentstype->where('app_type', '1')->count();
+            $currentappointments = null;
+            if ($user->is_doctor) {
+                $currentappointments = Appointment::where('doctor_id', $user->id)
+                    ->where('app_status', 1)
+                    ->whereDate('app_date', today())
+                    ->orderBy('token_no') // Order by token_no to get the first three
+                    ->limit(3) // Limit the results to the first three
+                    ->with(['patient', 'doctor', 'branch']) // Eager load relationships
+                    ->get();
+
+            } else {
+                $currentappointments = Appointment::where('app_status', 1)
+                    ->whereDate('app_date', today())
+                    ->orderBy('token_no') // Order by token_no to get the first three
+                    ->limit(3) // Limit the results to the first three
+                    ->with(['patient', 'doctor', 'branch']) // Eager load relationships
+                    ->get();
+            }
             if ($user->is_admin) {
                 $role = 'Admin';
-                $doctorAvailabilityService = new DoctorAvaialbilityService();
-                $currentDayName = Carbon::now()->englishDayOfWeek;
-                $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors(null, $currentDayName);
-                $totalPatients = PatientProfile::where('status', 'Y')->count(); // Replace with your actual logic to get the total
-                $totalStaffs = StaffProfile::where('status', 'Y')->count();
-                $totalDoctors = StaffProfile::where('status', 'Y')->whereNot('license_number', null)->count();
-                $totalOthers = $totalStaffs - $totalDoctors;
                 $dashboardView = 'dashboard.admin';
-                $totalTreatments = ToothExamination::distinct('treatment_id')->count('treatment_id');
 
             } elseif ($user->is_doctor) {
                 $role = 'Doctor';
-                $dashboardView = 'dashboard.admin';
+                $dashboardView = 'dashboard.doctor';
             } elseif ($user->is_nurse) {
                 $role = 'Nurse';
-                $dashboardView = 'dashboard.nurse';
+                $dashboardView = 'dashboard.reception';
             } else {
                 $role = 'User';
-                $dashboardView = 'dashboard.user';
+                $dashboardView = 'dashboard.reception';
             }
 
             //for logo and name as per user entry
@@ -117,20 +227,28 @@ class HomeController extends Controller
 
             // return view($dashboardView);
 
-            $staffDetails = StaffProfile::where('user_id', $user->id)->first();
-            $username = str_replace('<br>', ' ', $user->name);
-
             session(['username' => $username]);
             session(['role' => $role]);
             session(['currency' => $clinicsData->currency]);
             session(['treatmentTax' => $clinicsData->treatment_tax_included]);
 
-            if ($staffDetails) {
-                session(['staffPhoto' => $staffDetails->photo]);
+            // Initialize $idEncrypted
+            $pstaffidEncrypted = '';
+            $staffId = '';
+            if ($staffProfile) {
+                session(['staffPhoto' => $staffProfile->photo]);
+                $staffId = $staffProfile->id;
+
+                $base64Id = base64_encode($staffId);
+                $pstaffidEncrypted = Crypt::encrypt($base64Id);
             }
 
-            // echo "<pre>"; print_r($workingDoctors); echo "</pre>";exit;
-            return view($dashboardView, compact('workingDoctors', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients'));
+            // echo "<pre>";
+            // print_r($workingDoctors);
+            // echo "</pre>";
+            // exit;
+
+            return view($dashboardView, compact('workingDoctors', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients', 'totalUniquePatients', 'malePatientsCount', 'femalePatientsCount', 'newPatientsCount', 'followupPatientsCount', 'currentappointments', 'pstaffidEncrypted', 'childrenCount', 'otherCount'));
 
         } else {
             $countries = Country::all();
@@ -147,4 +265,78 @@ class HomeController extends Controller
 
         }
     }
+
+    // controller method to fetch appointment counts per hour
+    public function getAppointmentsByHour()
+    {
+        $appointments = DB::table('appointments')
+            ->select(DB::raw('HOUR(app_time) as hour'), DB::raw('COUNT(*) as count'))
+            ->whereDate('app_date', '=', now()->toDateString()) // Filter by the current date or your desired date
+            ->groupBy('hour')
+            ->orderBy('hour')
+            ->get();
+
+        return response()->json($appointments);
+    }
+
+    // public function getAppointmentsByMonth()
+    // {
+    //     // Get the current month and year
+    //     $currentMonth = now()->month;
+    //     $currentYear = now()->year;
+
+    //     // Calculate the start and end months for the range
+    //     $startMonth = $currentMonth - 3;
+    //     $endMonth = $currentMonth + 3;
+
+    //     // Adjust the year if crossing year boundaries
+    //     if ($startMonth <= 0) {
+    //         $startMonth += 12;
+    //         $startYear = $currentYear - 1;
+    //     } else {
+    //         $startYear = $currentYear;
+    //     }
+
+    //     if ($endMonth > 12) {
+    //         $endMonth -= 12;
+    //         $endYear = $currentYear + 1;
+    //     } else {
+    //         $endYear = $currentYear;
+    //     }
+
+    //     // Fetch appointment counts within the range
+    //     $appointments = DB::table('appointments')
+    //         ->select(DB::raw('MONTH(app_date) as month'), DB::raw('COUNT(*) as count'))
+    //         ->whereBetween(DB::raw('MONTH(app_date)'), [$startMonth, $endMonth])
+    //         ->whereBetween(DB::raw('YEAR(app_date)'), [$startYear, $endYear])
+    //         ->groupBy('month')
+    //         ->orderBy('month')
+    //         ->get();
+
+    //     return response()->json($appointments);
+    // }
+
+    public function getAppointmentsByMonth()
+    {
+        // Get the current month and year
+        $currentMonth = now()->month;
+        $currentYear = now()->year;
+
+        // Calculate the start month and year (6 months before the current month)
+        $startDate = now()->subMonths(6)->startOfMonth();
+        $endDate = now()->endOfMonth(); // This is the current month
+
+        // Fetch appointment counts within the range
+        $appointments = DB::table('appointments')
+            ->select(DB::raw('MONTH(app_date) as month'), DB::raw('COUNT(*) as count'))
+            ->whereBetween('app_date', [$startDate, $endDate])
+            ->groupBy(DB::raw('MONTH(app_date)'))
+            ->orderBy(DB::raw('MONTH(app_date)'))
+            ->get();
+
+        return response()->json($appointments);
+    }
+
+
+
 }

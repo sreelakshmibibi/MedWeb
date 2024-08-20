@@ -73,7 +73,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="doctor">Doctor</label><span class="text-danger">
+                                    <label class="form-label" for="doctor_id">Doctor</label><span class="text-danger">
                                         *</span>
                                     <select class="form-select" id="doctor_id" name="doctor_id" required
                                         data-placeholder="Select a Doctor" style="width: 100%;">

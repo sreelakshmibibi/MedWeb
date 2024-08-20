@@ -4,6 +4,7 @@
     $username = session('username');
     $role = session('role');
     $staffPhoto = session('staffPhoto');
+    $pstaffidEncrypted = isset($pstaffidEncrypted) ? $pstaffidEncrypted : '';
 @endphp
 <header class="main-header">
     <div class="inside-header">
@@ -43,7 +44,7 @@
                                 <form>
                                     <div class="input-group">
                                         <input type="search" class="form-control" placeholder="Search"
-                                            aria-label="Search" aria-describedby="button-addon2">
+                                            id="searchheader" aria-label="Search" aria-describedby="button-addon2">
                                         <div class="input-group-append">
                                             <button class="btn" type="submit" id="button-addon3"><i
                                                     class="icon-Search"><span class="path1"></span><span
@@ -73,8 +74,8 @@
                                         <p class="pt-5 fs-14 mb-0 fw-700 text-primary">{{ $username }}</p>
                                         <small class="fs-10 mb-0 text-uppercase text-mute">{{ $role }}</small>
                                     @else
-                                        <p class="pt-5 fs-14 mb-0 fw-700 text-primary">Johen Doe</p>
-                                        <small class="fs-10 mb-0 text-uppercase text-mute">Admin</small>
+                                        <p class="pt-5 fs-14 mb-0 fw-700 text-primary">Username</p>
+                                        <small class="fs-10 mb-0 text-uppercase text-mute">Role</small>
                                     @endif
 
                                 </div>
@@ -88,10 +89,17 @@
 
                             </div>
                         </a>
+
                         <ul class="dropdown-menu animated flipInX">
                             <li class="user-body">
-                                <a class="dropdown-item" href="extra_profile.html"><i
-                                        class="ti-user text-muted me-2"></i> Profile</a>
+                                @if ($pstaffidEncrypted)
+                                    <a class="dropdown-item"
+                                        href="{{ route('staff.staff_list.view', $pstaffidEncrypted) }}"><i
+                                            class="ti-user text-muted me-2"></i> Profile</a>
+                                @else
+                                    <a class="dropdown-item" href="#"><i class="ti-user text-muted me-2"></i>
+                                        Profile</a>
+                                @endif
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <a class="dropdown-item" href="{{ route('logout') }}"

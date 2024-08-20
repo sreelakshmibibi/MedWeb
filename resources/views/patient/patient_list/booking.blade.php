@@ -123,7 +123,7 @@
                             <hr />
                             <div class="col-md-6">
                                 <div class="form-group row">
-                                    <label for="example-text-input"
+                                    <label for="bp"
                                         class="col-md-4 col-form-label py-0 align-content-center">B.P.</label>
                                     <div class="col-md-8">
                                         <input type="text" class="form-control" id="bp" name="bp"
@@ -133,7 +133,7 @@
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="example-text-input"
+                                    <label for="height"
                                         class="col-md-4 col-form-label py-0 align-content-center">Height</label>
                                     <div class="col-md-8">
                                         <input type="text" class="form-control" id="height" name="height"
@@ -143,7 +143,7 @@
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="example-text-input"
+                                    <label for="weight"
                                         class="col-md-4 col-form-label py-0 align-content-center">Weight</label>
                                     <div class="col-md-8">
                                         <input type="text" class="form-control" id="weight" name="weight"
@@ -153,7 +153,7 @@
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="example-text-input"
+                                    <label for="temperature"
                                         class="col-md-4 col-form-label py-0 align-content-center">Temperature</label>
                                     <div class="col-md-8">
                                         <input type="text" class="form-control" id="temperature"
@@ -163,7 +163,7 @@
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="example-text-input"
+                                    <label for="allergies"
                                         class="col-md-4 col-form-label py-0 align-content-center">Allergies</label>
                                     <div class="col-md-8">
                                         <textarea class="form-control" id="allergies" name="allergies" placeholder="List any allergies" rows="1"></textarea>

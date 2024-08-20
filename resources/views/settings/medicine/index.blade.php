@@ -202,7 +202,7 @@
                             'Out of Stock');
                         $('#med_edit_yes').prop('checked', response.status === 'Y');
                         $('#med_edit_no').prop('checked', response.status === 'N');
-
+                        generateeditBarcode();
                     },
                     error: function(error) {
                         console.log(error)
@@ -268,6 +268,75 @@
                 alert('Please enter text to generate barcode.');
                 return;
             }
+
+            // Generate barcode
+            JsBarcode("#" + barcode, inputValue, {
+                format: "CODE128", // Barcode format (you can choose other formats like EAN-13, QR Code, etc.)
+                displayValue: true, // Display value below barcode
+                fontSize: 16,
+                textMargin: 10,
+                width: 2,
+                height: 50
+            });
+
+            JsBarcode("#" + barcode, inputValue, {
+                format: "CODE128", // Barcode format (CODE128, EAN-13, etc.)
+                displayValue: true, // Show human-readable value below barcode
+                fontSize: 16, // Font size of the value text
+                textMargin: 10, // Margin between barcode and value text
+                width: 2, // Barcode bar width (in pixels)
+                height: 50, // Barcode height (in pixels)
+                margin: 10, // Margin around the barcode (in pixels)
+                background: "#f0f0f0", // Background color of the barcode
+                // height: 25,
+                lineColor: "#333" // Color of the barcode bars
+            });
+        }
+
+        function clearBarcodeCanvas() {
+            var barcodeCanvas = document.getElementById('barcodeCanvas');
+            if (barcodeCanvas) {
+                var parent = barcodeCanvas.parentNode;
+                if (parent) {
+                    var newCanvas = document.createElement('canvas');
+                    newCanvas.id = 'barcodeCanvas';
+                    newCanvas.classList.add('col-md-4');
+                    newCanvas.style.height = '64px';
+                    newCanvas.width = barcodeCanvas.width;
+                    newCanvas.height = barcodeCanvas.height;
+                    parent.replaceChild(newCanvas, barcodeCanvas);
+                } else {
+                    console.error('Parent node is null for barcodeCanvas.');
+                }
+            } else {
+                console.error('Canvas element with ID barcodeCanvas not found.');
+            }
+            var editbarcodeCanvas = document.getElementById('editbarcodeCanvas');
+            if (editbarcodeCanvas) {
+                var parent = editbarcodeCanvas.parentNode;
+                if (parent) {
+                    var newCanvas = document.createElement('canvas');
+                    newCanvas.id = 'editbarcodeCanvas';
+                    newCanvas.classList.add('col-md-4');
+                    newCanvas.style.height = '64px';
+                    newCanvas.width = editbarcodeCanvas.width;
+                    newCanvas.height = editbarcodeCanvas.height;
+                    parent.replaceChild(newCanvas, editbarcodeCanvas);
+                } else {
+                    console.error('Parent node is null for editbarcodeCanvas.');
+                }
+            } else {
+                console.error('Canvas element with ID editbarcodeCanvas not found.');
+            }
+        }
+
+        function generateeditBarcode() {
+
+            // Get input value
+            var barcode = '';
+            var inputValue = '';
+            inputValue = document.getElementById("edit_med_bar_code").value.trim();
+            barcode = 'editbarcodeCanvas';
 
             // Generate barcode
             JsBarcode("#" + barcode, inputValue, {

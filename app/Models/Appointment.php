@@ -93,4 +93,9 @@ class Appointment extends Model
     {
         return $this->hasMany(Prescription::class, 'app_id', 'id');
     }
+
+    public function billingDetails()
+    {
+        return $this->hasMany(PatientTreatmentBilling::class, 'appointment_id', 'id');
+    }
 }

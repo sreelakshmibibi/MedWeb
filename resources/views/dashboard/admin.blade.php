@@ -66,7 +66,7 @@ use Illuminate\Support\Facades\Crypt;
                                                     class="w-120" />
                                             </div>
                                             <div>
-                                                <h4 class="mb-0">Total Surgery</h4>
+                                                <h4 class="mb-0">Total Treatments</h4>
                                                 <h3 class="countnm mb-0" id="total-surgery"><?= $totalTreatments ?></h3>
                                             </div>
                                         </div>
@@ -106,10 +106,10 @@ use Illuminate\Support\Facades\Crypt;
                             </div>
                             <div class="box-body">
                                 <div class="inner-user-div3">
-                                    <div class="d-flex align-items-center mb-30">
-                                        {{-- @if (!empty($workingDoctors)) --}}
-                                        @if ($workingDoctors->isNotEmpty())
-                                            @foreach ($workingDoctors as $workingDoctor)
+
+                                    @if ($workingDoctors->isNotEmpty())
+                                        @foreach ($workingDoctors as $workingDoctor)
+                                            <div class="d-flex align-items-center mb-30">
                                                 <div class="me-15">
                                                     @if ($workingDoctor->user->staffProfile->photo != '')
                                                         <img src="{{ asset('storage/' . $workingDoctor->user->staffProfile->photo) }}"
@@ -142,11 +142,13 @@ use Illuminate\Support\Facades\Crypt;
                                                 <a class="px-10 pt-5"
                                                     href="{{ route('staff.staff_list.view', $idEncrypted) }}"><i
                                                         class="fa fa-eye"></i></a>
-                                            @endforeach
-                                        @else
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <div class="d-flex align-items-center mb-30">
                                             <h6 class="text-muted mb-1 fs-16">No doctors available today!</h6>
-                                        @endif
-                                    </div>
+                                        </div>
+                                    @endif
 
                                 </div>
                             </div>
@@ -159,16 +161,21 @@ use Illuminate\Support\Facades\Crypt;
     </div>
     <!-- /.content-wrapper -->
     <!-- ./wrapper -->
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     <script>
+        var revisitedPatientsData = @json(array_values($revisitedPatientsData));
+        var newlyRegisteredData = @json(array_values($newlyRegisteredData));
+        var allData = revisitedPatientsData.concat(newlyRegisteredData);
+        var maxValue = Math.max(...allData);
+        var minValue = Math.min(...allData);
+        var tickAmount = Math.ceil(maxValue / 5);
         var options = {
             series: [{
                 name: 'Revisited',
-                data: @json($revisitedPatientsData)
+                data: @json(array_values($revisitedPatientsData))
             }, {
                 name: 'Newly Registered',
-                data: @json($newlyRegisteredData)
+                data: @json(array_values($newlyRegisteredData))
             }],
             chart: {
                 type: 'bar',
@@ -203,8 +210,15 @@ use Illuminate\Support\Facades\Crypt;
             yaxis: {
                 title: {
                     text: 'Patient Statistics'
+                },
+                tickAmount: maxValue, // Dynamically set tickAmount
+                labels: {
+                    formatter: function(value) {
+                        return Math.floor(value); // Ensure integer values
+                    }
                 }
             },
+
             legend: {
                 show: true,
                 position: 'top',

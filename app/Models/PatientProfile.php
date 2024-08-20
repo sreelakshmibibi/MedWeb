@@ -139,4 +139,11 @@ class PatientProfile extends Model
     {
         return $this->hasMany(Prescription::class, 'patient_id', 'patient_id');
     }
+
+    public function latestBilling()
+    {
+        return $this->hasOne(PatientTreatmentBilling::class, 'patient_id', 'patient_id')
+            ->latest('bill_paid_date')
+            ->latest('created_at');
+    }
 }

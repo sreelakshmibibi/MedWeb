@@ -26,12 +26,15 @@ class MenuItemsSeeder extends Seeder
             'view_dashboard',
             'manage_appointments',
             'staff_list',
-            'staff_details',
+            'leave',
+            'apply leave',
+            'approve leave',
             'patient_list',
             'patient_details',
             'patients',
             'clinics',
             'departments',
+            'diseases',
             'medicines',
             'treatment_cost',
             'combo_offers',
@@ -45,6 +48,7 @@ class MenuItemsSeeder extends Seeder
             'create permission',
             'update permission',
             'delete permission',
+            'users',
             'view user',
             'create user',
             'update user',
@@ -53,6 +57,10 @@ class MenuItemsSeeder extends Seeder
             'create menu item',
             'update menu item',
             'delete menu item',
+            'generate bill',
+            'receive payment',
+            'reports',
+            'change user status',
         ];
 
         foreach ($permissions as $permission) {
@@ -65,12 +73,13 @@ class MenuItemsSeeder extends Seeder
             'view_dashboard',
             'manage_appointments',
             'staff_list',
-            'staff_details',
+            'leave',
             'patient_list',
             'patient_details',
             'patients',
             'clinics',
             'departments',
+            'diseases',
             'medicines',
             'treatment_cost',
             'combo_offers',
@@ -83,7 +92,14 @@ class MenuItemsSeeder extends Seeder
             'view user',
             'create user',
             'update user',
+            'generate bill',
+            'receive payment',
+            'reports',
+            'apply leave',
+            'approve leave',
+            'change user status',
         ];
+
 
         $admin->syncPermissions($adminPermissions);
 
@@ -95,20 +111,27 @@ class MenuItemsSeeder extends Seeder
             'patients',
             'medicines',
             'staff_list',
+            'leave',
             'insurance',
             'treatment_plan',
+            'apply leave',
         ]);
 
         $nurse->syncPermissions([
             'view_dashboard',
             'patient_list',
             'patient_details',
+            'leave',
+            'apply leave',
         ]);
 
         $reception->syncPermissions([
             'view_dashboard',
             'manage_appointments',
             'patient_list',
+            'receive payment',
+            'leave',
+            'apply leave',
         ]);
 
         // Create menu items
@@ -146,15 +169,15 @@ class MenuItemsSeeder extends Seeder
 
         $reports = MenuItem::create([
             'name' => 'Reports',
-            'url' => '#',
-            'route_name' => '#',
+            'url' => '/report',
+            'route_name' => 'report',
             'icon' => 'fa-solid fa-file-lines',
             'order_no' => 5,
         ]);
 
         $billing = MenuItem::create([
             'name' => 'Billing',
-            'url' => '\billing',
+            'url' => '/billing',
             'route_name' => 'billing',
             'icon' => 'icon-Settings-1',
             'order_no' => 6,
@@ -166,6 +189,11 @@ class MenuItemsSeeder extends Seeder
             'route_name' => '#',
             'icon' => 'fa-solid fa-gear',
             'order_no' => 7,
+        ]);
+
+        $billingSubmenus = $billing->children()->createMany([
+            ['name' => 'Treatment Billing', 'url' => '/billing', 'route_name' => 'billing', 'icon' => 'icon-Commit', 'order_no' => 1],
+            ['name' => 'Outstanding Billing', 'url' => '/duepayment', 'route_name' => 'duePayment', 'icon' => 'icon-Commit', 'order_no' => 12],
         ]);
 
         $settingSubmenus = $settings->children()->createMany([
@@ -187,7 +215,7 @@ class MenuItemsSeeder extends Seeder
 
         $staffSubmenus = $staffs->children()->createMany([
             ['name' => 'Staff List', 'url' => '/staff_list', 'route_name' => 'staff.staff_list', 'icon' => 'icon-Commit', 'order_no' => 1],
-            ['name' => 'Staff Details', 'url' => '#', 'route_name' => '#', 'icon' => 'icon-Commit', 'order_no' => 2],
+            ['name' => 'Leave', 'url' => '/leave', 'route_name' => 'leave', 'icon' => 'icon-Commit', 'order_no' => 2],
         ]);
 
         $patientSubmenus = $patients->children()->createMany([
@@ -210,6 +238,9 @@ class MenuItemsSeeder extends Seeder
         $billing->roles()->attach([$superadmin->id, $admin->id]);
 
         // Attach roles to submenu items
+        foreach ($billingSubmenus as $submenu) {
+            $submenu->roles()->attach([$superadmin->id, $admin->id, $doctor->id]);
+        }
         foreach ($settingSubmenus as $submenu) {
             $submenu->roles()->attach([$superadmin->id, $admin->id]);
         }
@@ -218,7 +249,7 @@ class MenuItemsSeeder extends Seeder
         }
         // Fetching the created submenus
         $staffList = $staffSubmenus->where('name', 'Staff List')->first();
-        $staffDetails = $staffSubmenus->where('name', 'Staff Details')->first();
+        $staffDetails = $staffSubmenus->where('name', 'Leave')->first();
         foreach ($patientSubmenus as $submenu) {
             $submenu->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $nurse->id, $reception->id]);
         }

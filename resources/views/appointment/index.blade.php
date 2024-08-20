@@ -80,8 +80,10 @@
                 },
             });
 
-            var initialDate = $("#paginator").datepaginator("getDate");
-            selectedDate = moment(initialDate).format("YYYY-MM-DD")
+            // var initialDate = $("#paginator").datepaginator("getDate");
+            // alert(initialDate)
+            // selectedDate = moment(initialDate).format("YYYY-MM-DD");
+            selectedDate = moment().format("YYYY-MM-DD");
         });
 
         jQuery(function($) {
@@ -175,13 +177,16 @@
                 $('#patient_name').val(patientName); // Set app ID in the hidden input
                 $('#app_parent_id').val(app_parent_id);
 
+                // var now = new Date();
+                // var year = now.getFullYear();
+                // var month = (now.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+                // var day = now.getDate().toString().padStart(2, '0');
+                // var hours = now.getHours().toString().padStart(2, '0');
+                // var minutes = now.getMinutes().toString().padStart(2, '0');
+                // var datetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+
                 var now = new Date();
-                var year = now.getFullYear();
-                var month = (now.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
-                var day = now.getDate().toString().padStart(2, '0');
-                var hours = now.getHours().toString().padStart(2, '0');
-                var minutes = now.getMinutes().toString().padStart(2, '0');
-                var datetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+                var datetime = now.toISOString().slice(0, 16);
 
                 document.getElementById('appdate').value = datetime;
                 $('#modal-booking').modal('show');

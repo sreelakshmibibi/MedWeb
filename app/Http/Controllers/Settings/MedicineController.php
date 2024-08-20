@@ -10,6 +10,12 @@ use Yajra\DataTables\DataTables as DataTables;
 
 class MedicineController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:medicines', ['only' => ['index', 'store', 'update', 'edit', 'destroy']]);
+        
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -50,13 +56,6 @@ class MedicineController extends Controller
         return view('settings.medicine.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -91,14 +90,6 @@ class MedicineController extends Controller
 
             return redirect()->back()->with('error', 'Failed to create medicine entry: ' . $e->getMessage());
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Medicine $medicine)
-    {
-        //
     }
 
     /**

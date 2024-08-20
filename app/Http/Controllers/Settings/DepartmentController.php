@@ -17,16 +17,18 @@ class DepartmentController extends Controller
 {
     protected $commonService;
 
-    // public function __construct(CommonService $commonService)
-    // {
-    //     $this->commonService = $commonService;
-    // }
+    public function __construct()
+    {
+        $this->middleware('permission:departments', ['only' => ['index', 'create', 'store', 'update', 'edit', 'destroy']]);
+        
+    }
 
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
+        
         if ($request->ajax()) {
 
             $departments = Department::orderBy('department', 'asc')->get();
@@ -42,7 +44,6 @@ class DepartmentController extends Controller
                     return $btn1;
                 })
                 ->addColumn('action', function ($row) {
-
                     $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
                         data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
                         <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-del btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
@@ -56,14 +57,6 @@ class DepartmentController extends Controller
 
         // Return the view with menu items
         return view('settings.department.index');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -83,20 +76,18 @@ class DepartmentController extends Controller
             // Save the department
             $i = $department->save();
             if ($i) {
+                if ($request->ajax()) {
+                    return response()->json(['success' => 'Department created successfully.']);
+                }
                 return redirect()->back()->with('success', 'Department created successfully');
             }
         } catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json(['error' => 'Department not created.'. $e->getMessage()]);
+            }
             return redirect()->back()->with('error', 'Failed to create department: ' . $e->getMessage());
         }
 
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**
@@ -138,7 +129,7 @@ class DepartmentController extends Controller
             // Handle any unexpected errors
             // Return JSON response for AJAX request
             if ($request->ajax()) {
-                return response()->json(['error' => 'Failed to update department. Please try again.'], 500);
+                return response()->json(['error' => 'Failed to update department. Please try again.'.$e->getMessage()], 500);
             }
 
             // Redirect back with error message for non-AJAX request

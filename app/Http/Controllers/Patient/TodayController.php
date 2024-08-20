@@ -33,7 +33,8 @@ class TodayController extends Controller
 
             // Example: Fetch data from your model based on selected date
             $appointments = Appointment::whereDate('app_date', $selectedDate);
-            if (!Auth::user()->is_admin) {
+            // if (!Auth::user()->is_admin) {
+            if (Auth::user()->is_doctor) {
                 $appointments = $appointments->where('doctor_id', Auth::user()->id);
             }
             $appointments = $appointments->with(['patient', 'doctor', 'branch'])

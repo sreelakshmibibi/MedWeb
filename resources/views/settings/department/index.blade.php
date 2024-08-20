@@ -5,7 +5,7 @@
     <div class="content-wrapper">
         <div class="container-full">
             <div class="content-header">
-                <div id="successMessage" style="display:none;" class="alert alert-success">Department created successfully
+                <div id="successMessage" style="display:none;" class="alert alert-success">
                 </div>
                 @if (session('success'))
                     <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-success alerttop fadeOut"
@@ -21,8 +21,13 @@
                 @endif
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Department Details</h3>
+                    {{-- <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#modal-right"> <i class="fa fa-add"></i> Add New</button> --}}
                     <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
-                        data-bs-target="#modal-right"> <i class="fa fa-add"></i> Add New</button>
+                        data-bs-target="#modal-right" title="Add New">
+                        <span class="hidden-sm-up">Add New</span>
+                        <span class="hidden-xs-down"><i class="fa fa-add"></i> Add New</span>
+                    </button>
                 </div>
             </div>
 
@@ -30,7 +35,7 @@
                 <div class="box">
                     <div class="box-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover table-striped mb-0 border-2 data-table">
+                            <table width="100%" class="table table-bordered table-hover table-striped mb-0 data-table">
                                 <thead class="bg-primary-light text-center">
                                     <tr>
                                         <th width="10px">No</th>
@@ -55,9 +60,9 @@
     @include('settings.department.edit')
     @include('settings.department.delete')
 
-@endsection
+    {{-- @endsection
 
-@section('scripts')
+@section('scripts') --}}
 
     <script>
         var departmentUrl = "{{ route('settings.department') }}";
@@ -68,7 +73,6 @@
 
     <script type="text/javascript">
         jQuery(function($) {
-
             $(document).on('click', '.btn-edit', function() {
                 var departmentId = $(this).data('id');
                 $('#edit_department_id').val(departmentId); // Set department ID in the hidden input

@@ -43,8 +43,8 @@ $(function () {
         ],
     };
 
-    var chart = new ApexCharts(document.querySelector("#chart123"), options);
-    chart.render();
+    // var chart = new ApexCharts(document.querySelector("#chart123"), options);
+    // chart.render();
 
     var options = {
         series: [
@@ -95,8 +95,8 @@ $(function () {
         },
     };
 
-    var chart = new ApexCharts(document.querySelector("#chart"), options);
-    chart.render();
+    // var chart = new ApexCharts(document.querySelector("#chart"), options);
+    // chart.render();
 
     // Slim scrolling
     $(".inner-user-div").slimScroll({

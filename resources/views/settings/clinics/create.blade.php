@@ -19,7 +19,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="email">E-mail <span class="text-danger">
+                                    <label class="form-label" for="clinic_email">E-mail <span class="text-danger">
                                             *</span></label>
                                     <input type="email" class="form-control" id="clinic_email" name="clinic_email"
                                         placeholder="E-mail">
@@ -28,7 +28,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="phone">Contact
+                                    <label class="form-label" for="clinic_phone">Contact
                                         Number <span class="text-danger">
                                             *</span></label>
                                     <input type="text" class="form-control" id="clinic_phone" name="clinic_phone"
@@ -58,7 +58,7 @@
                         </div> -->
 
                         <div class="form-group mt-2">
-                            <label class="form-label col-md-6" for="branch">Is main branch?</label>
+                            <label class="form-label col-md-6" for="branch_yes">Is main branch?</label>
                             <input name="branch_active" type="radio" class="form-control with-gap" id="branch_yes"
                                 value="Y" checked>
                             <label for="branch_yes">Yes</label>
@@ -69,7 +69,7 @@
                         </div>
 
                         <div class="form-group mt-2">
-                            <label class="form-label col-md-6" for="medicine">Is medicine provided?</label>
+                            <label class="form-label col-md-6" for="medicine_yes">Is medicine provided?</label>
                             <input name="is_medicine_provided" type="radio" class="form-control with-gap"
                                 id="medicine_yes" value="Y" checked>
                             <label for="medicine_yes">Yes</label>
@@ -82,7 +82,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="address">Address Line
+                                    <label class="form-label" for="clinic_address1">Address Line
                                         1 <span class="text-danger">
                                             *</span></label>
                                     <input type="text" class="form-control" id="clinic_address1"
@@ -92,7 +92,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="address">Address Line
+                                    <label class="form-label" for="clinic_address2">Address Line
                                         2</label>
                                     <input type="text" class="form-control" id="clinic_address2"
                                         name="clinic_address2" placeholder="adress line 2">
@@ -166,7 +166,7 @@
 
 <script>
     $(function() {
-        var formSubmitting = false;//flag to prevent multiple submissions        
+        var formSubmitting = false; //flag to prevent multiple submissions        
         var initialCountryId = $('#clinic_country').val(); // Assuming India is selected initially
         loadStates(initialCountryId);
 
@@ -186,7 +186,7 @@
         function loadStates(countryId) {
             if (countryId) {
                 $.ajax({
-                    url: '{{ route("get.states", "") }}' + '/' + countryId,
+                    url: '{{ route('get.states', '') }}' + '/' + countryId,
                     type: "GET",
                     dataType: "json",
                     success: function(data) {
@@ -209,7 +209,7 @@
         function loadCities(stateId) {
             if (stateId) {
                 $.ajax({
-                    url: '{{ route("get.cities", "") }}' + '/' + stateId,
+                    url: '{{ route('get.cities', '') }}' + '/' + stateId,
                     type: "GET",
                     dataType: "json",
                     success: function(data) {

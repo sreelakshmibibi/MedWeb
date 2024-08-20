@@ -244,7 +244,7 @@
 
 @media (max-width: 1200px) {
     .select-chart {
-        border: 1px solid red;
+        /* border: 1px solid red; */
         right: 0;
         top: 1.2rem;
         gap: 0.75rem;
@@ -256,7 +256,7 @@
 }
 @media all and (min-width: 993px) and (max-width: 1200px) {
     .select-chart {
-        border: 1px solid red;
+        /* border: 1px solid red; */
         right: 0;
         top: 1.2rem;
         gap: 0.75rem;
@@ -266,7 +266,13 @@
         padding: 1rem 0;
     }
 }
-@media all and (max-width: 992px) and (min-width: 858px) {
+@media all and (max-width: 1100px) {
+    .tooth_body {
+        justify-content: flex-start;
+    }
+}
+/* @media all and (max-width: 992px) and (min-width: 858px) { */
+@media all and (max-width: 991px) {
     .dental-chart {
         transform: scale(0.9);
     }
@@ -289,6 +295,7 @@
     }
     .select-div {
         height: 68px;
+        height: 64px;
     }
 }
 @media all and (max-width: 768px) {
@@ -296,8 +303,14 @@
         transform: scale(0.8);
     }
 }
-@media all and (max-width: 576px) {
-    .dental-chart {
+@media all and (max-width: 575px) {
+    /* .dental-chart {
         transform: scale(0.7);
+    } */
+    .tooth_body {
+        width: 60% !important;
+        border: 1px solid;
+        overflow: scroll;
+        justify-content: flex-start;
     }
 }

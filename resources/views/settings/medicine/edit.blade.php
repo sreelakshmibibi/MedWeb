@@ -14,7 +14,7 @@
                     <div class="container-fluid">
 
                         <div class="form-group">
-                            <label class="form-label" for="name">Medicine Name <span class="text-danger">
+                            <label class="form-label" for="edit_med_name">Medicine Name <span class="text-danger">
                                     *</span></label>
                             <input class="form-control" type="text" id="edit_med_name" name="med_name"
                                 placeholder="Medicine Name">
@@ -23,7 +23,7 @@
 
                         <div class="row">
                             <div class="col-md-8">
-                                <label class="form-label" for="med_bar_code">Barcode <span class="text-danger">
+                                <label class="form-label" for="edit_med_bar_code">Barcode <span class="text-danger">
                                         *</span></label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="edit_med_bar_code"
@@ -31,6 +31,7 @@
                                     <div id="medBarcodeError" class="invalid-feedback"></div>
                                 </div>
                             </div>
+                            <canvas id="editbarcodeCanvas" class="col-md-4" style=" height:64px;"></canvas>
                         </div>
 
                         <div class="form-group">
@@ -42,7 +43,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="med_price">Price <span class="text-danger">
                                             *</span></label>
@@ -52,7 +53,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="expiry_date">Expiring Date <span class="text-danger">
                                             *</span></label>
@@ -61,7 +62,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="edit_package_type">Packaging Type <span
                                             class="text-danger">
@@ -74,10 +75,10 @@
                                     <div id="editMedPackageTypeError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                        </div>
+                            {{-- </div>
 
-                        <div class="row">
-                            <div class="col-md-4">
+                        <div class="row"> --}}
+                            <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="edit_units_per_package">Units per Package <span
                                             class="text-danger">
@@ -88,7 +89,7 @@
                                     <div id="editMedUnitPerPackError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="edit_package_count">Package Count <span
                                             class="text-danger">
@@ -99,7 +100,7 @@
                                     <div id="editmedPackageCountErrorError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="edit_total_quantity">Total Quantity</label>
                                     <input class="form-control" type="text" id="edit_total_quantity"
@@ -120,7 +121,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label col-md-6">Stock Status</label>
+                                    <label class="form-label">Stock Status</label>
                                     <div>
                                         <input name="stock_status" type="radio" class="form-control with-gap"
                                             id="edit_in" value="In Stock">
@@ -134,7 +135,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label col-md-6">Active</label>
+                                    <label class="form-label">Active</label>
                                     <div>
                                         <input name="status" type="radio" class="form-control with-gap"
                                             id="med_edit_yes" value="Y">
@@ -313,6 +314,7 @@
                     // table.draw(); // Refresh DataTable
                     // location.reload();
                     table.ajax.reload();
+                    clearBarcodeCanvas();
                 },
                 error: function(xhr) {
                     // If error, update modal to show errors
@@ -405,6 +407,7 @@
             $('#editMedRemarkError').text('');
             $('#editMedStockStatusError').text('');
             $('#editMedStatusError').text('');
+            clearBarcodeCanvas();
 
         });
 

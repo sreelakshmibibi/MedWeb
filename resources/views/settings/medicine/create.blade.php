@@ -20,7 +20,7 @@
                             <div id="medNameError" class="invalid-feedback"></div>
                         </div>
 
-                        <div class="row">
+                        <div class="row" id="barcodeCanvasWrapper">
                             <div class="col-md-8">
                                 <label class="form-label" for="med_bar_code">Barcode <span class="text-danger">
                                         *</span></label>
@@ -46,7 +46,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="med_price">Price <span class="text-danger">
                                             *</span></label>
@@ -55,7 +55,7 @@
                                     <div id="medPriceError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="expiry_date">Expiring Date <span class="text-danger">
                                             *</span></label>
@@ -63,7 +63,7 @@
                                     <div id="medExpDateError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="package_type">Packaging Type <span
                                             class="text-danger">
@@ -76,10 +76,10 @@
                                     <div id="medPackageTypeError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                        </div>
+                            {{-- </div>
 
-                        <div class="row">
-                            <div class="col-md-4">
+                        <div class="row"> --}}
+                            <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="units_per_package">Units per Package <span
                                             class="text-danger">
@@ -90,7 +90,7 @@
                                     <div id="medUnitPerPackError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="package_count">Package Count <span
                                             class="text-danger">
@@ -101,7 +101,7 @@
                                     <div id="medPackageCountError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="total_quantity">Total Quantity</label>
                                     <input class="form-control" type="text" id="total_quantity"
@@ -122,7 +122,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label col-md-6">Stock Status</label>
+                                    <label class="form-label">Stock Status</label>
                                     <div>
                                         <input name="stock_status" type="radio" checked
                                             class="form-control with-gap" id="in" value="In Stock">
@@ -136,7 +136,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label col-md-6">Active</label>
+                                    <label class="form-label">Active</label>
                                     <div>
                                         <input name="status" type="radio" checked class="form-control with-gap"
                                             id="yes" value="Y">
@@ -164,6 +164,7 @@
 <script>
     $(function() {
         $('#barcodeCanvas').empty();
+
         // Handle Save button click
         $('#saveMedicineBtn').click(function() {
             // Reset previous error messages
@@ -308,6 +309,7 @@
                 dataType: 'json',
                 success: function(response) {
                     // If successful, hide modal and show success message
+                    // clearBarcodeCanvas();
                     $('#modal-right').modal('hide');
                     $('#successMessage').text('Medicine created successfully');
                     $('#successMessage').fadeIn().delay(3000)
@@ -386,7 +388,7 @@
             $('#stock_status').removeClass('is-invalid');
             $('#status').removeClass('is-invalid');
             $('#barcodeCanvas').empty();
-
+            clearBarcodeCanvas();
 
             $('#medNameError').text('');
             $('#medBarcodeError').text('');

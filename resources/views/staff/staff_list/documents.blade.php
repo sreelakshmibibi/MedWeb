@@ -8,12 +8,108 @@
             </div>
             <div class="modal-body">
                 <div class="container-fluid">
-                    <div class="box-body">
-                        <form action="#" class="dropzone" id="dropzone-form">
-                            <div class="fallback">
-                                <input name="file" type="file" multiple />
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs " role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#uploadtabcontent" role="tab"
+                                id="uploadtabtitle">
+                                <span class="hidden-sm-up"><i class="fa-solid fa-upload"></i></span>
+                                <span class="hidden-xs-down">Upload</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#viewtabcontent" role="tab"
+                                id="viewtabtitle">
+                                <span class="hidden-sm-up"><i class="fa-solid fa-eye"></i></span>
+                                <span class="hidden-xs-down">View</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="uploadtabcontent" role="tabpanel">
+                            <div class="py-10">
+                                <section class="content px-2">
+                                    <div class="box-body">
+                                        <form action="#" class="dropzone" id="dropzone-form">
+                                            <div class="fallback">
+                                                <input name="file" type="file" multiple />
+                                            </div>
+                                        </form>
+                                    </div>
+                                </section>
                             </div>
-                        </form>
+                        </div>
+                        <div class="tab-pane" id="viewtabcontent" role="tabpanel">
+                            <div class="py-10">
+                                <section class="content px-2">
+                                    <div class="box-body py-0 px-2">
+                                        <div class="inner-user-div33">
+                                            <ul class="nav d-block nav-stacked py-1 ">
+
+                                                <li
+                                                    class="nav-item d-flex justify-content-between align-items-center bb-dashed border-bottom">
+                                                    <div class="min-w-200">
+                                                        Photo
+                                                    </div>
+                                                    <div class="text-muted">{{ $staffProfile->date_of_joining }}</div>
+                                                    <a class="min-w-50 btn" title="download"><i
+                                                            class="fa fa-download"></i></a>
+                                                </li>
+
+                                                <li
+                                                    class="nav-item d-flex justify-content-between align-items-center bb-dashed border-bottom">
+                                                    <div class="min-w-200">
+                                                        Passport
+                                                    </div>
+                                                    <div class="text-muted">{{ $staffProfile->date_of_joining }}</div>
+                                                    <a class="btn min-w-50" title="download"><i
+                                                            class="fa fa-download"></i></a>
+                                                </li>
+                                                <li
+                                                    class="nav-item d-flex justify-content-between align-items-center bb-dashed border-bottom">
+                                                    <div class="min-w-200">
+                                                        Photo
+                                                    </div>
+                                                    <div class="text-muted">{{ $staffProfile->date_of_joining }}</div>
+                                                    <a class="min-w-50 btn" title="download"><i
+                                                            class="fa fa-download"></i></a>
+                                                </li>
+                                                <li
+                                                    class="nav-item d-flex justify-content-between align-items-center bb-dashed border-bottom">
+                                                    <div class="min-w-200">
+                                                        Photo
+                                                    </div>
+                                                    <div class="text-muted">{{ $staffProfile->date_of_joining }}</div>
+                                                    <a class="min-w-50 btn" title="download"><i
+                                                            class="fa fa-download"></i></a>
+                                                </li>
+                                                <li
+                                                    class="nav-item d-flex justify-content-between align-items-center bb-dashed border-bottom">
+                                                    <div class="min-w-200">
+                                                        Photo
+                                                    </div>
+                                                    <div class="text-muted">{{ $staffProfile->date_of_joining }}</div>
+                                                    <a class="min-w-50 btn" title="download"><i
+                                                            class="fa fa-download"></i></a>
+                                                </li>
+                                                <li
+                                                    class="nav-item d-flex justify-content-between align-items-center bb-dashed border-bottom">
+                                                    <div class="min-w-200">
+                                                        Photo
+                                                    </div>
+                                                    <div class="text-muted">{{ $staffProfile->date_of_joining }}</div>
+                                                    <a class="min-w-50 btn" title="download"><i
+                                                            class="fa fa-download"></i></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -24,9 +120,6 @@
         </div>
     </div>
 </div>
-
-
-
 
 <script>
     $(document).ready(function() {
