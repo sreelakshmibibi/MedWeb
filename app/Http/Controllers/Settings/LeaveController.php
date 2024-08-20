@@ -54,10 +54,11 @@ class LeaveController extends Controller
                         $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-approve btn-xs me-1" title="approve" data-bs-toggle="modal" data-id="' . $row->id . '"
                         data-bs-target="#modal-approve" >Approve</button>
                         '; 
-                        if ($row->leave_from <= date('Y-m-d')) {
+                        if ($row->leave_from >= date('Y-m-d')) {
                             $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-reject btn-xs" data-bs-toggle="modal" data-bs-target="#modal-reject" data-id="' . $row->id . '" title="delete">Reject</button>';
                         }
                     }
+                
                     
                     if (Auth::user()->id = $row->user_id && $row->leave_status == LeaveApplication::Applied) {
                         $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
@@ -85,25 +86,50 @@ class LeaveController extends Controller
      */
     public function store(LeaveApplicationRequest $request)
     {
+        $userId = Auth::user()->id;
+        $leaveFrom = $request->input('leave_from');
+        $leaveTo = $request->input('leave_to');
+        
+        // Check if there is an existing leave application for the same user
+        $checkExists = LeaveApplication::where('user_id', $userId)
+            ->where(function ($query) use ($leaveFrom, $leaveTo) {
+                $query->whereBetween('leave_from', [$leaveFrom, $leaveTo])
+                    ->orWhereBetween('leave_to', [$leaveFrom, $leaveTo])
+                    ->orWhere(function ($query) use ($leaveFrom, $leaveTo) {
+                        $query->where('leave_from', '<=', $leaveFrom)
+                            ->where('leave_to', '>=', $leaveTo);
+                    });
+            })
+            ->whereNot('leave_status', LeaveApplication::Rejected)
+            ->exists();
+        
+        if ($checkExists) {
+            $message = 'Already exists an active leave application for the selected dates.';
+            return $request->ajax() 
+                ? response()->json(['error' => $message]) 
+                : redirect()->back()->with('error', $message);
+        }
+        
         $leaveApplication = new LeaveApplication();
-        $leaveApplication->user_id = Auth::user()->id;
+        $leaveApplication->user_id = $userId;
         $leaveApplication->leave_type = $request->input('leave_type');
-        $leaveApplication->leave_from = $request->input('leave_from');
-        $leaveApplication->leave_to = $request->input('leave_to');
+        $leaveApplication->leave_from = $leaveFrom;
+        $leaveApplication->leave_to = $leaveTo;
         $leaveApplication->leave_reason = $request->input('reason');
         $leaveApplication->leave_status = LeaveApplication::Applied;
+        
         if ($leaveApplication->save()) {
-            if ($request->ajax()) {
-                return response()->json(['success' => 'Leave applied successfully.']);
-            }
+            $message = 'Leave applied successfully.';
+            return $request->ajax() 
+                ? response()->json(['success' => $message]) 
+                : redirect()->route('leave.index')->with('success', $message);
         } else {
-            if ($request->ajax()) {
-                return response()->json(['error' => 'Leave application failed.']);
-            }
+            $message = 'Leave application failed.';
+            return $request->ajax() 
+                ? response()->json(['error' => $message]) 
+                : redirect()->back()->with('error', $message);
         }
     }
-
-
 
     /**
      * Show the form for editing the specified resource.
