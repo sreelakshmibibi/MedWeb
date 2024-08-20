@@ -15,6 +15,13 @@ use Yajra\DataTables\DataTables as DataTables;
 
 class LeaveController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:leave', ['only' => ['index']]);
+        $this->middleware('permission:apply leave', ['only' => ['create', 'store', 'update', 'edit', 'destroy']]);
+        $this->middleware('permission:approve leave', ['only' => ['approveLeave', 'rejectLeave']]);
+    }
+
     /**
      * Display a listing of the resource.
      */

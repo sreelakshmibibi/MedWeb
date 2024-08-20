@@ -21,8 +21,10 @@
                 @endif
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Leave Details</h3>
-                    <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
+                    @if (Auth::user()->can('apply leave'))
+                        <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
                         data-bs-target="#modal-right"> <i class="fa fa-add"></i> Apply Leave</button>
+                    @endif
                 </div>
             </div>
 
