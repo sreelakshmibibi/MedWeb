@@ -13,7 +13,7 @@ class TreatmentPlanController extends Controller
     protected $commonService;
     public function __construct()
     {
-        $this->middleware('permission:treatment_plan', ['only' => ['index', 'store', 'update', 'edit', 'destroy']]);
+        $this->middleware('permission:settings treatment_plan', ['only' => ['index', 'store', 'update', 'edit', 'destroy']]);
         
     }
     /**

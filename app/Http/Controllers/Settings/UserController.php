@@ -13,10 +13,10 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:view user', ['only' => ['index']]);
-        $this->middleware('permission:create user', ['only' => ['create', 'store']]);
-        $this->middleware('permission:update user', ['only' => ['update', 'edit']]);
-        $this->middleware('permission:delete user', ['only' => ['destroy']]);
+        $this->middleware('permission:staff view', ['only' => ['index']]);
+        $this->middleware('permission:staff create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:staff update', ['only' => ['update', 'edit']]);
+        $this->middleware('permission:staff delete', ['only' => ['destroy']]);
     }
 
     // public function index()
@@ -46,10 +46,10 @@ class UserController extends Controller
                 })
                 ->addColumn('action', function ($user) {
                     $btn = '';
-                    if (auth()->user()->can('update user')) {
+                    if (auth()->user()->can('staff update')) {
                         $btn .= '<a href="' . url('users/' . $user->id . '/edit') . '" class="btn btn-sm btn-success btn-edit" data-id="' . $user->id . '">Edit</a> ';
                     }
-                    if (auth()->user()->can('delete user')) {
+                    if (auth()->user()->can('staff delete')) {
                         $btn .= '<a href="' . url('users/' . $user->id . '/delete') . '" class="btn btn-sm btn-danger btn-delete" data-id="' . $user->id . '">Delete</a>';
                     }
 

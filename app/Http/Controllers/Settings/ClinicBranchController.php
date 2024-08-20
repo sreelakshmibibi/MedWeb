@@ -18,7 +18,7 @@ class ClinicBranchController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:clinics', ['only' => ['index', 'create', 'store', 'update', 'edit', 'destroy']]);
+        $this->middleware('permission:settings clinics', ['only' => ['index', 'create', 'store', 'update', 'edit', 'destroy']]);
         
     }
     /**

@@ -18,8 +18,8 @@ class LeaveController extends Controller
     public function __construct()
     {
         $this->middleware('permission:leave', ['only' => ['index']]);
-        $this->middleware('permission:apply leave', ['only' => ['create', 'store', 'update', 'edit', 'destroy']]);
-        $this->middleware('permission:approve leave', ['only' => ['approveLeave', 'rejectLeave']]);
+        $this->middleware('permission:leave apply', ['only' => ['create', 'store', 'update', 'edit', 'destroy']]);
+        $this->middleware('permission:leave approve', ['only' => ['approveLeave', 'rejectLeave']]);
     }
 
     /**
@@ -29,7 +29,7 @@ class LeaveController extends Controller
     {
         if ($request->ajax()) {
             $leaves = null;
-            if (Auth::user()->can('approve leave')) {
+            if (Auth::user()->can('leave approve')) {
                 $leaves = LeaveApplication::with('user')->orderBy('leave_from', 'desc')->get();
             } else {
                 $leaves = LeaveApplication::where('user_id', Auth::user()->id)
@@ -57,7 +57,7 @@ class LeaveController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     $btn = null;
-                    if (Auth::user()->can('approve leave')) {
+                    if (Auth::user()->can('leave approve')) {
                         $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-approve btn-xs me-1" title="approve" data-bs-toggle="modal" data-id="' . $row->id . '"
                         data-bs-target="#modal-approve" >Approve</button>
                         '; 
@@ -75,7 +75,7 @@ class LeaveController extends Controller
                     }
                     return $btn;
                 });
-                if (Auth::user()->can('approve leave')) {
+                if (Auth::user()->can('leave approve')) {
                     $dataTable->addColumn('staff', function ($row) {
                         return str_replace("<br>", " ", $row->user->name);
                     });

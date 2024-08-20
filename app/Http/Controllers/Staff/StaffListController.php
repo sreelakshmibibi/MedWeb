@@ -33,11 +33,11 @@ class StaffListController extends Controller
     public function __construct()
     {
         $this->middleware('permission:staff_list', ['only' => ['index']]);
-        $this->middleware('permission:view user', ['only' => ['view']]);
-        $this->middleware('permission:create user', ['only' => ['create', 'store']]);
-        $this->middleware('permission:update user', ['only' => ['update', 'edit']]);
-        $this->middleware('permission:delete user', ['only' => ['destroy']]);
-        $this->middleware('permission:change user status', ['only' => ['changeStatus']]);
+        $this->middleware('permission:staff view', ['only' => ['view']]);
+        $this->middleware('permission:staff create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:staff update', ['only' => ['update', 'edit']]);
+        $this->middleware('permission:staff delete', ['only' => ['destroy']]);
+        $this->middleware('permission:staff change status', ['only' => ['changeStatus']]);
         
     }
     /**
@@ -86,17 +86,17 @@ class StaffListController extends Controller
                     $base64Id = base64_encode($row->id);
                     $idEncrypted = Crypt::encrypt($base64Id);
                     $btn = null;
-                    if (Auth::user()->hasPermissionTo('view user')) {
+                    if (Auth::user()->hasPermissionTo('staff view')) {
                         $btn = '<a href="' . route('staff.staff_list.view', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
                     }
-                    if (Auth::user()->hasPermissionTo('update user')) {
+                    if (Auth::user()->hasPermissionTo('staff update')) {
                         $btn .= '<a href="' . route('staff.staff_list.edit', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
                     
                     }
-                    if (Auth::user()->hasPermissionTo('change user status')) {
+                    if (Auth::user()->hasPermissionTo('staff change status')) {
                         $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
                     }
-                    if (Auth::user()->hasPermissionTo('delete user')) { 
+                    if (Auth::user()->hasPermissionTo('staff delete')) { 
                         $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete"><i class="fa-solid fa-trash"></i></button>';
                     }
                     return $btn;

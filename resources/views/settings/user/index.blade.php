@@ -20,7 +20,7 @@
                             <th>Email</th>
                             <th>Roles</th>
                             <th width="200px">
-                                @can('create user')
+                                @can('staff create')
                                     {{-- <a href="{{ url('users/create') }}" class="btn btn-sm btn-primary"><i
                                             class="fa fa-plus"> </i> Add
                                         User</a> --}}

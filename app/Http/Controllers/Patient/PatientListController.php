@@ -105,18 +105,11 @@ class PatientListController extends Controller
 
                     return 'N/A';
                 })
-                // ->addColumn('new_appointment', function ($row) {
-                //     $parent_id = '';
-                //     $buttons = [
-                //         "<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1' title='follow up' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->first_name.' '.$row->last_name)."' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>",
-                //     ];
-
-                //     return implode('', $buttons);
-                // })
                 ->addColumn('action', function ($row) {
                     $parent_id = '';
                     $base64Id = base64_encode($row->id);
                     $idEncrypted = Crypt::encrypt($base64Id);
+                    
                     $btn = "<button type='button' class='waves-effect waves-light btn btn-circle btn-primary btn-add btn-xs me-1' title='New Booking' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->first_name . ' ' . $row->last_name) . "' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>";
                     $btn .= '<a href="' . route('patient.patient_list.view', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
                     $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';

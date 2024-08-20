@@ -21,7 +21,7 @@
                 @endif
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Leave Details</h3>
-                    @if (Auth::user()->can('apply leave'))
+                    @if (Auth::user()->can('leave apply'))
                         <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
                         data-bs-target="#modal-right"> <i class="fa fa-add"></i> Apply Leave</button>
                     @endif
@@ -37,7 +37,7 @@
                                 <thead class="bg-primary-light">
                                     <tr>
                                         <th width="10px">No</th>
-                                        @if (Auth::user()->can('approve leave'))
+                                        @if (Auth::user()->can('leave approve'))
                                             <th width="20%">Staff</th>
                                         @endif
                                         <th width="15%">Leave Type</th>
@@ -87,7 +87,7 @@
                             return meta.row + 1; // Adding 1 to start counting from 1
                         },
                     },
-                    <?php if (Auth::user()->can('approve leave')) { ?>
+                    <?php if (Auth::user()->can('leave approve)) { ?>
                     {
                         data:"staff",
                         name:"staff",

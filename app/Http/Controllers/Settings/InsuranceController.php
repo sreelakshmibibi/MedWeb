@@ -13,7 +13,7 @@ class InsuranceController extends Controller
     protected $commonService;
     public function __construct()
     {
-        $this->middleware('permission:insurance', ['only' => ['index', 'create', 'store', 'update', 'edit', 'destroy']]);
+        $this->middleware('permission:settings insurance', ['only' => ['index', 'create', 'store', 'update', 'edit', 'destroy']]);
         
     }
 

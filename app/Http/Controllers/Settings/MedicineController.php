@@ -12,7 +12,7 @@ class MedicineController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:medicines', ['only' => ['index', 'store', 'update', 'edit', 'destroy']]);
+        $this->middleware('permission:settings medicines', ['only' => ['index', 'store', 'update', 'edit', 'destroy']]);
         
     }
 

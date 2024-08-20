@@ -13,7 +13,7 @@ class ComboOfferController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:combo_offers', ['only' => ['index', 'store', 'update', 'edit', 'destroy']]);
+        $this->middleware('permission:settings combo_offers', ['only' => ['index', 'store', 'update', 'edit', 'destroy']]);
         
     }
     /**
