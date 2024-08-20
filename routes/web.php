@@ -108,7 +108,7 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/disease/update', [DiseaseController::class, 'update'])->name('settings.disease.update');
     Route::delete('/disease/{disease}', [DiseaseController::class, 'destroy'])->name('settings.disease.destroy');
 
-    Route::group(['middleware' => ['permission:departments']], function () {
+    Route::group(['middleware' => ['permission:settings departments']], function () {
         Route::get('/department', [DepartmentController::class, 'index'])->name('settings.department');
         Route::post('/department/store', [DepartmentController::class, 'store'])->name('settings.department.store');
         Route::get('/department/{department}/edit', [DepartmentController::class, 'edit'])->name('settings.department.edit');
