@@ -122,59 +122,91 @@
     </div>
     <div class="collectiondiv" style="display: none">
         <div class="table-responsive">
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover table-striped mb-0 data-table text-center">
+                <table class="table table-bordered table-hover table-striped mb-0 data-table text-center" id="collectionTable" width="100%">
                     <thead class="bg-primary-light">
                         <tr>
-                            <th width="10px">No</th>
+                            <th >#</th>
+                            <th>Date</th>
                             <th>Patient ID</th>
-                            <th>Name</th>
-                            <th>Gender</th>
-                            <th>Phone Number</th>
-                            <th>Last Appointment Date</th>
-                            <th>Upcoming (if any)</th>
-                            <th width="20px">Status</th>
-                            <th width="170px">Action</th>
+                            <th>Patient Name</th>
+                            <th>Branch</th>
+                            <th>Visit</th>
+                            <th>Total</th>
+                            <th>Discount</th>
+                            <th>Tax</th>
+                            <th>Net</th>
+                            <th>Cash</th>
+                            <th>Gpay</th>
+                            <th>Card</th>
+                            <th>Total Paid</th>
+                            <th>Balance Given</th>
+                            <th>Outstanding</th>
+                            <th>Created By</th>
+                            <th>Updated By</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td width="10px">1</td>
-                            <td>Patient ID</td>
-                            <td>Name</td>
-                            <td>Gender</th>
-                            <td>Phone Number</th>
-                            <td>Last Appointment Date</td>
-                            <td>Upcoming (if any)</td>
-                            <td width="20px">Status</td>
-                            <td width="170px">Action</td>
-                        </tr>
-                        <tr>
-                            <td width="10px">1</td>
-                            <td>Patient ID</td>
-                            <td>Name</td>
-                            <td>Gender</th>
-                            <td>Phone Number</th>
-                            <td>Last Appointment Date</td>
-                            <td>Upcoming (if any)</td>
-                            <td width="20px">Status</td>
-                            <td width="170px">Action</td>
-                        </tr>
-                        <tr>
-                            <td width="10px">1</td>
-                            <td>Patient ID</td>
-                            <td>Name</td>
-                            <td>Gender</th>
-                            <td>Phone Number</th>
-                            <td>Last Appointment Date</td>
-                            <td>Upcoming (if any)</td>
-                            <td width="20px">Status</td>
-                            <td width="170px">Action</td>
-                        </tr>
-
+                       
                     </tbody>
                 </table>
-            </div>
         </div>
     </div>
 </form>
+<script type="text/javascript">
+    var table;
+    jQuery(function($) {
+    
+    // Handle the search button click
+    $('#searchcollectionbtn').click(function() {
+        if ($.fn.DataTable.isDataTable(".data-table")) {
+        // Destroy existing DataTable instance
+        $(".data-table").DataTable().destroy();
+    }
+        $('.collectiondiv').show(); 
+        table = $('#collectionTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: "{{ route('report.collection') }}",
+            type: 'POST',
+            data: function(d) {
+                d._token = $('input[name="_token"]').val();
+                d.fromdate = $('#fromdate').val();
+                d.todate = $('#todate').val();
+                d.branch = $('#branch').val();
+                d.billedby = $('#billedby').val();
+                d.generatedby = $('#generatedby').val();
+                d.outstanding = $('#outstanding').val();
+                d.combooffer = $('#combooffer').val();
+                d.registration = $('#registration').val();
+            },
+            dataSrc: function (json) {
+                console.log('Response Data:', json); // Log response data
+                return json.data; // Return the data part of the response
+            }
+        },
+        columns: [
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+            { data: 'billDate', name: 'billDate' },
+            { data: 'patientId', name: 'patientId' },
+            { data: 'patientName', name: 'patientName' },
+            { data: 'branch', name: 'branch' },
+            { data: 'visitCount', name: 'visitCount' },
+            { data: 'total', name: 'total' },
+            { data: 'discount', name: 'discount' },
+            { data: 'tax', name: 'tax' },
+            { data: 'netAmount', name: 'netAmount' },
+            { data: 'cash', name: 'cash' },
+            { data: 'gpay', name: 'gpay' },
+            { data: 'card', name: 'card' },
+            { data: 'totalPaid', name: 'totalPaid' },
+            { data: 'balanceGiven', name: 'balanceGiven' },
+            { data: 'outstanding', name: 'outstanding' },
+            { data: 'createdBy', name: 'createdBy' },
+            { data: 'updatedBy', name: 'updatedBy' }
+        ]
+    }); // Reload the DataTable with new data
+        });
+});
+
+</script>

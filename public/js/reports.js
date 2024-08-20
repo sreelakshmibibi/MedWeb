@@ -1,11 +1,11 @@
-function toggleCollectionDiv() {
-    var collectionDiv = document.querySelector(".collectiondiv");
-    if (collectionDiv.style.display === "none") {
-        collectionDiv.style.display = "block";
-    } else {
-        collectionDiv.style.display = "none";
-    }
-}
+// function toggleCollectionDiv() {
+//     var collectionDiv = document.querySelector(".collectiondiv");
+//     if (collectionDiv.style.display === "none") {
+//         collectionDiv.style.display = "block";
+//     } else {
+//         collectionDiv.style.display = "none";
+//     }
+// }
 
 function toggleIncomeDiv() {
     var incomeDiv = document.querySelector(".incomediv");
@@ -43,9 +43,9 @@ function toggleDiseaseDiv() {
     }
 }
 
-document
-    .getElementById("searchcollectionbtn")
-    .addEventListener("click", toggleCollectionDiv);
+// document
+//     .getElementById("searchcollectionbtn")
+//     .addEventListener("click", toggleCollectionDiv);
 document
     .getElementById("searchincomebtn")
     .addEventListener("click", toggleIncomeDiv);

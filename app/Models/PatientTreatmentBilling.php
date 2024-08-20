@@ -56,4 +56,14 @@ class PatientTreatmentBilling extends Model
     {
         return $this->belongsTo(PatientProfile::class, 'patient_id', 'patient_id');
     }
+
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }
