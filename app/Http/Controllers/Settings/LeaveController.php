@@ -45,16 +45,26 @@ class LeaveController extends Controller
                     } else if ($row->leave_status == LeaveApplication::Approved) {
                         return "Approved";
                     } else if ($row->leave_status == LeaveApplication::Rejected) {
-                        return "Rejected" . " ( " . $row->rejected_reason. " ) ";
+                        return "Rejected" . " ( " . $row->rejection_reason. " ) ";
                     }
                 })
                 ->addColumn('action', function ($row) {
-
-                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
+                    $btn = null;
+                    if (Auth::user()->can('approve leave')) {
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-approve btn-xs me-1" title="approve" data-bs-toggle="modal" data-id="' . $row->id . '"
+                        data-bs-target="#modal-approve" >Approve</button>
+                        '; 
+                        if ($row->leave_from <= date('Y-m-d')) {
+                            $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-reject btn-xs" data-bs-toggle="modal" data-bs-target="#modal-reject" data-id="' . $row->id . '" title="delete">Reject</button>';
+                        }
+                    }
+                    
+                    if (Auth::user()->id = $row->user_id && $row->leave_status == LeaveApplication::Applied) {
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
                         data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
                         <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
                         <i class="fa fa-trash"></i></button>';
-
+                    }
                     return $btn;
                 });
                 if (Auth::user()->can('approve leave')) {
@@ -147,4 +157,26 @@ class LeaveController extends Controller
         return response()->json(['success', 'Leave Application deleted successfully.'], 201);
     }
 
+    public function approveLeave($leaveId)
+    {
+        $leave = LeaveApplication::findOrFail($leaveId);
+        if (!$leave)
+            abort(404);
+        $leave->leave_status = LeaveApplication::Approved;
+        $leave->approved_by = Auth::user()->id;
+        $leave->save();
+        return response()->json(['success', 'Leave Application approved successfully.'], 200);
+
+    }
+    public function rejectLeave($leaveId, Request $request)
+    {
+        $leave = LeaveApplication::findOrFail($leaveId);
+        if (!$leave)
+            abort(404);
+        $leave->leave_status = LeaveApplication::Rejected;
+        $leave->rejected_by = Auth::user()->id;
+        $leave->rejection_reason = $request->reject_reason;
+        $leave->save();
+        return response()->json(['success', 'Leave Application rejected successfully.'], 200);
+    }
 }

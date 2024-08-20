@@ -60,6 +60,9 @@
     @include('settings.leave.create')
     @include('settings.leave.edit')
     @include('settings.leave.delete')
+    @include('settings.leave.approve')
+    @include('settings.leave.reject')
+
 
     <script type="text/javascript">
         var today = new Date().toISOString().split('T')[0];
@@ -136,6 +139,77 @@
                     },
                     error: function(error) {
                         console.log(error);
+                    }
+                });
+            });
+            $(document).on('click', '.btn-approve', function() {
+                var leaveId = $(this).data('id');
+                $('#approve_leave_id').val(leaveId); // Set department ID in the hidden input
+                $('#modal-approve').modal('show');
+            });
+            $('#btn-confirm-approve').click(function() {
+                var leaveId = $('#approve_leave_id').val();
+                var url = "{{ route('leave.approve', ':leave') }}";
+                url = url.replace(':leave', leaveId);
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        $('#modal-approve').modal('hide');
+                        table.draw(); // Refresh DataTable
+                        $('#successMessage').text(response.success);
+                        $('#successMessage').fadeIn().delay(3000)
+                            .fadeOut(); // Show for 3 seconds
+                    },
+                    error: function(xhr) {
+                        $('#modal-approve').modal('hide');
+                        // swal("Error!", xhr.responseJSON.message, "error");
+                    }
+                });
+            });
+        
+            $(document).on('click', '.btn-reject', function() {
+                var leaveId = $(this).data('id');
+                $('#reject_leave_id').val(leaveId); // Set department ID in the hidden input
+                $('#modal-reject').modal('show');
+            });
+
+            $('#btn-confirm-reject').click(function() {
+                var leaveId = $('#reject_leave_id').val();
+                var reason = $('#reject_reason').val();
+
+                if (reason.length === 0) {
+                    $('#reject_reason').addClass('is-invalid');
+                    $('#rejectionError').text('Reason is required.');
+                    return; // Stop further execution
+                }
+
+                var url = "{{ route('leave.reject', ':leave') }}";
+                url = url.replace(':leave', leaveId);
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "reject_reason": reason
+                    },
+                    success: function(response) {
+                        table.draw(); // Refresh DataTable
+                        $('#modal-reject').modal(
+                            'hide'); 
+                        $('#successMessage').text(response.sucess);
+                        $('#successMessage').fadeIn().delay(3000)
+                            .fadeOut(); // Show for 3 seconds
+
+                    },
+                    error: function(xhr) {
+                        $('#modal-reject').modal(
+                            'hide'); // Close modal in case of error
+                        console.log("Error!", xhr.responseJSON.message, "error");
                     }
                 });
             });
