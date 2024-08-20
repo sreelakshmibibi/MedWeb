@@ -17,6 +17,7 @@ use App\Models\DoctorWorkingHour;
 use App\Models\History;
 use App\Models\Insurance;
 use App\Models\InsuranceCompany;
+use App\Models\LeaveApplication;
 use App\Models\PatientProfile;
 use App\Models\PatientRegistrationFee;
 use App\Models\State;
@@ -164,8 +165,9 @@ class PatientListController extends Controller
         $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
         // Get the first branch ID
         $firstBranchId = optional($clinicBranches->first())->id;
+        $date = date('Y-m-d');
         $currentDayName = Carbon::now()->englishDayOfWeek;
-        $workingDoctors = $this->getTodayWorkingDoctors($firstBranchId, $currentDayName);
+        $workingDoctors = $this->getTodayWorkingDoctors($firstBranchId, $currentDayName, $date);
         $appointmentStatuses = AppointmentStatus::all(); // Get all appointment statuses
         $clinic = ClinicBasicDetail::first();
         $registrationFees = $clinic->patient_registration_fees;
@@ -174,18 +176,41 @@ class PatientListController extends Controller
 
     }
 
-    public function getTodayWorkingDoctors($branchId, $weekday)
+    public function getTodayWorkingDoctors($branchId, $weekday, $date)
     {
-
+        // Retrieve working hours for the specified day and status
         $query = DoctorWorkingHour::where('week_day', $weekday)
             ->where('status', 'Y');
-
+    
         if ($branchId) {
             $query->where('clinic_branch_id', $branchId);
         }
-
-        return $query->with('user')->get();
+    
+        $workingDoctors = $query->with('user')->get();
+    
+        // Filter out doctors who are on leave
+        $workingDoctors = $workingDoctors->filter(function ($workingHour) use ($date) {
+            $doctorId = $workingHour->user_id;
+    
+            // Check if the doctor is on leave for the given date
+            $isOnLeave = LeaveApplication::where('user_id', $doctorId)
+                ->where(function ($query) use ($date) {
+                    $query->whereBetween('leave_from', [$date, $date])
+                          ->orWhereBetween('leave_to', [$date, $date])
+                          ->orWhere(function ($query) use ($date) {
+                              $query->where('leave_from', '<=', $date)
+                                    ->where('leave_to', '>=', $date);
+                          });
+                })
+                ->whereNot('leave_status', LeaveApplication::Rejected)
+                ->exists();
+    
+            return !$isOnLeave;
+        });
+    
+        return $workingDoctors;
     }
+    
 
     public function fetchDoctors($branchId, Request $request)
     {
@@ -193,7 +218,7 @@ class PatientListController extends Controller
         $date = Carbon::parse($request->input('appdate'))->toDateString(); // 'Y-m-d'
         $carbonDate = Carbon::parse($date);
         $weekday = $carbonDate->format('l');
-        $workingDoctors = $this->getTodayWorkingDoctors($branchId, $weekday);
+        $workingDoctors = $this->getTodayWorkingDoctors($branchId, $weekday, $date);
 
         return response()->json($workingDoctors);
     }
@@ -477,7 +502,7 @@ class PatientListController extends Controller
         $date = Carbon::parse($patientProfile->lastAppointment->app_date)->toDateString(); // 'Y-m-d'
         $carbonDate = Carbon::parse($date);
         $weekday = $carbonDate->format('l');
-        $workingDoctors = $this->getTodayWorkingDoctors($patientProfile->lastAppointment->app_branch, $weekday);
+        $workingDoctors = $this->getTodayWorkingDoctors($patientProfile->lastAppointment->app_branch, $weekday, $date);
         $appDate = $appointment->app_date;
         $appTime = $appointment->app_time;
         // Combine date and time into a single datetime string
