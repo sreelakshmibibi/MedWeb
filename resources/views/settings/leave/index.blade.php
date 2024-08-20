@@ -67,186 +67,169 @@
 
 
     <script type="text/javascript">
-        var today = new Date().toISOString().split('T')[0];
-        document.getElementById('leave_from').setAttribute('min', today);
-        document.getElementById('leave_to').setAttribute('min', today);
-        document.getElementById('editleave_from').setAttribute('min', today);
-        document.getElementById('editleave_to').setAttribute('min', today);
-        jQuery(function($) {
-            table = $(".data-table").DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: "{{ route('leave') }}",
-                columns: [{
-                        data: "DT_RowIndex",
-                        name: "DT_RowIndex",
-                        orderable: false,
-                        searchable: false,
-                        render: function(data, type, row, meta) {
-                            // Return the row index (starts from 0)
-                            return meta.row + 1; // Adding 1 to start counting from 1
-                        },
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById('leave_from').setAttribute('min', today);
+    document.getElementById('leave_to').setAttribute('min', today);
+    document.getElementById('editleave_from').setAttribute('min', today);
+    document.getElementById('editleave_to').setAttribute('min', today);
+
+    jQuery(function($) {
+        var table = $(".data-table").DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('leave') }}",
+            columns: [
+                {
+                    data: "DT_RowIndex",
+                    name: "DT_RowIndex",
+                    orderable: false,
+                    searchable: false,
+                    render: function(data, type, row, meta) {
+                        return meta.row + 1;
                     },
-                    <?php if (Auth::user()->can('leave approve)) { ?>
-                    {
-                        data:"staff",
-                        name:"staff",
-                        className: "text-left",
-                    },
-                    <?php  } ?>
-                    {
-                        data: "leave_type",
-                        name: "leave_type",
-                        className: "text-left",
-                    },
-                    {
-                        data: "leave_applied_dates",
-                        name: "leave_applied_dates",
-                    },
-                   
-                    {
-                        data: "leave_reason",
-                        name: "leave_reason",
-                        className: "text-left",
-                    },
-                    {
-                        data: "status",
-                        name: "status",
-                        className: "text-center",
-                    },
-                    {
-                        data: "action",
-                        name: "action",
-                        className: "text-center",
-                        orderable: false,
-                        searchable: true,
-                    },
-                ],
-            });
+                },
+                @can('leave approve')
+                {
+                    data: "staff",
+                    name: "staff",
+                    className: "text-left",
+                },
+                @endcan
+                {
+                    data: "leave_type",
+                    name: "leave_type",
+                    className: "text-left",
+                },
+                {
+                    data: "leave_applied_dates",
+                    name: "leave_applied_dates",
+                },
+                {
+                    data: "leave_reason",
+                    name: "leave_reason",
+                    className: "text-left",
+                },
+                {
+                    data: "status",
+                    name: "status",
+                    className: "text-center",
+                },
+                {
+                    data: "action",
+                    name: "action",
+                    className: "text-center",
+                    orderable: false,
+                    searchable: true,
+                },
+            ],
         });
-        jQuery(function($) {
-            $(document).on('click', '.btn-edit', function() {
-                var leaveId = $(this).data('id');
-                $('#edit_leave_id').val(leaveId); // Set department ID in the hidden input
-                $.ajax({
-                    url: '{{ url("leave") }}' + "/" + leaveId + "/edit",
-                    method: 'GET',
-                    success: function(response) {
-                        $('#editleave_id').val(response.id);
-                        $('#editleave_type').val(response.leave_type);
-                        $('#editleave_from').val(response.leave_from);
-                        $('#editleave_to').val(response.leave_to);
-                        $('#editreason').val(response.leave_reason);
-                        // $('#modal-edit').modal('show');
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
-                });
-            });
-            $(document).on('click', '.btn-approve', function() {
-                var leaveId = $(this).data('id');
-                $('#approve_leave_id').val(leaveId); // Set department ID in the hidden input
-                $('#modal-approve').modal('show');
-            });
-            $('#btn-confirm-approve').click(function() {
-                var leaveId = $('#approve_leave_id').val();
-                var url = "{{ route('leave.approve', ':leave') }}";
-                url = url.replace(':leave', leaveId);
-                $.ajax({
-                    type: 'GET',
-                    url: url,
-                    data: {
-                        "_token": "{{ csrf_token() }}"
-                    },
-                    success: function(response) {
-                        $('#modal-approve').modal('hide');
-                        table.draw(); // Refresh DataTable
-                        $('#successMessage').text(response.success);
-                        $('#successMessage').fadeIn().delay(3000)
-                            .fadeOut(); // Show for 3 seconds
-                    },
-                    error: function(xhr) {
-                        $('#modal-approve').modal('hide');
-                        // swal("Error!", xhr.responseJSON.message, "error");
-                    }
-                });
-            });
-        
-            $(document).on('click', '.btn-reject', function() {
-                var leaveId = $(this).data('id');
-                $('#reject_leave_id').val(leaveId); // Set department ID in the hidden input
-                $('#modal-reject').modal('show');
-            });
 
-            $('#btn-confirm-reject').click(function() {
-                var leaveId = $('#reject_leave_id').val();
-                var reason = $('#reject_reason').val();
-
-                if (reason.length === 0) {
-                    $('#reject_reason').addClass('is-invalid');
-                    $('#rejectionError').text('Reason is required.');
-                    return; // Stop further execution
+        // Edit Leave
+        $(document).on('click', '.btn-edit', function() {
+            var leaveId = $(this).data('id');
+            $('#edit_leave_id').val(leaveId);
+            $.ajax({
+                url: '{{ url("leave") }}/' + leaveId + '/edit',
+                method: 'GET',
+                success: function(response) {
+                    $('#editleave_id').val(response.id);
+                    $('#editleave_type').val(response.leave_type);
+                    $('#editleave_from').val(response.leave_from);
+                    $('#editleave_to').val(response.leave_to);
+                    $('#editreason').val(response.leave_reason);
+                    $('#modal-edit').modal('show');
+                },
+                error: function(error) {
+                    console.log(error);
                 }
-
-                var url = "{{ route('leave.reject', ':leave') }}";
-                url = url.replace(':leave', leaveId);
-
-                $.ajax({
-                    type: 'POST',
-                    url: url,
-                    data: {
-                        "_token": "{{ csrf_token() }}",
-                        "reject_reason": reason
-                    },
-                    success: function(response) {
-                        table.draw(); // Refresh DataTable
-                        $('#modal-reject').modal(
-                            'hide'); 
-                        $('#successMessage').text(response.sucess);
-                        $('#successMessage').fadeIn().delay(3000)
-                            .fadeOut(); // Show for 3 seconds
-
-                    },
-                    error: function(xhr) {
-                        $('#modal-reject').modal(
-                            'hide'); // Close modal in case of error
-                        console.log("Error!", xhr.responseJSON.message, "error");
-                    }
-                });
-            });
-
-            $(document).on('click', '.btn-danger', function() {
-                console.log('hi');
-                var leaveId = $(this).data('id');
-                $('#delete_leave_id').val(leaveId); // Set department ID in the hidden input
-                $('#modal-delete').modal('show');
-            });
-
-            $('#btn-confirm-delete').click(function() {
-                var leaveId = $('#delete_leave_id').val();
-                var url = "{{ route('leave.destroy', ':leave') }}";
-                url = url.replace(':leave', leaveId);
-                $.ajax({
-                    type: 'DELETE',
-                    url: url,
-                    data: {
-                        "_token": "{{ csrf_token() }}"
-                    },
-                    success: function(response) {
-                        table.draw(); // Refresh DataTable
-                        $('#successMessage').text('Leave applicaton deleted successfully');
-                        $('#successMessage').fadeIn().delay(3000)
-                            .fadeOut(); // Show for 3 seconds
-                    },
-                    error: function(xhr) {
-                        $('#modal-delete').modal('hide');
-                        swal("Error!", xhr.responseJSON.message, "error");
-                    }
-                });
             });
         });
 
+        // Approve Leave
+        $(document).on('click', '.btn-approve', function() {
+            var leaveId = $(this).data('id');
+            $('#approve_leave_id').val(leaveId);
+            $('#modal-approve').modal('show');
+        });
 
-    </script>
+        $('#btn-confirm-approve').click(function() {
+            var leaveId = $('#approve_leave_id').val();
+            $.ajax({
+                type: 'GET',
+                url: "{{ route('leave.approve', ':leave') }}".replace(':leave', leaveId),
+                data: { "_token": "{{ csrf_token() }}" },
+                success: function(response) {
+                    $('#modal-approve').modal('hide');
+                    table.draw();
+                    $('#successMessage').text(response.success).fadeIn().delay(3000).fadeOut();
+                },
+                error: function(xhr) {
+                    $('#modal-approve').modal('hide');
+                    console.log("Error:", xhr.responseJSON.message);
+                }
+            });
+        });
+
+        // Reject Leave
+        $(document).on('click', '.btn-reject', function() {
+            var leaveId = $(this).data('id');
+            $('#reject_leave_id').val(leaveId);
+            $('#modal-reject').modal('show');
+        });
+
+        $('#btn-confirm-reject').click(function() {
+            var leaveId = $('#reject_leave_id').val();
+            var reason = $('#reject_reason').val();
+
+            if (reason.length === 0) {
+                $('#reject_reason').addClass('is-invalid');
+                $('#rejectionError').text('Reason is required.');
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "{{ route('leave.reject', ':leave') }}".replace(':leave', leaveId),
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "reject_reason": reason
+                },
+                success: function(response) {
+                    table.draw();
+                    $('#modal-reject').modal('hide');
+                    $('#successMessage').text(response.success).fadeIn().delay(3000).fadeOut();
+                },
+                error: function(xhr) {
+                    $('#modal-reject').modal('hide');
+                    console.log("Error:", xhr.responseJSON.message);
+                }
+            });
+        });
+
+        // Delete Leave
+        $(document).on('click', '.btn-danger', function() {
+            var leaveId = $(this).data('id');
+            $('#delete_leave_id').val(leaveId);
+            $('#modal-delete').modal('show');
+        });
+
+        $('#btn-confirm-delete').click(function() {
+            var leaveId = $('#delete_leave_id').val();
+            $.ajax({
+                type: 'DELETE',
+                url: "{{ route('leave.destroy', ':leave') }}".replace(':leave', leaveId),
+                data: { "_token": "{{ csrf_token() }}" },
+                success: function(response) {
+                    table.draw();
+                    $('#successMessage').text('Leave application deleted successfully').fadeIn().delay(3000).fadeOut();
+                },
+                error: function(xhr) {
+                    $('#modal-delete').modal('hide');
+                    console.log("Error:", xhr.responseJSON.message);
+                }
+            });
+        });
+    });
+</script>
+
 @endsection
