@@ -6,6 +6,7 @@ use App\Models\Appointment;
 use App\Models\AppointmentStatus;
 use App\Models\MenuItem;
 use App\Models\PatientDetailBilling;
+use App\Models\PatientRegistrationFee;
 use App\Models\PatientTreatmentBilling;
 use App\Models\ToothExamination;
 use App\Models\TreatmentComboOffer;
@@ -208,7 +209,7 @@ class BillingService
             ->orderBy('appointment_id', 'desc') // Order by descending to get the most recent previous appointment
             ->first(); // Get the first result which will be the closest previous appointment
 
-        // Check if a previous appointment was found
+        // Check if a previous appointment was founde
         if ($previousBill) {
             if ($previousBill->bill_status == PatientTreatmentBilling::PAYMENT_DONE) {
                 $previousOutStanding += $previousBill->balance_due;
@@ -219,6 +220,18 @@ class BillingService
 
         }
         return $previousOutStanding;
+    }
+
+    public function generateBillId()
+    {
+        $yearMonth = date('Ym'); // Year and Month
+        $latestBill = PatientRegistrationFee::where('bill_id', 'like', $yearMonth . '%')
+            ->orderBy('bill_id', 'desc')
+            ->first();
+        $lastBillId = $latestBill ? intval(substr($latestBill->bill_id, -4)) : 0;
+        $newBillId = $yearMonth . str_pad($lastBillId + 1, 4, '0', STR_PAD_LEFT);
+
+        return $newBillId;
     }
 
 }
