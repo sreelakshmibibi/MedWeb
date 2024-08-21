@@ -1,4 +1,6 @@
 <?php
+
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Session;
 
@@ -232,7 +234,7 @@ if ($hasPrescriptionBill) {
                             </td>
                         </tr>
                         <tr>
-
+                                
                             <td colspan="4" class="text-start">
                                 <span class="text-bold me-2">Mode of Payment:</span>
 
@@ -311,12 +313,13 @@ if ($hasPrescriptionBill) {
 
         <div class="row text-end py-3">
             <div class="col-12">
-                <?php if (!$hasPrescriptionBill) { ?>
+                <?php if (!$hasPrescriptionBill) { 
+                    if (Auth::user()->can('bill payment')) {?>
                 <button type="button" class="btn btn-success pull-right" name="prescSubmitPayment"
                     id="prescSubmitPayment"><i class="fa fa-credit-card"></i>
                     Submit Payment
                 </button>
-                <?php  } else { ?>
+                <?php  } } else { ?>
                 <button type="button" class="btn btn-warning pull-right" name="prescPrintPayment"
                     id="prescPrintPayment"><i class="fa fa-print"></i>
                     Print Receipt

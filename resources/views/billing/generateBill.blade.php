@@ -1,4 +1,6 @@
 <?php
+
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Session;
 date_default_timezone_set('Asia/Kolkata');
@@ -258,107 +260,7 @@ date_default_timezone_set('Asia/Kolkata');
                                                         </h3>
                                                     </td>
                                                 </tr>
-                                                {{-- <tr>
-                                                    <td colspan="3" class="text-start">
-                                                        <span class="text-bold">Mode of Payment : </span>
-                                                        <input type="radio" class="form-control with-gap"
-                                                            name="mode_of_payment" id="mode_of_payment_gpay"
-                                                            value="gpay" required <?php if ($billExists->mode_of_payment == "gpay") { ?> checked
-                                                            <?php } ?>>
-                                                        <label class="form-check-label me-2"
-                                                            for="mode_of_payment_gpay">Gpay</label>
-                                                        <input type="radio" class="form-control with-gap"
-                                                            name="mode_of_payment" id="mode_of_payment_card"
-                                                            value="card" required <?php if ($billExists->mode_of_payment == "card") { ?> checked
-                                                            <?php } ?>>
-                                                        <label class="form-check-label me-2"
-                                                            for="mode_of_payment_card">Card</label>
-                                                        <input type="radio" class="form-control with-gap"
-                                                            name="mode_of_payment" id="mode_of_payment_cash"
-                                                            value="cash" required <?php if ($billExists->mode_of_payment == "cash") { ?> checked
-                                                            <?php } ?>>
-                                                        <label class="form-check-label me-2"
-                                                            for="mode_of_payment_cash">Cash</label>
-                                                        <span class="error-message text-danger" id="modeError"></span>
-                                                    </td>
-                                                    <td><input type="text" readonly name="tax"
-                                                            class="form-control text-center"
-                                                            value="{{ number_format($billExists->tax, 3) }}"></td>
-                                                </tr> --}}
-
-
-                                                
-                                                {{-- <tr class="bt-3 border-primary">
-                                                    <td colspan="5" class="text-end ">
-                                                        <h3><b>Total</b></h3>
-                                                    </td>
-                                                    <td>
-                                                        <h3>{{ session('currency') }}{{ number_format($billExists->amount_to_be_paid, 2) }}
-                                                            <input type="hidden" name="totaltoPay" id="totalToPay"
-                                                                class="form-control text-center"
-                                                                value="{{ $billExists->amount_to_be_paid }}">
-                                                        </h3>
-                                                    </td>
-                                                </tr> --}}
                                                 <tr>
-                                                    {{-- <td colspan="3">
-                                                        <span class="text-bold">Mode of Payment : </span>
-                                                        <input type="radio" class="form-check-input"
-                                                            name="mode_of_payment" id="mode_of_payment_gpay"
-                                                            value="gpay" required <?php if ($billExists->mode_of_payment == "gpay") { ?> checked
-                                                            <?php } ?>>
-                                                        <label class="form-check-label"
-                                                            for="mode_of_payment_gpay">Gpay</label>
-                                                        <input type="radio" class="form-check-input"
-                                                            name="mode_of_payment" id="mode_of_payment_card"
-                                                            value="card" required <?php if ($billExists->mode_of_payment == "card") { ?> checked
-                                                            <?php } ?>>
-                                                        <label class="form-check-label"
-                                                            for="mode_of_payment_card">Card</label>
-                                                        <input type="radio" class="form-check-input"
-                                                            name="mode_of_payment" id="mode_of_payment_cash"
-                                                            value="cash" required <?php if ($billExists->mode_of_payment == "cash") { ?> checked
-                                                            <?php } ?>>
-                                                        <label class="form-check-label"
-                                                            for="mode_of_payment_cash">Cash</label>
-                                                        <span class="error-message text-danger" id="modeError"></span>
-                                                    </td> --}}
-                                                    {{-- <td colspan="3" class="text-start">
-                                                        <span class="text-bold">Mode of Payment : </span>
-                                                        <input type="radio" class="form-control with-gap"
-                                                            name="mode_of_payment" id="mode_of_payment_gpay"
-                                                            value="gpay" required <?php// if ($billExists->mode_of_payment == "gpay") { ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> checked
-                                                            <?php// } ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?>>
-                                                        <label class="form-check-label me-2"
-                                                            for="mode_of_payment_gpay">Gpay</label>
-                                                        <input type="text" name="gpaycash" style="display: none;"
-                                                            class="form-control d-inline w-50">
-
-                                                        <input type="radio" class="form-control with-gap"
-                                                            name="mode_of_payment" id="mode_of_payment_cash"
-                                                            value="cash" required <?php// if ($billExists->mode_of_payment == "cash") { ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> checked
-                                                            <?php// } ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?>>
-                                                        <label class="form-check-label me-2"
-                                                            for="mode_of_payment_cash">Cash</label>
-                                                        <input type="text" name="cash" style="display: none;"
-                                                            class="form-control d-inline w-50">
-
-                                                        <input type="radio" class="form-control with-gap"
-                                                            name="mode_of_payment" id="mode_of_payment_card"
-                                                            value="card" required <?php// if ($billExists->mode_of_payment == "card") { ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> checked
-                                                            <?php// } ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?>>
-                                                        <label class="form-check-label me-2"
-                                                            for="mode_of_payment_card">Card</label>
-                                                        <input type="text" name="cardcash" style="display: none;"
-                                                            class="form-control d-inline w-50 me-2">
-                                                        <select class="ms-2 form-select d-inline w-150" id="machine"
-                                                            name="machine" style="display: none;">
-                                                            <option value="">Select Machine</option>
-                                                            <option value="1">Machine 1</option>
-                                                            <option value="2">Machine 2</option>
-                                                        </select>
-                                                        <span class="error-message text-danger" id="modeError"></span>
-                                                    </td> --}}
                                                     <td colspan="3" class="text-start">
                                                         <span class="text-bold me-2">Mode of Payment:</span>
 
@@ -370,13 +272,13 @@ date_default_timezone_set('Asia/Kolkata');
                                                         <label class="form-check-label me-2"
                                                             for="mode_of_payment_gpay">Gpay</label>
                                                         <input type="text" name="gpaycash" id="gpaycash"
-                                                            class="form-control  w-100 " style="display: none;" value="<?php if ($billExists->gpay != null) { echo $billExists->gpay;
+                                                            class="form-control  w-100 " style="display: none;" value="<?php if ($billExists->gpay > 0) { echo $billExists->gpay;
                                                              } ?>">
                                                         &nbsp;
                                                         <!-- Checkbox for Cash -->
                                                         <input type="checkbox" class="filled-in chk-col-success"
                                                             id="mode_of_payment_cash" name="mode_of_payment[]"
-                                                            value="cash" <?php if ($billExists->cash != null) { ?> checked
+                                                            value="cash" <?php if ($billExists->cash > 0) { ?> checked
                                                             <?php } ?>>
                                                         <label class="form-check-label me-2"
                                                             for="mode_of_payment_cash">Cash</label>
@@ -387,7 +289,7 @@ date_default_timezone_set('Asia/Kolkata');
                                                         <!-- Checkbox for Card -->
                                                         <input type="checkbox" class="filled-in chk-col-success"
                                                             id="mode_of_payment_card" name="mode_of_payment[]"
-                                                            value="card" <?php if ($billExists->card != null) { ?> checked
+                                                            value="card" <?php if ($billExists->card > 0) { ?> checked
                                                             <?php } ?>>
                                                         <label class="form-check-label me-2"
                                                             for="mode_of_payment_card">Card</label>
@@ -457,12 +359,13 @@ date_default_timezone_set('Asia/Kolkata');
 
                                 <div class="row text-end py-3">
                                     <div class="col-12">
-                                        <?php if ($billExists->amount_paid == null) { ?>
+                                        <?php if ($billExists->amount_paid == null) { 
+                                            if (Auth::user()->can('bill payment')) {?>
                                         <button type="button" class="btn btn-success pull-right" name="submitPayment"
                                             id="submitPayment"><i class="fa fa-credit-card"></i>
                                             Submit Payment
                                         </button>
-                                        <?php  } else { ?>
+                                        <?php } } else { ?>
                                         <button type="button" class="btn btn-warning pull-right" name="printPayment"
                                             id="printPayment"><i class="fa fa-print"></i>
                                             Print Receipt
