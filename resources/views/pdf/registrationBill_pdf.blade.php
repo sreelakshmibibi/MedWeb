@@ -266,7 +266,7 @@ header('Content-Type: text/html; charset=UTF-8');
                             <td colspan="2" style="text-align:right;">Paid Date:</td>
                             <td>
                                 {{-- {{ $billDetail->paid_at ?? '' }} --}}
-                                {{ \Carbon\Carbon::parse($billDetail->paid_at ?? now())->format('d-m-Y') }}
+                                {{ \Carbon\Carbon::parse($billDetail->bill_paid_date ?? now())->format('d-m-Y') }}
                             </td>
                         </tr>
                     @endforeach
