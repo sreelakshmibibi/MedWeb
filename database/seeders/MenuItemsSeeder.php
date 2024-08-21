@@ -130,7 +130,7 @@ class MenuItemsSeeder extends Seeder
             'settings medicines',
             'staff_list',
             'leave',
-            'insurance',
+            'settings insurance',
             'treatment_plan',
             'leave apply',
         ]);
