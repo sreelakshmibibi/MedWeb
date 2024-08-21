@@ -26,6 +26,7 @@ use App\Services\DoctorAvaialbilityService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -34,6 +35,16 @@ use Yajra\DataTables\DataTables as DataTables;
 
 class PatientListController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:patients', ['only' => ['index']]);
+        $this->middleware('permission:patient create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:patient update', ['only' => ['edit', 'update', 'changeStatus']]);
+        $this->middleware('permission:patient delete', ['only' => ['destroy']]);
+        $this->middleware('permission:patient view', ['only' => ['show']]);
+        $this->middleware('permission:create appointment', ['only' => ['appointmentBooking']]);
+        $this->middleware('permission:appointments', ['only' => ['appointmentDetails']]);
+    }
     /**
      * Display a listing of the resource.
      */
@@ -51,7 +62,7 @@ class PatientListController extends Controller
                             data-patient-id='{$row->patient_id}'>" . $row->patient_id . '</i></a>';
                     } else {
                         $name1 = "<a href='#' class='waves-effect waves-light btn-patientidcard-pdf-generate' title='download patient ID' data-app-id='{$row->latestAppointment->id}'
-    data-patient-id='{$row->patient_id}'>" . $row->patient_id . '</i></a>';
+                        data-patient-id='{$row->patient_id}'>" . $row->patient_id . '</i></a>';
                     }
 
                     return $name1;
@@ -109,14 +120,22 @@ class PatientListController extends Controller
                     $parent_id = '';
                     $base64Id = base64_encode($row->id);
                     $idEncrypted = Crypt::encrypt($base64Id);
-                    
-                    $btn = "<button type='button' class='waves-effect waves-light btn btn-circle btn-primary btn-add btn-xs me-1' title='New Booking' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->first_name . ' ' . $row->last_name) . "' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>";
-                    $btn .= '<a href="' . route('patient.patient_list.view', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
-                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
-                    if (auth()->user()->hasRole('Admin')) {
+                    $btn = null;
+                    if (Auth::user()->can('appointment create')) {
+                        $btn .= "<button type='button' class='waves-effect waves-light btn btn-circle btn-primary btn-add btn-xs me-1' title='New Booking' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->first_name . ' ' . $row->last_name) . "' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>";
+                    }  
+                    if (Auth::user()->can('patient view')) {
+                        $btn .= '<a href="' . route('patient.patient_list.view', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
+                    } 
+                    if (Auth::user()->can('patient update')) {
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
                         $btn .= '<a href="' . route('patient.patient_list.edit', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
+                    }
+                    
+                    if (Auth::user()->can('patient delete')) {
                         $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="Delete"><i class="fa-solid fa-trash"></i></button>';
                     }
+                
 
                     return $btn;
                 })

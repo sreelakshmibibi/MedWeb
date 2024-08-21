@@ -21,8 +21,10 @@
                 @endif
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Patient List</h3>
-                    <a type="button" class="waves-effect waves-light btn btn-primary"
+                    @if (Auth::user()->can('patient create'))
+                        <a type="button" class="waves-effect waves-light btn btn-primary"
                         href="{{ route('patient.patient_list.create') }}"> <i class="fa fa-add"></i> Add New</a>
+                    @endif
                 </div>
             </div>
 
