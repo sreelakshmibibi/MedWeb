@@ -196,39 +196,18 @@ class HomeController extends Controller
                     ->with(['patient', 'doctor', 'branch']) // Eager load relationships
                     ->get();
             }
-            if ($userType == null) {
-                if ($user->is_admin) {
-                    $role = 'Admin';
-                    $dashboardView = 'dashboard.admin';
+            $userType = $userType ?? ($user->is_admin ? 'admin' : ($user->is_doctor ? 'doctor' : ($user->is_nurse ? 'nurse' : 'user')));
 
-                } elseif ($user->is_doctor) {
-                    $role = 'Doctor';
-                    $dashboardView = 'dashboard.doctor';
-                } elseif ($user->is_nurse) {
-                    $role = 'Nurse';
-                    $dashboardView = 'dashboard.reception';
-                } else {
-                    $role = 'User';
-                    $dashboardView = 'dashboard.reception';
-                }
-            } else {
-                if ($userType == 'admin') {
-                    $role = 'Admin';
-                    $dashboardView = 'dashboard.admin';
-                } elseif ($userType == 'doctor') {
-                    
-                    $role = 'Doctor';
-                    $dashboardView = 'dashboard.doctor';
-                } elseif ($userType == 'nurse') {
-                    $role = 'Nurse';
-                    $dashboardView = 'dashboard.reception';
-                } else {
-                    $role = 'User';
-                    $dashboardView = 'dashboard.reception';
-                }
-
-            }
-
+            // Map user type to role and dashboard view
+            $roleMapping = [
+                'admin'  => ['Admin', 'dashboard.admin'],
+                'doctor' => ['Doctor', 'dashboard.doctor'],
+                'nurse'  => ['Nurse', 'dashboard.reception'],
+                'user'   => ['User', 'dashboard.reception'],
+            ];
+            
+            // Retrieve role and dashboard view based on user type
+            [$role, $dashboardView] = $roleMapping[$userType] ?? ['User', 'dashboard.reception'];
            
             session(['username' => $username]);
             session(['role' => $role]);
