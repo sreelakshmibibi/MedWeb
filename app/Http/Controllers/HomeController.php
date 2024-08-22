@@ -200,15 +200,15 @@ class HomeController extends Controller
 
             // Map user type to role and dashboard view
             $roleMapping = [
-                'admin'  => ['Admin', 'dashboard.admin'],
+                'admin' => ['Admin', 'dashboard.admin'],
                 'doctor' => ['Doctor', 'dashboard.doctor'],
-                'nurse'  => ['Nurse', 'dashboard.reception'],
-                'user'   => ['User', 'dashboard.reception'],
+                'nurse' => ['Nurse', 'dashboard.reception'],
+                'user' => ['User', 'dashboard.reception'],
             ];
-            
+
             // Retrieve role and dashboard view based on user type
             [$role, $dashboardView] = $roleMapping[$userType] ?? ['User', 'dashboard.reception'];
-           
+
             session(['username' => $username]);
             session(['role' => $role]);
             session(['currency' => $clinicsData->currency]);
@@ -223,6 +223,7 @@ class HomeController extends Controller
 
                 $base64Id = base64_encode($staffId);
                 $pstaffidEncrypted = Crypt::encrypt($base64Id);
+                session(['pstaffidEncrypted' => $pstaffidEncrypted]);
             }
 
             return view($dashboardView, compact('workingDoctors', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients', 'totalUniquePatients', 'malePatientsCount', 'femalePatientsCount', 'newPatientsCount', 'followupPatientsCount', 'currentappointments', 'pstaffidEncrypted', 'childrenCount', 'otherCount'));

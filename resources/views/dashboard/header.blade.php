@@ -4,7 +4,8 @@
     $username = session('username');
     $role = session('role');
     $staffPhoto = session('staffPhoto');
-    $pstaffidEncrypted = isset($pstaffidEncrypted) ? $pstaffidEncrypted : '';
+    $pstaffidEncrypted = session('pstaffidEncrypted');
+    // $pstaffidEncrypted = isset($pstaffidEncrypted) ? $pstaffidEncrypted : '';
 @endphp
 <header class="main-header">
     <div class="inside-header">
