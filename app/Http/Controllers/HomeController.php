@@ -220,9 +220,9 @@ class HomeController extends Controller
             if ($staffProfile) {
                 session(['staffPhoto' => $staffProfile->photo]);
                 $staffId = $staffProfile->user->id;
-
                 $base64Id = base64_encode($staffId);
                 $pstaffidEncrypted = Crypt::encrypt($base64Id);
+                session(['pstaffidEncrypted' => $pstaffidEncrypted]);
             }
 
             return view($dashboardView, compact('workingDoctors', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients', 'totalUniquePatients', 'malePatientsCount', 'femalePatientsCount', 'newPatientsCount', 'followupPatientsCount', 'currentappointments', 'pstaffidEncrypted', 'childrenCount', 'otherCount'));
