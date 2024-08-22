@@ -146,6 +146,7 @@
                         <th>Patient Name</th>
                         <th>Branch</th>
                         <th>Visit</th>
+                        <th>Bill Type</th>
                         <th>Total</th>
                         <th>Discount</th>
                         <th>Tax</th>
@@ -165,8 +166,18 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th colspan="6">Total:</th>
-                        <!-- Other footers -->
+                        <th colspan="7">Total:</th>
+                        <th id="total-sum"></th>
+                        <th id="total-dis"></th>
+                        <th id="total-tax"></th>
+                        <th id="total-net"></th>
+                        <th id="total-cash"></th>
+                        <th id="total-gpay"></th>
+                        <th id="total-card"></th>
+                        <th id="total-paid"></th>
+                        <th id="total-balance"></th>
+                        <th id="total-due"></th>
+                        <th colspan="2"></th>
                     </tr>
                 </tfoot>
             </table>
@@ -176,180 +187,7 @@
 <script type="text/javascript">
     var table;
     jQuery(function($) {
-
-        // Handle the search button click
-        // $('#searchcollectionbtn').click(function() {
-        //     // if ($.fn.DataTable.isDataTable(".data-table")) {
-        //     //     // Destroy existing DataTable instance
-        //     //     $(".data-table").DataTable().destroy();
-        //     // }
-        //     // $('.collectiondiv').show();
-        //     table = $('#collectionTable').DataTable({
-        //         processing: true,
-        //         serverSide: true,
-        //         ajax: {
-        //             url: "{{ route('report.collection') }}",
-        //             type: 'POST',
-        //             data: function(d) {
-        //                 d._token = $('input[name="_token"]').val();
-        //                 d.fromdate = $('#fromdate').val();
-        //                 d.todate = $('#todate').val();
-        //                 d.branch = $('#branch').val();
-        //                 d.billedby = $('#billedby').val();
-        //                 d.generatedby = $('#generatedby').val();
-        //                 d.outstanding = $('#outstanding').val();
-        //                 d.combooffer = $('#combooffer').val();
-        //                 d.registration = $('#registration').val();
-        //             },
-        //             dataSrc: function(json) {
-        //                 // console.log('Response Data:', json); // Log response data
-        //                 return json.data; // Return the data part of the response
-        //             }
-        //         },
-        //         columns: [{
-        //                 data: 'DT_RowIndex',
-        //                 name: 'DT_RowIndex',
-        //                 orderable: false,
-        //                 searchable: false
-        //             },
-        //             {
-        //                 data: 'billDate',
-        //                 name: 'billDate'
-        //             },
-        //             {
-        //                 data: 'patientId',
-        //                 name: 'patientId'
-        //             },
-        //             {
-        //                 data: 'patientName',
-        //                 name: 'patientName'
-        //             },
-        //             {
-        //                 data: 'branch',
-        //                 name: 'branch'
-        //             },
-        //             {
-        //                 data: 'visitCount',
-        //                 name: 'visitCount'
-        //             },
-        //             {
-        //                 data: 'total',
-        //                 name: 'total'
-        //             },
-        //             {
-        //                 data: 'discount',
-        //                 name: 'discount'
-        //             },
-        //             {
-        //                 data: 'tax',
-        //                 name: 'tax'
-        //             },
-        //             {
-        //                 data: 'netAmount',
-        //                 name: 'netAmount'
-        //             },
-        //             {
-        //                 data: 'cash',
-        //                 name: 'cash'
-        //             },
-        //             {
-        //                 data: 'gpay',
-        //                 name: 'gpay'
-        //             },
-        //             {
-        //                 data: 'card',
-        //                 name: 'card'
-        //             },
-        //             {
-        //                 data: 'totalPaid',
-        //                 name: 'totalPaid'
-        //             },
-        //             {
-        //                 data: 'balanceGiven',
-        //                 name: 'balanceGiven'
-        //             },
-        //             {
-        //                 data: 'outstanding',
-        //                 name: 'outstanding'
-        //             },
-        //             {
-        //                 data: 'createdBy',
-        //                 name: 'createdBy'
-        //             },
-        //             {
-        //                 data: 'updatedBy',
-        //                 name: 'updatedBy'
-        //             }
-        //         ]
-        //     }); // Reload the DataTable with new data
-        //     $('.collectiondiv').show();
-        // });
-        // $(document).ready(function() {
-        //     var table;
-
-        //     $('#searchcollectionbtn').click(function(e) {
-        //         e.preventDefault(); // Prevent the form from submitting the default way
-
-        //         if ($.fn.DataTable.isDataTable("#collectionTable")) {
-        //             // Destroy existing DataTable instance
-        //             table.destroy();
-        //         }
-
-        //         // Initialize or re-initialize DataTable
-        //         table = $('#collectionTable').DataTable({
-        //             processing: true,
-        //             serverSide: true,
-        //             ajax: {
-        //                 url: "{{ route('report.collection') }}",
-        //                 type: 'POST',
-        //                 data: function(d) {
-        //                     d._token = $('input[name="_token"]').val();
-        //                     d.fromdate = $('#fromdate').val();
-        //                     d.todate = $('#todate').val();
-        //                     d.branch = $('#branch').val();
-        //                     d.billedby = $('#billedby').val();
-        //                     d.generatedby = $('#generatedby').val();
-        //                     d.outstanding = $('#outstanding').val();
-        //                     d.combooffer = $('#combooffer').val();
-        //                     d.registration = $('#registration').val();
-        //                 },
-        //                 dataSrc: function(json) {
-        //                     return json.data;
-        //                 }
-        //             },
-        //             columns: [{
-        //                     data: 'DT_RowIndex',
-        //                     name: 'DT_RowIndex',
-        //                     orderable: false,
-        //                     searchable: false
-        //                 },
-        //                 {
-        //                     data: 'billDate',
-        //                     name: 'billDate'
-        //                 },
-        //                 {
-        //                     data: 'patientId',
-        //                     name: 'patientId'
-        //                 },
-        //                 // Other columns
-        //             ],
-        //             footerCallback: function(row, data, start, end, display) {
-        //                 var api = this.api();
-
-        //                 // Calculate the total of the specified column (index 6 for 'total' here)
-        //                 var total = api.column(6).data().reduce(function(a, b) {
-        //                     return parseFloat(a) + parseFloat(b);
-        //                 }, 0);
-
-        //                 // Update the footer
-        //                 $(api.column(6).footer()).html('Total: ' + total.toFixed(
-        //                 2));
-        //             }
-        //         });
-
-        //         $('.collectiondiv').show();
-        //     });
-        // });
+        
         $('#searchcollectionbtn').click(function(e) {
             e.preventDefault(); // Prevent form submission
 
@@ -406,6 +244,10 @@
                     {
                         data: 'visitCount',
                         name: 'visitCount'
+                    },
+                    {
+                        data: 'billType',
+                        name: 'billType'
                     },
                     {
                         data: 'total',
@@ -499,10 +341,17 @@
                 ],
                 footerCallback: function(row, data, start, end, display) {
                     var api = this.api();
-                    var total = api.column(6).data().reduce(function(a, b) {
-                        return parseFloat(a) + parseFloat(b);
-                    }, 0);
-                    $(api.column(6).footer()).html('Total: ' + total.toFixed(2));
+                    // var total = api.column(7).data().reduce(function(a, b) {
+                    //     return parseFloat(a) + parseFloat(b);
+                    //     // return a + b;
+                    // }, 0);
+                    // $(api.column(7).footer()).html(total.toFixed(2));
+                    for(let i=7;i<17;i++){
+                        var total = api.column(i).data().reduce(function(a, b) {
+                            return parseFloat(a) + parseFloat(b);
+                        }, 0);
+                    $(api.column(i).footer()).html(total.toFixed(2));
+                    }
                 }
             });
 

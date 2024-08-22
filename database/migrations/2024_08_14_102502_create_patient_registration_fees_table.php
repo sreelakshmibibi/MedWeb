@@ -14,10 +14,20 @@ return new class extends Migration
         Schema::create('patient_registration_fees', function (Blueprint $table) {
             $table->id();
             $table->string('bill_id')->unique();
+            $table->unsignedBigInteger('appointment_id')->nullable()->constrained('appointments');
             $table->unsignedBigInteger('patient_id');
             $table->decimal('amount', 10, 2)->nullable();
-            $table->timestamp('paid_at')->nullable();
+            $table->float('tax_percentile')->nullable();
+            $table->decimal('tax', 10, 3)->nullable();
+            $table->decimal('amount_to_be_paid', 10, 3)->nullable();
             $table->string('payment_method')->nullable();
+            $table->decimal('gpay', 10, 3)->nullable();
+            $table->decimal('cash', 10, 3)->nullable();
+            $table->decimal('card', 10, 3)->nullable();
+            $table->foreignId('card_pay_id')->nullable()->constrained('card_pays');
+            $table->decimal('amount_paid', 10, 3)->nullable();
+            $table->decimal('balance_given', 10, 3)->nullable();
+            $table->dateTime('bill_paid_date')->nullable();
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
             $table->char('status')->default('Y');

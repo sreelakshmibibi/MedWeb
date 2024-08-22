@@ -92,6 +92,7 @@ class MedicineBillController extends Controller
                 'card_pay_id' => $cardPayId,
                 'amount_paid' => $request->medamountPaid,
                 'balance_given' => $request->medbalanceToGiveBack,
+                'bill_paid_date'=>now(),
                 'status' => 'Y',
                 'created_by' => auth()->user()->id,
                 'updated_by' => auth()->user()->id,
