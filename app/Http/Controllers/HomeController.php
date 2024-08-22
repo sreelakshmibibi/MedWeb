@@ -220,7 +220,6 @@ class HomeController extends Controller
             if ($staffProfile) {
                 session(['staffPhoto' => $staffProfile->photo]);
                 $staffId = $staffProfile->user->id;
-
                 $base64Id = base64_encode($staffId);
                 $pstaffidEncrypted = Crypt::encrypt($base64Id);
                 session(['pstaffidEncrypted' => $pstaffidEncrypted]);
