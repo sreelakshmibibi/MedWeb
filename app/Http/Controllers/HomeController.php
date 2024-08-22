@@ -34,7 +34,7 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index($userType = null)
     {
         $user = Auth::user();
 
@@ -109,14 +109,6 @@ class HomeController extends Controller
             ->get();
 
         $dates = $appointmentData->pluck('date')->toArray();
-        // Convert dates to 'dd MMM YYYY' format
-        // $formattedData = $appointmentData->map(function ($item) {
-        //     $item->date = Carbon::parse($item->date)->format('d M Y'); // Format date
-        //     return $item;
-        // });
-
-        // // If you need to get the dates as an array
-        // $dates = $formattedData->pluck('date')->toArray();
 
         $chartTotalPatients = $appointmentData->pluck('total_patients')->toArray();
         $chartfollowupPatients = $appointmentData->pluck('followup_patients')->toArray();
@@ -204,29 +196,19 @@ class HomeController extends Controller
                     ->with(['patient', 'doctor', 'branch']) // Eager load relationships
                     ->get();
             }
-            if ($user->is_admin) {
-                $role = 'Admin';
-                $dashboardView = 'dashboard.admin';
+            $userType = $userType ?? ($user->is_admin ? 'admin' : ($user->is_doctor ? 'doctor' : ($user->is_nurse ? 'nurse' : 'user')));
 
-            } elseif ($user->is_doctor) {
-                $role = 'Doctor';
-                $dashboardView = 'dashboard.doctor';
-            } elseif ($user->is_nurse) {
-                $role = 'Nurse';
-                $dashboardView = 'dashboard.reception';
-            } else {
-                $role = 'User';
-                $dashboardView = 'dashboard.reception';
-            }
-
-            //for logo and name as per user entry
-            // $clinicDetails = ClinicBasicDetail::first();
-            // // Set session variable
-            // session(['logoPath' => $clinicDetails->clinic_logo]);
-            // session(['clinicName' => $clinicDetails->clinic_name]);
-
-            // return view($dashboardView);
-
+            // Map user type to role and dashboard view
+            $roleMapping = [
+                'admin'  => ['Admin', 'dashboard.admin'],
+                'doctor' => ['Doctor', 'dashboard.doctor'],
+                'nurse'  => ['Nurse', 'dashboard.reception'],
+                'user'   => ['User', 'dashboard.reception'],
+            ];
+            
+            // Retrieve role and dashboard view based on user type
+            [$role, $dashboardView] = $roleMapping[$userType] ?? ['User', 'dashboard.reception'];
+           
             session(['username' => $username]);
             session(['role' => $role]);
             session(['currency' => $clinicsData->currency]);
@@ -242,11 +224,6 @@ class HomeController extends Controller
                 $base64Id = base64_encode($staffId);
                 $pstaffidEncrypted = Crypt::encrypt($base64Id);
             }
-
-            // echo "<pre>";
-            // print_r($workingDoctors);
-            // echo "</pre>";
-            // exit;
 
             return view($dashboardView, compact('workingDoctors', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients', 'totalUniquePatients', 'malePatientsCount', 'femalePatientsCount', 'newPatientsCount', 'followupPatientsCount', 'currentappointments', 'pstaffidEncrypted', 'childrenCount', 'otherCount'));
 
