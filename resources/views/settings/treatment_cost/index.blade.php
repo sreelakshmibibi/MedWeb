@@ -37,11 +37,11 @@
                     <div class="box-body">
                         <div class="table-responsive">
                             <table width="100%"
-                                class="table table-bordered table-hover table-striped mb-0 border-2 data-table text-center">
+                                class="table table-bordered table-hover table-striped mb-0 data-table text-center">
                                 <thead class="bg-primary-light">
                                     <tr>
                                         <th width="10px">No</th>
-                                        <th>Treatment Name</th>
+                                        <th class="text-center">Treatment Name</th>
                                         <th width="100px">Cost</th>
                                         <th width="100px">Discount (%)</th>
                                         <th width="80px">From</th>
@@ -95,7 +95,8 @@
                     },
                     {
                         data: 'treat_name',
-                        name: 'treat_name'
+                        name: 'treat_name',
+                        className: 'text-start'
                     },
                     {
                         data: 'treat_cost',

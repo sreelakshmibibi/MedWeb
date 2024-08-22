@@ -286,7 +286,7 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            $('#cbranch_table').css('visibility', 'hidden');
+            // $('#cbranch_table').css('visibility', 'hidden');
             var canvas = document.getElementById('logoCanvas');
             var ctx = canvas.getContext('2d');
             if ('{{ $clinicDetails }}') {
