@@ -27,10 +27,10 @@
             <section class="content">
                 <div class="box b-0 container-fluid" style="max-height: 100%; min-height: 100vh;">
                     <div class="box-body p-0">
+
                         <!-- Nav tabs -->
                         <div class="vtabs" style="width: 100%;">
-                            <ul class="nav nav-tabs tabs-vertical" role="tablist"
-                                style="width:15%; max-height: 100%; height: 100vh;">
+                            <ul class="nav nav-tabs tabs-vertical" role="tablist" style=" max-height: 100%; height: 100vh;">
                                 <li class="nav-item"> <a class="nav-link active" data-bs-toggle="tab" href="#collectiontab"
                                         role="tab"><span class="hidden-sm-up">Collection</span> <span
                                             class="hidden-xs-down">Collection Report</span> </a> </li>
@@ -51,7 +51,7 @@
                                             class="hidden-xs-down">Disease Report</span></a> </li>
                             </ul>
                             <!-- Tab panes -->
-                            <div class="tab-content" style="max-width: 85%;">
+                            <div class="tab-content">
                                 <div class="tab-pane active" id="collectiontab" role="tabpanel">
                                     <div class="p-15">
                                         {{-- <section class="content"> --}}

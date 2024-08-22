@@ -70,7 +70,7 @@
                     targets: 5
                 }
             ],
-            fixedColumns: true,
+            // fixedColumns: true,
             responsive: true,
             processing: true,
             serverSide: true,
@@ -119,10 +119,10 @@
                     searchable: true
                 },
             ],
-            drawCallback: function(settings) {
-                table.columns.adjust().draw();
-                $('#cbranch_table').css('visibility', 'visible');
-            }
+            // drawCallback: function(settings) {
+            //     table.columns.adjust().draw();
+            //     $('#cbranch_table').css('visibility', 'visible');
+            // }
         });
 
         $(document).on('click', '.btn-edit', function() {
