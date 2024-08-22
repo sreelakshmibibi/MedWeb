@@ -48,7 +48,7 @@ class PatientListRequest extends FormRequest
                 'required',
                 'date',
                 'before:today',
-                'after:'.now()->subYears(130)->format('Y-m-d'),
+                'after:' . now()->subYears(130)->format('Y-m-d'),
             ],
             'aadhaar_no' => [
                 'nullable',
@@ -154,6 +154,7 @@ class PatientListRequest extends FormRequest
             'temperature' => ['nullable', 'numeric', 'min:90', 'max:110'],
             'paymode' => ['nullable', 'string', 'in:Cash,Card,GPay'],
             'regfee' => ['nullable', 'numeric', 'min:0'],
+            'cardmachine' => ['nullable', 'exists:card_pays,id'],
         ];
     }
 
@@ -176,7 +177,7 @@ class PatientListRequest extends FormRequest
             'date_of_birth.required' => 'The date of birth field is required.',
             'date_of_birth.date' => 'The date of birth is not a valid date.',
             'date_of_birth.before' => 'The date of birth must be before today.',
-            'date_of_birth.after' => 'The date of birth must be after '.now()->subYears(130)->format('Y-m-d').'.',
+            'date_of_birth.after' => 'The date of birth must be after ' . now()->subYears(130)->format('Y-m-d') . '.',
             'aadhaar_no.digits' => 'The Aadhaar number must be 12 digits.',
             'aadhaar_no.unique' => 'The Aadhaar number has already been taken.',
             'email.email' => 'The email must be a valid email address.',
@@ -238,6 +239,10 @@ class PatientListRequest extends FormRequest
             'temperature.numeric' => 'The temperature must be a number.',
             'temperature.min' => 'The temperature must be at least 90 degrees.',
             'temperature.max' => 'The temperature may not be greater than 110 degrees.',
+            'paymode.in' => 'The payment mode must be one of the following: Cash, Card, or GPay.',
+            'regfee.numeric' => 'The registration fee must be a numeric value.',
+            'regfee.min' => 'The registration fee cannot be negative.',
+            'cardmachine.exists' => 'The selected card machine does not exist in our records.',
         ];
     }
 }
