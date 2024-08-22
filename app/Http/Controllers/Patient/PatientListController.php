@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Patient;
-
+use App\Models\CardPay;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Appointment\AppointmentRequest;
 use App\Http\Requests\Patient\PatientEditRequest;
@@ -57,10 +57,10 @@ class PatientListController extends Controller
 
             // Query to fetch patients
             $query = PatientProfile::with([
-                'latestAppointment', 
-                'nextAppointment', 
-                'country', 
-                'state', 
+                'latestAppointment',
+                'nextAppointment',
+                'country',
+                'state',
                 'city'
             ]);
 
@@ -171,8 +171,9 @@ class PatientListController extends Controller
         $appointmentStatuses = AppointmentStatus::all(); // Get all appointment statuses
         $clinic = ClinicBasicDetail::first();
         $registrationFees = $clinic->patient_registration_fees;
+        $cardPay = CardPay::where('status', 'Y')->get();
 
-        return view('patient.patient_list.add', compact('countries', 'states', 'cities', 'clinicBranches', 'workingDoctors', 'appointmentStatuses', 'registrationFees'));
+        return view('patient.patient_list.add', compact('countries', 'states', 'cities', 'clinicBranches', 'workingDoctors', 'appointmentStatuses', 'registrationFees', 'cardPay'));
 
     }
 
@@ -340,10 +341,10 @@ class PatientListController extends Controller
                         'amount' => $request->input('regfee'),
                         'amount_to_be_paid' => $request->input('regfee'),
                         'payment_method' => $request->input('paymode'),
-                        'gpay' => $request->input('paymode')=='GPay'?$request->input('regfee'):0,
-                        'cash' => $request->input('paymode')=='Cash'?$request->input('regfee'):0,
-                        'card' => $request->input('paymode')=='Card'?$request->input('regfee'):0,
-                        'card_pay_id' => null ,
+                        'gpay' => $request->input('paymode') == 'GPay' ? $request->input('regfee') : 0,
+                        'cash' => $request->input('paymode') == 'Cash' ? $request->input('regfee') : 0,
+                        'card' => $request->input('paymode') == 'Card' ? $request->input('regfee') : 0,
+                        'card_pay_id' => null,
                         'paid_amount' => $request->input('regfee'),
                         'balance_given' => null,
                         'bill_paid_date' => now(),
@@ -381,7 +382,7 @@ class PatientListController extends Controller
                             'clinicLogo' => $clinicLogo,
                             'currency' => $clinicDetails->currency,
                         ])->setPaper('A5', 'portrait');
-                        
+
 
                         // Return the PDF as a download
                         return response()->json([
