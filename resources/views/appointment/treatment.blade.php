@@ -1,11 +1,12 @@
-<?php
-
-use Illuminate\Support\Facades\Session;
-?>
+@php
+    use Illuminate\Support\Facades\Session;
+    $role = session('role');
+@endphp
 @extends('layouts.dashboard')
 @section('title', 'Patient')
 @section('content')
     <!-- Content Wrapper. Contains page content -->
+    <input type="hidden" id="isAdmin" name="isAdmin" value="{{ $role == 'Admin' ? true : false }}">
     <div class="content-wrapper">
         <div class="container-full">
             <div class="content-header">
