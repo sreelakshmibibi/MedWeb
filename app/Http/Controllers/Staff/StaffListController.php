@@ -33,7 +33,6 @@ class StaffListController extends Controller
     public function __construct()
     {
         $this->middleware('permission:staff_list', ['only' => ['index']]);
-        $this->middleware('permission:staff view', ['only' => ['view']]);
         $this->middleware('permission:staff create', ['only' => ['create', 'store']]);
         $this->middleware('permission:staff update', ['only' => ['update', 'edit']]);
         $this->middleware('permission:staff delete', ['only' => ['destroy']]);
@@ -329,7 +328,7 @@ class StaffListController extends Controller
     public function view(string $id, Request $request)
     {
         $id = base64_decode(Crypt::decrypt($id));
-        $staffProfile = StaffProfile::with('user')->find($id);
+        $staffProfile = StaffProfile::with('user')->where('user_id', $id)->first();
         abort_if(!$staffProfile, 404);
 
         $userDetails = $staffProfile->user;
@@ -389,7 +388,7 @@ class StaffListController extends Controller
         // Extract the patients from the appointments
         $patients = $appointments->pluck('patient')->unique('id');
 
-        // Count the total number of unique patients
+        // if Count the total number of unique patients
         $totalUniquePatients = $patients->count();
 
         // Count the number of male and female patients

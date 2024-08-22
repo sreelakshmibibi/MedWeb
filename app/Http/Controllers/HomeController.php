@@ -138,7 +138,7 @@ class HomeController extends Controller
             $totalOthers = $totalStaffs - $totalDoctors;
             $totalTreatments = ToothExamination::distinct('treatment_id')->count('treatment_id');
 
-            $staffProfile = StaffProfile::where('user_id', $user->id)->first();
+            $staffProfile = StaffProfile::with('user')->where('user_id', $user->id)->first();
             $username = str_replace('<br>', ' ', $user->name);
             $appointments = null;
             if ($user->is_doctor) {
@@ -219,7 +219,7 @@ class HomeController extends Controller
             $staffId = '';
             if ($staffProfile) {
                 session(['staffPhoto' => $staffProfile->photo]);
-                $staffId = $staffProfile->id;
+                $staffId = $staffProfile->user->id;
 
                 $base64Id = base64_encode($staffId);
                 $pstaffidEncrypted = Crypt::encrypt($base64Id);
