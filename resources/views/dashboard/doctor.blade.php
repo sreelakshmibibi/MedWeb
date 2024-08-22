@@ -93,53 +93,55 @@ use Illuminate\Support\Facades\Crypt;
                         </div>
                         <div class="box">
                             <div class="box-body p-15 dashboardpatients">
-                                @if ($currentappointments->isNotEmpty())
-                                    @foreach ($currentappointments as $currentappointment)
-                                        <div class="mb-10 d-flex justify-content-between align-items-center">
-                                            <div class="fw-600 min-w-120">
-                                                <?= date('g:i A', strtotime($currentappointment->app_time)) ?>
-                                            </div>
-                                            <div
-                                                class="w-p100 p-10 rounded10 justify-content-between align-items-center d-flex bg-lightest doctodaydash">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <span title="Token No"
-                                                        class="me-10 avatar bg-primary-light rounded-circle b-1 text-bold">
-                                                        <?= $currentappointment->token_no ?>
-                                                    </span>
-                                                    <div>
-                                                        <h6 class="mb-0">
-                                                            <?= str_replace('<br>', ' ', $currentappointment->patient->first_name . ' ' . $currentappointment->patient->last_name) ?>
-                                                        </h6>
-                                                        <p class="mb-0 fs-12 text-mute">Patient ID:
-                                                            <?= $currentappointment->app_id ?></p>
+                                <div class="inner-user-div22">
+                                    @if ($currentappointments->isNotEmpty())
+                                        @foreach ($currentappointments as $currentappointment)
+                                            <div class="mb-10 d-flex justify-content-between align-items-center">
+                                                <div class="fw-600 min-w-120">
+                                                    <?= date('g:i A', strtotime($currentappointment->app_time)) ?>
+                                                </div>
+                                                <div
+                                                    class="w-p100 p-10 rounded10 justify-content-between align-items-center d-flex bg-lightest doctodaydash">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span title="Token No"
+                                                            class="me-10 avatar bg-primary-light rounded-circle b-1 text-bold">
+                                                            <?= $currentappointment->token_no ?>
+                                                        </span>
+                                                        <div>
+                                                            <h6 class="mb-0">
+                                                                <?= str_replace('<br>', ' ', $currentappointment->patient->first_name . ' ' . $currentappointment->patient->last_name) ?>
+                                                            </h6>
+                                                            <p class="mb-0 fs-12 text-mute">Patient ID:
+                                                                <?= $currentappointment->app_id ?></p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex dashboardbtnwrapper">
+                                                        <a href=''
+                                                            class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1'
+                                                            title='treatment'><i class='fa-solid fa-stethoscope'></i></a>
+                                                        <a href=''
+                                                            class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1'
+                                                            title='view'><i class='fa-solid fa-eye'></i></a>
+                                                        <button type='button'
+                                                            class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1'
+                                                            title='follow up'><i class='fa fa-plus'></i></button>
+                                                        <button type='button'
+                                                            class='waves-effect waves-light btn btn-circle btn-warning btn-reschedule btn-xs me-1'
+                                                            title='reschedule'><i
+                                                                class='fa-solid fa-calendar-days'></i></button>
+                                                        <button type='button'
+                                                            class='waves-effect waves-light btn btn-circle btn-danger btn-xs'
+                                                            title='cancel'><i class='fa fa-times'></i></button>
                                                     </div>
                                                 </div>
-                                                <div class="d-flex dashboardbtnwrapper">
-                                                    <a href=''
-                                                        class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1'
-                                                        title='treatment'><i class='fa-solid fa-stethoscope'></i></a>
-                                                    <a href=''
-                                                        class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1'
-                                                        title='view'><i class='fa-solid fa-eye'></i></a>
-                                                    <button type='button'
-                                                        class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1'
-                                                        title='follow up'><i class='fa fa-plus'></i></button>
-                                                    <button type='button'
-                                                        class='waves-effect waves-light btn btn-circle btn-warning btn-reschedule btn-xs me-1'
-                                                        title='reschedule'><i
-                                                            class='fa-solid fa-calendar-days'></i></button>
-                                                    <button type='button'
-                                                        class='waves-effect waves-light btn btn-circle btn-danger btn-xs'
-                                                        title='cancel'><i class='fa fa-times'></i></button>
-                                                </div>
                                             </div>
+                                        @endforeach
+                                    @else
+                                        <div class="mb-10 d-flex justify-content-between align-items-center">
+                                            <h6 class="text-muted mb-1 fs-16">No patients remaining today!</h6>
                                         </div>
-                                    @endforeach
-                                @else
-                                    <div class="mb-10 d-flex justify-content-between align-items-center">
-                                        <h6 class="text-muted mb-1 fs-16">No patients remaining today!</h6>
-                                    </div>
-                                @endif
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>

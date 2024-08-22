@@ -319,6 +319,10 @@
                 ],
 
                 dom: 'Bfrtlp',
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, 'All']
+                ],
                 buttons: [{
                         extend: 'print',
                         text: 'Print',
@@ -348,6 +352,9 @@
                         messageTop: 'Collection Report',
                         footer: true,
                         filename: 'Collection Report',
+                        exportOptions: {
+                            columns: ':visible'
+                        }
                     },
                     {
                         extend: 'pdfHtml5',

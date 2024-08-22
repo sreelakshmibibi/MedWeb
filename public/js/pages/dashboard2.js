@@ -73,6 +73,10 @@ $(function () {
         height: "138px",
     });
 
+    $(".inner-user-div22").slimScroll({
+        height: "190px",
+    });
+
     $(".inner-user-div4").slimScroll({
         height: "315px",
     });

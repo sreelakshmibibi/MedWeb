@@ -51,7 +51,7 @@ class ReportController extends Controller
             'updatedBy:id,name',
             'createdBy:id,name',
         ]);
-       
+
         if ($request->filled('fromdate')) {
             $treatmentQuery->whereDate('bill_paid_date', '>=', $request->fromdate);
         }
@@ -155,7 +155,7 @@ class ReportController extends Controller
         }
         $dueBillngs = $dueBillQuery->get();
 
-        
+
 
         $allBillings = collect(); // Initialize an empty collection
 
@@ -337,9 +337,11 @@ class ReportController extends Controller
             ->addColumn('createdBy', function ($row) {
                 //return $row->createdBy->name ?? 'N/A';
                 if (isset($row->createdBy->name)) {
-                    return $row->createdBy->name;
+                    // return $row->createdBy->name;
+                    return str_replace('<br>', ' ', $row->createdBy->name);
                 } elseif (isset($row->creator->name)) {
-                    return $row->creator->name;
+                    // return $row->creator->name;
+                    return str_replace('<br>', ' ', $row->creator->name);
                 } else {
                     return 'N/A';
                 }
@@ -347,9 +349,11 @@ class ReportController extends Controller
             ->addColumn('updatedBy', function ($row) {
                 //return $row->updatedBy->name ?? 'N/A';
                 if (isset($row->updatedBy->name)) {
-                    return $row->updatedBy->name;
+                    // return $row->updatedBy->name;
+                    return str_replace('<br>', ' ', $row->updatedBy->name);
                 } elseif (isset($row->updater->name)) {
-                    return $row->updater->name;
+                    // return $row->updater->name;
+                    return str_replace('<br>', ' ', $row->updater->name);
                 } else {
                     return 'N/A';
                 }
@@ -357,7 +361,7 @@ class ReportController extends Controller
             ->make(true);
     }
 
-    
+
     public function income(Request $request)
     {
         echo "income";

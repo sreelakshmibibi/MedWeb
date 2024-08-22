@@ -20,11 +20,30 @@
 }
 .dashboardpatients {
     height: 218px;
-    overflow: scroll;
+    /* overflow: scroll; */
 }
 .dashboardchart {
     height: 250px;
 }
+.vtabs .tab-content {
+    display: block;
+}
+/* table.dataTable {
+    border-collapse: collapse !important;
+} */
+/* @media print {
+    table {
+        width: 100%; /* Ensure the table fits within the page width */
+/*    page-break-inside: auto; /* Prevent page breaks inside the table */
+/*  }
+    thead {
+        display: table-header-group;
+    } /* Repeat table header on each page */
+/*  tfoot {
+        display: table-footer-group;
+    } /* Repeat table footer on each page */
+/*} */
+
 @media (max-width: 857px) {
     .dental-chart {
         transform: scale(0.8);
@@ -101,6 +120,8 @@
     .doctodaydash {
         flex-direction: column;
         gap: 2px;
+        gap: 4px;
+        align-items: start !important;
     }
     .dashboarddoclistdiv {
         flex-direction: column;
