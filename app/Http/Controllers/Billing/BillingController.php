@@ -569,6 +569,8 @@ class BillingController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+        print_r($e->getMessage());
+            exit;
             // Log the error
             Log::create([
                 'log_type' => 'ERROR',
@@ -628,7 +630,7 @@ class BillingController extends Controller
             $bill->bill_delete_reason = $request->input('reason');
             $bill->status = 'N';
             $bill->bill_status = PatientTreatmentBilling::BILL_CANCELLED;
-
+            $bill->deleted_by = Auth::user()->id;
             if ($bill->save()) {
                 return response()->json(['success', 'Bill cancelled successfully.'], 200);
             } else {
@@ -636,6 +638,9 @@ class BillingController extends Controller
             }
 
         } catch (Exception $e) {
+            echo $e->getMessage();
+            exit;
+
             return response()->json(['error', 'Bill not cancelled.'], 200);
         }
     }
