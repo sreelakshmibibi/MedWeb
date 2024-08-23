@@ -66,4 +66,9 @@ class PatientTreatmentBilling extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function cardPay()
+    {
+        return $this->belongsTo(CardPay::class, 'card_pay_id');
+    }
 }
