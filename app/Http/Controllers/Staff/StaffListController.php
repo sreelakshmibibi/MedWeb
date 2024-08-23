@@ -84,9 +84,11 @@ class StaffListController extends Controller
                 ->addColumn('action', function ($row) {
                     $base64Id = base64_encode($row->id);
                     $idEncrypted = Crypt::encrypt($base64Id);
+                    $base64Iduser = base64_encode($row->user->id);
+                    $idEncryptedUser = Crypt::encrypt($base64Iduser);
                     $btn = null;
                     if (Auth::user()->hasPermissionTo('staff view')) {
-                        $btn = '<a href="' . route('staff.staff_list.view', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
+                        $btn = '<a href="' . route('staff.staff_list.view', $idEncryptedUser) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
                     }
                     if (Auth::user()->hasPermissionTo('staff update')) {
                         $btn .= '<a href="' . route('staff.staff_list.edit', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
@@ -319,7 +321,12 @@ class StaffListController extends Controller
 
     public function destroy($id)
     {
-        $staffProfile = StaffProfile::findOrFail($id);
+        $staffProfile = StaffProfile::with('user')->findOrFail($id);
+        abort_if(!$staffProfile, 404);
+        if ($staffProfile->user) {
+            $staffProfile->user->delete();
+        }
+
         $staffProfile->delete();
 
         return response()->json(['success', 'Staff deleted successfully.'], 201);
@@ -329,6 +336,7 @@ class StaffListController extends Controller
     {
         $id = base64_decode(Crypt::decrypt($id));
         $staffProfile = StaffProfile::with('user')->where('user_id', $id)->first();
+       
         abort_if(!$staffProfile, 404);
 
         $userDetails = $staffProfile->user;

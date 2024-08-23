@@ -40,9 +40,18 @@ class AppointmentController extends Controller
 
         if ($request->ajax()) {
             $selectedDate = $request->input('selectedDate');
-            $appointments = Appointment::whereDate('app_date', $selectedDate)
-                ->with(['patient', 'doctor', 'branch'])
-                ->get();
+           
+            $query = Appointment::whereDate('app_date', $selectedDate)
+                ->with(['patient', 'doctor', 'branch']);
+
+            // Filter by doctor if the authenticated user is a doctor
+            // if (Auth::user()->is_doctor) {
+            //     $query->where('doctor_id', Auth::user()->id);
+            // }
+
+            // Get appointments
+            $appointments = $query->get();
+            
 
             return DataTables::of($appointments)
                 ->addIndexColumn()
@@ -108,7 +117,7 @@ class AppointmentController extends Controller
                     $base64Id = base64_encode($row->id);
                     $idEncrypted = Crypt::encrypt($base64Id);
                     // Check if the appointment date is less than the selected date
-                    if (Auth::user()->can('treatments')) {
+                    if (Auth::user()->can('treatments') && (Auth::user()->id == $row->doctor_id || Auth::user()->is_admin)) {
                         if ($row->app_date < date('Y-m-d') && $row->app_status == AppointmentStatus::COMPLETED) {
                             // If appointment date is less than the selected date, show view icon
                             $buttons[] = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa-solid fa-eye'></i></a>";
