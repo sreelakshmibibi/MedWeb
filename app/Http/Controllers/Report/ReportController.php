@@ -533,7 +533,69 @@ class ReportController extends Controller
             ->groupBy(DB::raw('MONTH(patient_registration_fees.created_at)'), 'card_pays.card_name', 'card_pays.service_charge_perc')
             ->get();
 
-        $monthlyTotals = $regQuery->groupBy('month')->map(function ($items, $month) {
+        // $monthlyTotals = $regQuery->groupBy('month')->map(function ($items, $month) {
+        //     $result = [
+        //         'month' => $month,
+        //         'total_amount_to_be_paid' => 0,
+        //         'total_gpay' => 0,
+        //         'total_cash' => 0,
+        //         'total_card' => 0,
+        //         'total_amount_paid' => 0,
+        //         'cards' => [],
+        //     ];
+
+        //     foreach ($items as $item) {
+        //         $result['total_amount_to_be_paid'] += $item->total_amount_to_be_paid;
+        //         $result['total_gpay'] += $item->total_gpay;
+        //         $result['total_cash'] += $item->total_cash;
+        //         $result['total_card'] += $item->total_card;
+        //         $result['total_amount_paid'] += $item->total_amount_paid;
+
+        //         if (!isset($result['cards'][$item->card_name])) {
+        //             $result['cards'][$item->card_name] = [
+        //                 'total_card' => 0,
+        //                 'machine_tax' => $item->machine_tax,
+        //             ];
+        //         }
+
+        //         $result['cards'][$item->card_name]['total_card'] += $item->total_card;
+        //     }
+
+        //     return $result;
+        // })->values();
+
+        // // Prepare the data for DataTable
+        // $dataTableData = [];
+        // foreach ($monthlyTotals as $row) {
+        //     $rowData = [
+        //         'month' => $row['month'],
+        //         'netPaid' => $row['total_amount_paid'],
+        //         'cash' => $row['total_cash'],
+        //         'gpay' => $row['total_gpay'],
+        //         'totalPaid' => $row['total_amount_paid'],
+        //         'pureTotal' => $row['total_amount_to_be_paid'],
+        //         'totalCustomer' => 10, 
+        //         'totalService' => 10,  
+        //         'avgIncome' => 10,  
+        //         'dayCount' => 10,  
+        //         'avgCustomer' => 10,  
+        //         'avgService' => 10,  
+        //     ];
+
+        //     // Add card-specific data
+        //     foreach ($row['cards'] as $cardName => $cardData) {
+        //         if($cardName!='No Card'){
+        //             $rowData["cards.{$cardName}.total"] = $cardData['total_card'];
+        //         $rowData["cards.{$cardName}.machine_tax"] = $cardData['machine_tax'];
+        //         }
+                
+        //     }
+
+        //     $dataTableData[] = $rowData;
+        // }
+        $cardPay = CardPay::where('status', 'Y')->get()->pluck('card_name')->toArray();
+
+        $monthlyTotals = $regQuery->groupBy('month')->map(function ($items, $month) use ($cardPay) {
             $result = [
                 'month' => $month,
                 'total_amount_to_be_paid' => 0,
@@ -543,54 +605,61 @@ class ReportController extends Controller
                 'total_amount_paid' => 0,
                 'cards' => [],
             ];
-
+        
+            foreach ($cardPay as $cardName) {
+                $result['cards'][$cardName] = [
+                    'total_card' => 0,
+                    'machine_tax' => 0,
+                ];
+            }
+        
             foreach ($items as $item) {
                 $result['total_amount_to_be_paid'] += $item->total_amount_to_be_paid;
                 $result['total_gpay'] += $item->total_gpay;
                 $result['total_cash'] += $item->total_cash;
                 $result['total_card'] += $item->total_card;
                 $result['total_amount_paid'] += $item->total_amount_paid;
-
-                if (!isset($result['cards'][$item->card_name])) {
-                    $result['cards'][$item->card_name] = [
-                        'total_card' => 0,
-                        'machine_tax' => $item->machine_tax,
-                    ];
+        
+                if (isset($result['cards'][$item->card_name])) {
+                    $result['cards'][$item->card_name]['total_card'] += $item->total_card;
+                    $result['cards'][$item->card_name]['machine_tax'] = $item->machine_tax;
                 }
-
-                $result['cards'][$item->card_name]['total_card'] += $item->total_card;
             }
-
+        
             return $result;
         })->values();
+        
 
-        // Prepare the data for DataTable
-        $dataTableData = [];
-        foreach ($monthlyTotals as $row) {
-            $rowData = [
-                'month' => $row['month'],
-                'netPaid' => $row['total_amount_paid'],
-                'cash' => $row['total_cash'],
-                'gpay' => $row['total_gpay'],
-                'totalPaid' => $row['total_amount_paid'],
-                'pureTotal' => $row['total_amount_to_be_paid'],
-                'totalCustomer' => 10, 
-                'totalService' => 10,  
-                'avgIncome' => 10,  
-                'dayCount' => 10,  
-                'avgCustomer' => 10,  
-                'avgService' => 10,  
-            ];
+$dataTableData = [];
+foreach ($monthlyTotals as $row) {
+    $rowData = [
+        'month' => $row['month'],
+        'netPaid' => $row['total_amount_paid'],
+        'cash' => $row['total_cash'],
+        'gpay' => $row['total_gpay'],
+        'totalPaid' => $row['total_amount_paid'],
+        'pureTotal' => $row['total_amount_to_be_paid'],
+        'totalCustomer' => 10, 
+        'totalService' => 10,  
+        'avgIncome' => 10,  
+        'dayCount' => 10,  
+        'avgCustomer' => 10,  
+        'avgService' => 10,  
+    ];
 
-            // Add card-specific data
-            foreach ($row['cards'] as $cardName => $cardData) {
-                $rowData["cards.{$cardName}.total"] = $cardData['total_card'];
-                $rowData["cards.{$cardName}.machine_tax"] = $cardData['machine_tax'];
-            }
+    // Add all possible card data
+    foreach ($cardPay as $cardName) {
+        $rowData["cards.{$cardName}.total"] = $row['cards'][$cardName]['total_card'];
+        $rowData["cards.{$cardName}.machine_tax"] = $row['cards'][$cardName]['machine_tax'];
+    }
 
-            $dataTableData[] = $rowData;
-        }
+    $dataTableData[] = $rowData;
+}
+      
+
         Log::info('Monthly Totals: ', $dataTableData);
+       
+        //return response()->json(['data' => $dataTableData]);
         // Return the data to DataTables
         return DataTables::of($dataTableData)
             ->addIndexColumn()

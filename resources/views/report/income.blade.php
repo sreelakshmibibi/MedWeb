@@ -94,8 +94,8 @@
                         <th>Cash</th>
                         <th>Gpay</th>
                         @foreach ($cardPay as $machine)
-                        <th>{{ $machine->card_name }} card</th>
-                        <th>{{ $machine->card_name }} Bank POS Machine Fee</th>
+                            <th>{{ $machine->card_name }} card</th>
+                            <th>{{ $machine->card_name }} Bank POS Machine Fee</th>
                         @endforeach
                         <th>Total Paid</th>
                         <th>Pure Total</th>
@@ -134,8 +134,8 @@
                         <th>Cash</th>
                         <th>Gpay</th>
                         @foreach ($cardPay as $machine)
-                        <th>{{ $machine->card_name }} card</th>
-                        <th>{{ $machine->card_name }} Bank POS Machine Fee</th>
+                            <th>{{ $machine->card_name }} card</th>
+                            <th>{{ $machine->card_name }} Bank POS Machine Fee</th>
                         @endforeach
                         <th>Total Paid</th>
                         <th>Pure Total</th>
@@ -208,143 +208,195 @@
                     "Please select at least one filter (Year, Month, From Date, or To Date).");
             } else {
                 if (month === '' && year !== '') {
+
+                    let table;
                     if ($.fn.DataTable.isDataTable("#monthwiseIncomeTable")) {
-                        // Destroy existing DataTable instance
-                        table.destroy();
+                        table = $('#monthwiseIncomeTable').DataTable();
+                        table.clear().destroy();
+                        $('#monthwiseIncomeTable').empty();
                     }
-                    table = $('#monthwiseIncomeTable').DataTable({
-                        processing: true,
-                        serverSide: true,
-                        responsive: true,
-                        ajax: {
-                            url: "{{ route('report.income') }}",
-                            type: 'POST',
-                            data: function(d) {
-                                d._token = $('input[name="_token"]').val();
-                                d.fromdate = $('#fromdate').val();
-                                d.todate = $('#todate').val();
-                                d.month = $('#month').val();
-                                d.year = $('#year').val();
-                            },
-                            dataSrc: function(json) {
-                                return json.data;
+
+                    $.ajax({
+                        url: "{{ route('report.income') }}",
+                        type: 'POST',
+                        data: {
+                            _token: $('input[name="_token"]').val(),
+                            fromdate: $('#fromdate').val(),
+                            todate: $('#todate').val(),
+                            month: $('#month').val(),
+                            year: $('#year').val()
+                        },
+                        success: function(response) {
+                            console.log("AJAX response:", response);
+
+                            if (response.data && Array.isArray(response.data) && response
+                                .data.length > 0) {
+                                let dynamicColumns = [{
+                                        data: 'DT_RowIndex',
+                                        name: 'DT_RowIndex',
+                                        orderable: false,
+                                        searchable: false
+                                    },
+                                    {
+                                        data: 'month',
+                                        name: 'month'
+                                    },
+                                    {
+                                        data: 'netPaid',
+                                        name: 'netPaid'
+                                    },
+                                    {
+                                        data: 'cash',
+                                        name: 'cash'
+                                    },
+                                    {
+                                        data: 'gpay',
+                                        name: 'gpay'
+                                    },
+                                    {
+                                        data: 'totalPaid',
+                                        name: 'totalPaid'
+                                    },
+                                    {
+                                        data: 'pureTotal',
+                                        name: 'pureTotal'
+                                    },
+                                    {
+                                        data: 'avgIncome',
+                                        name: 'avgIncome'
+                                    },
+                                    {
+                                        data: 'dayCount',
+                                        name: 'dayCount'
+                                    },
+                                    {
+                                        data: 'totalCustomer',
+                                        name: 'totalCustomer'
+                                    },
+                                    {
+                                        data: 'avgCustomer',
+                                        name: 'avgCustomer'
+                                    },
+                                    {
+                                        data: 'totalService',
+                                        name: 'totalService'
+                                    },
+                                    {
+                                        data: 'avgService',
+                                        name: 'avgService'
+                                    }
+                                ];
+
+                                // Determine dynamic columns
+                                let firstRow = response.data[0];
+                                if (firstRow) {
+                                    Object.keys(firstRow).forEach(function(key) {
+                                        if (key.startsWith('cards.')) {
+                                            dynamicColumns.push({
+                                                data: key,
+                                                name: key
+                                            });
+                                        }
+                                    });
+                                }
+
+                                console.log(dynamicColumns);
+
+                                try {
+                                    // Initialize DataTable with dynamic columns
+                                    table = $('#monthwiseIncomeTable').DataTable({
+                                        processing: true,
+                                        serverSide: true,
+                                        responsive: true,
+                                        data: response.data,
+                                        columns: dynamicColumns,
+                                        dom: 'lfrtBp',
+                                        buttons: [{
+                                                extend: 'print',
+                                                text: 'Print',
+                                                className: 'btn btn-primary',
+                                                title: 'Patient Report',
+                                                messageTop: 'This is a printed report.',
+                                                exportOptions: {
+                                                    columns: ':visible'
+                                                },
+                                                customize: function(win) {
+                                                    $(win.document.body)
+                                                        .css('font-size',
+                                                            '10pt');
+                                                    $(win.document.body)
+                                                        .find('table')
+                                                        .addClass('compact')
+                                                        .css('font-size',
+                                                            'inherit');
+                                                }
+                                            },
+                                            {
+                                                extend: 'excelHtml5',
+                                                text: 'Excel',
+                                                className: 'btn btn-success',
+                                                title: 'Patient Report'
+                                            },
+                                            {
+                                                extend: 'pdfHtml5',
+                                                text: 'PDF',
+                                                className: 'btn btn-danger',
+                                                title: 'Patient Report',
+                                                exportOptions: {
+                                                    columns: ':visible'
+                                                },
+                                                customize: function(doc) {
+                                                    doc.defaultStyle
+                                                        .fontSize = 10;
+                                                    doc.styles.tableHeader
+                                                        .fontSize = 10;
+                                                }
+                                            }
+                                        ],
+                                        footerCallback: function(row, data, start,
+                                            end, display) {
+                                            var api = this.api();
+                                            dynamicColumns.forEach(function(col,
+                                                i) {
+                                                if (i >
+                                                    2) { // Skip non-numeric columns (e.g., month)
+                                                    var total = api
+                                                        .column(i)
+                                                        .data().reduce(
+                                                            function(a,
+                                                                b) {
+                                                                return parseFloat(
+                                                                        a
+                                                                        ) +
+                                                                    parseFloat(
+                                                                        b
+                                                                        );
+                                                            }, 0);
+                                                    $(api.column(i)
+                                                            .footer())
+                                                        .html(total
+                                                            .toFixed(2)
+                                                            );
+                                                }
+                                            });
+                                        }
+                                    });
+
+                                    // Show the appropriate divs
+                                    $('.incomedivmonthwise').show();
+                                    $('.incomedivdatewise').hide();
+                                } catch (error) {
+                                    console.error("DataTable initialization error:", error);
+                                }
+                            } else {
+                                console.error("No data received or data is empty.");
                             }
                         },
-                        columns: [{
-                                data: 'DT_RowIndex',
-                                name: 'DT_RowIndex',
-                                orderable: false,
-                                searchable: false
-                            },
-                            {
-                                data: 'month',
-                                name: 'month'
-                            },
-                            {
-                                data: 'netPaid',
-                                name: 'netPaid'
-                            },
-                            {
-                                data: 'cash',
-                                name: 'cash'
-                            },
-                            {
-                                data: 'gpay',
-                                name: 'gpay'
-                            },
-                            {
-                                data: 'card',
-                                name: 'card'
-                            },
-                            {
-                                data: 'machineTax',
-                                name: 'machineTax'
-                            },
-                            {
-                                data: 'totalPaid',
-                                name: 'totalPaid'
-                            },
-                            {
-                                data: 'pureTotal',
-                                name: 'pureTotal'
-                            },
-                            {
-                                data: 'avgIncome',
-                                name: 'avgIncome'
-                            },
-                            {
-                                data: 'dayCount',
-                                name: 'dayCount'
-                            },
-                            {
-                                data: 'totalCustomer',
-                                name: 'totalCustomer'
-                            },
-                            {
-                                data: 'avgCustomer',
-                                name: 'avgCustomer'
-                            },
-                            {
-                                data: 'totalService',
-                                name: 'totalService'
-                            },
-                            {
-                                data: 'avgService',
-                                name: 'avgService'
-                            }
-                        ],
-                        dom: 'lfrtBp', // Specify layout including Buttons
-                        buttons: [{
-                                extend: 'print',
-                                text: 'Print',
-                                className: 'btn btn-primary',
-                                title: 'Patient Report',
-                                messageTop: 'This is a printed report.',
-                                exportOptions: {
-                                    columns: ':visible'
-                                },
-                                customize: function(win) {
-                                    $(win.document.body).css('font-size', '10pt');
-                                    $(win.document.body).find('table').addClass(
-                                        'compact').css(
-                                        'font-size',
-                                        'inherit');
-                                }
-                            },
-                            // Optional: Add more buttons if needed
-                            {
-                                extend: 'excelHtml5',
-                                text: 'Excel',
-                                className: 'btn btn-success',
-                                title: 'Patient Report'
-                            },
-                            {
-                                extend: 'pdfHtml5',
-                                text: 'PDF',
-                                className: 'btn btn-danger',
-                                title: 'Patient Report',
-                                exportOptions: {
-                                    columns: ':visible'
-                                },
-                                customize: function(doc) {
-                                    doc.defaultStyle.fontSize = 10;
-                                    doc.styles.tableHeader.fontSize = 10;
-                                }
-                            }
-                        ],
-                        footerCallback: function(row, data, start, end, display) {
-                            var api = this.api();
-                            // for (let i = 3; i < 16; i++) {
-                            //     var total = api.column(i).data().reduce(function(a, b) {
-                            //         return parseFloat(a) + parseFloat(b);
-                            //     }, 0);
-                            //     $(api.column(i).footer()).html(total.toFixed(2));
-                            // }
+                        error: function(xhr, status, error) {
+                            console.error("AJAX error:", status, error);
                         }
                     });
 
-                    $('.incomedivmonthwise').show();
-                    $('.incomedivdatewise').hide();
                 } else {
                     if ($.fn.DataTable.isDataTable("#datewiseIncomeTable")) {
                         // Destroy existing DataTable instance
