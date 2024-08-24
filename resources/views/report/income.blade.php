@@ -13,16 +13,17 @@
             </div>
         </div>
         <div class="box-body px-0 ">
-            <div class="row">
+            {{-- <div class="row">
                 <p class="text-warning">
                     * Select <b class="text-decoration-underline">From & To</b> or <b
                         class="text-decoration-underline">Month & Year</b> or
                     <b class="text-decoration-underline">Year Only</b> for getting
                     corresponding reports
                 </p>
-            </div>
+            </div> --}}
             <div class="row">
-                <div class="col-md-2">
+                <legend class="text-warning fs-18">Datewise Report</legend>
+                <div class="col-md-3 col-lg-2">
                     <div class="form-group">
                         <label class="form-label" for="incomeFromDate">From </label>
                         <input type="date" class="form-control" id="incomeFromDate" name="incomeFromDate"
@@ -30,15 +31,22 @@
                     </div>
                 </div>
 
-                <div class="col-md-2">
+                <div class="col-md-3 col-lg-2">
                     <div class="form-group">
                         <label class="form-label" for="incomeToDate">To </label>
                         <input type="date" class="form-control" id="incomeToDate" name="incomeToDate"
                             value="<?php echo date('Y-m-d'); ?>" required>
                     </div>
                 </div>
-
-                <div class="col-md-2">
+                <p class="text-muted">
+                    * Select only <b class="text-decoration-underline">From & To</b> for getting
+                    Datewise Report report
+                </p>
+            </div>
+            <hr />
+            <div class="row">
+                <legend class="text-warning fs-18">Monthwise/ Yearwise Report</legend>
+                <div class="col-md-3 col-lg-2">
                     <div class="form-group">
                         <label class="form-label" for="month">Month</label>
                         <select class="form-control " type="text" id="month" name="month">
@@ -59,7 +67,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-2">
+                <div class="col-md-3 col-lg-2">
                     <div class="form-group">
                         <label class="form-label" for="year">Year</label>
                         <select class="form-control " type="text" id="year" name="year">
@@ -71,13 +79,17 @@
                     </div>
                 </div>
                 <div id="errorDiv" class="text-danger"></div>
-
+                <p class="text-muted">
+                    * Select <b class="text-decoration-underline">Month & Year</b> or
+                    <b class="text-decoration-underline">Only Year</b> for getting
+                    corresponding reports
+                </p>
             </div>
         </div>
         <div class="box-footer p-3 px-0 text-end bb-1" style="border-radius: 0px;">
-            <button type="submit" class="btn btn-success" id="searchIncomeDateWiseBtn">
+            {{-- <button type="submit" class="btn btn-success" id="searchIncomeDateWiseBtn">
                 <i class="fa fa-search"></i> Search
-            </button>
+            </button> --}}
 
             <button type="submit" class="btn btn-success" id="searchIncomeMonthWiseBtn">
                 <i class="fa fa-search"></i> Search
@@ -108,7 +120,8 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th colspan="3">Total:</th>
+                        <th colspan="2"></th>
+                        <th>Total:</th>
                         <th id="total-net"></th>
                         <th id="total-cash"></th>
                         <th id="total-gpay"></th>
@@ -151,7 +164,8 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th colspan="2">Total:</th>
+                        <th></th>
+                        <th>Total:</th>
                         <th id="total-net"></th>
                         <th id="total-cash"></th>
                         <th id="total-gpay"></th>
@@ -297,11 +311,11 @@
                                 text: 'Print',
                                 // className: 'btn btn-primary',
                                 title: 'Dental Clinic',
-                                messageTop: 'Collection Report',
+                                messageTop: 'Income Report',
                                 orientation: 'landscape',
                                 pageSize: 'A4',
                                 footer: true,
-                                filename: 'Collection Report',
+                                filename: 'Income Report',
                                 exportOptions: {
                                     columns: ':visible'
                                 },
@@ -319,9 +333,9 @@
                                 text: 'Excel',
                                 // className: 'btn btn-success',
                                 title: 'Dental Clinic',
-                                messageTop: 'Collection Report',
+                                messageTop: 'Income Report',
                                 footer: true,
-                                filename: 'Collection Report',
+                                filename: 'Income Report',
                                 exportOptions: {
                                     columns: ':visible'
                                 }
@@ -331,7 +345,7 @@
                                 text: 'PDF',
                                 // className: 'btn btn-danger',
                                 title: 'Dental Clinic',
-                                messageTop: 'Collection Report',
+                                messageTop: 'Income Report',
                                 orientation: 'landscape',
                                 pageSize: 'A3',
                                 exportOptions: {
@@ -339,7 +353,7 @@
                                 },
                                 footer: true,
                                 headerRows: 1,
-                                filename: 'Collection Report',
+                                filename: 'Income Report',
                                 customize: function(doc) {
                                     doc.defaultStyle.fontSize = 10;
                                     doc.styles.tableHeader.fontSize = 10;
@@ -362,7 +376,7 @@
                     $('.incomedivdatewise').hide();
 
                 } else {
-                    
+
                     if ($.fn.DataTable.isDataTable("#datewiseIncomeTable")) {
                         // Destroy existing DataTable instance
                         table.destroy();
@@ -446,11 +460,11 @@
                                 text: 'Print',
                                 // className: 'btn btn-primary',
                                 title: 'Dental Clinic',
-                                messageTop: 'Collection Report',
+                                messageTop: 'Income Report',
                                 orientation: 'landscape',
                                 pageSize: 'A4',
                                 footer: true,
-                                filename: 'Collection Report',
+                                filename: 'Income Report',
                                 exportOptions: {
                                     columns: ':visible'
                                 },
@@ -468,9 +482,9 @@
                                 text: 'Excel',
                                 // className: 'btn btn-success',
                                 title: 'Dental Clinic',
-                                messageTop: 'Collection Report',
+                                messageTop: 'Income Report',
                                 footer: true,
-                                filename: 'Collection Report',
+                                filename: 'Income Report',
                                 exportOptions: {
                                     columns: ':visible'
                                 }
@@ -480,7 +494,7 @@
                                 text: 'PDF',
                                 // className: 'btn btn-danger',
                                 title: 'Dental Clinic',
-                                messageTop: 'Collection Report',
+                                messageTop: 'Income Report',
                                 orientation: 'landscape',
                                 pageSize: 'A3',
                                 exportOptions: {
@@ -488,7 +502,7 @@
                                 },
                                 footer: true,
                                 headerRows: 1,
-                                filename: 'Collection Report',
+                                filename: 'Income Report',
                                 customize: function(doc) {
                                     doc.defaultStyle.fontSize = 10;
                                     doc.styles.tableHeader.fontSize = 10;
@@ -499,7 +513,7 @@
                         footerCallback: function(row, data, start, end, display) {
                             var api = this.api();
 
-                            for (let i = 3; i < 13; i++) {
+                            for (let i = 3; i < 12; i++) {
                                 var total = api.column(i).data().reduce(function(a, b) {
                                     return parseFloat(a) + parseFloat(b);
                                 }, 0);
