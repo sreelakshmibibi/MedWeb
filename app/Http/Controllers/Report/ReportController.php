@@ -21,6 +21,7 @@ use App\Models\PatientPrescriptionBilling;
 use App\Models\PatientRegistrationFee;
 use App\Models\PatientDueBill;
 use App\Models\CardPay;
+use App\Models\ClinicBasicDetail;
 use Illuminate\Support\Facades\Log;
 
 class ReportController extends Controller
@@ -41,7 +42,8 @@ class ReportController extends Controller
         $comboOffers = $reportService->getComboOffers();
         $years = $reportService->getYears();
         $cardPay = CardPay::where('status', 'Y')->get();
-        return view('report.index', compact('treatments', 'treatmentPlans', 'diseases', 'doctors', 'branches', 'staffs', 'billStaffs', 'comboOffers', 'years', 'cardPay'));
+        $clinicBasicDetails = ClinicBasicDetail::first();
+        return view('report.index', compact('treatments', 'treatmentPlans', 'diseases', 'doctors', 'branches', 'staffs', 'billStaffs', 'comboOffers', 'years', 'cardPay', 'clinicBasicDetails'));
     }
 
     public function collection(Request $request)
@@ -489,7 +491,7 @@ class ReportController extends Controller
         $month = $request->month;
         $fromDate = $request->fromdate;
         $toDate = $request->todate;
-        
+
         if ($request->filled('year') && !$request->filled('month')) {
 
             // Query 1: Income Reports
@@ -693,8 +695,8 @@ class ReportController extends Controller
 
 
         } else if ($request->filled('fromdate') && $request->filled('todate')) {
-           
-            
+
+
             $fromDate = $request->fromdate;
             $toDate = $request->todate;
             // Query 1: Income Reports

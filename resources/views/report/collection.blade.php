@@ -189,6 +189,7 @@
 <script type="text/javascript">
     var table;
     jQuery(function($) {
+        var clinicBasicDetails = @json($clinicBasicDetails);
 
         $('#searchcollectionbtn').click(function(e) {
             e.preventDefault(); // Prevent form submission
@@ -327,10 +328,10 @@
                         extend: 'print',
                         text: 'Print',
                         // className: 'btn btn-primary',
-                        title: 'Dental Clinic',
+                        title: clinicBasicDetails.clinic_name,
                         messageTop: 'Collection Report',
                         orientation: 'landscape',
-                        pageSize: 'A4',
+                        pageSize: 'A3',
                         footer: true,
                         filename: 'Collection Report',
                         exportOptions: {
@@ -348,7 +349,7 @@
                         extend: 'excelHtml5',
                         text: 'Excel',
                         // className: 'btn btn-success',
-                        title: 'Dental Clinic',
+                        title: clinicBasicDetails.clinic_name,
                         messageTop: 'Collection Report',
                         footer: true,
                         filename: 'Collection Report',
@@ -360,7 +361,7 @@
                         extend: 'pdfHtml5',
                         text: 'PDF',
                         // className: 'btn btn-danger',
-                        title: 'Dental Clinic',
+                        title: clinicBasicDetails.clinic_name,
                         messageTop: 'Collection Report',
                         orientation: 'landscape',
                         pageSize: 'A3',
