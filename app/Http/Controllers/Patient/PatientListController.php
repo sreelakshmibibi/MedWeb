@@ -334,6 +334,7 @@ class PatientListController extends Controller
                     }
                     $billingService = new BillingService();
                     $bill_id = $billingService->generateBillId();
+                    $billPaidDate = Carbon::now();
                     $registrationFee = PatientRegistrationFee::create([
                         'bill_id' => $bill_id,
                         'patient_id' => $patient->patient_id,
@@ -347,15 +348,25 @@ class PatientListController extends Controller
                         'card_pay_id' => $request->input('paymode') == 'Card' ?$request->input('cardmachine'):null,
                         'amount_paid' => $request->input('regfee'),
                         'balance_given' => null,
-                        'bill_paid_date' => now(),
+                        'bill_paid_date' => $billPaidDate,
                         'status' => 'Y',
                         'created_by' => auth()->user()->id,
                         'updated_by' => auth()->user()->id,
                     ]);
+                    $incomeData = [
+                        'bill_type' => 'registration_fee',
+                        'bill_no' => $bill_id,
+                        'bill_date' => $billPaidDate,
+                        'gpay' => $request->input('paymode') == 'GPay' ? $request->input('regfee') : 0,
+                        'cash' => $request->input('paymode') == 'Cash' ? $request->input('regfee') : 0,
+                        'card' => $request->input('paymode') == 'Card' ? $request->input('regfee') : 0,
+                        'card_pay_id' => $request->input('paymode') == 'Card' ?$request->input('cardmachine'):null,
+                        'balance_given' => 0,
+                        'created_by' => auth()->user()->id, 
+                    ];
+                    $incomeReport = $billingService->saveIncomeReport($incomeData);
                     DB::commit();
                     if ($registrationFee) {
-                        // In your controller
-                        //$registrationFees = PatientRegistrationFee::where('patient_id', $patient->patient_id)->get();
                         $registrationFees = PatientRegistrationFee::with('createdBy')->where('patient_id', $patient->patient_id)->get();
 
                         $patient1 = PatientProfile::with([

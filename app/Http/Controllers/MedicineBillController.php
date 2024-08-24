@@ -16,6 +16,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
+
 
 class MedicineBillController extends Controller
 {
@@ -73,6 +75,7 @@ class MedicineBillController extends Controller
         $cashAmount = $request->medcash ?? 0;
         $cardAmount = $request->medcard ?? 0;
         $cardPayId = $request->medmachine ?? null;
+        $billPaidDate = Carbon::now();
 
         DB::beginTransaction();
 
@@ -92,7 +95,7 @@ class MedicineBillController extends Controller
                 'card_pay_id' => $cardPayId,
                 'amount_paid' => $request->medamountPaid,
                 'balance_given' => $request->medbalanceToGiveBack,
-                'bill_paid_date'=>now(),
+                'bill_paid_date' => $billPaidDate,
                 'status' => 'Y',
                 'created_by' => auth()->user()->id,
                 'updated_by' => auth()->user()->id,
@@ -100,7 +103,7 @@ class MedicineBillController extends Controller
 
             // Store prescription details
             foreach ($request->quantity as $index => $quantity) {
-                if ($quantity > 0 && $request->rate[$index] > 0 && ! empty($request->medicine_checkbox[$index])) {
+                if ($quantity > 0 && $request->rate[$index] > 0 && !empty($request->medicine_checkbox[$index])) {
                     PrescriptionDetailBilling::create([
                         'bill_id' => $billing->id,
                         'medicine_id' => $request->medicine_checkbox[$index],
@@ -113,6 +116,20 @@ class MedicineBillController extends Controller
                     ]);
                 }
             }
+            $billingService = new BillingService();
+
+            $incomeData = [
+                'bill_type' => 'prescription',
+                'bill_no' => $bill_id,
+                'bill_date' => $billPaidDate,
+                'gpay' => $request->medgpay ?? 0,
+                'cash' => $request->medcash ?? 0,
+                'card' => $request->medcard ?? 0,
+                'card_pay_id' => $request->medmachine ?? null,
+                'balance_given' => $request->medbalanceToGiveBack ?? 0,
+                'created_by' => auth()->user()->id,
+            ];
+            $incomeReport = $billingService->saveIncomeReport($incomeData);
             DB::commit();
 
             return redirect()->route('billing')->with('success', 'Billing recorded successfully!');
@@ -120,18 +137,18 @@ class MedicineBillController extends Controller
             // Rollback the transaction on error
             DB::rollBack();
 
-            return redirect()->back()->with('error', 'Failed to create bill: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Failed to create bill: ' . $e->getMessage());
         }
     }
 
     public function generateBillId()
     {
         $yearMonth = date('Ym'); // Year and Month
-        $latestBill = PatientPrescriptionBilling::where('bill_id', 'like', $yearMonth.'%')
+        $latestBill = PatientPrescriptionBilling::where('bill_id', 'like', $yearMonth . '%')
             ->orderBy('bill_id', 'desc')
             ->first();
         $lastBillId = $latestBill ? intval(substr($latestBill->bill_id, -4)) : 0;
-        $newBillId = $yearMonth.str_pad($lastBillId + 1, 4, '0', STR_PAD_LEFT);
+        $newBillId = $yearMonth . str_pad($lastBillId + 1, 4, '0', STR_PAD_LEFT);
 
         return $newBillId;
     }
@@ -150,7 +167,7 @@ class MedicineBillController extends Controller
         if ($clinicDetails->clinic_logo == '') {
             $clinicLogo = 'public/images/logo-It.png';
         } else {
-            $clinicLogo = 'storage/'.$clinicDetails->clinic_logo;
+            $clinicLogo = 'storage/' . $clinicDetails->clinic_logo;
         }
         $pdf = Pdf::loadView('pdf.prescriptionBill_pdf', [
             'billDetails' => $billDetails,
@@ -161,10 +178,10 @@ class MedicineBillController extends Controller
             'clinicLogo' => $clinicLogo,
             'currency' => $clinicDetails->currency,
         ])->setPaper('A5', 'portrait');
-        $bill_patientId = 'prescriptionbill_'.$appointment->patient_id.'_'.date('Y-m-d').'.pdf';
+        $bill_patientId = 'prescriptionbill_' . $appointment->patient_id . '_' . date('Y-m-d') . '.pdf';
         // Save PDF to storage
-        $fileName = 'prescriptionBilling_report_'.$bill_patientId;
-        $filePath = 'public/pdfs/'.$fileName;
+        $fileName = 'prescriptionBilling_report_' . $bill_patientId;
+        $filePath = 'public/pdfs/' . $fileName;
         // Storage::put($filePath, $pdf->output());
 
         // // Return PDF file URL

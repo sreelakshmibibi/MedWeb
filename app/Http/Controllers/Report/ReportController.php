@@ -364,15 +364,15 @@ class ReportController extends Controller
             ->make(true);
     }
 
-
     // public function income(Request $request)
     // {
     //     $year = $request->input('year');
     //     $month = $request->input('month');
     //     $fromDate = $request->input('fromDate');
     //     $toDate = $request->input('toDate');
+
     //     if ($request->filled('year') && !$request->filled('month')) {
-    //         $query = DB::table('patient_treatment_billings')
+    //         $treatmentQuery = DB::table('patient_treatment_billings')
     //             ->join('card_pays', 'patient_treatment_billings.card_pay_id', '=', 'card_pays.id')
     //             ->select(
     //                 DB::raw('MONTH(patient_treatment_billings.created_at) as month'),
@@ -387,8 +387,8 @@ class ReportController extends Controller
     //             ->whereYear('patient_treatment_billings.created_at', $year)
     //             ->groupBy(DB::raw('MONTH(patient_treatment_billings.created_at)'), 'card_pays.card_name', 'card_pays.service_charge_perc')
     //             ->get();
-           
-    //         $regquery = DB::table('patient_registration_fees')
+
+    //         $regQuery = DB::table('patient_registration_fees')
     //             ->leftJoin('card_pays', 'patient_registration_fees.card_pay_id', '=', 'card_pays.id')
     //             ->select(
     //                 DB::raw('MONTH(patient_registration_fees.created_at) as month'),
@@ -404,8 +404,10 @@ class ReportController extends Controller
     //             ->groupBy(DB::raw('MONTH(patient_registration_fees.created_at)'), 'card_pays.card_name', 'card_pays.service_charge_perc')
     //             ->get();
 
-    //         // Aggregate totals per month including card-wise totals
-    //         $monthlyTotals = $regquery->groupBy('month')->map(function ($items, $month) {
+
+    //         $cardPay = CardPay::where('status', 'Y')->get()->pluck('card_name')->toArray();
+
+    //         $monthlyTotals = $regQuery->groupBy('month')->map(function ($items, $month) use ($cardPay) {
     //             $result = [
     //                 'month' => $month,
     //                 'total_amount_to_be_paid' => 0,
@@ -416,6 +418,13 @@ class ReportController extends Controller
     //                 'cards' => [],
     //             ];
 
+    //             foreach ($cardPay as $cardName) {
+    //                 $result['cards'][$cardName] = [
+    //                     'total_card' => 0,
+    //                     'machine_tax' => 0,
+    //                 ];
+    //             }
+
     //             foreach ($items as $item) {
     //                 $result['total_amount_to_be_paid'] += $item->total_amount_to_be_paid;
     //                 $result['total_gpay'] += $item->total_gpay;
@@ -423,255 +432,363 @@ class ReportController extends Controller
     //                 $result['total_card'] += $item->total_card;
     //                 $result['total_amount_paid'] += $item->total_amount_paid;
 
-    //                 if (!isset($result['cards'][$item->card_name])) {
-    //                     $result['cards'][$item->card_name] = [
-    //                         'total_amount_to_be_paid' => 0,
-    //                         'total_gpay' => 0,
-    //                         'total_cash' => 0,
-    //                         'total_card' => 0,
-    //                         'total_amount_paid' => 0,
-    //                         'machine_tax' => $item->machine_tax,
-    //                     ];
+    //                 if (isset($result['cards'][$item->card_name])) {
+    //                     $result['cards'][$item->card_name]['total_card'] += $item->total_card;
+    //                     $result['cards'][$item->card_name]['machine_tax'] = $item->machine_tax;
     //                 }
-
-    //                 $result['cards'][$item->card_name]['total_amount_to_be_paid'] += $item->total_amount_to_be_paid;
-    //                 $result['cards'][$item->card_name]['total_gpay'] += $item->total_gpay;
-    //                 $result['cards'][$item->card_name]['total_cash'] += $item->total_cash;
-    //                 $result['cards'][$item->card_name]['total_card'] += $item->total_card;
-    //                 $result['cards'][$item->card_name]['total_amount_paid'] += $item->total_amount_paid;
     //             }
 
     //             return $result;
     //         })->values();
 
-    //         // Output the aggregated results
-    //         Log::info('Monthly Totals: ', $monthlyTotals->toArray());
 
-    //         Log::info('$treatment' . $query);
+    //         $dataTableData = [];
+    //         foreach ($monthlyTotals as $row) {
+    //             $rowData = [
+    //                 'month' => $row['month'],
+    //                 'netPaid' => $row['total_amount_paid'],
+    //                 'cash' => $row['total_cash'],
+    //                 'gpay' => $row['total_gpay'],
+    //                 'totalPaid' => $row['total_amount_paid'],
+    //                 'pureTotal' => $row['total_amount_to_be_paid'],
+    //                 'totalCustomer' => 10,
+    //                 'totalService' => 10,
+    //                 'avgIncome' => 10,
+    //                 'dayCount' => 10,
+    //                 'avgCustomer' => 10,
+    //                 'avgService' => 10,
+    //             ];
 
-    //         return DataTables::of($monthlyTotals)
-    //         ->addIndexColumn()
-    //         ->addColumn('month', function ($row) {
-    //             return $row['month'];
-    //         })
-    //         ->addColumn('netPaid', function ($row) {
-    //             return $row['total_amount_paid'];
-    //         })
-    //         ->addColumn('cash', function ($row) {
-    //             return $row['total_cash'];
-    //         })
-    //         ->addColumn('gpay', function ($row) {
-    //             return $row['total_gpay'];
-    //         })
-    //         ->addColumn('totalPaid', function ($row) {
-    //             return $row['total_amount_paid'];
-    //         })
-    //         ->addColumn('pureTotal', function ($row) {
-    //            return $row['total_amount_to_be_paid'];
-    //         })
-    //         ->addColumn('totalCustomer', function ($row) {
-    //             return 10;
-    //         })
-    //         ->addColumn('totalService', function ($row) {
-    //             return 12;
-    //         })
-    //         ->addColumn('avgIncome', function ($row) {
-    //             return 12;
-    //         })
-    //         ->addColumn('dayCount', function ($row) {
-    //             return 30;
-    //         })
-    //         ->addColumn('avgCustomer', function ($row) {
-    //             return 12;
-    //         })
-    //         ->addColumn('avgService', function ($row) {
-    //             return 12;
-    //         })
-    //         ->make(true);
+    //             // Add all possible card data
+    //             foreach ($cardPay as $cardName) {
+    //                 $rowData["cards.{$cardName}.total"] = $row['cards'][$cardName]['total_card'];
+    //                 $rowData["cards.{$cardName}.machine_tax"] = $row['cards'][$cardName]['machine_tax'];
+    //             }
+
+    //             $dataTableData[] = $rowData;
+    //         }
+
+
+    //         Log::info('Monthly Totals: ', $dataTableData);
+
+    //         //return response()->json(['data' => $dataTableData]);
+    //         // Return the data to DataTables
+    //         return DataTables::of($dataTableData)
+    //             ->addIndexColumn()
+    //             ->make(true);
 
     //     }
 
+    //     // Handle cases where no data is provided
+    //     return response()->json(['data' => []]);
     // }
 
     public function income(Request $request)
-{
-    $year = $request->input('year');
-    $month = $request->input('month');
-    $fromDate = $request->input('fromDate');
-    $toDate = $request->input('toDate');
-
-    if ($request->filled('year') && !$request->filled('month')) {
-        $treatmentQuery = DB::table('patient_treatment_billings')
-            ->join('card_pays', 'patient_treatment_billings.card_pay_id', '=', 'card_pays.id')
-            ->select(
-                DB::raw('MONTH(patient_treatment_billings.created_at) as month'),
-                DB::raw('SUM(patient_treatment_billings.amount_to_be_paid) as total_amount_to_be_paid'),
-                DB::raw('SUM(patient_treatment_billings.gpay) as total_gpay'),
-                DB::raw('SUM(patient_treatment_billings.cash) as total_cash'),
-                DB::raw('SUM(patient_treatment_billings.card) as total_card'),
-                DB::raw('SUM(patient_treatment_billings.amount_paid) as total_amount_paid'),
-                'card_pays.card_name',
-                'card_pays.service_charge_perc as machine_tax'
-            )
-            ->whereYear('patient_treatment_billings.created_at', $year)
-            ->groupBy(DB::raw('MONTH(patient_treatment_billings.created_at)'), 'card_pays.card_name', 'card_pays.service_charge_perc')
-            ->get();
-
-        $regQuery = DB::table('patient_registration_fees')
-            ->leftJoin('card_pays', 'patient_registration_fees.card_pay_id', '=', 'card_pays.id')
-            ->select(
-                DB::raw('MONTH(patient_registration_fees.created_at) as month'),
-                DB::raw('COALESCE(card_pays.card_name, "No Card") as card_name'),
-                DB::raw('SUM(patient_registration_fees.amount_to_be_paid) as total_amount_to_be_paid'),
-                DB::raw('SUM(patient_registration_fees.gpay) as total_gpay'),
-                DB::raw('SUM(patient_registration_fees.cash) as total_cash'),
-                DB::raw('SUM(patient_registration_fees.card) as total_card'),
-                DB::raw('SUM(patient_registration_fees.amount_paid) as total_amount_paid'),
-                DB::raw('COALESCE(card_pays.service_charge_perc, 0) as machine_tax')
-            )
-            ->whereYear('patient_registration_fees.created_at', $year)
-            ->groupBy(DB::raw('MONTH(patient_registration_fees.created_at)'), 'card_pays.card_name', 'card_pays.service_charge_perc')
-            ->get();
-
-        // $monthlyTotals = $regQuery->groupBy('month')->map(function ($items, $month) {
-        //     $result = [
-        //         'month' => $month,
-        //         'total_amount_to_be_paid' => 0,
-        //         'total_gpay' => 0,
-        //         'total_cash' => 0,
-        //         'total_card' => 0,
-        //         'total_amount_paid' => 0,
-        //         'cards' => [],
-        //     ];
-
-        //     foreach ($items as $item) {
-        //         $result['total_amount_to_be_paid'] += $item->total_amount_to_be_paid;
-        //         $result['total_gpay'] += $item->total_gpay;
-        //         $result['total_cash'] += $item->total_cash;
-        //         $result['total_card'] += $item->total_card;
-        //         $result['total_amount_paid'] += $item->total_amount_paid;
-
-        //         if (!isset($result['cards'][$item->card_name])) {
-        //             $result['cards'][$item->card_name] = [
-        //                 'total_card' => 0,
-        //                 'machine_tax' => $item->machine_tax,
-        //             ];
-        //         }
-
-        //         $result['cards'][$item->card_name]['total_card'] += $item->total_card;
-        //     }
-
-        //     return $result;
-        // })->values();
-
-        // // Prepare the data for DataTable
-        // $dataTableData = [];
-        // foreach ($monthlyTotals as $row) {
-        //     $rowData = [
-        //         'month' => $row['month'],
-        //         'netPaid' => $row['total_amount_paid'],
-        //         'cash' => $row['total_cash'],
-        //         'gpay' => $row['total_gpay'],
-        //         'totalPaid' => $row['total_amount_paid'],
-        //         'pureTotal' => $row['total_amount_to_be_paid'],
-        //         'totalCustomer' => 10, 
-        //         'totalService' => 10,  
-        //         'avgIncome' => 10,  
-        //         'dayCount' => 10,  
-        //         'avgCustomer' => 10,  
-        //         'avgService' => 10,  
-        //     ];
-
-        //     // Add card-specific data
-        //     foreach ($row['cards'] as $cardName => $cardData) {
-        //         if($cardName!='No Card'){
-        //             $rowData["cards.{$cardName}.total"] = $cardData['total_card'];
-        //         $rowData["cards.{$cardName}.machine_tax"] = $cardData['machine_tax'];
-        //         }
-                
-        //     }
-
-        //     $dataTableData[] = $rowData;
-        // }
-        $cardPay = CardPay::where('status', 'Y')->get()->pluck('card_name')->toArray();
-
-        $monthlyTotals = $regQuery->groupBy('month')->map(function ($items, $month) use ($cardPay) {
-            $result = [
-                'month' => $month,
-                'total_amount_to_be_paid' => 0,
-                'total_gpay' => 0,
-                'total_cash' => 0,
-                'total_card' => 0,
-                'total_amount_paid' => 0,
-                'cards' => [],
-            ];
+    {
+        $year = $request->year;
+        $month = $request->month;
+        $fromDate = $request->fromdate;
+        $toDate = $request->todate;
         
-            foreach ($cardPay as $cardName) {
-                $result['cards'][$cardName] = [
-                    'total_card' => 0,
-                    'machine_tax' => 0,
+        if ($request->filled('year') && !$request->filled('month')) {
+
+            // Query 1: Income Reports
+            $incomeReportQuery = DB::table('income_reports')
+                ->select(
+                    DB::raw('MONTH(created_at) as month'),
+                    DB::raw('SUM(net_paid) as total_net_paid'),
+                    DB::raw('SUM(cash) as total_cash'),
+                    DB::raw('SUM(gpay) as total_gpay'),
+                    DB::raw('SUM(card) as total_card'),
+                    DB::raw('SUM(machine_tax) as total_machine_tax'),
+                    DB::raw('SUM(balance_given) as total_balance_given'),
+                    DB::raw('SUM(net_income) as total_net_income')
+                )
+                ->whereYear('created_at', $year)
+                ->groupBy(DB::raw('MONTH(created_at)'))
+                ->get();
+
+            // Query 2: Appointments
+            $appointmentsQuery = DB::table('appointments')
+                ->select(
+                    DB::raw('MONTH(created_at) as month'),
+                    DB::raw('COUNT(patient_id) as total_patients')
+                )
+                ->whereYear('created_at', $year)
+                ->groupBy(DB::raw('MONTH(created_at)'))
+                ->get();
+
+            // Query 3: Tooth Examinations
+            $toothExaminationsQuery = DB::table('tooth_examinations')
+                ->select(
+                    DB::raw('MONTH(created_at) as month'),
+                    DB::raw('COUNT(id) as total_services')
+                )
+                ->whereYear('created_at', $year)
+                ->groupBy(DB::raw('MONTH(created_at)'))
+                ->get();
+
+            // Map of month numbers to month names
+            $months = [
+                1 => 'January',
+                2 => 'February',
+                3 => 'March',
+                4 => 'April',
+                5 => 'May',
+                6 => 'June',
+                7 => 'July',
+                8 => 'August',
+                9 => 'September',
+                10 => 'October',
+                11 => 'November',
+                12 => 'December',
+            ];
+
+            // Combine Results
+            $combinedResults = [];
+
+            foreach (range(1, 12) as $month) {
+                $incomeReport = $incomeReportQuery->firstWhere('month', $month);
+                $appointment = $appointmentsQuery->firstWhere('month', $month);
+                $toothExamination = $toothExaminationsQuery->firstWhere('month', $month);
+
+                $combinedResults[] = [
+                    'month' => $months[$month],
+                    'total_net_paid' => $incomeReport->total_net_paid ?? 0,
+                    'total_cash' => $incomeReport->total_cash ?? 0,
+                    'total_gpay' => $incomeReport->total_gpay ?? 0,
+                    'total_card' => $incomeReport->total_card ?? 0,
+                    'total_machine_tax' => $incomeReport->total_machine_tax ?? 0,
+                    'total_balance_given' => $incomeReport->total_balance_given ?? 0,
+                    'total_net_income' => $incomeReport->total_net_income ?? 0,
+                    'total_patients' => $appointment->total_patients ?? 0,
+                    'total_services' => $toothExamination->total_services ?? 0,
                 ];
             }
-        
-            foreach ($items as $item) {
-                $result['total_amount_to_be_paid'] += $item->total_amount_to_be_paid;
-                $result['total_gpay'] += $item->total_gpay;
-                $result['total_cash'] += $item->total_cash;
-                $result['total_card'] += $item->total_card;
-                $result['total_amount_paid'] += $item->total_amount_paid;
-        
-                if (isset($result['cards'][$item->card_name])) {
-                    $result['cards'][$item->card_name]['total_card'] += $item->total_card;
-                    $result['cards'][$item->card_name]['machine_tax'] = $item->machine_tax;
-                }
+            $dataTableData = [];
+            foreach ($combinedResults as $row) {
+                $monthNumber = date_parse($row['month'])['month'];
+
+                // Get the total days in the current month for the given year
+                $date = Carbon::createFromDate($year, $monthNumber, 1);
+                $monthDays = $date->daysInMonth;
+                $rowData = [
+                    'month' => $row['month'],
+                    'netPaid' => $row['total_net_paid'],
+                    'cash' => $row['total_cash'],
+                    'gpay' => $row['total_gpay'],
+                    'card' => $row['total_card'],
+                    'machine_tax' => $row['total_machine_tax'],
+                    'balance_given' => $row['total_balance_given'],
+                    'pureTotal' => $row['total_net_income'],
+                    'totalCustomer' => $row['total_patients'],
+                    'totalService' => $row['total_services'],
+                    'avgIncome' => round($row['total_net_income'] / $monthDays, 2),
+                    'dayCount' => $monthDays,
+                    'avgCustomer' => round($row['total_patients'] / $monthDays, 2),
+                    'avgService' => round($row['total_services'] / $monthDays, 2),
+                ];
+                $dataTableData[] = $rowData;
             }
-        
-            return $result;
-        })->values();
-        
+            Log::info('Monthly Totals: ', $dataTableData);
+            return DataTables::of($dataTableData)
+                ->addIndexColumn()
+                ->make(true);
 
-$dataTableData = [];
-foreach ($monthlyTotals as $row) {
-    $rowData = [
-        'month' => $row['month'],
-        'netPaid' => $row['total_amount_paid'],
-        'cash' => $row['total_cash'],
-        'gpay' => $row['total_gpay'],
-        'totalPaid' => $row['total_amount_paid'],
-        'pureTotal' => $row['total_amount_to_be_paid'],
-        'totalCustomer' => 10, 
-        'totalService' => 10,  
-        'avgIncome' => 10,  
-        'dayCount' => 10,  
-        'avgCustomer' => 10,  
-        'avgService' => 10,  
-    ];
+        } else if ($request->filled('month') && $request->filled('year')) {
 
-    // Add all possible card data
-    foreach ($cardPay as $cardName) {
-        $rowData["cards.{$cardName}.total"] = $row['cards'][$cardName]['total_card'];
-        $rowData["cards.{$cardName}.machine_tax"] = $row['cards'][$cardName]['machine_tax'];
-    }
+            $year = $request->year;
+            $month = $request->month;
+            $incomeReportQuery = DB::table('income_reports')
+                ->select(
+                    DB::raw('DAY(created_at) as day'),
+                    DB::raw('SUM(net_paid) as total_net_paid'),
+                    DB::raw('SUM(cash) as total_cash'),
+                    DB::raw('SUM(gpay) as total_gpay'),
+                    DB::raw('SUM(card) as total_card'),
+                    DB::raw('SUM(machine_tax) as total_machine_tax'),
+                    DB::raw('SUM(balance_given) as total_balance_given'),
+                    DB::raw('SUM(net_income) as total_net_income')
+                )
+                ->whereYear('created_at', $year)
+                ->whereMonth('created_at', $month)
+                ->groupBy(DB::raw('DAY(created_at)'))
+                ->get();
 
-    $dataTableData[] = $rowData;
-}
-      
+            // Query 2: Appointments
+            $appointmentsQuery = DB::table('appointments')
+                ->select(
+                    DB::raw('DAY(created_at) as day'),
+                    DB::raw('COUNT(patient_id) as total_patients')
+                )
+                ->whereYear('created_at', $year)
+                ->whereMonth('created_at', $month)
+                ->groupBy(DB::raw('DAY(created_at)'))
+                ->get();
 
-        Log::info('Monthly Totals: ', $dataTableData);
-       
-        //return response()->json(['data' => $dataTableData]);
-        // Return the data to DataTables
-        return DataTables::of($dataTableData)
-            ->addIndexColumn()
-            ->make(true);
+            // Query 3: Tooth Examinations
+            $toothExaminationsQuery = DB::table('tooth_examinations')
+                ->select(
+                    DB::raw('DAY(created_at) as day'),
+                    DB::raw('COUNT(id) as total_services')
+                )
+                ->whereYear('created_at', $year)
+                ->whereMonth('created_at', $month)
+                ->groupBy(DB::raw('DAY(created_at)'))
+                ->get();
+
+            // Combine Results
+            $combinedResults = [];
+
+            $daysInMonth = Carbon::createFromDate($year, $month, 1)->daysInMonth;
+
+            foreach (range(1, $daysInMonth) as $day) {
+                $date = Carbon::create($year, $month, $day)->format('Y-m-d');
+                $dayName = Carbon::create($year, $month, $day)->format('l');
+                $incomeReport = $incomeReportQuery->firstWhere('day', $day);
+                $appointment = $appointmentsQuery->firstWhere('day', $day);
+                $toothExamination = $toothExaminationsQuery->firstWhere('day', $day);
+
+                $combinedResults[] = [
+                    'date' => $date,
+                    'dayName' => $dayName,
+                    'total_net_paid' => $incomeReport->total_net_paid ?? 0,
+                    'total_cash' => $incomeReport->total_cash ?? 0,
+                    'total_gpay' => $incomeReport->total_gpay ?? 0,
+                    'total_card' => $incomeReport->total_card ?? 0,
+                    'total_machine_tax' => $incomeReport->total_machine_tax ?? 0,
+                    'total_balance_given' => $incomeReport->total_balance_given ?? 0,
+                    'total_net_income' => $incomeReport->total_net_income ?? 0,
+                    'total_patients' => $appointment->total_patients ?? 0,
+                    'total_services' => $toothExamination->total_services ?? 0,
+                ];
+            }
+
+            $dataTableData = [];
+            foreach ($combinedResults as $row) {
+                $date = Carbon::parse($row['date']);
+                $dayName = $date->format('l'); // Get the full day name
+                $daysInMonth = $date->daysInMonth;
+
+                $rowData = [
+                    'date' => $date->format('Y-m-d'),
+                    'day' => $dayName,
+                    'netPaid' => $row['total_net_paid'],
+                    'cash' => $row['total_cash'],
+                    'gpay' => $row['total_gpay'],
+                    'card' => $row['total_card'],
+                    'machine_tax' => $row['total_machine_tax'],
+                    'balance_given' => $row['total_balance_given'],
+                    'pureTotal' => $row['total_net_income'],
+                    'totalCustomer' => $row['total_patients'],
+                    'totalService' => $row['total_services'],
+                ];
+                $dataTableData[] = $rowData;
+            }
+
+            Log::info('Monthly Totals for Specific Month: ', $dataTableData);
+            return DataTables::of($dataTableData)
+                ->addIndexColumn()
+                ->make(true);
+
+
+        } else if ($request->filled('fromdate') && $request->filled('todate')) {
+           
             
+            $fromDate = $request->fromdate;
+            $toDate = $request->todate;
+            // Query 1: Income Reports
+            $incomeReportQuery = DB::table('income_reports')
+                ->select(
+                    DB::raw('DATE(created_at) as date'),
+                    DB::raw('SUM(net_paid) as total_net_paid'),
+                    DB::raw('SUM(cash) as total_cash'),
+                    DB::raw('SUM(gpay) as total_gpay'),
+                    DB::raw('SUM(card) as total_card'),
+                    DB::raw('SUM(machine_tax) as total_machine_tax'),
+                    DB::raw('SUM(balance_given) as total_balance_given'),
+                    DB::raw('SUM(net_income) as total_net_income')
+                )
+                ->whereBetween('created_at', [$fromDate, $toDate])
+                ->groupBy(DB::raw('DATE(created_at)'))
+                ->get();
+
+            // Query 2: Appointments
+            $appointmentsQuery = DB::table('appointments')
+                ->select(
+                    DB::raw('DATE(created_at) as date'),
+                    DB::raw('COUNT(patient_id) as total_patients')
+                )
+                ->whereBetween('created_at', [$fromDate, $toDate])
+                ->groupBy(DB::raw('DATE(created_at)'))
+                ->get();
+
+            // Query 3: Tooth Examinations
+            $toothExaminationsQuery = DB::table('tooth_examinations')
+                ->select(
+                    DB::raw('DATE(created_at) as date'),
+                    DB::raw('COUNT(id) as total_services')
+                )
+                ->whereBetween('created_at', [$fromDate, $toDate])
+                ->groupBy(DB::raw('DATE(created_at)'))
+                ->get();
+
+            // Combine Results
+            $combinedResults = [];
+
+            foreach ($incomeReportQuery as $incomeReport) {
+                $appointment = $appointmentsQuery->firstWhere('date', $incomeReport->date);
+                $toothExamination = $toothExaminationsQuery->firstWhere('date', $incomeReport->date);
+
+                $combinedResults[] = [
+                    'date' => $incomeReport->date,
+                    'total_net_paid' => $incomeReport->total_net_paid ?? 0,
+                    'total_cash' => $incomeReport->total_cash ?? 0,
+                    'total_gpay' => $incomeReport->total_gpay ?? 0,
+                    'total_card' => $incomeReport->total_card ?? 0,
+                    'total_machine_tax' => $incomeReport->total_machine_tax ?? 0,
+                    'total_balance_given' => $incomeReport->total_balance_given ?? 0,
+                    'total_net_income' => $incomeReport->total_net_income ?? 0,
+                    'total_patients' => $appointment->total_patients ?? 0,
+                    'total_services' => $toothExamination->total_services ?? 0,
+                ];
+            }
+
+            $dataTableData = [];
+            foreach ($combinedResults as $row) {
+                $date = Carbon::parse($row['date']);
+                $dayName = $date->format('l'); // Get the full day name
+                $daysInMonth = $date->daysInMonth;
+
+                $rowData = [
+                    'date' => $date->format('Y-m-d'),
+                    'day' => $dayName,
+                    'netPaid' => $row['total_net_paid'],
+                    'cash' => $row['total_cash'],
+                    'gpay' => $row['total_gpay'],
+                    'card' => $row['total_card'],
+                    'machine_tax' => $row['total_machine_tax'],
+                    'balance_given' => $row['total_balance_given'],
+                    'pureTotal' => $row['total_net_income'],
+                    'totalCustomer' => $row['total_patients'],
+                    'totalService' => $row['total_services'],
+                ];
+                $dataTableData[] = $rowData;
+            }
+
+            Log::info('Date Range Totals: ', $dataTableData);
+            return DataTables::of($dataTableData)
+                ->addIndexColumn()
+                ->make(true);
+
+        } else {
+            // Handle the case where neither year nor month is provided, or other invalid scenarios.
+            return response()->json(['error' => 'Invalid parameters provided'], 400);
+        }
+
+        // Handle cases where no data is provided
+        //return response()->json(['data' => []]);
     }
-
-    // Handle cases where no data is provided
-    return response()->json(['data' => []]);
-}
-
-
     /**
      * Report Collection.
      */

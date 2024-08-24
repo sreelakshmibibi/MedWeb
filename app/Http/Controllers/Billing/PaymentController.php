@@ -15,6 +15,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Services\BillingService;
+use Carbon\Carbon;
 
 class PaymentController extends Controller
 {
@@ -179,6 +181,7 @@ class PaymentController extends Controller
             $appId = base64_decode(Crypt::decrypt($request->appInput));
             $treatBillId = base64_decode(Crypt::decrypt($request->treatmentBillInput));
             $bill_id = $this->generateBillId();
+            $billPaidDate = Carbon::now();
 
             // Create a new PatientDueBill record
             $dueBill = PatientDueBill::create([
@@ -192,8 +195,8 @@ class PaymentController extends Controller
                 'card' => $request->duecard,
                 'card_pay_id' => $request->duemachine,
                 'paid_amount' => $totalPaid,
-                'balance_given' => $request->dueBalance_given ? $request->dueBalanceToGiveBack : null,
-                'bill_paid_date' => now(),
+                'balance_given' => $request->dueBalanceToGiveBack ? $request->dueBalanceToGiveBack : null,
+                'bill_paid_date' => $billPaidDate,
                 'status' => 'Y',
                 'created_by' => auth()->user()->id,
             ]);
@@ -203,6 +206,20 @@ class PaymentController extends Controller
             $patientTreatmentBilling->due_covered_date = now();
             if ($patientTreatmentBilling->save()) {
 
+                $billingService = new BillingService();
+                
+                $incomeData = [
+                    'bill_type' => 'due_bill',
+                    'bill_no' => $bill_id,
+                    'bill_date' => $billPaidDate,
+                    'gpay' => $request->duegpay ? $request->duegpay : 0,
+                    'cash' => $request->duecash ? $request->duecash : 0,
+                    'card' => $request->duecard ? $request->duecard : 0,
+                    'card_pay_id' => $request->duemachine ?$request->duemachine:null,
+                    'balance_given' => $request->dueBalanceToGiveBack ? $request->dueBalanceToGiveBack : 0,
+                    'created_by' => auth()->user()->id, 
+                ];
+                $incomeReport = $billingService->saveIncomeReport($incomeData);
                 // Commit the transaction since everything was successful
                 DB::commit();
 

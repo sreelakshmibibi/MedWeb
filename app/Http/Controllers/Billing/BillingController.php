@@ -478,7 +478,7 @@ class BillingController extends Controller
             if (!$patientTreatmentBilling) {
                 throw new \Exception('Bill not found.');
             }
-
+            $billPaidDate = Carbon::now();
             // Update billing information
             $patientTreatmentBilling->previous_outstanding = isset($request['previousOutStanding']) ? $request['previousOutStanding'] : 0;
             $patientTreatmentBilling->amount_to_be_paid = $request['totaltoPay'];
@@ -492,7 +492,7 @@ class BillingController extends Controller
             $patientTreatmentBilling->balance_to_give_back = $request['balanceToGiveBack'];
             $patientTreatmentBilling->balance_given = isset($request['balance_given']) ? 1 : 0;
             $patientTreatmentBilling->bill_status = PatientTreatmentBilling::PAYMENT_DONE;
-            $patientTreatmentBilling->bill_paid_date = Carbon::now();
+            $patientTreatmentBilling->bill_paid_date = $billPaidDate;
             $patientTreatmentBilling->billed_by = Auth::user()->id;
 
             // Log the update attempt
@@ -506,6 +506,20 @@ class BillingController extends Controller
             ]);
 
             $i = $patientTreatmentBilling->save();
+            //Income report data
+            $incomeData = [
+                'bill_type' => 'treatment',
+                'bill_no' => $patientTreatmentBilling->bill_id,
+                'bill_date' => $billPaidDate,
+                'gpay' => $request['gpaycash'] ?? 0,
+                'cash' => $request['cash'] ?? 0,
+                'card' => $request['cardcash'] ?? 0,
+                'card_pay_id' => $request['machine'] ?? null,
+                'balance_given' => isset($request['balance_given']) ? $request['balanceToGiveBack'] : 0,
+                'created_by' => auth()->user()->id, 
+            ];
+            $billingService = new BillingService();
+            $incomeReport = $billingService->saveIncomeReport($incomeData);
 
             if ($i && $patientTreatmentBilling->previous_outstanding != 0) {
                 $previousBill = PatientTreatmentBilling::where('patient_id', $appointment->patient_id)

@@ -12,6 +12,8 @@ use App\Models\ToothExamination;
 use App\Models\TreatmentComboOffer;
 use Carbon\Carbon;
 use DateTime;
+use App\Models\IncomeReport;
+use App\Models\CardPay;
 
 class BillingService
 {
@@ -234,4 +236,36 @@ class BillingService
         return $newBillId;
     }
 
+    public function saveIncomeReport(array $inputData)
+    {
+        $netPaid = $inputData['cash'] + $inputData['gpay'] + $inputData['card'];
+        $machineTax = 0;
+        if ($inputData['card_pay_id'] != null) {
+            $cardTax = CardPay::where('id', $inputData['card_pay_id'])->pluck('service_charge_perc')->first();
+            $machineTax = $inputData['card'] * ($cardTax / 100);
+        }
+         
+        $netIncome = $netPaid - $machineTax - $inputData['balance_given'];
+
+        $data = [
+            'bill_type' => $inputData['bill_type'],
+            'bill_no' => $inputData['bill_no'],
+            'bill_date' => $inputData['bill_date'],
+            'net_paid' => $netPaid,
+            'cash' => $inputData['cash'],
+            'gpay' => $inputData['gpay'],
+            'card' => $inputData['card'],
+            'card_pay_id' => $inputData['card_pay_id'] ?? null,
+            'machine_tax' => $machineTax,
+            'balance_given' => $inputData['balance_given'],
+            'net_income' => $netIncome,
+            'created_by' => $inputData['created_by'],
+        ];
+
+        $incomeReport = new IncomeReport();
+        $incomeReport->fill($data);
+        $incomeReport->save();
+
+        return $incomeReport;
+    }
 }
