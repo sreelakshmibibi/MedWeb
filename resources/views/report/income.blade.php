@@ -219,7 +219,8 @@
                 if (month === '' && year !== '') {
                     if ($.fn.DataTable.isDataTable("#monthwiseIncomeTable")) {
                         // Destroy existing DataTable instance
-                        table.destroy();
+                        // table.destroy();
+                        $('#monthwiseIncomeTable').DataTable().destroy();
                     }
                     table = $('#monthwiseIncomeTable').DataTable({
                         processing: true,
@@ -380,7 +381,8 @@
 
                     if ($.fn.DataTable.isDataTable("#datewiseIncomeTable")) {
                         // Destroy existing DataTable instance
-                        table.destroy();
+                        // table.destroy();
+                        $('#datewiseIncomeTable').DataTable().destroy();
                     }
                     table = $('#datewiseIncomeTable').DataTable({
                         processing: true,

@@ -196,7 +196,8 @@
 
             if ($.fn.DataTable.isDataTable("#collectionTable")) {
                 // Destroy existing DataTable instance
-                table.destroy();
+                // table.destroy();
+                $('#collectionTable').DataTable().destroy();
             }
 
             // Initialize DataTable
