@@ -34,9 +34,9 @@
                                 <li class="nav-item"> <a class="nav-link active" data-bs-toggle="tab" href="#collectiontab"
                                         role="tab"><span class="hidden-sm-up">Collection</span> <span
                                             class="hidden-xs-down">Collection Report</span> </a> </li>
-                                <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#profile4"
+                                {{-- <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#profile4"
                                         role="tab"><span class="hidden-sm-up"><i class="ion-person"></i></span> <span
-                                            class="hidden-xs-down">Annual Report</span></a> </li>
+                                            class="hidden-xs-down">Annual Report</span></a> </li> --}}
                                 <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#incometab"
                                         role="tab"><span class="hidden-sm-up">Income</span> <span
                                             class="hidden-xs-down">Income Report</span></a> </li>
@@ -61,11 +61,11 @@
                                         {{-- </section> --}}
                                     </div>
                                 </div>
-                                <div class="tab-pane" id="profile4" role="tabpanel">
+                                {{-- <div class="tab-pane" id="profile4" role="tabpanel">
                                     <div class="p-15">
 
                                     </div>
-                                </div>
+                                </div> --}}
                                 <div class="tab-pane" id="incometab" role="tabpanel">
                                     <div class="p-15">
                                         @include('report.income')

@@ -33,13 +33,13 @@ class LeaveController extends Controller
                 $leaves = LeaveApplication::with('user')->orderBy('leave_from', 'desc')->get();
             } else {
                 $leaves = LeaveApplication::where('user_id', Auth::user()->id)
-                            ->orderBy('leave_from', 'desc')->get();
+                    ->orderBy('leave_from', 'desc')->get();
             }
-            
 
-            $dataTable =  DataTables::of($leaves)
+
+            $dataTable = DataTables::of($leaves)
                 ->addIndexColumn()
-                ->addColumn('leave_applied_dates', function ($row){
+                ->addColumn('leave_applied_dates', function ($row) {
                     $leaveFrom = Carbon::parse($row->leave_from);
                     $leaveTo = Carbon::parse($row->leave_to);
                     $differenceInDays = $leaveFrom->diffInDays($leaveTo) + 1; // Adding 1 because both start and end dates are inclusive
@@ -48,25 +48,28 @@ class LeaveController extends Controller
 
                 ->addColumn('status', function ($row) {
                     if ($row->leave_status == LeaveApplication::Applied) {
-                        return "Applied";
+                        // return "Applied";
+                        return "<span class='text-info'>Applied</span";
                     } else if ($row->leave_status == LeaveApplication::Approved) {
-                        return "Approved";
+                        // return "Approved";
+                        return "<span class='text-success'>Approved</span";
                     } else if ($row->leave_status == LeaveApplication::Rejected) {
-                        return "Rejected" . " ( " . $row->rejection_reason. " ) ";
+                        // return "Rejected" . " ( " . $row->rejection_reason . " ) ";
+                        return "<span class='text-danger'>Rejected( " . $row->rejection_reason . " )</span";
                     }
                 })
                 ->addColumn('action', function ($row) {
                     $btn = null;
                     if (Auth::user()->can('leave approve')) {
-                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-approve btn-xs me-1" title="approve" data-bs-toggle="modal" data-id="' . $row->id . '"
-                        data-bs-target="#modal-approve" >Approve</button>
-                        '; 
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-primary btn-approve btn-xs me-1" title="approve" data-bs-toggle="modal" data-id="' . $row->id . '"
+                        data-bs-target="#modal-approve" ><i class="fa fa-check"></i></button>
+                        ';
                         if ($row->leave_from >= date('Y-m-d')) {
-                            $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-reject btn-xs" data-bs-toggle="modal" data-bs-target="#modal-reject" data-id="' . $row->id . '" title="delete">Reject</button>';
+                            $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-reject btn-xs me-1" data-bs-toggle="modal" data-bs-target="#modal-reject" data-id="' . $row->id . '" title="reject"><i class="fa fa-close"></i></button>';
                         }
                     }
-                
-                    
+
+
                     if (Auth::user()->id = $row->user_id && $row->leave_status == LeaveApplication::Applied) {
                         $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
                         data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
@@ -75,12 +78,12 @@ class LeaveController extends Controller
                     }
                     return $btn;
                 });
-                if (Auth::user()->can('leave approve')) {
-                    $dataTable->addColumn('staff', function ($row) {
-                        return str_replace("<br>", " ", $row->user->name);
-                    });
-                }
-               return $dataTable->rawColumns(['status', 'action'])
+            if (Auth::user()->can('leave approve')) {
+                $dataTable->addColumn('staff', function ($row) {
+                    return str_replace("<br>", " ", $row->user->name);
+                });
+            }
+            return $dataTable->rawColumns(['status', 'action'])
                 ->make(true);
         }
 
@@ -96,7 +99,7 @@ class LeaveController extends Controller
         $userId = Auth::user()->id;
         $leaveFrom = $request->input('leave_from');
         $leaveTo = $request->input('leave_to');
-        
+
         // Check if there is an existing leave application for the same user
         $checkExists = LeaveApplication::where('user_id', $userId)
             ->where(function ($query) use ($leaveFrom, $leaveTo) {
@@ -109,14 +112,14 @@ class LeaveController extends Controller
             })
             ->whereNot('leave_status', LeaveApplication::Rejected)
             ->exists();
-        
+
         if ($checkExists) {
             $message = 'Already exists an active leave application for the selected dates.';
-            return $request->ajax() 
-                ? response()->json(['error' => $message]) 
+            return $request->ajax()
+                ? response()->json(['error' => $message])
                 : redirect()->back()->with('error', $message);
         }
-        
+
         $leaveApplication = new LeaveApplication();
         $leaveApplication->user_id = $userId;
         $leaveApplication->leave_type = $request->input('leave_type');
@@ -124,16 +127,16 @@ class LeaveController extends Controller
         $leaveApplication->leave_to = $leaveTo;
         $leaveApplication->leave_reason = $request->input('reason');
         $leaveApplication->leave_status = LeaveApplication::Applied;
-        
+
         if ($leaveApplication->save()) {
             $message = 'Leave applied successfully.';
-            return $request->ajax() 
-                ? response()->json(['success' => $message]) 
+            return $request->ajax()
+                ? response()->json(['success' => $message])
                 : redirect()->route('leave.index')->with('success', $message);
         } else {
             $message = 'Leave application failed.';
-            return $request->ajax() 
-                ? response()->json(['error' => $message]) 
+            return $request->ajax()
+                ? response()->json(['error' => $message])
                 : redirect()->back()->with('error', $message);
         }
     }

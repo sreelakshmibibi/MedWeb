@@ -21,6 +21,7 @@ use App\Models\PatientPrescriptionBilling;
 use App\Models\PatientRegistrationFee;
 use App\Models\PatientDueBill;
 use App\Models\CardPay;
+use App\Models\ClinicBasicDetail;
 use App\Models\ToothExamination;
 use Illuminate\Support\Facades\Log;
 
@@ -42,7 +43,8 @@ class ReportController extends Controller
         $comboOffers = $reportService->getComboOffers();
         $years = $reportService->getYears();
         $cardPay = CardPay::where('status', 'Y')->get();
-        return view('report.index', compact('treatments', 'treatmentPlans', 'diseases', 'doctors', 'branches', 'staffs', 'billStaffs', 'comboOffers', 'years', 'cardPay'));
+        $clinicBasicDetails = ClinicBasicDetail::first();
+        return view('report.index', compact('treatments', 'treatmentPlans', 'diseases', 'doctors', 'branches', 'staffs', 'billStaffs', 'comboOffers', 'years', 'cardPay', 'clinicBasicDetails'));
     }
 
     public function collection(Request $request)

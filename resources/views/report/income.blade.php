@@ -86,7 +86,7 @@
                 </p>
             </div>
         </div>
-        <div class="box-footer p-3 px-0 text-end bb-1" style="border-radius: 0px;">
+        <div class="box-footer p-3 px-0 text-end " style="border-radius: 0px;">
             {{-- <button type="submit" class="btn btn-success" id="searchIncomeDateWiseBtn">
                 <i class="fa fa-search"></i> Search
             </button> --}}
@@ -189,6 +189,7 @@
 <script type="text/javascript">
     var table;
     jQuery(function($) {
+        var clinicBasicDetails = @json($clinicBasicDetails);
 
         $('#searchIncomeMonthWiseBtn').click(function(e) {
             e.preventDefault();
@@ -218,7 +219,8 @@
                 if (month === '' && year !== '') {
                     if ($.fn.DataTable.isDataTable("#monthwiseIncomeTable")) {
                         // Destroy existing DataTable instance
-                        table.destroy();
+                        // table.destroy();
+                        $('#monthwiseIncomeTable').DataTable().destroy();
                     }
                     table = $('#monthwiseIncomeTable').DataTable({
                         processing: true,
@@ -310,7 +312,7 @@
                                 extend: 'print',
                                 text: 'Print',
                                 // className: 'btn btn-primary',
-                                title: 'Dental Clinic',
+                                title: clinicBasicDetails.clinic_name,
                                 messageTop: 'Income Report',
                                 orientation: 'landscape',
                                 pageSize: 'A4',
@@ -332,7 +334,7 @@
                                 extend: 'excelHtml5',
                                 text: 'Excel',
                                 // className: 'btn btn-success',
-                                title: 'Dental Clinic',
+                                title: clinicBasicDetails.clinic_name,
                                 messageTop: 'Income Report',
                                 footer: true,
                                 filename: 'Income Report',
@@ -344,7 +346,7 @@
                                 extend: 'pdfHtml5',
                                 text: 'PDF',
                                 // className: 'btn btn-danger',
-                                title: 'Dental Clinic',
+                                title: clinicBasicDetails.clinic_name,
                                 messageTop: 'Income Report',
                                 orientation: 'landscape',
                                 pageSize: 'A3',
@@ -379,7 +381,8 @@
 
                     if ($.fn.DataTable.isDataTable("#datewiseIncomeTable")) {
                         // Destroy existing DataTable instance
-                        table.destroy();
+                        // table.destroy();
+                        $('#datewiseIncomeTable').DataTable().destroy();
                     }
                     table = $('#datewiseIncomeTable').DataTable({
                         processing: true,
@@ -407,7 +410,25 @@
                             },
                             {
                                 data: 'date',
-                                name: 'date'
+                                name: 'date',
+                                className: 'min-w-60',
+                                render: function(data, type, row) {
+                                    if (data) {
+                                        // Convert the date string to a JavaScript Date object
+                                        var date = new Date(data);
+
+                                        // Format the date as d-m-y
+                                        var day = ("0" + date.getDate()).slice(-2);
+                                        var month = ("0" + (date.getMonth() + 1)).slice(
+                                            -2);
+                                        var year = date.getFullYear();
+
+                                        return day + '-' + month + '-' +
+                                            year; // Return formatted date
+                                    } else {
+                                        return '-'; // Return dash if no data is present
+                                    }
+                                }
                             },
                             {
                                 data: 'day',
@@ -459,7 +480,7 @@
                                 extend: 'print',
                                 text: 'Print',
                                 // className: 'btn btn-primary',
-                                title: 'Dental Clinic',
+                                title: clinicBasicDetails.clinic_name,
                                 messageTop: 'Income Report',
                                 orientation: 'landscape',
                                 pageSize: 'A4',
@@ -481,7 +502,7 @@
                                 extend: 'excelHtml5',
                                 text: 'Excel',
                                 // className: 'btn btn-success',
-                                title: 'Dental Clinic',
+                                title: clinicBasicDetails.clinic_name,
                                 messageTop: 'Income Report',
                                 footer: true,
                                 filename: 'Income Report',
@@ -493,7 +514,7 @@
                                 extend: 'pdfHtml5',
                                 text: 'PDF',
                                 // className: 'btn btn-danger',
-                                title: 'Dental Clinic',
+                                title: clinicBasicDetails.clinic_name,
                                 messageTop: 'Income Report',
                                 orientation: 'landscape',
                                 pageSize: 'A3',
