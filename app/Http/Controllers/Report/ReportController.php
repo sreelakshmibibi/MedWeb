@@ -21,6 +21,7 @@ use App\Models\PatientPrescriptionBilling;
 use App\Models\PatientRegistrationFee;
 use App\Models\PatientDueBill;
 use App\Models\CardPay;
+use App\Models\ToothExamination;
 use Illuminate\Support\Facades\Log;
 
 class ReportController extends Controller
@@ -489,7 +490,7 @@ class ReportController extends Controller
         $month = $request->month;
         $fromDate = $request->fromdate;
         $toDate = $request->todate;
-        
+
         if ($request->filled('year') && !$request->filled('month')) {
 
             // Query 1: Income Reports
@@ -693,8 +694,8 @@ class ReportController extends Controller
 
 
         } else if ($request->filled('fromdate') && $request->filled('todate')) {
-           
-            
+
+
             $fromDate = $request->fromdate;
             $toDate = $request->todate;
             // Query 1: Income Reports
@@ -794,9 +795,95 @@ class ReportController extends Controller
      */
     public function service(Request $request)
     {
-        echo "service";
-        exit;
+        $query = ToothExamination::select(
+            'tooth_examinations.patient_id',
+            'tooth_examinations.treatment_id',
+            't.treat_name as treatment_name',
+            't.treat_cost as total',
+            DB::raw('DATE(tooth_examinations.created_at) as date'),
+            DB::raw('COUNT(*) as quantity'),
+            'b.clinic_address as branch_name',
+            'p.phone',
+            'tp.plan'
+        )
+            ->join('patient_profiles as p', 'p.patient_id', '=', 'tooth_examinations.patient_id')
+            ->join('appointments as a', 'tooth_examinations.app_id', '=', 'a.id')
+            ->join('clinic_branches as b', 'a.app_branch', '=', 'b.id')
+            ->leftJoin('treatment_types as t', 'tooth_examinations.treatment_id', '=', 't.id')
+            ->leftJoin('treatment_plans as tp', 'tooth_examinations.treatment_plan_id', '=', 'tp.id')
+            ->whereBetween('tooth_examinations.created_at', ['2024-08-01', '2024-08-31'])
+            ->groupBy(
+                'tooth_examinations.patient_id',
+                'tooth_examinations.treatment_id',
+                't.treat_name',
+                't.treat_cost',
+                DB::raw('DATE(tooth_examinations.created_at)'),
+                'b.clinic_address',
+                'p.phone',
+                'tp.plan'
+            );
+
+        // Apply filters based on request inputs
+        if ($request->filled('serviceFromDate')) {
+            $query->whereDate('tooth_examinations.created_at', '>=', $request->serviceFromDate);
+        }
+
+        if ($request->filled('serviceToDate')) {
+            $query->whereDate('tooth_examinations.created_at', '<=', $request->serviceToDate);
+        }
+
+        if ($request->filled('serviceBranch')) {
+            $query->where('a.app_branch', $request->serviceBranch);
+        }
+        if ($request->filled('serviceComboOffer')) {
+            $query->where('a.combo_offer_id', $request->serviceComboOffer);
+        }
+
+        if ($request->filled('serviceCreatedBy')) {
+            $query->where('tooth_examinations.created_by', $request->serviceCreatedBy);
+        }
+
+        if ($request->filled('serviceTreatment')) {
+            $query->where('tooth_examinations.treatment_id', $request->serviceTreatment);
+        }
+
+        if ($request->filled('serviceTreatmentPlan')) {
+            $query->where('tooth_examinations.treatment_plan_id', $request->serviceTreatmentPlan);
+        }
+
+        if ($request->filled('serviceGender')) {
+            $query->where('p.gender', $request->serviceGender);
+        }
+
+        if ($request->filled('serviceAgeFrom')) {
+            $query->whereRaw('TIMESTAMPDIFF(YEAR, p.date_of_birth, CURDATE()) >= ?', [$request->serviceAgeFrom]);
+        }
+
+        if ($request->filled('serviceAgeTo')) {
+            $query->whereRaw('TIMESTAMPDIFF(YEAR, p.date_of_birth, CURDATE()) <= ?', [$request->serviceAgeTo]);
+        }
+
+        // Execute the query
+        $serviceData = $query->get();
+        $dataTableData = $serviceData->map(function ($item, $key) {
+            return [
+                'DT_RowIndex' => $key + 1,
+                'branch' => $item->branch_name ?? 'N/A',
+                'date' => $item->date,
+                'phoneNumber' => $item->phone ?? 'N/A',
+                'serviceName' => $item->treatment_name ?? 'N/A',
+                'treatmentPlan' => $item->plan ?? 'N/A',
+                'quantity' => $item->quantity,
+                'total' => $item->total ?? 0,  // Format as needed
+            ];
+        });
+        Log::info('service: ', ['data' => json_encode($dataTableData)]);
+
+        return response()->json([
+            'data' => $dataTableData
+        ]);
     }
+
 
     /**
      * Report Collection.

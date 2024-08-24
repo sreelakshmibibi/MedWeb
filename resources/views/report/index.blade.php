@@ -97,5 +97,5 @@
 
 
     <!-- ./wrapper -->
-    <script src="{{ asset('js/reports.js') }}"></script>
+    {{-- <script src="{{ asset('js/reports.js') }}"></script> --}}
 @endsection

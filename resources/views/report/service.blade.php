@@ -1,4 +1,4 @@
-<form method="post" action="{{ route('report.service')}}">
+<form method="post" action="{{ route('report.service') }}">
     @csrf
     <div class="box no-border mb-2">
         <div class="box-header p-0">
@@ -16,25 +16,25 @@
             <div class="row">
                 <div class="col-md-2">
                     <div class="form-group">
-                        <label class="form-label" for="fromdate">From <span class="text-danger">
+                        <label class="form-label" for="serviceFromDate">From <span class="text-danger">
                                 *</span></label>
-                        <input type="date" class="form-control" id="fromdate" name="fromdate"
+                        <input type="date" class="form-control" id="serviceFromDate" name="serviceFromDate"
                             value="<?php echo date('Y-m-d'); ?>" required>
                     </div>
                 </div>
 
                 <div class="col-md-2">
                     <div class="form-group">
-                        <label class="form-label" for="todate">To <span class="text-danger">
+                        <label class="form-label" for="serviceToDate">To <span class="text-danger">
                                 *</span></label>
-                        <input type="date" class="form-control" id="todate" name="todate" value="<?php echo date('Y-m-d'); ?>"
-                            required>
+                        <input type="date" class="form-control" id="serviceToDate" name="serviceToDate"
+                            value="<?php echo date('Y-m-d'); ?>" required>
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="form-group">
-                        <label class="form-label" for="branch">Branch</label>
-                        <select class="form-control " type="text" id="branch" name="branch">
+                        <label class="form-label" for="serviceBranch">Branch</label>
+                        <select class="form-control " type="text" id="serviceBranch" name="serviceBranch">
                             <option value="">All</option>
                             @foreach ($branches as $branch)
                                 <option value="{{ $branch['id'] }}"> {{ $branch['name'] }}</option>
@@ -45,11 +45,12 @@
 
                 <div class="col-md-2">
                     <div class="form-group">
-                        <label class="form-label" for="createdby">Done By</label>
-                        <select class="form-control " type="text" id="createdby" name="createdby">
+                        <label class="form-label" for="serviceCreatedBy">Done By</label>
+                        <select class="form-control " type="text" id="serviceCreatedBy" name="serviceCreatedBy">
                             <option value="">All</option>
                             @foreach ($doctors as $doctor)
-                                <option value="{{ $doctor->id }}"> {{ str_replace("<br>", " ", $doctor->name) }}</option>
+                                <option value="{{ $doctor->id }}"> {{ str_replace('<br>', ' ', $doctor->name) }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -59,8 +60,8 @@
 
                 <div class="col-md-2">
                     <div class="form-group">
-                        <label class="form-label" for="treatment">Treatment</label>
-                        <select class="form-control " type="text" id="treatment" name="treatment">
+                        <label class="form-label" for="serviceTreatment">Treatment</label>
+                        <select class="form-control " type="text" id="serviceTreatment" name="serviceTreatment">
                             <option value="">All</option>
                             @foreach ($treatments as $treatment)
                                 <option value="{{ $treatment->id }}"> {{ $treatment->treat_name }}</option>
@@ -71,11 +72,12 @@
 
                 <div class="col-md-2">
                     <div class="form-group">
-                        <label class="form-label" for="combooffer">Combo Offer</label>
-                        <select class="form-control " type="text" id="combooffer" name="combooffer">
+                        <label class="form-label" for="serviceTreatmentPlan">Treatment Plan</label>
+                        <select class="form-control " type="text" id="serviceTreatmentPlan"
+                            name="serviceTreatmentPlan">
                             <option value="">All</option>
-                            @foreach ($comboOffers as $comboOffer)
-                                <option value="{{$comboOffer->id}}"> {{ $comboOffer->treatments->pluck('treat_name')->implode(', ') }}</option>
+                            @foreach ($treatmentPlans as $treatmentPlan)
+                                <option value="{{ $treatmentPlan->id }}"> {{ $treatmentPlan->plan }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -83,8 +85,21 @@
 
                 <div class="col-md-2">
                     <div class="form-group">
-                        <label class="form-label" for="gender">Gender</label>
-                        <select class="form-control " type="text" id="gender" name="gender">
+                        <label class="form-label" for="serviceComboOffer">Combo Offer</label>
+                        <select class="form-control " type="text" id="serviceComboOffer" name="serviceComboOffer">
+                            <option value="">All</option>
+                            @foreach ($comboOffers as $comboOffer)
+                                <option value="{{ $comboOffer->id }}">
+                                    {{ $comboOffer->treatments->pluck('treat_name')->implode(', ') }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label class="form-label" for="serviceGender">Gender</label>
+                        <select class="form-control " type="text" id="serviceGender" name="serviceGender">
                             <option value="">All</option>
                             <option value="M">Male</option>
                             <option value="F">Female</option>
@@ -96,9 +111,11 @@
                     <div class="form-group">
                         <label class="form-label" for="age">Age</label>
                         <div class="input-group">
-                            <input type="number" class="form-control" placeholder="From" name="sAgeFrom" id="sAgeFrom" aria-label="From" min="0" max="99">
+                            <input type="number" class="form-control" placeholder="From" name="serviceAgeFrom"
+                                id="serviceAgeFrom" aria-label="From" min="0" max="99">
                             <span class="input-group-text">-</span>
-                            <input type="number" class="form-control" placeholder="To" name="sAgeTo" id="sAgeTo" aria-label="To" min="0" max="99">
+                            <input type="number" class="form-control" placeholder="To" name="serviceAgeTo"
+                                id="serviceAgeTo" aria-label="To" min="0" max="99">
                         </div>
                     </div>
                 </div>
@@ -107,64 +124,177 @@
 
         </div>
         <div class="box-footer p-3 px-0 text-end bb-1" style="border-radius: 0px;">
-            <button type="submit" class="btn btn-success" id="searchservicebtn">
+            <button type="submit" class="btn btn-success" id="searchServiceBtn">
                 <i class="fa fa-search"></i> Search
             </button>
         </div>
     </div>
     <div class="servicediv" style="display: none">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover table-striped mb-0 data-table text-center">
+        <div class="table-responsive" style=" width: 100%; overflow-x: auto;">
+            <table class="table table-bordered table-hover table-striped mb-0 data-table text-center"
+                id="serviceTable" width="100%">
                 <thead class="bg-primary-light">
                     <tr>
-                        <th width="10px">No</th>
-                        <th>Patient ID</th>
-                        <th>Name</th>
-                        <th>Gender</th>
+                        <th>No</th>
+                        <th>Branch</th>
+                        <th>Date</th>
                         <th>Phone Number</th>
-                        <th>Last Appointment Date</th>
-                        <th>Upcoming (if any)</th>
-                        <th width="20px">Status</th>
-                        <th width="170px">Action</th>
+                        <th>Service Name</th>
+                        <th>Treatment Plan</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td width="10px">1</td>
-                        <td>Patient ID</td>
-                        <td>Name</td>
-                        <td>Gender</th>
-                        <td>Phone Number</th>
-                        <td>Last Appointment Date</td>
-                        <td>Upcoming (if any)</td>
-                        <td width="20px">Status</td>
-                        <td width="170px">Action</td>
-                    </tr>
-                    <tr>
-                        <td width="10px">1</td>
-                        <td>Patient ID</td>
-                        <td>Name</td>
-                        <td>Gender</th>
-                        <td>Phone Number</th>
-                        <td>Last Appointment Date</td>
-                        <td>Upcoming (if any)</td>
-                        <td width="20px">Status</td>
-                        <td width="170px">Action</td>
-                    </tr>
-                    <tr>
-                        <td width="10px">1</td>
-                        <td>Patient ID</td>
-                        <td>Name</td>
-                        <td>Gender</th>
-                        <td>Phone Number</th>
-                        <td>Last Appointment Date</td>
-                        <td>Upcoming (if any)</td>
-                        <td width="20px">Status</td>
-                        <td width="170px">Action</td>
-                    </tr>
-
                 </tbody>
+                <tfoot>
+                    <tr class="bt-3 border-primary">
+                        <th colspan="5"></th>
+                        <th>Total:</th>
+                        <th id="total-quantity"></th>
+                        <th id="total-total"></th>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     </div>
 </form>
+<script type="text/javascript">
+    var table;
+    jQuery(function($) {
+        $('#searchServiceBtn').click(function(e) {
+            e.preventDefault(); // Prevent form submission
+
+            if ($.fn.DataTable.isDataTable("#serviceTable")) {
+                // Destroy existing DataTable instance
+                table.destroy();
+            }
+
+            // Initialize DataTable
+            table = $('#serviceTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('report.service') }}",
+                    type: 'POST',
+                    data: function(d) {
+                        d._token = $('input[name="_token"]').val();
+                        d.serviceFromDate = $('#serviceFromDate').val();
+                        d.serviceToDate = $('#serviceToDate').val();
+                        d.serviceBranch = $('#serviceBranch').val();
+                        d.serviceCreatedBy = $('#serviceCreatedBy').val();
+                        d.serviceTreatment = $('#serviceTreatment').val();
+                        d.serviceTreatmentPlan = $('#serviceTreatmentPlan').val();
+                        d.serviceComboOffer = $('#serviceComboOffer').val();
+                        d.serviceGender = $('#serviceGender').val();
+                        d.serviceAgeFrom = $('#serviceAgeFrom').val();
+                        d.serviceAgeTo = $('#serviceAgeTo').val();
+                    },
+                    dataSrc: function(json) {
+                        return json.data; // Ensure `json.data` is correct
+                    }
+                },
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'branch',
+                        name: 'branch'
+                    },
+                    {
+                        data: 'date',
+                        name: 'date'
+                    },
+                    {
+                        data: 'phoneNumber',
+                        name: 'phoneNumber'
+                    },
+                    {
+                        data: 'serviceName',
+                        name: 'serviceName'
+                    },
+                    {
+                        data: 'treatmentPlan',
+                        name: 'treatmentPlan'
+                    },
+                    {
+                        data: 'quantity',
+                        name: 'quantity'
+                    },
+                    {
+                        data: 'total',
+                        name: 'total'
+                    }
+                ],
+                dom: 'Bfrtlp',
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, 'All']
+                ],
+                buttons: [{
+                        extend: 'print',
+                        text: 'Print',
+                        title: 'Service Report',
+                        messageTop: 'Service Report',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        footer: true,
+                        filename: 'Service Report',
+                        exportOptions: {
+                            columns: ':visible'
+                        },
+                        customize: function(win) {
+                            $(win.document.body).css('font-size', '10pt');
+                            $(win.document.body).find('table').addClass('compact').css(
+                                'font-size', 'inherit');
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        title: 'Service Report',
+                        messageTop: 'Service Report',
+                        footer: true,
+                        filename: 'Service Report',
+                        exportOptions: {
+                            columns: ':visible'
+                        }
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'PDF',
+                        title: 'Service Report',
+                        messageTop: 'Service Report',
+                        orientation: 'landscape',
+                        pageSize: 'A3',
+                        exportOptions: {
+                            columns: ':visible'
+                        },
+                        footer: true,
+                        customize: function(doc) {
+                            doc.defaultStyle.fontSize = 10;
+                            doc.styles.tableHeader.fontSize = 10;
+                        }
+                    }
+                ],
+                footerCallback: function(row, data, start, end, display) {
+                    var api = this.api();
+                    var totalQuantity = api.column(6).data().reduce(function(a, b) {
+                        return parseFloat(a) + parseFloat(b);
+                    }, 0);
+                    var totalAmount = api.column(7).data().reduce(function(a, b) {
+                        return parseFloat(a) + parseFloat(b);
+                    }, 0);
+                    $(api.column(6).footer()).html(totalQuantity.toFixed(2));
+                    $(api.column(7).footer()).html(totalAmount.toFixed(2));
+                }
+            });
+
+            $('.servicediv').show();
+        });
+
+    });
+</script>
