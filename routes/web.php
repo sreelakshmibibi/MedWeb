@@ -3,6 +3,7 @@
 use App\Http\Controllers\Appointment\AppointmentController;
 use App\Http\Controllers\Appointment\TreatmentController;
 use App\Http\Controllers\Auth\StaffVerificationController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\Billing\BillingController;
 use App\Http\Controllers\Billing\PaymentController;
 use App\Http\Controllers\HelperController;
@@ -239,4 +240,7 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::delete('/leave/{leave}', [LeaveController::class, 'destroy'])->name('leave.destroy');
     Route::get('/leave/approve/{leave}', [LeaveController::class, 'approveLeave'])->name('leave.approve');
     Route::post('/leave/reject/{leave}', [LeaveController::class, 'rejectLeave'])->name('leave.reject');
+
+    Route::get('/db_backup', [BackupController::class, 'index'])->name('settings.db_backup');
+
 });

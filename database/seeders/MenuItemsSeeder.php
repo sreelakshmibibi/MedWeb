@@ -71,6 +71,7 @@ class MenuItemsSeeder extends Seeder
             'bill view',
             'reports',
             'users',
+            'settings db_backup',
         ];
 
         foreach ($permissions as $permission) {
@@ -118,6 +119,7 @@ class MenuItemsSeeder extends Seeder
             'reports',
             'leave apply',
             'leave approve',
+            'settings db_backup',
         ];
 
 
@@ -240,6 +242,7 @@ class MenuItemsSeeder extends Seeder
             ['name' => 'Insurance', 'url' => '/insurance', 'route_name' => 'settings.insurance', 'icon' => 'icon-Commit', 'order_no' => 7],
             ['name' => 'Treatment Plan', 'url' => '/treatment_plan', 'route_name' => 'settings.treatment_plan', 'icon' => 'icon-Commit', 'order_no' => 8],
             ['name' => 'Roles and Permissions', 'url' => 'roles', 'route_name' => 'roles.index', 'icon' => 'icon-Commit', 'order_no' => 9],
+            ['name' => 'DB Backup', 'url' => '/db_backup', 'route_name' => 'settings.db_backup', 'icon' => 'icon-Commit', 'order_no' => 10],
         ]);
 
         $settingSuperAdminSubmenus = $settings->children()->createMany([
