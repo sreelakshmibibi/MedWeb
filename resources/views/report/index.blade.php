@@ -64,11 +64,7 @@
                             <div class="tab-content p-0">
                                 <div class="tab-pane active" id="collectiontab" role="tabpanel">
                                     <div class="p-15">
-                                        {{-- <section class="content"> --}}
-
                                         @include('report.collection')
-
-                                        {{-- </section> --}}
                                     </div>
                                 </div>
                                 {{-- <div class="tab-pane" id="profile4" role="tabpanel">
@@ -94,6 +90,21 @@
                                 <div class="tab-pane" id="diseasetab" role="tabpanel">
                                     <div class="p-15">
                                         @include('report.disease')
+                                    </div>
+                                </div>
+                                <div class="tab-pane active" id="auditBilTab" role="tabpanel">
+                                    <div class="p-15">
+                                        @include('report.auditbill')
+                                    </div>
+                                </div>
+                                <div class="tab-pane active" id="auditPatientTab" role="tabpanel">
+                                    <div class="p-15">
+                                        @include('report.auditpatient')
+                                    </div>
+                                </div>
+                                <div class="tab-pane active" id="auditStaffTab" role="tabpanel">
+                                    <div class="p-15">
+                                        @include('report.auditstaff')
                                     </div>
                                 </div>
                             </div>
