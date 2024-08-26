@@ -49,6 +49,15 @@
                                 <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#diseasetab"
                                         role="tab"><span class="hidden-sm-up">Disease</span> <span
                                             class="hidden-xs-down">Disease Report</span></a> </li>
+                                <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#auditBilTab"
+                                        role="tab"><span class="hidden-sm-up">Audit Bill</span> <span
+                                            class="hidden-xs-down">Audit Bill</span></a> </li>
+                                <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#auditPatientTab"
+                                        role="tab"><span class="hidden-sm-up"></span> <span
+                                            class="hidden-xs-down">Audit Patient</span></a> </li>
+                                <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#auditStaffTab"
+                                        role="tab"><span class="hidden-sm-up">Audit Staff</span> <span
+                                            class="hidden-xs-down">Audit Staff</span></a> </li>
                             </ul>
                             <!-- Tab panes -->
                             <div class="tab-content">
