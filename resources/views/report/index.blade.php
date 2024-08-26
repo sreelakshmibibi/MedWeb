@@ -30,7 +30,8 @@
 
                         <!-- Nav tabs -->
                         <div class="vtabs" style="width: 100%;">
-                            <ul class="nav nav-tabs tabs-vertical" role="tablist" style=" max-height: 100%; height: 100vh;">
+                            <ul class="nav nav-tabs tabs-vertical" id="verticaltabmenu" role="tablist"
+                                style=" max-height: 100%; height: 100vh;">
                                 <li class="nav-item"> <a class="nav-link active" data-bs-toggle="tab" href="#collectiontab"
                                         role="tab"><span class="hidden-sm-up">Collection</span> <span
                                             class="hidden-xs-down">Collection Report</span> </a> </li>
@@ -53,14 +54,14 @@
                                         role="tab"><span class="hidden-sm-up">Audit Bill</span> <span
                                             class="hidden-xs-down">Audit Bill</span></a> </li>
                                 <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#auditPatientTab"
-                                        role="tab"><span class="hidden-sm-up"></span> <span
-                                            class="hidden-xs-down">Audit Patient</span></a> </li>
+                                        role="tab"><span class="hidden-sm-up"></span> <span class="hidden-xs-down">Audit
+                                            Patient</span></a> </li>
                                 <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#auditStaffTab"
                                         role="tab"><span class="hidden-sm-up">Audit Staff</span> <span
                                             class="hidden-xs-down">Audit Staff</span></a> </li>
                             </ul>
                             <!-- Tab panes -->
-                            <div class="tab-content">
+                            <div class="tab-content p-0">
                                 <div class="tab-pane active" id="collectiontab" role="tabpanel">
                                     <div class="p-15">
                                         {{-- <section class="content"> --}}

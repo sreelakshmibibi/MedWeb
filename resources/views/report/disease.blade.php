@@ -1,94 +1,94 @@
-<form method="post" action="{{ route('report.disease')}}">
-@csrf
-    <div class="box no-border mb-2">
-        <div class="box-header p-0">
-            <div class="d-flex align-items-center justify-content-between">
-                <h4 class="box-title ">
-                    Disease Report
-                </h4>
-
-                <button type='button'
-                    class='waves-effect waves-light btn btn-circle btn-secondary btn-treatment-pdf-generate btn-xs mt-0 mb-2'
-                    title='Download & Print Treatment Summary'><i class='fa fa-download'></i></button>
+<form method="post" action="{{ route('report.disease') }}">
+    @csrf
+    <div class="container-fluid">
+        <div class="box no-border mb-2">
+            <div class="box-header p-0">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h4 class="box-title ">
+                        Disease Report
+                    </h4>
+                </div>
             </div>
-        </div>
-        <div class="box-body px-0 ">
-            <div class="row">
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label class="form-label" for="diseaseFromDate">From <span class="text-danger">
-                                *</span></label>
-                        <input type="date" class="form-control" id="diseaseFromDate" name="diseaseFromDate"
-                            value="<?php echo date('Y-m-d'); ?>" required>
+            <div class="box-body px-0 ">
+                <div class="row">
+                    <div class="col-md-3 col-lg-2">
+                        <div class="form-group">
+                            <label class="form-label" for="diseaseFromDate">From <span class="text-danger">
+                                    *</span></label>
+                            <input type="date" class="form-control" id="diseaseFromDate" name="diseaseFromDate"
+                                value="<?php echo date('Y-m-d'); ?>" required>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label class="form-label" for="diseaseToDate">To <span class="text-danger">
-                                *</span></label>
-                        <input type="date" class="form-control" id="diseaseToDate" name="diseaseToDate" value="<?php echo date('Y-m-d'); ?>"
-                            required>
+                    <div class="col-md-3 col-lg-2">
+                        <div class="form-group">
+                            <label class="form-label" for="diseaseToDate">To <span class="text-danger">
+                                    *</span></label>
+                            <input type="date" class="form-control" id="diseaseToDate" name="diseaseToDate"
+                                value="<?php echo date('Y-m-d'); ?>" required>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label class="form-label" for="diseaseBranch">Branch</label>
-                        <select class="form-control " type="text" id="diseaseBranch" name="diseaseBranch">
-                            <option value="">All</option>
-                            @foreach ($branches as $branch)
-                            <option value="{{ $branch['id'] }}"> {{ $branch['name'] }}</option>
-                            @endforeach
-                        </select>
+                    <div class="col-md-3 col-lg-2">
+                        <div class="form-group">
+                            <label class="form-label" for="diseaseBranch">Branch</label>
+                            <select class="form-control " type="text" id="diseaseBranch" name="diseaseBranch">
+                                <option value="">All</option>
+                                @foreach ($branches as $branch)
+                                    <option value="{{ $branch['id'] }}"> {{ $branch['name'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label class="form-label" for="disease">Disease</label>
-                        <select class="form-control " type="text" id="disease" name="disease">
-                            <option value="">All</option>
-                            @foreach ($diseases as $disease)
-                                <option value="{{$disease->id}}"> {{ $disease->name }}</option>
-                            @endforeach
-                        </select>
+                    <div class="col-md-3 col-lg-2">
+                        <div class="form-group">
+                            <label class="form-label" for="disease">Disease</label>
+                            <select class="form-control " type="text" id="disease" name="disease">
+                                <option value="">All</option>
+                                @foreach ($diseases as $disease)
+                                    <option value="{{ $disease->id }}"> {{ $disease->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label class="form-label" for="diseaseGender">Gender</label>
-                        <select class="form-control " type="text" id="diseaseGender" name="diseaseGender">
-                            <option value="">All</option>
-                            <option value="M">Male</option>
-                            <option value="F">Female</option>
-                            <option value="O">Others</option>
-                        </select>
+                    <div class="col-md-3 col-lg-2">
+                        <div class="form-group">
+                            <label class="form-label" for="diseaseGender">Gender</label>
+                            <select class="form-control " type="text" id="diseaseGender" name="diseaseGender">
+                                <option value="">All</option>
+                                <option value="M">Male</option>
+                                <option value="F">Female</option>
+                                <option value="O">Others</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label class="form-label" for="diseaseAge">Age</label>
+                    <div class="col-md-3 col-lg-2">
+                        <div class="form-group">
+                            <label class="form-label" for="diseaseAge">Age</label>
                             <div class="input-group">
-                                <input type="number" class="form-control" placeholder="From" aria-label="From" name="diseaseAgeFrom" id="diseaseAgeFrom" min="0" max="110">
+                                <input type="number" class="form-control" placeholder="From" aria-label="From"
+                                    name="diseaseAgeFrom" id="diseaseAgeFrom" min="0" max="110">
                                 <span class="input-group-text">-</span>
-                                <input type="number" class="form-control" placeholder="To" aria-label="To" name="diseaseAgeTo" id="diseaseAgeTo" min="0" max="110">
+                                <input type="number" class="form-control" placeholder="To" aria-label="To"
+                                    name="diseaseAgeTo" id="diseaseAgeTo" min="0" max="110">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="box-footer p-3 px-0 text-end bb-1" style="border-radius: 0px;">
+        <div class="box-footer p-3 px-0 text-end">
             <button type="submit" class="btn btn-success" id="searchDiseaseBtn">
                 <i class="fa fa-search"></i> Search
             </button>
         </div>
     </div>
-    <div class="diseasediv" style="display: none">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover table-striped mb-0 data-table text-center"
-                id="diseaseTable" width="100%">
+    </div>
+    <div class="diseasediv container" style="display: none">
+        <div class="table-responsive" style=" width: 100%; overflow-x: auto;">
+            <table class="table table-bordered table-hover table-striped mb-0 data-table text-center" id="diseaseTable"
+                width="100%">
                 <thead class="bg-primary-light">
                     <tr>
                         <th>No</th>
@@ -131,15 +131,15 @@
                     data: function(d) {
                         d._token = $('input[name="_token"]').val();
                         d.diseaseFromDate = $('#diseaseFromDate').val();
-                        d.diseaseToDate = $('#diseaseToDate').val(); 
+                        d.diseaseToDate = $('#diseaseToDate').val();
                         d.diseaseBranch = $('#diseaseBranch').val();
-                        d.disease = $('#disease').val(); 
-                        d.diseaseGender = $('#diseaseGender').val(); 
-                        d.diseaseAgeFrom = $('#diseaseAgeFrom').val(); 
-                        d.diseaseAgeTo = $('#diseaseAgeTo').val(); 
+                        d.disease = $('#disease').val();
+                        d.diseaseGender = $('#diseaseGender').val();
+                        d.diseaseAgeFrom = $('#diseaseAgeFrom').val();
+                        d.diseaseAgeTo = $('#diseaseAgeTo').val();
                     },
                     dataSrc: function(json) {
-                        return json.data; 
+                        return json.data;
                     }
                 },
                 columns: [{
@@ -161,7 +161,7 @@
                                 var month = ("0" + (date.getMonth() + 1)).slice(-2);
                                 var year = date.getFullYear();
 
-                                return day + '-' + month + '-' + year; 
+                                return day + '-' + month + '-' + year;
                             } else {
                                 return '-';
                             }
@@ -210,7 +210,7 @@
                         text: 'Print',
                         title: clinicBasicDetails.clinic_name,
                         messageTop: 'Disease Report',
-                        orientation: 'portrait',
+                        orientation: 'landscape',
                         pageSize: 'A4',
                         footer: true,
                         filename: 'Disease Report',
@@ -239,7 +239,7 @@
                         text: 'PDF',
                         title: clinicBasicDetails.clinic_name,
                         messageTop: 'Disease Report',
-                        orientation: 'portrait',
+                        orientation: 'landscape',
                         pageSize: 'A4',
                         exportOptions: {
                             columns: ':visible'

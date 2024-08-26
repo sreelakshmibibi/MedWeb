@@ -28,6 +28,13 @@
 .vtabs .tab-content {
     display: block;
 }
+.vtabs .tabs-vertical {
+    width: 150px !important;
+}
+#verticaltabmenu {
+    width: 150px !important;
+    min-width: 150px !important;
+}
 /* table.dataTable {
     border-collapse: collapse !important;
 } */

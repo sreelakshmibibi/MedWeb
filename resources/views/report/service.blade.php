@@ -7,10 +7,6 @@
                     <h4 class="box-title ">
                         Service Report
                     </h4>
-
-                    <button type='button'
-                        class='waves-effect waves-light btn btn-circle btn-secondary btn-treatment-pdf-generate btn-xs mt-0 mb-2'
-                        title='Download & Print Treatment Summary'><i class='fa fa-download'></i></button>
                 </div>
             </div>
             <div class="box-body px-0 ">
