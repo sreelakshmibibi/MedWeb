@@ -179,7 +179,7 @@ class AppointmentController extends Controller
             $tokenNo = $commonService->generateTokenNo($doctorId, $appDate);
             $clinicBranchId = $request->input('clinic_branch_id');
             // Check if an appointment with the same date, time, and doctor exists
-            $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId);
+            $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId, $patientId);
             $existingAppointmentPatient = $doctorAvailabilityService->checkAppointmentDate($clinicBranchId, $appDate, $doctorId, $patientId);
             if ($existingAppointmentPatient) {
                 return response()->json(['errorPatient' => 'An appointment already exists for the given date and doctor.'], 422);
@@ -260,7 +260,7 @@ class AppointmentController extends Controller
             $commonService = new CommonService();
             $tokenNo = $commonService->generateTokenNo($doctorId, $appDate);
             // Check if an appointment with the same date, time, and doctor exists
-            $appointmentExists = $commonService->checkexisting($doctorId, $appDate, $appTime, $existingAppointment->app_branch);
+            $appointmentExists = $commonService->checkexisting($doctorId, $appDate, $appTime, $existingAppointment->app_branch,$existingAppointment->patient_id);
 
             if ($appointmentExists) {
                 return response()->json(['error' => 'An appointment already exists for the given date, time, and doctor.'], 422);

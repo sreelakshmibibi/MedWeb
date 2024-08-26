@@ -197,6 +197,7 @@ class PatientListController extends Controller
         $doctor_id = $request->input('doctorId');
         $patient_id = $request->input('patientId');
         $doctorAvailabilityService = new DoctorAvaialbilityService();
+        $checkAppointmentDate = 0;
         $checkAppointmentDate = $doctorAvailabilityService->checkAppointmentDate($branchId, $appDate, $doctor_id, $patient_id);
         $existingAppointments = $doctorAvailabilityService->getExistingAppointments($branchId, $appDate, $doctor_id);
         $checkAllocated = $doctorAvailabilityService->checkAllocatedAppointments($branchId, $appDate, $doctor_id, $appTime);
@@ -285,7 +286,7 @@ class PatientListController extends Controller
                 $tokenNo = $commonService->generateTokenNo($doctorId, $appDate);
                 $clinicBranchId = $request->input('clinic_branch_id0');
                 // Check if an appointment with the same date, time, and doctor exists
-                $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId);
+                $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId, $patient->id);
                 if ($existingAppointment) {
                     DB::rollBack();
 
@@ -653,7 +654,7 @@ class PatientListController extends Controller
             $clinicBranchId = $request->input('clinic_branch_id');
             $patientId = $request->input('patient_id');
             // Check if an appointment with the same date, time, and doctor exists
-            $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId);
+            $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId, $patientId);
             $existingAppointmentPatient = $doctorAvailabilityService->checkAppointmentDate($clinicBranchId, $appDate, $doctorId, $patientId);
             if ($existingAppointmentPatient) {
                 return response()->json(['errorPatient' => 'An appointment already exists for the given date and doctor.'], 422);

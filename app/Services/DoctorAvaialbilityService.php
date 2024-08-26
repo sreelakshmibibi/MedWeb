@@ -184,7 +184,7 @@ class DoctorAvaialbilityService
             $query->whereDate('app_date', $appDate); // Assuming app_date is a date field
         }
         if ($patientId) {
-            $query->whereDate('patient_id', $patientId); // Assuming app_date is a date field
+            $query->where('patient_id', $patientId); // Assuming app_date is a date field
         }
         // Execute the query and return the result
         $appointments = $query->exists(); // Use exists() for a boolean check
