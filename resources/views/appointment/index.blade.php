@@ -21,6 +21,7 @@
                 @endif
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Appointment List</h3>
+
                 </div>
             </div>
 
@@ -44,7 +45,11 @@
                                         <th width="10px">Time</th>
                                         <th width="10px">Type</th>
                                         <th>Status</th>
-                                        <th width="144px">Action</th>
+                                        <th width="144px">
+                                            <button type="button" class="waves-effect waves-light btn btn-sm btn-primary"
+                                                id="smsbtn">
+                                                <i class="fa fa-paper-plane"></i> Send SMS</button>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -80,9 +85,10 @@
                 },
             });
 
-            // var initialDate = $("#paginator").datepaginator("getDate");
-            // alert(initialDate)
-            // selectedDate = moment(initialDate).format("YYYY-MM-DD");
+            $(document).on('click', '#smsbtn', function() {
+
+            });
+
             selectedDate = moment().format("YYYY-MM-DD");
         });
 
