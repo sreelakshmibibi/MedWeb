@@ -141,6 +141,7 @@
                         <th>No</th>
                         <th>Branch</th>
                         <th>Date</th>
+                        <th>Patient Id</th>
                         <th>Phone Number</th>
                         <th>Service Name</th>
                         <th>Treatment Plan</th>
@@ -152,7 +153,7 @@
                 </tbody>
                 <tfoot>
                     <tr class="bt-3 border-primary">
-                        <th colspan="5"></th>
+                        <th colspan="6"></th>
                         <th>Total:</th>
                         <th id="total-quantity"></th>
                         <th id="total-total"></th>
@@ -232,6 +233,10 @@
                         }
                     },
                     {
+                        data: 'patientId',
+                        name: 'patientId'
+                    },
+                    {
                         data: 'phoneNumber',
                         name: 'phoneNumber'
                     },
@@ -306,14 +311,14 @@
                 ],
                 footerCallback: function(row, data, start, end, display) {
                     var api = this.api();
-                    var totalQuantity = api.column(6).data().reduce(function(a, b) {
+                    var totalQuantity = api.column(7).data().reduce(function(a, b) {
                         return parseFloat(a) + parseFloat(b);
                     }, 0);
-                    var totalAmount = api.column(7).data().reduce(function(a, b) {
+                    var totalAmount = api.column(8).data().reduce(function(a, b) {
                         return parseFloat(a) + parseFloat(b);
                     }, 0);
-                    $(api.column(6).footer()).html(totalQuantity.toFixed(2));
-                    $(api.column(7).footer()).html(totalAmount.toFixed(2));
+                    $(api.column(7).footer()).html(totalQuantity.toFixed(2));
+                    $(api.column(8).footer()).html(totalAmount.toFixed(2));
                 }
             });
 
