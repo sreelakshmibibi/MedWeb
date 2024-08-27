@@ -12,13 +12,15 @@
                     <div class="col-md-3 col-lg-2">
                         <div class="form-group">
                             <label class="form-label" for="fromdate">From <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="fromdate" name="fromdate" value="{{ date('Y-m-d') }}" required>
+                            <input type="date" class="form-control" id="fromdate" name="fromdate"
+                                value="{{ date('Y-m-d') }}" required>
                         </div>
                     </div>
                     <div class="col-md-3 col-lg-2">
                         <div class="form-group">
                             <label class="form-label" for="todate">To <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="todate" name="todate" value="{{ date('Y-m-d') }}" required>
+                            <input type="date" class="form-control" id="todate" name="todate"
+                                value="{{ date('Y-m-d') }}" required>
                         </div>
                     </div>
                     <div class="col-md-3 col-lg-2">
@@ -38,7 +40,8 @@
                             <select class="form-control" id="billedby" name="billedby">
                                 <option value="">All</option>
                                 @foreach ($billStaffs as $billStaff)
-                                    <option value="{{ $billStaff->id }}">{{ str_replace('<br>', ' ', $billStaff->name) }}</option>
+                                    <option value="{{ $billStaff->id }}">
+                                        {{ str_replace('<br>', ' ', $billStaff->name) }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -49,7 +52,8 @@
                             <select class="form-control" id="generatedby" name="generatedby">
                                 <option value="">All</option>
                                 @foreach ($billStaffs as $billStaff)
-                                    <option value="{{ $billStaff->id }}">{{ str_replace('<br>', ' ', $billStaff->name) }}</option>
+                                    <option value="{{ $billStaff->id }}">
+                                        {{ str_replace('<br>', ' ', $billStaff->name) }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -65,7 +69,8 @@
     </div>
     <div class="auditcancelBilldiv container" style="display: none;">
         <div class="table-responsive" style="width: 100%; overflow-x: auto;">
-            <table class="table table-bordered table-hover table-striped mb-0 data-table text-center" id="auditcancelBillTable" width="100%">
+            <table class="table table-bordered table-hover table-striped mb-0 data-table text-center"
+                id="auditcancelBillTable" width="100%">
                 <thead class="bg-primary-light">
                     <tr>
                         <th>#</th>
@@ -91,17 +96,18 @@
                 </thead>
                 <tfoot class="bg-light-gray">
                     <tr>
-                        <th colspan="5">Total</th>
-                        <th class="total"></th>
-                        <th class="discount"></th>
-                        <th class="tax"></th>
-                        <th class="netAmount"></th>
-                        <th class="cash"></th>
-                        <th class="gpay"></th>
-                        <th class="card"></th>
-                        <th class="totalPaid"></th>
-                        <th class="balanceGiven"></th>
-                        <th class="outstanding"></th>
+                        <th colspan="4"></th>
+                        <th>Total</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                         <th colspan="4"></th>
                     </tr>
                 </tfoot>
@@ -140,37 +146,91 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
                 },
-                columns: [
-                    {data: 'DT_RowIndex',
+                columns: [{
+                        data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
                         orderable: false,
-                        searchable: false},
-                    { data: 'billDate', name: 'billDate' },
-                    { data: 'patient_id', name: 'patient_id' },
-                    { data: 'patientName', name: 'patientName' },
-                    { data: 'bill_id', name: 'bill_id' },
-                    { data: 'total', name: 'total' },
-                    { data: 'discount', name: 'discount' },
-                    { data: 'tax', name: 'tax' },
-                    { data: 'netAmount', name: 'netAmount' },
-                    { data: 'cash', name: 'cash' },
-                    { data: 'gpay', name: 'gpay' },
-                    { data: 'card', name: 'card' },
-                    { data: 'totalPaid', name: 'totalPaid' },
-                    { data: 'balanceGiven', name: 'balanceGiven' },
-                    { data: 'outstanding', name: 'outstanding' },
-                    { data: 'createdBy', name: 'createdBy' },
-                    { data: 'updatedBy', name: 'updatedBy' },
-                    { data: 'deletedBy', name: 'deletedBy' },
-                    { data: 'bill_delete_reason', name: 'bill_delete_reason' }
+                        searchable: false
+                    },
+                    {
+                        data: 'billDate',
+                        name: 'billDate'
+                    },
+                    {
+                        data: 'patient_id',
+                        name: 'patient_id'
+                    },
+                    {
+                        data: 'patientName',
+                        name: 'patientName'
+                    },
+                    {
+                        data: 'bill_id',
+                        name: 'bill_id'
+                    },
+                    {
+                        data: 'total',
+                        name: 'total'
+                    },
+                    {
+                        data: 'discount',
+                        name: 'discount'
+                    },
+                    {
+                        data: 'tax',
+                        name: 'tax'
+                    },
+                    {
+                        data: 'netAmount',
+                        name: 'netAmount'
+                    },
+                    {
+                        data: 'cash',
+                        name: 'cash'
+                    },
+                    {
+                        data: 'gpay',
+                        name: 'gpay'
+                    },
+                    {
+                        data: 'card',
+                        name: 'card'
+                    },
+                    {
+                        data: 'totalPaid',
+                        name: 'totalPaid'
+                    },
+                    {
+                        data: 'balanceGiven',
+                        name: 'balanceGiven'
+                    },
+                    {
+                        data: 'outstanding',
+                        name: 'outstanding'
+                    },
+                    {
+                        data: 'createdBy',
+                        name: 'createdBy'
+                    },
+                    {
+                        data: 'updatedBy',
+                        name: 'updatedBy'
+                    },
+                    {
+                        data: 'deletedBy',
+                        name: 'deletedBy'
+                    },
+                    {
+                        data: 'bill_delete_reason',
+                        name: 'bill_delete_reason'
+                    }
                 ],
                 dom: 'Bfrtlp',
                 lengthMenu: [
                     [10, 25, 50, -1],
                     [10, 25, 50, 'All']
                 ],
-                buttons: [
-                    {
+                buttons: [{
                         extend: 'print',
                         text: 'Print',
                         title: clinicBasicDetails.clinic_name,
@@ -182,9 +242,10 @@
                         exportOptions: {
                             columns: ':visible'
                         },
-                        customize: function (win) {
+                        customize: function(win) {
                             $(win.document.body).css('font-size', '10pt');
-                            $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+                            $(win.document.body).find('table').addClass('compact').css(
+                                'font-size', 'inherit');
                         }
                     },
                     {
@@ -210,27 +271,27 @@
                         },
                         footer: true,
                         filename: 'Collection Report',
-                        customize: function (doc) {
+                        customize: function(doc) {
                             doc.defaultStyle.fontSize = 10;
                             doc.styles.tableHeader.fontSize = 10;
                         }
                     }
                 ],
-                footerCallback: function (row, data, start, end, display) {
+                footerCallback: function(row, data, start, end, display) {
                     var api = this.api();
-                    var columnsToSum = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-                    columnsToSum.forEach(function (index) {
-                        var total = api.column(index).data().reduce(function (a, b) {
+                    var columnsToSum = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+                    columnsToSum.forEach(function(index) {
+                        var total = api.column(index).data().reduce(function(a, b) {
                             return parseFloat(a) + parseFloat(b);
                         }, 0);
                         $(api.column(index).footer()).html(total.toFixed(2));
                     });
                 },
-                drawCallback: function () {
-                    $('.auditcancelBilldiv').show();
-                }
+                // drawCallback: function() {
+                //     $('.auditcancelBilldiv').show();
+                // }
             });
+            $('.auditcancelBilldiv').show();
         });
     });
 </script>
-
