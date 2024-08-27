@@ -136,6 +136,11 @@
         flex-direction: column;
         gap: 2px;
     }
+    .dashboardbtnwrapper {
+        margin-right: 0;
+        margin-left: auto;
+        justify-content: end;
+    }
 }
 
 @media screen and (max-width: 991px) {
