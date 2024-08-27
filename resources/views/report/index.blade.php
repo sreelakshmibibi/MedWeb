@@ -41,21 +41,27 @@
                                 <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#incometab"
                                         role="tab"><span class="hidden-sm-up">Income</span> <span
                                             class="hidden-xs-down">Income Report</span></a> </li>
+
                                 <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#servicetab"
                                         role="tab"><span class="hidden-sm-up">Service</span> <span
                                             class="hidden-xs-down">Service Report</span></a> </li>
+
                                 <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#patientstab"
                                         role="tab"><span class="hidden-sm-up">Patients</span> <span
                                             class="hidden-xs-down">Patients Report</span></a> </li>
+
                                 <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#diseasetab"
                                         role="tab"><span class="hidden-sm-up">Disease</span> <span
                                             class="hidden-xs-down">Disease Report</span></a> </li>
-                                <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#auditBilTab"
+
+                                <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#auditBillTab"
                                         role="tab"><span class="hidden-sm-up">Audit Bill</span> <span
                                             class="hidden-xs-down">Audit Bill</span></a> </li>
+
                                 <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#auditPatientTab"
                                         role="tab"><span class="hidden-sm-up"></span> <span class="hidden-xs-down">Audit
                                             Patient</span></a> </li>
+
                                 <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#auditStaffTab"
                                         role="tab"><span class="hidden-sm-up">Audit Staff</span> <span
                                             class="hidden-xs-down">Audit Staff</span></a> </li>
@@ -92,17 +98,18 @@
                                         @include('report.disease')
                                     </div>
                                 </div>
-                                <div class="tab-pane active" id="auditBilTab" role="tabpanel">
+                                <div class="tab-pane" id="auditBillTab" role="tabpanel">
                                     <div class="p-15">
                                         @include('report.auditbill')
                                     </div>
                                 </div>
-                                <div class="tab-pane active" id="auditPatientTab" role="tabpanel">
+
+                                <div class="tab-pane" id="auditPatientTab" role="tabpanel">
                                     <div class="p-15">
                                         @include('report.auditpatient')
                                     </div>
                                 </div>
-                                <div class="tab-pane active" id="auditStaffTab" role="tabpanel">
+                                <div class="tab-pane" id="auditStaffTab" role="tabpanel">
                                     <div class="p-15">
                                         @include('report.auditstaff')
                                     </div>

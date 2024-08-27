@@ -84,7 +84,7 @@
             </button>
         </div>
     </div>
-    </div>
+
     <div class="diseasediv container" style="display: none">
         <div class="table-responsive" style=" width: 100%; overflow-x: auto;">
             <table class="table table-bordered table-hover table-striped mb-0 data-table text-center" id="diseaseTable"
