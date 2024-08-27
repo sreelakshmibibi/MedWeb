@@ -65,6 +65,8 @@ function getDentalTable(stepIndex) {
                                         rowName = row3;
                                     } else if (exam.row_id == 4) {
                                         rowName = row4;
+                                    } else if (exam.row_id == 5) {
+                                        rowName = row5;
                                     }
                                 }
                                 teethName = exam.tooth_id

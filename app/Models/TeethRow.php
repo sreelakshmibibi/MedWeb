@@ -12,6 +12,9 @@ class TeethRow extends Model
     const Row2 = 2;
     const Row3 = 3;
     const Row4 = 4;
+    const RowAll = 5;
+    const Row_All_Desc = "All";
+
     const Row_1_Desc = "Primary Maxillary Dentition";
     const Row_2_Desc = "Permanent Maxillary Dentition";
     const Row_3_Desc = "Permanent Mandibular Dentition";
