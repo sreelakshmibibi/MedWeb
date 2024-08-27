@@ -193,7 +193,8 @@ use Illuminate\Support\Facades\Session;
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col">
+
+                                <div class="col ps-0">
                                     <div class="box flex-grow-1 mb-0 no-border">
                                         <div class="box-body">
                                             <div class="media-list px-0">
@@ -227,12 +228,12 @@ use Illuminate\Support\Facades\Session;
                                                                     echo '-';
                                                                 } else {
                                                                     // Iterate over the history collection
-                                                                    echo '<ul>';
+                                                                    // echo '<ul>';
                                                                     foreach ($history as $record) {
                                                                         // Access the 'history' field of each record
                                                                         echo '<li>' . $record->history . '</li>';
                                                                     }
-                                                                    echo '</ul>';
+                                                                    // echo '</ul>';
                                                                 }
                                                             @endphp
                                                         </h6>

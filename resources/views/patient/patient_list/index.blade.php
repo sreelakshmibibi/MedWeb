@@ -23,7 +23,7 @@
                     <h3 class="page-title">Patient List</h3>
                     @if (Auth::user()->can('patient create'))
                         <a type="button" class="waves-effect waves-light btn btn-primary"
-                        href="{{ route('patient.patient_list.create') }}"> <i class="fa fa-add"></i> Add New</a>
+                            href="{{ route('patient.patient_list.create') }}"> <i class="fa fa-add"></i> Add New</a>
                     @endif
                 </div>
             </div>
@@ -39,7 +39,7 @@
                                     <tr>
                                         <th width="10px">No</th>
                                         <th>Patient ID</th>
-                                        <th>Name</th>
+                                        <th class="text-center">Name</th>
                                         <th>Gender</th>
                                         <th>Phone Number</th>
                                         <th>Last Appointment Date</th>
@@ -132,7 +132,8 @@
                     },
                     {
                         data: 'name',
-                        name: 'name'
+                        name: 'name',
+                        className: 'text-start'
                     },
                     {
                         data: 'gender',
