@@ -62,9 +62,9 @@
                                         role="tab"><span class="hidden-sm-up"></span> <span class="hidden-xs-down">Audit
                                             Patient</span></a> </li>
 
-                                <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#auditStaffTab"
-                                        role="tab"><span class="hidden-sm-up">Audit Staff</span> <span
-                                            class="hidden-xs-down">Audit Staff</span></a> </li>
+                                <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#auditCancelledBillsTab"
+                                        role="tab"><span class="hidden-sm-up">Cancelled BIlls</span> <span
+                                            class="hidden-xs-down">Cancelled Bills</span></a> </li>
                             </ul>
                             <!-- Tab panes -->
                             <div class="tab-content p-0">
@@ -109,9 +109,9 @@
                                         @include('report.auditpatient')
                                     </div>
                                 </div>
-                                <div class="tab-pane" id="auditStaffTab" role="tabpanel">
+                                <div class="tab-pane" id="auditCancelledBillsTab" role="tabpanel">
                                     <div class="p-15">
-                                        @include('report.auditstaff')
+                                        @include('report.auditCancelledBill')
                                     </div>
                                 </div>
                             </div>
