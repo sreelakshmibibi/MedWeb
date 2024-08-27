@@ -618,12 +618,14 @@ $lower_teethImages = [
             if ($(this).is(':checked')) {
                 $('.exam_toothdiv').hide();
                 $('#modal-teeth').modal('show');
+                $('.exam_chiefComplaint').show();
                 // $('#trow1').addClass('rowbordered');
                 // $('#trow2').addClass('rowbordered');
                 // $('#trow3').addClass('rowbordered');
                 // $('#trow4').addClass('rowbordered');
             } else {
                 $('.exam_toothdiv').show();
+                $('.exam_chiefComplaint').hide();
                 // $('#trow1').removeClass('rowbordered');
                 // $('#trow2').removeClass('rowbordered');
                 // $('#trow3').removeClass('rowbordered');
