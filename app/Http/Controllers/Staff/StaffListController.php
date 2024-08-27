@@ -37,7 +37,7 @@ class StaffListController extends Controller
         $this->middleware('permission:staff update', ['only' => ['update', 'edit']]);
         $this->middleware('permission:staff delete', ['only' => ['destroy']]);
         $this->middleware('permission:staff change status', ['only' => ['changeStatus']]);
-        
+
     }
     /**
      * Display a listing of the resource.
@@ -58,17 +58,17 @@ class StaffListController extends Controller
                 })
                 ->addColumn('role', function ($row) {
                     $role = '';
+                    if ($row->user->is_admin) {
+                        $role .= '<span class="d-block  badge badge-primary mb-1">Admin</span>';
+                    }
                     if ($row->user->is_doctor) {
                         $role .= '<span class="d-block  badge badge-success mb-1">Doctor</span>';
                     }
                     if ($row->user->is_nurse) {
-                        $role .= '<span class="d-block  badge badge-warning mb-1">Nurse</span>';
-                    }
-                    if ($row->user->is_admin) {
-                        $role .= '<span class="d-block  badge badge-primary mb-1">Admin</span>';
+                        $role .= '<span class="d-block  badge badge-info mb-1">Nurse</span>';
                     }
                     if ($row->user->is_reception) {
-                        $role .= '<span class="d-block  badge badge-info mb-1">Others</span>';
+                        $role .= '<span class="d-block  badge badge-secondary mb-1">Others</span>';
                     }
                     return $role;
                 })
@@ -92,12 +92,12 @@ class StaffListController extends Controller
                     }
                     if (Auth::user()->hasPermissionTo('staff update')) {
                         $btn .= '<a href="' . route('staff.staff_list.edit', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
-                    
+
                     }
                     if (Auth::user()->hasPermissionTo('staff change status')) {
                         $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
                     }
-                    if (Auth::user()->hasPermissionTo('staff delete')) { 
+                    if (Auth::user()->hasPermissionTo('staff delete')) {
                         $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete"><i class="fa-solid fa-trash"></i></button>';
                     }
                     return $btn;
@@ -337,7 +337,7 @@ class StaffListController extends Controller
     {
         $id = base64_decode(Crypt::decrypt($id));
         $staffProfile = StaffProfile::with('user')->where('user_id', $id)->first();
-       
+
         abort_if(!$staffProfile, 404);
 
         $userDetails = $staffProfile->user;
