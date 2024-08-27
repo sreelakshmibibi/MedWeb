@@ -37,7 +37,7 @@
                             <label class="form-label" for="retypepassword">Retype New Password <span
                                     class="text-danger">
                                     *</span></label>
-                            <input class="form-control" type="text" id="retypepassword" name="retypepassword"
+                            <input class="form-control" type="password" id="retypepassword" name="retypepassword"
                                 placeholder="Retype New Password" required>
                                 <div id="rPasswordError" class="invalid-feedback"></div>
                         </div>

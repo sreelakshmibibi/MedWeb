@@ -295,7 +295,8 @@ class StaffListController extends Controller
         $name = $commonService->splitNames($userDetails->name);
         $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
         $availability = DoctorWorkingHour::where('user_id', $staffProfile->user_id)->get();
-        $availabilityCount = DoctorWorkingHour::where('user_id', $staffProfile->user_id)->groupBy('clinic_branch_id')->count();
+        $availabilityCount = DoctorWorkingHour::where('user_id', $staffProfile->user_id)
+        ->where('status', 'Y')->distinct('clinic_branch_id')->count();
         $doctorAvailability = new DoctorAvaialbilityService();
         $availableBranches = $doctorAvailability->availableBranchAndTimings($staffProfile->user_id);
         $countries = Country::all();
