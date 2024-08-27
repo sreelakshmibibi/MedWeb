@@ -153,11 +153,18 @@
                         },
                         {
                             data: 'oldData',
-                            name: 'oldData'
+                            name: 'oldData',
+                            render: function(data, type, row) {
+                                // Render the oldData as HTML
+                                return data ? $('<div/>').html(data).text() : '-';
+                            }
                         },
                         {
                             data: 'newData',
-                            name: 'newData'
+                            name: 'newData',
+                            render: function(data, type, row) {
+                                return data ? $('<div/>').html(data).text() : '-';
+                            }
                         },
                         {
                             data: 'changedBy',

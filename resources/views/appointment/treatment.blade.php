@@ -89,6 +89,7 @@
         var row2 = "{{ App\Models\TeethRow::Row_2_Desc }}";
         var row3 = "{{ App\Models\TeethRow::Row_3_Desc }}";
         var row4 = "{{ App\Models\TeethRow::Row_4_Desc }}";
+        var row5 = "{{ App\Models\TeethRow::Row_All_Desc }}";
         var teethId;
         let isAdmin = $("#isAdmin").val();
 
