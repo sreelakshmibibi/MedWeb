@@ -64,7 +64,16 @@
                 },
                 {
                     data: 'name',
-                    name: 'name'
+                    name: 'name',
+                    render: function(data, type, row, meta) {
+                        if (data) {
+                            return data
+                                .replace(/&lt;br\s*\/?&gt;/gi, ' ')
+                                .replace(/<br\s*\/?>/gi, ' ')
+                                .trim();
+                        }
+                        return data;
+                    }
                 },
                 {
                     data: 'email',
