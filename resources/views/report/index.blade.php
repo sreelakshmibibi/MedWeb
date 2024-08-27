@@ -25,7 +25,8 @@
             </div>
 
             <section class="content">
-                <div class="box b-0 container-fluid" style="max-height: 100%; min-height: 100vh;">
+
+                <div class="box b-0 container-fluid" style="max-height: 100%; min-height: 100vh; overflow-x:scroll">
                     <div class="box-body p-0">
 
                         <!-- Nav tabs -->
@@ -33,8 +34,8 @@
                             <ul class="nav nav-tabs tabs-vertical" id="verticaltabmenu" role="tablist"
                                 style=" max-height: 100%; height: 100vh;">
                                 <li class="nav-item"> <a class="nav-link active" data-bs-toggle="tab" href="#collectiontab"
-                                        role="tab"><span class="hidden-sm-up">Collection</span> <span
-                                            class="hidden-xs-down">Collection Report</span> </a> </li>
+                                        role="tab"><span class="hidden-sm-up">Collection</span>
+                                        <span class="hidden-xs-down">Collection Report</span> </a> </li>
                                 {{-- <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#profile4"
                                         role="tab"><span class="hidden-sm-up"><i class="ion-person"></i></span> <span
                                             class="hidden-xs-down">Annual Report</span></a> </li> --}}
@@ -62,9 +63,9 @@
                                         role="tab"><span class="hidden-sm-up"></span> <span class="hidden-xs-down">Audit
                                             Patient</span></a> </li>
 
-                                <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#auditCancelledBillsTab"
-                                        role="tab"><span class="hidden-sm-up">Cancelled BIlls</span> <span
-                                            class="hidden-xs-down">Cancelled Bills</span></a> </li>
+                                <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab"
+                                        href="#auditCancelledBillsTab" role="tab"><span class="hidden-sm-up">Cancelled
+                                            BIlls</span> <span class="hidden-xs-down">Cancelled Bills</span></a> </li>
                             </ul>
                             <!-- Tab panes -->
                             <div class="tab-content p-0">
