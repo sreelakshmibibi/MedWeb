@@ -56,7 +56,7 @@
             $("#staffform .actions ul li:last-child a").addClass("bg-success btn btn-success");
 
             var today = new Date().toISOString().split('T')[0];
-            document.getElementById('date_of_joining').setAttribute('min', today);
+            // document.getElementById('date_of_joining').setAttribute('min', today);
 
             var input = document.getElementById('profile_photo');
             var canvas = document.getElementById('logoCanvas');
