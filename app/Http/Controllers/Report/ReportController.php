@@ -1207,22 +1207,78 @@ class ReportController extends Controller
             ->make(true);
     }
 
+    // public function formatAuditData($dataString)
+    // {
+    //     if (is_null($dataString)) {
+    //         return 'N/A';
+    //     }
+
+    //     // Split the string into key-value pairs
+    //     $dataPairs = explode(',', $dataString);
+
+    //     // Group them into a formatted string
+    //     $formattedData = '<ul>';
+    //     for ($i = 0; $i < count($dataPairs); $i += 2) {
+    //         $key = trim($dataPairs[$i]);
+    //         $value = isset($dataPairs[$i + 1]) ? trim($dataPairs[$i + 1]) : '';
+    //         $formattedData .= '<li><strong class="text-muted">' . $key . ' </strong> ' . $value . '</li>';
+    //     }
+    //     $formattedData .= '</ul>';
+
+    //     return $formattedData;
+    // }
+
     public function formatAuditData($dataString)
     {
-        if (is_null($dataString)) {
+        // Handle the case where dataString is null or empty
+        if (is_null($dataString) || trim($dataString) === '') {
             return 'N/A';
         }
 
-        // Split the string into key-value pairs
+        // Split the string into key-value pairs based on commas
         $dataPairs = explode(',', $dataString);
 
-        // Group them into a formatted string
+        // Initialize formatted data
         $formattedData = '<ul>';
-        for ($i = 0; $i < count($dataPairs); $i += 2) {
-            $key = trim($dataPairs[$i]);
-            $value = isset($dataPairs[$i + 1]) ? trim($dataPairs[$i + 1]) : '';
-            $formattedData .= '<li><strong>' . $key . ' - </strong> ' . $value . '</li>';
+
+        $key = '';
+        $value = '';
+
+        // Process key-value pairs
+        foreach ($dataPairs as $index => $pair) {
+            // Trim the pair
+            // $pair = trim($pair);
+
+            // If pair ends with a colon, it is a key
+            // if (strpos($pair, ':') !== false) {
+            if (str_ends_with(trim($pair), ':')) {
+                // If we have a previous key-value pair, use it
+                if (!empty($key)) {
+                    $formattedData .= '<li><strong class="text-muted">' . htmlspecialchars($key, ENT_QUOTES, 'UTF-8') . ' </strong> ' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</li>';
+                }
+                // Set the current key
+                $key = $pair;
+                $value = null; // Reset value
+            } else {
+                // This is a value
+                if (empty($value)) {
+                    $value = $pair;
+                } else {
+                    // If value is already set, it means the current pair is misaligned
+                    // Therefore, treat it as part of the previous value and add it to the formatted output
+                    $formattedData .= '<li><strong class="text-muted">' . htmlspecialchars($key, ENT_QUOTES, 'UTF-8') . ' </strong> ' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</li>';
+                    // Set new key-value pair
+                    $key = $pair;
+                    $value = null;
+                }
+            }
         }
+
+        // For the last key-value pair
+        if (!empty($key)) {
+            $formattedData .= '<li><strong class="text-muted">' . htmlspecialchars($key, ENT_QUOTES, 'UTF-8') . ' </strong> ' . htmlspecialchars($value ?? '-', ENT_QUOTES, 'UTF-8') . '</li>';
+        }
+
         $formattedData .= '</ul>';
 
         return $formattedData;
@@ -1272,7 +1328,8 @@ class ReportController extends Controller
                 return $row->patient_id;
             })
             ->addColumn('patientName', function ($row) {
-                return $row->first_name . ' ' . $row->last_name;
+                // return $row->first_name . ' ' . $row->last_name;
+                return str_replace('<br>', ' ', $row->first_name ?? '') . ' ' . ($row->last_name ?? '');
             })
             ->addColumn('tableName', function ($row) {
                 return $row->billing_type;

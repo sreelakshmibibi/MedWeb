@@ -225,7 +225,11 @@ class HomeController extends Controller
                 session(['pstaffidEncrypted' => $pstaffidEncrypted]);
             }
 
-            return view($dashboardView, compact('workingDoctors', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients', 'totalUniquePatients', 'malePatientsCount', 'femalePatientsCount', 'newPatientsCount', 'followupPatientsCount', 'currentappointments', 'pstaffidEncrypted', 'childrenCount', 'otherCount'));
+            $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])
+                ->where('clinic_status', 'Y')
+                ->get();
+
+            return view($dashboardView, compact('workingDoctors', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients', 'totalUniquePatients', 'malePatientsCount', 'femalePatientsCount', 'newPatientsCount', 'followupPatientsCount', 'currentappointments', 'pstaffidEncrypted', 'childrenCount', 'otherCount', 'clinicBranches'));
 
         } else {
             $countries = Country::all();
