@@ -31,17 +31,6 @@
                     </div>
                     <div class="col-md-3 col-lg-2">
                         <div class="form-group">
-                            <label class="form-label" for="branch">Branch</label>
-                            <select class="form-control " type="text" id="branch" name="branch">
-                                <option value="">All</option>
-                                @foreach ($branches as $branch)
-                                    <option value="{{ $branch['id'] }}"> {{ $branch['name'] }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-lg-2">
-                        <div class="form-group">
                             <label class="form-label" for="patient_id">Patient Id</label>
                             <input type="text" class="form-control " id="patient_id" name="patient_id">
                         </div>
@@ -50,19 +39,6 @@
                         <div class="form-group">
                             <label class="form-label" for="bill_no">Bill No.</label>
                             <input type="text" class="form-control " id="bill_no" name="bill_no">
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-lg-2">
-                        <div class="form-group">
-                            <label class="form-label" for="branch">Bill Status</label>
-                            <select class="form-control " type="text" id="branch" name="branch">
-                                <option value="">All</option>
-                               
-                                <option value="{{ App\Models\PatientTreatmentBilling::BILL_GENERATED }}"> {{ App\Models\PatientTreatmentBilling::BILL_GENERATED_WORDS }}</option>
-                                <option value="{{ App\Models\PatientTreatmentBilling::PAYMENT_DONE }}"> {{ App\Models\PatientTreatmentBilling::PAYMENT_DONE_WORDS }}</option>
-                                <option value="{{ App\Models\PatientTreatmentBilling::BILL_CANCELLED }}"> {{ App\Models\PatientTreatmentBilling::BILL_CANCELLED_WORDS }}</option>
-                                
-                            </select>
                         </div>
                     </div>
                 </div>
