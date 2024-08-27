@@ -1,11 +1,12 @@
-<?php
-
-use Illuminate\Support\Facades\Session;
-?>
+@php
+    use Illuminate\Support\Facades\Session;
+    $role = session('role');
+@endphp
 @extends('layouts.dashboard')
 @section('title', 'Patient')
 @section('content')
     <!-- Content Wrapper. Contains page content -->
+    <input type="hidden" id="isAdmin" name="isAdmin" value="{{ $role == 'Admin' ? true : false }}">
     <div class="content-wrapper">
         <div class="container-full">
             <div class="content-header">
@@ -88,6 +89,7 @@ use Illuminate\Support\Facades\Session;
         var row2 = "{{ App\Models\TeethRow::Row_2_Desc }}";
         var row3 = "{{ App\Models\TeethRow::Row_3_Desc }}";
         var row4 = "{{ App\Models\TeethRow::Row_4_Desc }}";
+        var row5 = "{{ App\Models\TeethRow::Row_All_Desc }}";
         var teethId;
         let isAdmin = $("#isAdmin").val();
 

@@ -33,12 +33,11 @@ class StaffListController extends Controller
     public function __construct()
     {
         $this->middleware('permission:staff_list', ['only' => ['index']]);
-        $this->middleware('permission:view user', ['only' => ['view']]);
-        $this->middleware('permission:create user', ['only' => ['create', 'store']]);
-        $this->middleware('permission:update user', ['only' => ['update', 'edit']]);
-        $this->middleware('permission:delete user', ['only' => ['destroy']]);
-        $this->middleware('permission:change user status', ['only' => ['changeStatus']]);
-        
+        $this->middleware('permission:staff create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:staff update', ['only' => ['update', 'edit']]);
+        $this->middleware('permission:staff delete', ['only' => ['destroy']]);
+        $this->middleware('permission:staff change status', ['only' => ['changeStatus']]);
+
     }
     /**
      * Display a listing of the resource.
@@ -59,17 +58,17 @@ class StaffListController extends Controller
                 })
                 ->addColumn('role', function ($row) {
                     $role = '';
+                    if ($row->user->is_admin) {
+                        $role .= '<span class="d-block  badge badge-primary mb-1">Admin</span>';
+                    }
                     if ($row->user->is_doctor) {
                         $role .= '<span class="d-block  badge badge-success mb-1">Doctor</span>';
                     }
                     if ($row->user->is_nurse) {
-                        $role .= '<span class="d-block  badge badge-warning mb-1">Nurse</span>';
-                    }
-                    if ($row->user->is_admin) {
-                        $role .= '<span class="d-block  badge badge-primary mb-1">Admin</span>';
+                        $role .= '<span class="d-block  badge badge-info mb-1">Nurse</span>';
                     }
                     if ($row->user->is_reception) {
-                        $role .= '<span class="d-block  badge badge-info mb-1">Others</span>';
+                        $role .= '<span class="d-block  badge badge-secondary mb-1">Others</span>';
                     }
                     return $role;
                 })
@@ -85,18 +84,20 @@ class StaffListController extends Controller
                 ->addColumn('action', function ($row) {
                     $base64Id = base64_encode($row->id);
                     $idEncrypted = Crypt::encrypt($base64Id);
+                    $base64Iduser = base64_encode($row->user->id);
+                    $idEncryptedUser = Crypt::encrypt($base64Iduser);
                     $btn = null;
-                    if (Auth::user()->hasPermissionTo('view user')) {
-                        $btn = '<a href="' . route('staff.staff_list.view', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
+                    if (Auth::user()->hasPermissionTo('staff view')) {
+                        $btn = '<a href="' . route('staff.staff_list.view', $idEncryptedUser) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
                     }
-                    if (Auth::user()->hasPermissionTo('update user')) {
+                    if (Auth::user()->hasPermissionTo('staff update')) {
                         $btn .= '<a href="' . route('staff.staff_list.edit', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
-                    
+
                     }
-                    if (Auth::user()->hasPermissionTo('change user status')) {
+                    if (Auth::user()->hasPermissionTo('staff change status')) {
                         $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
                     }
-                    if (Auth::user()->hasPermissionTo('delete user')) { 
+                    if (Auth::user()->hasPermissionTo('staff delete')) {
                         $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete"><i class="fa-solid fa-trash"></i></button>';
                     }
                     return $btn;
@@ -234,6 +235,7 @@ class StaffListController extends Controller
                     $staffProfile->consultation_fees = $request->consultation_fees;
                 } else if ($user->is_nurse) {
                     $staffProfile->license_number = $request->license_number_nurse;
+                    $staffProfile->clinic_branch_id = $request->clinic_branch_id;
                 } else {
                     $staffProfile->clinic_branch_id = $request->clinic_branch_id;
                 }
@@ -293,7 +295,8 @@ class StaffListController extends Controller
         $name = $commonService->splitNames($userDetails->name);
         $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
         $availability = DoctorWorkingHour::where('user_id', $staffProfile->user_id)->get();
-        $availabilityCount = DoctorWorkingHour::where('user_id', $staffProfile->user_id)->groupBy('clinic_branch_id')->count();
+        $availabilityCount = DoctorWorkingHour::where('user_id', $staffProfile->user_id)
+        ->where('status', 'Y')->distinct('clinic_branch_id')->count();
         $doctorAvailability = new DoctorAvaialbilityService();
         $availableBranches = $doctorAvailability->availableBranchAndTimings($staffProfile->user_id);
         $countries = Country::all();
@@ -320,7 +323,12 @@ class StaffListController extends Controller
 
     public function destroy($id)
     {
-        $staffProfile = StaffProfile::findOrFail($id);
+        $staffProfile = StaffProfile::with('user')->findOrFail($id);
+        abort_if(!$staffProfile, 404);
+        if ($staffProfile->user) {
+            $staffProfile->user->delete();
+        }
+
         $staffProfile->delete();
 
         return response()->json(['success', 'Staff deleted successfully.'], 201);
@@ -329,7 +337,8 @@ class StaffListController extends Controller
     public function view(string $id, Request $request)
     {
         $id = base64_decode(Crypt::decrypt($id));
-        $staffProfile = StaffProfile::with('user')->find($id);
+        $staffProfile = StaffProfile::with('user')->where('user_id', $id)->first();
+
         abort_if(!$staffProfile, 404);
 
         $userDetails = $staffProfile->user;
@@ -389,7 +398,7 @@ class StaffListController extends Controller
         // Extract the patients from the appointments
         $patients = $appointments->pluck('patient')->unique('id');
 
-        // Count the total number of unique patients
+        // if Count the total number of unique patients
         $totalUniquePatients = $patients->count();
 
         // Count the number of male and female patients

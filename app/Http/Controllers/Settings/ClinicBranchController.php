@@ -18,7 +18,7 @@ class ClinicBranchController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:clinics', ['only' => ['index', 'create', 'store', 'update', 'edit', 'destroy']]);
+        $this->middleware('permission:settings clinics', ['only' => ['index', 'create', 'store', 'update', 'edit', 'destroy']]);
         
     }
     /**
@@ -96,7 +96,7 @@ class ClinicBranchController extends Controller
             $consultationFees = $request->input('consultation_fees');
             $consultationFeesFrequency = $request->input('consultation_fees_frequency');
             $patientRegistrationFees = $request->input('patient_registration_fees');
-            $tax = $request->input('treatment_tax');
+            $tax = $request->input('treatment_tax')? $request->input('treatment_tax') : 0;
             $currency = $request->input('currency');
             $treatment_tax_included = $request->input('treatment_tax_included');
             // Check if a file for clinic_logo was uploaded

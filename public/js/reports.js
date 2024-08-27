@@ -1,20 +1,20 @@
-function toggleCollectionDiv() {
-    var collectionDiv = document.querySelector(".collectiondiv");
-    if (collectionDiv.style.display === "none") {
-        collectionDiv.style.display = "block";
-    } else {
-        collectionDiv.style.display = "none";
-    }
-}
+// function toggleCollectionDiv() {
+//     var collectionDiv = document.querySelector(".collectiondiv");
+//     if (collectionDiv.style.display === "none") {
+//         collectionDiv.style.display = "block";
+//     } else {
+//         collectionDiv.style.display = "none";
+//     }
+// }
 
-function toggleIncomeDiv() {
-    var incomeDiv = document.querySelector(".incomediv");
-    if (incomeDiv.style.display === "none") {
-        incomeDiv.style.display = "block";
-    } else {
-        incomeDiv.style.display = "none";
-    }
-}
+// function toggleIncomeDiv() {
+//     var incomeDiv = document.querySelector(".incomediv");
+//     if (incomeDiv.style.display === "none") {
+//         incomeDiv.style.display = "block";
+//     } else {
+//         incomeDiv.style.display = "none";
+//     }
+// }
 
 function toggleServiceDiv() {
     var serviceDiv = document.querySelector(".servicediv");
@@ -43,12 +43,12 @@ function toggleDiseaseDiv() {
     }
 }
 
-document
-    .getElementById("searchcollectionbtn")
-    .addEventListener("click", toggleCollectionDiv);
-document
-    .getElementById("searchincomebtn")
-    .addEventListener("click", toggleIncomeDiv);
+// document
+//     .getElementById("searchcollectionbtn")
+//     .addEventListener("click", toggleCollectionDiv);
+// document
+//     .getElementById("searchincomebtn")
+//     .addEventListener("click", toggleIncomeDiv);
 document
     .getElementById("searchservicebtn")
     .addEventListener("click", toggleServiceDiv);

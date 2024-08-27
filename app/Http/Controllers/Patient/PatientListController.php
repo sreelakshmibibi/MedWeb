@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Patient;
-
+use App\Models\CardPay;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Appointment\AppointmentRequest;
 use App\Http\Requests\Patient\PatientEditRequest;
@@ -17,14 +17,17 @@ use App\Models\DoctorWorkingHour;
 use App\Models\History;
 use App\Models\Insurance;
 use App\Models\InsuranceCompany;
+use App\Models\LeaveApplication;
 use App\Models\PatientProfile;
 use App\Models\PatientRegistrationFee;
 use App\Models\State;
+use App\Services\BillingService;
 use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -33,101 +36,101 @@ use Yajra\DataTables\DataTables as DataTables;
 
 class PatientListController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:patients', ['only' => ['index']]);
+        $this->middleware('permission:patient create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:patient update', ['only' => ['edit', 'update', 'changeStatus']]);
+        $this->middleware('permission:patient delete', ['only' => ['destroy']]);
+        $this->middleware('permission:patient view', ['only' => ['show']]);
+        $this->middleware('permission:appointment create', ['only' => ['appointmentBooking']]);
+        $this->middleware('permission:appointments', ['only' => ['appointmentDetails']]);
+    }
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
         if ($request->ajax()) {
+            // Get the doctor ID for filtering if the user is a doctor
+            $doctorId = Auth::user()->is_doctor ? Auth::id() : null;
 
-            $patient = PatientProfile::with(['latestAppointment', 'nextAppointment', 'country', 'state', 'city'])->get();
+            // Query to fetch patients
+            $query = PatientProfile::with([
+                'latestAppointment',
+                'nextAppointment',
+                'country',
+                'state',
+                'city'
+            ]);
 
-            return DataTables::of($patient)
+            if ($doctorId) {
+                if (!Auth::user()->is_admin) {
+                    // If the user is a doctor, filter patients who have appointments with them
+                    $query->whereHas('appointments', function ($query) use ($doctorId) {
+                        $query->where('doctor_id', $doctorId);
+                    });
+                }
+            }
+
+            $patients = $query->get();
+
+            return DataTables::of($patients)
                 ->addIndexColumn()
                 ->addColumn('patient_id', function ($row) {
-                    if ($row->latestAppointment == '') {
-                        $name1 = "<a href='#' class='waves-effect waves-light btn-patientidcard-pdf-generate' title='download patient ID' data-app-id='{$row->nextAppointment->id}'
-                            data-patient-id='{$row->patient_id}'>" . $row->patient_id . '</i></a>';
-                    } else {
-                        $name1 = "<a href='#' class='waves-effect waves-light btn-patientidcard-pdf-generate' title='download patient ID' data-app-id='{$row->latestAppointment->id}'
-    data-patient-id='{$row->patient_id}'>" . $row->patient_id . '</i></a>';
+                    $latestAppointment = $row->latestAppointment ?? $row->nextAppointment;
+                    if ($latestAppointment) {
+                        return "<a href='#' class='waves-effect waves-light btn-patientidcard-pdf-generate' title='download patient ID' data-app-id='{$latestAppointment->id}' data-patient-id='{$row->patient_id}'>{$row->patient_id}</a>";
                     }
-
-                    return $name1;
+                    return $row->patient_id;
                 })
                 ->addColumn('name', function ($row) {
-                    $firstName = str_replace('<br>', ' ', $row->first_name);
-
-                    return $firstName . ' ' . $row->last_name;
+                    return str_replace('<br>', ' ', $row->first_name) . ' ' . $row->last_name;
                 })
                 ->addColumn('gender', function ($row) {
-                    $gender = '';
-                    switch ($row->gender) {
-                        case 'M':
-                            $gender = 'Male';
-                            break;
-                        case 'F':
-                            $gender = 'Female';
-                            break;
-                        case 'O':
-                            $gender = 'Other';
-                            break;
-                        default:
-                            $gender = 'Unknown'; // Optional: handle unexpected values
-                            break;
-                    }
-
-                    return $gender;
+                    return match ($row->gender) {
+                        'M' => 'Male',
+                        'F' => 'Female',
+                        'O' => 'Other',
+                        default => 'Unknown',
+                    };
                 })
-
                 ->addColumn('record_status', function ($row) {
-                    if ($row->status == 'Y') {
-                        $btn1 = '<span class="text-success" title="active"><i class="fa-solid fa-circle-check"></i></span>';
-                    } else {
-                        $btn1 = '<span class="text-danger" title="inactive"><i class="fa-solid fa-circle-xmark"></i></span>';
-                    }
-
-                    return $btn1;
+                    return $row->status === 'Y'
+                        ? '<span class="text-success" title="active"><i class="fa-solid fa-circle-check"></i></span>'
+                        : '<span class="text-danger" title="inactive"><i class="fa-solid fa-circle-xmark"></i></span>';
                 })
-
                 ->addColumn('appointment', function ($row) {
-                    if ($row->latestAppointment) {
-                        return $row->latestAppointment->app_date . ' ' . $row->latestAppointment->app_time;
-                    }
-
-                    return 'N/A';
+                    return $row->latestAppointment ? $row->latestAppointment->app_date . ' ' . $row->latestAppointment->app_time : 'N/A';
                 })
                 ->addColumn('next_appointment', function ($row) {
-                    if ($row->nextAppointment) {
-                        return $row->nextAppointment->app_date . ' ' . $row->nextAppointment->app_time;
-                    }
-
-                    return 'N/A';
+                    return $row->nextAppointment ? $row->nextAppointment->app_date . ' ' . $row->nextAppointment->app_time : 'N/A';
                 })
-                // ->addColumn('new_appointment', function ($row) {
-                //     $parent_id = '';
-                //     $buttons = [
-                //         "<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1' title='follow up' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient_id}' data-patient-name='".str_replace('<br>', ' ', $row->first_name.' '.$row->last_name)."' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>",
-                //     ];
-
-                //     return implode('', $buttons);
-                // })
                 ->addColumn('action', function ($row) {
-                    $parent_id = '';
                     $base64Id = base64_encode($row->id);
                     $idEncrypted = Crypt::encrypt($base64Id);
-                    $btn = "<button type='button' class='waves-effect waves-light btn btn-circle btn-primary btn-add btn-xs me-1' title='New Booking' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->first_name . ' ' . $row->last_name) . "' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>";
-                    $btn .= '<a href="' . route('patient.patient_list.view', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
-                    $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
-                    if (auth()->user()->hasRole('Admin')) {
+                    $btn = '';
+
+                    if (Auth::user()->can('appointment create')) {
+                        $btn .= "<button type='button' class='waves-effect waves-light btn btn-circle btn-primary btn-add btn-xs me-1' title='New Booking' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='' data-patient-id='{$row->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->first_name . ' ' . $row->last_name) . "' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>";
+                    }
+
+                    if (Auth::user()->can('patient view')) {
+                        $btn .= '<a href="' . route('patient.patient_list.view', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
+                    }
+
+                    if (Auth::user()->can('patient update')) {
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1" data-bs-toggle="modal" data-bs-target="#modal-status" data-id="' . $row->id . '" title="change status"><i class="fa-solid fa-sliders"></i></button>';
                         $btn .= '<a href="' . route('patient.patient_list.edit', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
+                    }
+
+                    if (Auth::user()->can('patient delete')) {
                         $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="Delete"><i class="fa-solid fa-trash"></i></button>';
                     }
 
                     return $btn;
                 })
-                //->rawColumns(['appointment_status', 'new_appointment', 'record_status', 'action'])
-                ->rawColumns(['patient_id', 'appointment_status', 'record_status', 'action'])
+                ->rawColumns(['patient_id', 'record_status', 'appointment', 'next_appointment', 'action'])
                 ->make(true);
         }
 
@@ -144,13 +147,12 @@ class PatientListController extends Controller
 
         // Initialize DoctorAvaialbilityService and fetch working doctors
         $doctorAvailabilityService = new DoctorAvaialbilityService();
-        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($firstBranchId, $currentDayName);
+        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($firstBranchId, $currentDayName, date('Y-m-d'));
 
         // Fetch all appointment statuses
         $appointmentStatuses = AppointmentStatus::all();
 
         return view('patient.patient_list.index', compact('clinicBranches', 'firstBranchId', 'currentDayName', 'workingDoctors', 'appointmentStatuses'));
-
     }
 
     /**
@@ -164,27 +166,17 @@ class PatientListController extends Controller
         $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
         // Get the first branch ID
         $firstBranchId = optional($clinicBranches->first())->id;
+        $date = date('Y-m-d');
         $currentDayName = Carbon::now()->englishDayOfWeek;
-        $workingDoctors = $this->getTodayWorkingDoctors($firstBranchId, $currentDayName);
+        $doctorAvailabilityService = new DoctorAvaialbilityService();
+        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($firstBranchId, $currentDayName, $date);
         $appointmentStatuses = AppointmentStatus::all(); // Get all appointment statuses
         $clinic = ClinicBasicDetail::first();
         $registrationFees = $clinic->patient_registration_fees;
+        $cardPay = CardPay::where('status', 'Y')->get();
 
-        return view('patient.patient_list.add', compact('countries', 'states', 'cities', 'clinicBranches', 'workingDoctors', 'appointmentStatuses', 'registrationFees'));
+        return view('patient.patient_list.add', compact('countries', 'states', 'cities', 'clinicBranches', 'workingDoctors', 'appointmentStatuses', 'registrationFees', 'cardPay'));
 
-    }
-
-    public function getTodayWorkingDoctors($branchId, $weekday)
-    {
-
-        $query = DoctorWorkingHour::where('week_day', $weekday)
-            ->where('status', 'Y');
-
-        if ($branchId) {
-            $query->where('clinic_branch_id', $branchId);
-        }
-
-        return $query->with('user')->get();
     }
 
     public function fetchDoctors($branchId, Request $request)
@@ -193,7 +185,8 @@ class PatientListController extends Controller
         $date = Carbon::parse($request->input('appdate'))->toDateString(); // 'Y-m-d'
         $carbonDate = Carbon::parse($date);
         $weekday = $carbonDate->format('l');
-        $workingDoctors = $this->getTodayWorkingDoctors($branchId, $weekday);
+        $doctorAvailabilityService = new DoctorAvaialbilityService();
+        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($branchId, $weekday, $date);
 
         return response()->json($workingDoctors);
     }
@@ -206,6 +199,7 @@ class PatientListController extends Controller
         $doctor_id = $request->input('doctorId');
         $patient_id = $request->input('patientId');
         $doctorAvailabilityService = new DoctorAvaialbilityService();
+        $checkAppointmentDate = 0;
         $checkAppointmentDate = $doctorAvailabilityService->checkAppointmentDate($branchId, $appDate, $doctor_id, $patient_id);
         $existingAppointments = $doctorAvailabilityService->getExistingAppointments($branchId, $appDate, $doctor_id);
         $checkAllocated = $doctorAvailabilityService->checkAllocatedAppointments($branchId, $appDate, $doctor_id, $appTime);
@@ -217,15 +211,6 @@ class PatientListController extends Controller
             $doctorAvailable = $doctorAvailabilityService->isDoctorAvailable($branchId, $doctor_id, $weekDay, $appTime);
         }
 
-        //$patient = PatientProfile::where('patient_id', $patient_id)->first();
-        //$nextAppointment = $patient ? $patient->nextDoctorBranchAppointment($doctor_id, $branchId) : null;
-        // Log::info('Doctor availability result', [
-        //     'doctor_id' => $doctor_id,
-        //     'branch_id' => $branchId,
-        //     'week_day' => $weekDay,
-        //     'time' => $appTime,
-        //     'is_available' => $doctorAvailable,
-        // ]);
         $response = [
             'existingAppointments' => $existingAppointments,
             'checkAllocated' => $checkAllocated,
@@ -303,7 +288,7 @@ class PatientListController extends Controller
                 $tokenNo = $commonService->generateTokenNo($doctorId, $appDate);
                 $clinicBranchId = $request->input('clinic_branch_id0');
                 // Check if an appointment with the same date, time, and doctor exists
-                $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId);
+                $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId, $patient->id);
                 if ($existingAppointment) {
                     DB::rollBack();
 
@@ -350,21 +335,41 @@ class PatientListController extends Controller
                         }
 
                     }
-                    $bill_id = $this->generateBillId();
+                    $billingService = new BillingService();
+                    $bill_id = $billingService->generateBillId();
+                    $billPaidDate = Carbon::now();
                     $registrationFee = PatientRegistrationFee::create([
                         'bill_id' => $bill_id,
                         'patient_id' => $patient->patient_id,
+                        'appointment_id' => $appointment->id,
                         'amount' => $request->input('regfee'),
-                        'paid_at' => now(),
+                        'amount_to_be_paid' => $request->input('regfee'),
                         'payment_method' => $request->input('paymode'),
+                        'gpay' => $request->input('paymode') == 'GPay' ? $request->input('regfee') : 0,
+                        'cash' => $request->input('paymode') == 'Cash' ? $request->input('regfee') : 0,
+                        'card' => $request->input('paymode') == 'Card' ? $request->input('regfee') : 0,
+                        'card_pay_id' => $request->input('paymode') == 'Card' ? $request->input('cardmachine') : null,
+                        'amount_paid' => $request->input('regfee'),
+                        'balance_given' => null,
+                        'bill_paid_date' => $billPaidDate,
                         'status' => 'Y',
                         'created_by' => auth()->user()->id,
                         'updated_by' => auth()->user()->id,
                     ]);
+                    $incomeData = [
+                        'bill_type' => 'registration_fee',
+                        'bill_no' => $bill_id,
+                        'bill_date' => $billPaidDate,
+                        'gpay' => $request->input('paymode') == 'GPay' ? $request->input('regfee') : 0,
+                        'cash' => $request->input('paymode') == 'Cash' ? $request->input('regfee') : 0,
+                        'card' => $request->input('paymode') == 'Card' ? $request->input('regfee') : 0,
+                        'card_pay_id' => $request->input('paymode') == 'Card' ? $request->input('cardmachine') : null,
+                        'balance_given' => 0,
+                        'created_by' => auth()->user()->id,
+                    ];
+                    $incomeReport = $billingService->saveIncomeReport($incomeData);
                     DB::commit();
                     if ($registrationFee) {
-                        // In your controller
-                        //$registrationFees = PatientRegistrationFee::where('patient_id', $patient->patient_id)->get();
                         $registrationFees = PatientRegistrationFee::with('createdBy')->where('patient_id', $patient->patient_id)->get();
 
                         $patient1 = PatientProfile::with([
@@ -391,7 +396,7 @@ class PatientListController extends Controller
                             'clinicLogo' => $clinicLogo,
                             'currency' => $clinicDetails->currency,
                         ])->setPaper('A5', 'portrait');
-                        
+
 
                         // Return the PDF as a download
                         return response()->json([
@@ -423,18 +428,6 @@ class PatientListController extends Controller
             return response()->json(['error' => 'Failed to create patient: ' . $e->getMessage()], 422);
         }
 
-    }
-
-    public function generateBillId()
-    {
-        $yearMonth = date('Ym'); // Year and Month
-        $latestBill = PatientRegistrationFee::where('bill_id', 'like', $yearMonth . '%')
-            ->orderBy('bill_id', 'desc')
-            ->first();
-        $lastBillId = $latestBill ? intval(substr($latestBill->bill_id, -4)) : 0;
-        $newBillId = $yearMonth . str_pad($lastBillId + 1, 4, '0', STR_PAD_LEFT);
-
-        return $newBillId;
     }
 
     /**
@@ -477,7 +470,8 @@ class PatientListController extends Controller
         $date = Carbon::parse($patientProfile->lastAppointment->app_date)->toDateString(); // 'Y-m-d'
         $carbonDate = Carbon::parse($date);
         $weekday = $carbonDate->format('l');
-        $workingDoctors = $this->getTodayWorkingDoctors($patientProfile->lastAppointment->app_branch, $weekday);
+        $doctorAvailabilityService = new DoctorAvaialbilityService();
+        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($patientProfile->lastAppointment->app_branch, $weekday, $date);
         $appDate = $appointment->app_date;
         $appTime = $appointment->app_time;
         // Combine date and time into a single datetime string
@@ -603,10 +597,6 @@ class PatientListController extends Controller
 
     public function appointmentDetails($id)
     {
-        // Find the patient profile by ID with the last appointment and history
-        // $patientProfile = PatientProfile::where('patient_id', $id)->with(['lastAppointment', 'history'])->first();
-        // abort_if(! $patientProfile, 404);
-
         // Prepare data to return
         $patientProfile = PatientProfile::where('patient_id', $id)
             ->with('lastAppointment')
@@ -666,7 +656,7 @@ class PatientListController extends Controller
             $clinicBranchId = $request->input('clinic_branch_id');
             $patientId = $request->input('patient_id');
             // Check if an appointment with the same date, time, and doctor exists
-            $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId);
+            $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId, $patientId);
             $existingAppointmentPatient = $doctorAvailabilityService->checkAppointmentDate($clinicBranchId, $appDate, $doctorId, $patientId);
             if ($existingAppointmentPatient) {
                 return response()->json(['errorPatient' => 'An appointment already exists for the given date and doctor.'], 422);

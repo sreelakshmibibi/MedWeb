@@ -6,11 +6,14 @@ use App\Models\Appointment;
 use App\Models\AppointmentStatus;
 use App\Models\MenuItem;
 use App\Models\PatientDetailBilling;
+use App\Models\PatientRegistrationFee;
 use App\Models\PatientTreatmentBilling;
 use App\Models\ToothExamination;
 use App\Models\TreatmentComboOffer;
 use Carbon\Carbon;
 use DateTime;
+use App\Models\IncomeReport;
+use App\Models\CardPay;
 
 class BillingService
 {
@@ -208,7 +211,7 @@ class BillingService
             ->orderBy('appointment_id', 'desc') // Order by descending to get the most recent previous appointment
             ->first(); // Get the first result which will be the closest previous appointment
 
-        // Check if a previous appointment was found
+        // Check if a previous appointment was founde
         if ($previousBill) {
             if ($previousBill->bill_status == PatientTreatmentBilling::PAYMENT_DONE) {
                 $previousOutStanding += $previousBill->balance_due;
@@ -221,4 +224,48 @@ class BillingService
         return $previousOutStanding;
     }
 
+    public function generateBillId()
+    {
+        $yearMonth = date('Ym'); // Year and Month
+        $latestBill = PatientRegistrationFee::where('bill_id', 'like', $yearMonth . '%')
+            ->orderBy('bill_id', 'desc')
+            ->first();
+        $lastBillId = $latestBill ? intval(substr($latestBill->bill_id, -4)) : 0;
+        $newBillId = $yearMonth . str_pad($lastBillId + 1, 4, '0', STR_PAD_LEFT);
+
+        return $newBillId;
+    }
+
+    public function saveIncomeReport(array $inputData)
+    {
+        $netPaid = $inputData['cash'] + $inputData['gpay'] + $inputData['card'];
+        $machineTax = 0;
+        if ($inputData['card_pay_id'] != null) {
+            $cardTax = CardPay::where('id', $inputData['card_pay_id'])->pluck('service_charge_perc')->first();
+            $machineTax = $inputData['card'] * ($cardTax / 100);
+        }
+         
+        $netIncome = $netPaid - $machineTax - $inputData['balance_given'];
+
+        $data = [
+            'bill_type' => $inputData['bill_type'],
+            'bill_no' => $inputData['bill_no'],
+            'bill_date' => $inputData['bill_date'],
+            'net_paid' => $netPaid,
+            'cash' => $inputData['cash'],
+            'gpay' => $inputData['gpay'],
+            'card' => $inputData['card'],
+            'card_pay_id' => $inputData['card_pay_id'] ?? null,
+            'machine_tax' => $machineTax,
+            'balance_given' => $inputData['balance_given'],
+            'net_income' => $netIncome,
+            'created_by' => $inputData['created_by'],
+        ];
+
+        $incomeReport = new IncomeReport();
+        $incomeReport->fill($data);
+        $incomeReport->save();
+
+        return $incomeReport;
+    }
 }

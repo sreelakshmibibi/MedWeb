@@ -1,6 +1,6 @@
 <!--appointment-->
 <div class="row">
-    <div class="col-md-2">
+    <div class="col-md-3">
         <div class="form-group">
             <label class="form-label" for="clinic_branch_id0">Branch <span class="text-danger">
                     *</span></label>
@@ -20,7 +20,7 @@
         </div>
     </div>
 
-    <div class="col-md-2">
+    <div class="col-md-3">
         <div class="form-group">
             <label class="form-label" for="appdate">Appointment Date & Time <span class="text-danger">
                     *</span></label>
@@ -30,7 +30,7 @@
         </div>
     </div>
 
-    <div class="col-md-2">
+    <div class="col-md-3">
         <div class="form-group">
             <label class="form-label" for="doctor2">Doctor <span class="text-danger">
                     *</span></label>
@@ -45,7 +45,7 @@
         </div>
     </div>
 
-    <div class="col-md-2">
+    <div class="col-md-3">
         <div class="form-group">
             <label class="form-label" for="appstatus">Appointment Status <span class="text-danger">
                     *</span></label>
@@ -56,14 +56,16 @@
             </select>
         </div>
     </div>
-    <div class="col-md-2">
+</div>
+<div class="row">
+    <div class="col-md-3">
         <div class="form-group">
             <label class="form-label" for="regfee">Registration Fee</label>
             <input type="text" class="form-control" id="regfee" name="regfee" placeholder="Registration Fee"
                 value="{{ $registrationFees }}" readonly>
         </div>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-3">
         <div class="form-group">
             <label class="form-label" for="paymode">Payment Mode <span class="text-danger">
                     *</span></label>
@@ -72,6 +74,20 @@
                 <option value="Cash">Cash</option>
                 <option value="Card">Card</option>
                 <option value="GPay">GPay</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-md-3" id="machinediv" style="display: none;">
+        <div class="form-group">
+            <label class="form-label" for="cardmachine">Machine <span class="text-danger">
+                    *</span></label>
+            <select class="form-select" id="cardmachine" name="cardmachine">
+                <option value="">Select Machine</option>
+                @foreach ($cardPay as $machine)
+                    <option value="{{ $machine->id }}">
+                        {{ $machine->card_name }}
+                    </option>
+                @endforeach
             </select>
         </div>
     </div>
@@ -198,3 +214,24 @@
         <input type="text" class="form-control" id="rdoctor" name="rdoctor" placeholder="Referred Doctor">
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+        // Initially hide the machinediv
+        $('#machinediv').hide();
+
+        // Event handler for changes in the paymode select
+        $('#paymode').change(function() {
+            // Get the selected value
+            var selectedValue = $(this).val();
+
+            // Check if the selected value is "Card"
+            if (selectedValue === 'Card') {
+                // Show the machinediv
+                $('#machinediv').show();
+            } else {
+                // Hide the machinediv
+                $('#machinediv').hide();
+            }
+        });
+    });
+</script>

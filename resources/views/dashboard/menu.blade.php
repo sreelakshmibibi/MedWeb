@@ -74,22 +74,71 @@
                         </i>
                         {{ $item->name }}
                     </a>
-                    @if ($item->children->count())
+                    @if ($item->name == 'Dashboard')
                         <ul>
-                            @foreach ($item->children as $child)
-                                @if (auth()->user()->hasAnyRole($child->roles->pluck('name')->toArray()))
-                                    <li>
-                                        <a href="{{ $child->route_name != '#' ? route($child->route_name) : '#' }}">
-                                            <i class="{{ $child->icon }}">
-                                                <span class="path1"></span>
-                                                <span class="path2"></span>
-                                            </i>
-                                            {{ $child->name }}
-                                        </a>
-                                    </li>
-                                @endif
-                            @endforeach
+                            @if(auth()->user()->is_admin)
+                                <li>
+                                    <a href="{{route('dashboard.userType', 'admin')}}">
+                                        <i>
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                    Admin Dashboard
+                                    </a>
+                                </li>
+                            @endif
+                            @if(auth()->user()->is_doctor)
+                            <li>
+                                <a href="{{route('dashboard.userType', 'doctor')}}">
+                                    <i>
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                    </i>
+                                   Doctor Dashboard
+                                </a>
+                            </li>
+                            @endif
+                            @if(auth()->user()->is_nurse)
+                            <li>
+                                <a href="{{route('dashboard.userType', 'nurse')}}">
+                                    <i>
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                    </i>
+                                   Nurse Dashboard
+                                </a>
+                            </li>
+                            @endif
+                            @if(auth()->user()->is_reception)
+                            <li>
+                                <a href="{{route('dashboard.userType', 'reception')}}">
+                                    <i>
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                    </i>
+                                   Reception Dashboard
+                                </a>
+                            </li>
+                            @endif
                         </ul>
+                    @else
+                        @if ($item->children->count())
+                            <ul>
+                                @foreach ($item->children as $child)
+                                    @if (auth()->user()->hasAnyRole($child->roles->pluck('name')->toArray()))
+                                        <li>
+                                            <a href="{{ $child->route_name != '#' ? route($child->route_name) : '#' }}">
+                                                <i class="{{ $child->icon }}">
+                                                    <span class="path1"></span>
+                                                    <span class="path2"></span>
+                                                </i>
+                                                {{ $child->name }}
+                                            </a>
+                                        </li>
+                                    @endif
+                                @endforeach
+                            </ul>
+                        @endif
                     @endif
                 </li>
             @endif

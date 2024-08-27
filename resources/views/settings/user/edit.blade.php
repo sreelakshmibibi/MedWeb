@@ -57,7 +57,7 @@
                                 <label class="form-label" for="name">Name <span class="text-danger">
                                         *</span></label>
                                 <input class="form-control" type="text" id="name" name="name" placeholder="Name"
-                                    value="{{ $user->name }}">
+                                    value="{{ str_replace('<br>', ' ', $user->name) }}">
                                 @error('name')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror

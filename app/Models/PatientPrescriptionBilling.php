@@ -69,4 +69,9 @@ class PatientPrescriptionBilling extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+
+    public function cardPay()
+    {
+        return $this->belongsTo(CardPay::class, 'card_pay_id');
+    }
 }

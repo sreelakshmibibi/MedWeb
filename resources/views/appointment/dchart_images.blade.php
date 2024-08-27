@@ -199,13 +199,13 @@ $lower_teethImages = [
                     </div>
                 </div>
             </div>
-            <!-- <div class="row position-absolute" style="left:2rem; top:0;">
+            <div class="row position-absolute" style="left:2rem; top:0;">
                 {{-- <div class="row position-absolute" style="left:2rem; top:-1.5rem;"> --}}
                 <div class="select-div">
-                    <input type="checkbox" id="checkbox_all" class="filled-in chk-col-success">
-                    <label for="checkbox_all">Select All</label>
+                    <input type="checkbox" id="checkbox_all" class="filled-in chk-col-success" value="<?= TeethRow::RowAll ?>">
+                    <label for="checkbox_all">Other</label>
                 </div>
-            </div> -->
+            </div>
             <div>
                 <ul class="list-style-none ps-0">
                     <li><span class="badge badge-dot badge-danger"></span>&nbsp; Treatment ongoing</li>
@@ -618,12 +618,14 @@ $lower_teethImages = [
             if ($(this).is(':checked')) {
                 $('.exam_toothdiv').hide();
                 $('#modal-teeth').modal('show');
+                $('.exam_chiefComplaint').show();
                 // $('#trow1').addClass('rowbordered');
                 // $('#trow2').addClass('rowbordered');
                 // $('#trow3').addClass('rowbordered');
                 // $('#trow4').addClass('rowbordered');
             } else {
                 $('.exam_toothdiv').show();
+                $('.exam_chiefComplaint').hide();
                 // $('#trow1').removeClass('rowbordered');
                 // $('#trow2').removeClass('rowbordered');
                 // $('#trow3').removeClass('rowbordered');
@@ -631,6 +633,32 @@ $lower_teethImages = [
             }
         });
 
+        if ($('#checkbox_all').is(':checked')) {
+            $('.exam_toothdiv').hide();
+            $('#row_id').val(5);
+            getRowData(5, patientId, appId);
+            $('#modal-teeth').modal('show');
+            
+        } else {
+            $('.exam_toothdiv').show();
+            
+        }
+
+
+        $('#checkbox_all').change(function() {
+            if ($(this).is(':checked')) {
+                $('.exam_toothdiv').hide();
+                $('.exam_chiefComplaint').show();
+                $('#row_id').val(5);
+                getRowData(5, patientId, appId);
+                $('#modal-teeth').modal('show');
+                
+            } else {
+                $('.exam_toothdiv').show();
+                $('.exam_chiefComplaint').hide();
+                
+            }
+        });
 
         if ($('#checkbox_row1').is(':checked')) {
             $('.exam_toothdiv').hide();

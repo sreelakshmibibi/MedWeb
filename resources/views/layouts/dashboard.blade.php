@@ -25,11 +25,10 @@
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/skin_color.css') }}">
 
-    <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
-    {{-- <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script> --}}
+    <script src="{{ asset('js/jquery-3.5.1.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/datatable/datatables.min.js') }}"></script>
+    <link href="{{ asset('css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
+
     <script src="{{ asset('assets/vendor_components/apexcharts-bundle/dist/apexcharts.js') }}"></script>
     <script src="{{ asset('assets/vendor_components/apexcharts-bundle/dist/apexcharts.min.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('css/tooth_style.css') }}">
@@ -65,7 +64,6 @@
     <script src="{{ asset('assets/vendor_components/flexslider/jquery.flexslider.js') }}"></script>
 
     <script src="{{ asset('js/pages/statistic.js') }}"></script>
-
     <!-- MedWeb App -->
     <script src="{{ asset('js/jquery.smartmenus.js') }}"></script>
     <script src="{{ asset('js/menus.js') }}"></script>

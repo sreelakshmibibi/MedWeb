@@ -82,7 +82,7 @@ class TreatmentController extends Controller
 
         // Initialize DoctorAvaialbilityService and fetch working doctors
         $doctorAvailabilityService = new DoctorAvaialbilityService();
-        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($appointmentBranchId, $currentDayName);
+        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($appointmentBranchId, $currentDayName, date('Y-m-d'));
 
         // Fetch all appointment types
         $appointmentTypes = AppointmentType::all();
@@ -194,6 +194,9 @@ class TreatmentController extends Controller
                                 case TeethRow::Row4:
                                     $teethName = 'Row : ' . TeethRow::Row_4_Desc;
                                     break;
+                                case TeethRow::RowAll:
+                                    $teethName = TeethRow::Row_All_Desc;
+                                    break;
                                 default:
                                     $teethName = '';
                                     break;
@@ -254,7 +257,7 @@ class TreatmentController extends Controller
     public function fetchExistingExamination($toothId, $appId, $patientId)
     {
         $toothExamination = [];
-        if (in_array($toothId, [1, 2, 3, 4])) {
+        if (in_array($toothId, [1, 2, 3, 4, 5])) {
             $toothExamination = ToothExamination::where('row_id', $toothId)
                 ->where('patient_id', $patientId)
                 ->where('app_id', $appId)
@@ -277,22 +280,6 @@ class TreatmentController extends Controller
         return response()->json(['examination' => $toothExamination, 'xrays' => $xrays]);
     }
 
-    // public function getImages($patientId, $toothId)
-    // {
-
-    //     $directory = 'public/x-rays/' . $patientId . '/' . $toothId;
-    //     $files = Storage::files($directory);
-
-    //     // Extract only the filenames from the full file paths
-    //     $fileNames = [];
-    //     foreach ($files as $file) {
-    //         $fileName = pathinfo($file, PATHINFO_BASENAME); // Get just the filename
-    //         $fileNames[] = $fileName;
-    //     }
-
-    //     return response()->json(['images' => $fileNames]);
-    // }
-
     public function getImages($toothExaminationId)
     {
         $xrays = XRayImage::where('tooth_examination_id', $toothExaminationId)->where('status', 'Y')->get();
@@ -314,11 +301,6 @@ class TreatmentController extends Controller
         return response()->json(['message' => 'Image deleted successfully']);
     }
 
-    public function create()
-    {
-
-    }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -327,7 +309,7 @@ class TreatmentController extends Controller
         try {
             DB::beginTransaction();
             $checkExists = [];
-            if (in_array($request->row_id, [1, 2, 3, 4])) {
+            if (in_array($request->row_id, [1, 2, 3, 4, 5])) {
                 
                 $checkExists = ToothExamination::where('row_id', $request->row_id)
                     ->where('patient_id', $request->patient_id)
@@ -347,11 +329,6 @@ class TreatmentController extends Controller
                 foreach ($checkExists as $check) {
                     $check->status = 'N';
                     $check->save();
-                    // $xraysExists = XRayImage::where('tooth_examination_id', $check->id)->get();
-                    // if (!empty($xraysExists)) {
-                    //     XRayImage::where('tooth_examination_id', $check->id) // Condition to match
-                    //     ->update(['status' => 'N']);
-                    // }
                 }
             }
             // $toothExamination = new ToothExamination();
@@ -388,6 +365,9 @@ class TreatmentController extends Controller
             ]));
             $anatomyService = new AnatomyService();
             $anatomyImage = $anatomyService->getAnatomyImage($toothId, $occulusal_condn, $palatal_condn, $mesial_condn, $distal_condn, $buccal_condn);
+            if ((TreatmentType::find($request->treatment_id))->treat_name == "Tooth Extraction" ) {
+                $anatomyImage = "images/tooth/noteeth.svg";
+            }
             $toothExaminationEdit = ToothExamination::find($toothExamination->id);
             if ($request->hasFile('xray')) {
                 $toothExaminationEdit->xray = 1;
@@ -460,71 +440,6 @@ class TreatmentController extends Controller
             'toothExaminations' => $toothExaminations,
         ]);
     }
-
-    // public function showCharge($appointment, Request $request)
-    // {
-    //     // Retrieve patient_id from the query parameters
-    //     $patientId = $request->query('patient_id');
-    //     // Fetch ToothExamination data with related teeth and treatment details
-    //     $toothExaminations = ToothExamination::with([
-    //         'teeth:id,teeth_name,teeth_image',
-    //         'treatment',
-    //     ])
-    //         ->where('app_id', $appointment)
-    //         ->where('patient_id', $patientId)
-    //         ->where('status', 'Y')
-    //         ->get();
-    //         $treatments = null;
-    //     foreach ($toothExaminations as $toothExamination)
-    //     {
-    //         $treatments[] = $toothExamination->treatment->id;
-    //         $treatmentCost = $toothExamination->treatment->treat_cost;
-    //         // $toothExamination->treatment->discount_percentage = 0;
-    //         $currentDate = date('Y-m-d');
-    //         $discount_from = $toothExamination->treatment->discount_from;
-    //         $discount_to = $toothExamination->treatment->discount_to;
-    //         $discount_percentage = $toothExamination->treatment->discount_percentage;
-    //         $discountCost = 0;
-    //         if ($discount_from !== null && $discount_to !== null) {
-    //             if ($currentDate >= $discount_from && $currentDate <= $discount_to) {
-    //                 if ($discount_percentage != null) {
-    //                     $discountCost = $treatmentCost *  (1 - $discount_percentage / 100);
-
-    //                 }
-    //             }
-    //         }
-    //         $toothExamination->treatment->discount_cost = $discountCost != 0 ? $discountCost : $treatmentCost;
-    //     }
-    //    // Fetch ComboOfferTreatment records where treatment_id is in $treatments
-    //     $comboOffers = ComboOfferTreatment::whereIn('treatment_id', $treatments)->get();
-
-    //     // Initialize variables to store and validate combo_offer_id
-    //     $commonComboOfferId = null;
-    //     $valid = true;
-
-    //     // Check if all treatments have the same combo_offer_id
-    //     foreach ($comboOffers as $comboOffer) {
-    //         if ($commonComboOfferId === null) {
-    //             // Initialize with the first combo_offer_id
-    //             $commonComboOfferId = $comboOffer->combo_offer_id;
-    //         } elseif ($commonComboOfferId !== $comboOffer->combo_offer_id) {
-    //             // If combo_offer_id differs, set $valid to false and break the loop
-    //             $valid = false;
-    //             break;
-    //         }
-    //     }
-
-    //     // After the loop, if $valid is true, all treatments have the same combo_offer_id
-    //     $comboOffersResult = [];
-    //     if ($valid && $commonComboOfferId !== null) {
-    //         $comboOffersResult = TreatmentComboOffer::where('id', $commonComboOfferId)->get();
-    //     }
-    //     // Return the data as a JSON response
-    //     return response()->json([
-    //         'toothExaminations' => $toothExaminations,
-    //         'comboOffer' => $comboOffersResult
-    //     ]);
-    // }
 
     public function showCharge($appointment, Request $request)
     {
@@ -641,10 +556,6 @@ class TreatmentController extends Controller
                     ->where('app_branch', $clinicBranchId)
                     ->exists();
                 if ($patientAppointment) {
-                    // $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId);
-                    // if ($existingAppointment) {
-                    //     return response()->json(['error' => 'An appointment already exists for the given date, time, and doctor.'], 422);
-                    // }
                     // Additional check to ensure no time conflict
                     $appointmentWithSameTime = Appointment::where('doctor_id', $doctorId)
                         ->where('app_date', $appDate)
@@ -813,22 +724,6 @@ class TreatmentController extends Controller
             return response()->json(['error' => 'Failed to add treatment details: ' . $e->getMessage()], 422);
         }
 
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
     }
 
     /**

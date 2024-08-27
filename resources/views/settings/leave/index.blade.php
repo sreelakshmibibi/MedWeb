@@ -21,8 +21,10 @@
                 @endif
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Leave Details</h3>
-                    <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
-                        data-bs-target="#modal-right"> <i class="fa fa-add"></i> Apply Leave</button>
+                    @if (Auth::user()->can('leave apply'))
+                        <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#modal-right"> <i class="fa fa-add"></i> Apply Leave</button>
+                    @endif
                 </div>
             </div>
 
@@ -35,14 +37,14 @@
                                 <thead class="bg-primary-light">
                                     <tr>
                                         <th width="10px">No</th>
-                                        @if (Auth::user()->can('approve leave'))
-                                            <th width="20%">Staff</th>
+                                        @if (Auth::user()->can('leave approve'))
+                                            <th width="150px">Staff</th>
                                         @endif
-                                        <th width="15%">Leave Type</th>
-                                        <th width="25%">Dates (Days)</th>
-                                        <th width="30%">Reason</th>
-                                        <th width="20px">Status</th>
-                                        <th width="80px">Action</th>
+                                        <th>Leave Type</th>
+                                        <th>Dates (Days)</th>
+                                        <th>Reason</th>
+                                        <th>Status</th>
+                                        <th width="150px">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -65,11 +67,13 @@
 
 
     <script type="text/javascript">
+        var table;
         var today = new Date().toISOString().split('T')[0];
         document.getElementById('leave_from').setAttribute('min', today);
         document.getElementById('leave_to').setAttribute('min', today);
         document.getElementById('editleave_from').setAttribute('min', today);
         document.getElementById('editleave_to').setAttribute('min', today);
+
         jQuery(function($) {
             table = $(".data-table").DataTable({
                 processing: true,
@@ -81,18 +85,16 @@
                         orderable: false,
                         searchable: false,
                         render: function(data, type, row, meta) {
-                            // Return the row index (starts from 0)
-                            return meta.row + 1; // Adding 1 to start counting from 1
+                            return meta.row + 1;
                         },
                     },
-                    <?php if (Auth::user()->can('approve leave')) { ?>
-                    {
-                        data:"staff",
-                        name:"staff",
-                        className: "text-left",
-                    },
-                    <?php  } ?>
-                    {
+                    @can('leave approve')
+                        {
+                            data: "staff",
+                            name: "staff",
+                            className: "text-left",
+                        },
+                    @endcan {
                         data: "leave_type",
                         name: "leave_type",
                         className: "text-left",
@@ -101,7 +103,6 @@
                         data: "leave_applied_dates",
                         name: "leave_applied_dates",
                     },
-                   
                     {
                         data: "leave_reason",
                         name: "leave_reason",
@@ -121,13 +122,13 @@
                     },
                 ],
             });
-        });
-        jQuery(function($) {
+
+            // Edit Leave
             $(document).on('click', '.btn-edit', function() {
                 var leaveId = $(this).data('id');
-                $('#edit_leave_id').val(leaveId); // Set department ID in the hidden input
+                $('#edit_leave_id').val(leaveId);
                 $.ajax({
-                    url: '{{ url("leave") }}' + "/" + leaveId + "/edit",
+                    url: '{{ url('leave') }}/' + leaveId + '/edit',
                     method: 'GET',
                     success: function(response) {
                         $('#editleave_id').val(response.id);
@@ -135,116 +136,134 @@
                         $('#editleave_from').val(response.leave_from);
                         $('#editleave_to').val(response.leave_to);
                         $('#editreason').val(response.leave_reason);
-                        // $('#modal-edit').modal('show');
+                        $('#modal-edit').modal('show');
                     },
                     error: function(error) {
                         console.log(error);
                     }
                 });
             });
+
+            // Approve Leave
             $(document).on('click', '.btn-approve', function() {
                 var leaveId = $(this).data('id');
-                $('#approve_leave_id').val(leaveId); // Set department ID in the hidden input
+                $('#approve_leave_id').val(leaveId);
                 $('#modal-approve').modal('show');
             });
+
             $('#btn-confirm-approve').click(function() {
                 var leaveId = $('#approve_leave_id').val();
-                var url = "{{ route('leave.approve', ':leave') }}";
-                url = url.replace(':leave', leaveId);
                 $.ajax({
                     type: 'GET',
-                    url: url,
+                    url: "{{ route('leave.approve', ':leave') }}".replace(':leave', leaveId),
                     data: {
                         "_token": "{{ csrf_token() }}"
                     },
                     success: function(response) {
-                        $('#modal-approve').modal('hide');
-                        table.draw(); // Refresh DataTable
-                        $('#successMessage').text(response.success);
-                        $('#successMessage').fadeIn().delay(3000)
-                            .fadeOut(); // Show for 3 seconds
+                        // $('#modal-approve').modal('hide');
+                        table.ajax.reload();
+                        // table.draw();
+                        $('#successMessage').text(response.success).fadeIn().delay(3000)
+                            .fadeOut();
                     },
                     error: function(xhr) {
                         $('#modal-approve').modal('hide');
-                        // swal("Error!", xhr.responseJSON.message, "error");
+                        console.log("Error:", xhr.responseJSON.message);
                     }
                 });
             });
-        
+
+            // Reject Leave
             $(document).on('click', '.btn-reject', function() {
                 var leaveId = $(this).data('id');
-                $('#reject_leave_id').val(leaveId); // Set department ID in the hidden input
-                $('#modal-reject').modal('show');
+                $('#reject_leave_id').val(leaveId);
+                // $('#modal-reject').modal('show');
             });
 
-            $('#btn-confirm-reject').click(function() {
+            $('#btn-confirm-reject').click(function(event) {
                 var leaveId = $('#reject_leave_id').val();
                 var reason = $('#reject_reason').val();
+                event.preventDefault();
 
                 if (reason.length === 0) {
                     $('#reject_reason').addClass('is-invalid');
                     $('#rejectionError').text('Reason is required.');
-                    return; // Stop further execution
+                    return;
                 }
-
-                var url = "{{ route('leave.reject', ':leave') }}";
-                url = url.replace(':leave', leaveId);
 
                 $.ajax({
                     type: 'POST',
-                    url: url,
+                    url: "{{ route('leave.reject', ':leave') }}".replace(':leave', leaveId),
                     data: {
                         "_token": "{{ csrf_token() }}",
                         "reject_reason": reason
                     },
                     success: function(response) {
-                        table.draw(); // Refresh DataTable
-                        $('#modal-reject').modal(
-                            'hide'); 
-                        $('#successMessage').text(response.sucess);
-                        $('#successMessage').fadeIn().delay(3000)
-                            .fadeOut(); // Show for 3 seconds
+                        table.ajax.reload();
+                        // table.draw();
+                        // $('#modal-reject').modal('hide');
 
+                        var modalElement = document.getElementById('modal-reject');
+                        var modal = bootstrap.Modal.getInstance(
+                            modalElement); // Get existing instance
+
+                        if (modal) {
+                            modal.hide(); // Hide the modal
+                        } else {
+                            // If modal instance does not exist, create a new instance and hide it
+                            var newModal = new bootstrap.Modal(modalElement);
+                            newModal.hide();
+                        }
+                        $('#successMessage').text(response.success).fadeIn().delay(3000)
+                            .fadeOut();
                     },
                     error: function(xhr) {
-                        $('#modal-reject').modal(
-                            'hide'); // Close modal in case of error
-                        console.log("Error!", xhr.responseJSON.message, "error");
+                        // $('#modal-reject').modal('hide');
+
+                        var modalElement = document.getElementById('modal-reject');
+                        var modal = bootstrap.Modal.getInstance(
+                            modalElement); // Get existing instance
+
+                        if (modal) {
+                            modal.hide(); // Hide the modal
+                        } else {
+                            // If modal instance does not exist, create a new instance and hide it
+                            var newModal = new bootstrap.Modal(modalElement);
+                            newModal.hide();
+                        }
+                        console.log("Error:", xhr.responseJSON.message);
                     }
                 });
             });
 
+            // Delete Leave
             $(document).on('click', '.btn-danger', function() {
-                console.log('hi');
                 var leaveId = $(this).data('id');
-                $('#delete_leave_id').val(leaveId); // Set department ID in the hidden input
+                $('#delete_leave_id').val(leaveId);
                 $('#modal-delete').modal('show');
             });
 
             $('#btn-confirm-delete').click(function() {
                 var leaveId = $('#delete_leave_id').val();
-                var url = "{{ route('leave.destroy', ':leave') }}";
-                url = url.replace(':leave', leaveId);
                 $.ajax({
                     type: 'DELETE',
-                    url: url,
+                    url: "{{ route('leave.destroy', ':leave') }}".replace(':leave', leaveId),
                     data: {
                         "_token": "{{ csrf_token() }}"
                     },
                     success: function(response) {
-                        table.draw(); // Refresh DataTable
-                        $('#successMessage').text('Leave applicaton deleted successfully');
-                        $('#successMessage').fadeIn().delay(3000)
-                            .fadeOut(); // Show for 3 seconds
+                        table.ajax.reload();
+                        // table.draw();
+                        $('#successMessage').text('Leave application deleted successfully')
+                            .fadeIn().delay(3000).fadeOut();
                     },
                     error: function(xhr) {
                         $('#modal-delete').modal('hide');
-                        swal("Error!", xhr.responseJSON.message, "error");
+                        console.log("Error:", xhr.responseJSON.message);
                     }
                 });
             });
         });
-
-
     </script>
+
 @endsection

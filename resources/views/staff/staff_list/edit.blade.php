@@ -98,8 +98,14 @@
             });
 
 
-            let count = '{{ $availabilityCount }}';
-            count++;
+            let count = parseInt('{{ $availabilityCount }}') || 0;
+    
+            // Function to update row count input field value
+            function updateRowCount() {
+                $('#row_count').val(count);
+            }
+
+            
             // Event listener for Add Row button click
             $(document).on('click', '#buttonAddRow', function() {
                 count++;
@@ -183,18 +189,35 @@
                 });
                 updateRowCount();
             });
+            // Function to update row indices and input names
+            function updateRowIndices() {
+                $('#tablebody tr').each(function(index) {
+                    $(this).find('td:first-child').text(index + 1); // Update row number
 
+                    // Update input names and IDs
+                    $(this).find('select, input').each(function() {
+                        let name = $(this).attr('name');
+                        let id = $(this).attr('id');
+                        
+                        if (name && id) {
+                            let newName = name.replace(/\d+/, index + 1);
+                            let newId = id.replace(/\d+/, index + 1);
+                            
+                            $(this).attr('name', newName);
+                            $(this).attr('id', newId);
+                        }
+                    });
+                });
+            }
             // Event listener for Delete button click
             $(document).on('click', '.btnDelete', function() {
                 $(this).closest('tr').remove();
+                count--;
+                updateRowIndices();
                 updateRowCount();
             });
 
-            // Function to update row count input field value
-            function updateRowCount() {
-                $('#row_count').val(count);
-            }
-
+            
             // Validation for 'from' and 'to' time fields
             $(document).on('focusout', '.fromTime, .toTime', function() {
                 console.log('hi');

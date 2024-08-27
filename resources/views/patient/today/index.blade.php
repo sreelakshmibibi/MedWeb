@@ -72,7 +72,7 @@
         var table = $('.data-table').DataTable({
             processing: true,
             serverSide: true,
-            responsive: true,
+            // responsive: true,
             lengthMenu: [5, 10, 25, 50],
             ajax: {
                 url: '{{ route('patient.today') }}',

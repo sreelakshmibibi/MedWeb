@@ -93,53 +93,79 @@ use Illuminate\Support\Facades\Crypt;
                         </div>
                         <div class="box">
                             <div class="box-body p-15 dashboardpatients">
-                                @if ($currentappointments->isNotEmpty())
-                                    @foreach ($currentappointments as $currentappointment)
-                                        <div class="mb-10 d-flex justify-content-between align-items-center">
-                                            <div class="fw-600 min-w-120">
-                                                <?= date('g:i A', strtotime($currentappointment->app_time)) ?>
-                                            </div>
-                                            <div
-                                                class="w-p100 p-10 rounded10 justify-content-between align-items-center d-flex bg-lightest doctodaydash">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <span title="Token No"
-                                                        class="me-10 avatar bg-primary-light rounded-circle b-1 text-bold">
-                                                        <?= $currentappointment->token_no ?>
-                                                    </span>
-                                                    <div>
-                                                        <h6 class="mb-0">
-                                                            <?= str_replace('<br>', ' ', $currentappointment->patient->first_name . ' ' . $currentappointment->patient->last_name) ?>
-                                                        </h6>
-                                                        <p class="mb-0 fs-12 text-mute">Patient ID:
-                                                            <?= $currentappointment->app_id ?></p>
+                                <div class="inner-user-div22">
+                                    @if ($currentappointments->isNotEmpty())
+                                        @foreach ($currentappointments as $currentappointment)
+                                            <div class="mb-10 d-flex justify-content-between align-items-center">
+                                                <div class="fw-600 min-w-120">
+                                                    <?= date('g:i A', strtotime($currentappointment->app_time)) ?>
+                                                </div>
+                                                <div
+                                                    class="w-p100 p-10 rounded10 justify-content-between align-items-center d-flex bg-lightest doctodaydash">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span title="Token No"
+                                                            class="me-10 avatar bg-primary-light rounded-circle b-1 text-bold">
+                                                            <?= $currentappointment->token_no ?>
+                                                        </span>
+                                                        <div>
+                                                            <h6 class="mb-0">
+                                                                <?= str_replace('<br>', ' ', $currentappointment->patient->first_name . ' ' . $currentappointment->patient->last_name) ?>
+                                                            </h6>
+                                                            <p class="mb-0 fs-12 text-mute">Patient ID:
+                                                                <?= $currentappointment->app_id ?></p>
+                                                        </div>
+                                                    </div>
+                                                    @php
+                                                        $parent_id = $currentappointment->app_parent_id
+                                                            ? $currentappointment->app_parent_id
+                                                            : $currentappointment->id;
+                                                        $base64Id = base64_encode($currentappointment->id);
+                                                        $idEncrypted = Crypt::encrypt($base64Id);
+                                                    @endphp
+                                                    <div class="d-flex dashboardbtnwrapper">
+                                                        <a href='{{ route('treatment', $idEncrypted) }}'
+                                                            class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1'
+                                                            title='treatment'><i class='fa-solid fa-stethoscope'></i></a>
+                                                        {{-- <a href=''
+                                                            class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1'
+                                                            title='view'><i class='fa-solid fa-eye'></i></a> --}}
+                                                        <button type='button'
+                                                            class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1'
+                                                            title='follow up' data-bs-toggle='modal'
+                                                            data-id='{{ $currentappointment->id }}'
+                                                            data-parent-id='{{ $parent_id }}'
+                                                            data-patient-id='{{ $currentappointment->patient->patient_id }}'
+                                                            data-patient-name='{{ str_replace('<br>', ' ', $currentappointment->patient->first_name . ' ' . $currentappointment->patient->last_name) }}'
+                                                            data-bs-target='#modal-booking'><i
+                                                                class='fa fa-plus'></i></button>
+
+                                                        <button type='button'
+                                                            class='waves-effect waves-light btn btn-circle btn-warning btn-reschedule btn-xs me-1'
+                                                            title='reschedule' data-bs-toggle='modal'
+                                                            data-id='{{ $currentappointment->id }}'
+                                                            data-parent-id='{{ $parent_id }}'
+                                                            data-patient-id='{{ $currentappointment->patient->patient_id }}'
+                                                            data-patient-name='{{ str_replace('<br>', ' ', $currentappointment->patient->first_name . ' ' . $currentappointment->patient->last_name) }}'
+                                                            data-bs-target='#modal-reschedule'><i
+                                                                class='fa-solid fa-calendar-days'></i></button>
+
+                                                        <button type='button' id="cancelbtn"
+                                                            class='waves-effect waves-light btn btn-circle btn-danger btn-xs'
+                                                            title='cancel' data-bs-toggle='modal'
+                                                            data-bs-target='#modal-cancel'
+                                                            data-id='{{ $currentappointment->id }}'><i
+                                                                class='fa fa-times'></i></button>
+
                                                     </div>
                                                 </div>
-                                                <div class="d-flex dashboardbtnwrapper">
-                                                    <a href=''
-                                                        class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1'
-                                                        title='treatment'><i class='fa-solid fa-stethoscope'></i></a>
-                                                    <a href=''
-                                                        class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1'
-                                                        title='view'><i class='fa-solid fa-eye'></i></a>
-                                                    <button type='button'
-                                                        class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1'
-                                                        title='follow up'><i class='fa fa-plus'></i></button>
-                                                    <button type='button'
-                                                        class='waves-effect waves-light btn btn-circle btn-warning btn-reschedule btn-xs me-1'
-                                                        title='reschedule'><i
-                                                            class='fa-solid fa-calendar-days'></i></button>
-                                                    <button type='button'
-                                                        class='waves-effect waves-light btn btn-circle btn-danger btn-xs'
-                                                        title='cancel'><i class='fa fa-times'></i></button>
-                                                </div>
                                             </div>
+                                        @endforeach
+                                    @else
+                                        <div class="mb-10 d-flex justify-content-between align-items-center">
+                                            <h6 class="text-muted mb-1 fs-16">No patients remaining today!</h6>
                                         </div>
-                                    @endforeach
-                                @else
-                                    <div class="mb-10 d-flex justify-content-between align-items-center">
-                                        <h6 class="text-muted mb-1 fs-16">No patients remaining today!</h6>
-                                    </div>
-                                @endif
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -181,6 +207,10 @@ use Illuminate\Support\Facades\Crypt;
     </div>
     <!-- /.content-wrapper -->
     <!-- ./wrapper -->
+    @include('appointment.booking')
+    @include('appointment.reschedule')
+    @include('appointment.cancel')
+
     <script>
         $(document).ready(function() {
 
@@ -431,6 +461,69 @@ use Illuminate\Support\Facades\Crypt;
 
             appointmentsbyhour();
             appointmentsbymonth();
+
+            $(document).on('click', '.btn-add', function() {
+                var app_parent_id = $(this).data('parent-id');
+                var patientId = $(this).data('patient-id');
+                var patientName = $(this).data('patient-name');
+                $('#patient_id').val(patientId); // Set app ID in the hidden input
+                $('#patient_name').val(patientName); // Set app ID in the hidden input
+                $('#app_parent_id').val(app_parent_id);
+
+                // var now = new Date();
+                // var year = now.getFullYear();
+                // var month = (now.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+                // var day = now.getDate().toString().padStart(2, '0');
+                // var hours = now.getHours().toString().padStart(2, '0');
+                // var minutes = now.getMinutes().toString().padStart(2, '0');
+                // var datetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+                var now = new Date();
+                var datetime = now.toISOString().slice(0, 16);
+
+                document.getElementById('appdate').value = datetime;
+                $('#modal-booking').modal('show');
+            });
+
+            $(document).on('click', '.btn-reschedule', function() {
+                var appId = $(this).data('id');
+                var patientId = $(this).data('patient-id');
+                var patientName = $(this).data('patient-name');
+
+                $('#reschedule_app_id').val(appId); // Set app ID in the hidden input
+                $.ajax({
+                    url: '{{ url('appointment', '') }}' + "/" + appId + "/edit",
+                    method: 'GET',
+                    success: function(response) {
+                        $('#edit_app_id').val(response.id);
+                        $('#edit_patient_id').val(response
+                            .patient_id); // Set app ID in the hidden input
+                        $('#edit_patient_name').val(patientName);
+                        var doctorName = response.doctor.name;
+                        var formattedDoctorName = doctorName.replace(/<br>/g, ' ');
+                        $('#edit_doctor').val(formattedDoctorName);
+
+                        $('#edit_clinic_branch').val(response.clinic_branch);
+                        $('#edit_doctor_id').val(response.doctor_id);
+
+                        $('#edit_clinic_branch_id').val(response.app_branch);
+                        // $('#edit_staff').val(response.staff);
+                        var app_date = response.app_date;
+                        var app_time = response.app_time;
+                        $('#scheduled_appdate').val(app_date + ' ' + app_time);
+                        $('#modal-reschedule').modal('show');
+                    },
+                    error: function(error) {
+                        console.log(error)
+                    }
+                });
+            });
+
+            $(document).on('click', '#cancelbtn', function() {
+                var appId = $(this).data('id');
+                $('#delete_app_id').val(appId); // Set staff ID in the hidden input
+                $('#modal-cancel').modal('show');
+            });
 
         });
     </script>

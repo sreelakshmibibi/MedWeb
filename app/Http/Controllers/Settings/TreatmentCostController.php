@@ -13,7 +13,7 @@ class TreatmentCostController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:treatment_cost', ['only' => ['index', 'store', 'update', 'edit', 'destroy']]);
+        $this->middleware('permission:settings treatment_cost', ['only' => ['index', 'store', 'update', 'edit', 'destroy']]);
         
     }
 

@@ -61,12 +61,13 @@ class CommonService
         return $tokenNo;
     }
 
-    public function checkexisting($doctorId, $appDate, $appTime, $clinicBranchId)
+    public function checkexisting($doctorId, $appDate, $appTime, $clinicBranchId, $patientId)
     {
       return Appointment::where('doctor_id', $doctorId)
                 ->where('app_date', $appDate)
                 ->where('app_time', $appTime)
                 ->where('app_branch', $clinicBranchId)
+                ->where('patient_id', $patientId)
                 ->exists();
     }
 

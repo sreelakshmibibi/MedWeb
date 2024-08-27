@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Appointment;
 use App\Models\AppointmentStatus;
 use App\Models\DoctorWorkingHour;
+use App\Models\LeaveApplication;
 use App\Models\WeekDay;
 
 class DoctorAvaialbilityService
@@ -77,7 +78,7 @@ class DoctorAvaialbilityService
         return $availableBranches;
     }
 
-    public function getTodayWorkingDoctors($branchId, $weekday)
+    public function getTodayWorkingDoctors($branchId, $weekday, $date)
     {
 
         $query = DoctorWorkingHour::where('week_day', $weekday)
@@ -87,17 +88,29 @@ class DoctorAvaialbilityService
             $query->where('clinic_branch_id', $branchId);
         }
 
-        // return $query->with('user')->get();
-        // return $query->with(['user', 'appointment'])->get();
-        // return $query->with([
-        //     'user',
-        //     'appointment' => function ($query) {
-        //         $query->selectRaw('doctor_id, count(*) as appointments_count')
-        //             ->groupBy('doctor_id');
-        //     }
-        // ])->get();
+        
         // Count appointments for each working doctor
         $workingDoctors = $query->with('user')->get();
+        // Filter out doctors who are on leave
+        $workingDoctors = $workingDoctors->filter(function ($workingHour) use ($date) {
+            $doctorId = $workingHour->user_id;
+    
+            // Check if the doctor is on leave for the given date
+            $isOnLeave = LeaveApplication::where('user_id', $doctorId)
+                ->where(function ($query) use ($date) {
+                    $query->whereBetween('leave_from', [$date, $date])
+                          ->orWhereBetween('leave_to', [$date, $date])
+                          ->orWhere(function ($query) use ($date) {
+                              $query->where('leave_from', '<=', $date)
+                                    ->where('leave_to', '>=', $date);
+                          });
+                })
+                ->whereNot('leave_status', LeaveApplication::Rejected)
+                ->exists();
+    
+            return !$isOnLeave;
+        });
+    
         foreach ($workingDoctors as $doctor) {
             $doctor->appointments_count = Appointment::where('doctor_id', $doctor->user_id)
                 ->whereDate('app_date', today()) // Assuming appointments are filtered by today’s date
@@ -171,7 +184,7 @@ class DoctorAvaialbilityService
             $query->whereDate('app_date', $appDate); // Assuming app_date is a date field
         }
         if ($patientId) {
-            $query->whereDate('patient_id', $patientId); // Assuming app_date is a date field
+            $query->where('patient_id', $patientId); // Assuming app_date is a date field
         }
         // Execute the query and return the result
         $appointments = $query->exists(); // Use exists() for a boolean check

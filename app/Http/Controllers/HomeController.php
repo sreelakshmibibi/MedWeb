@@ -34,7 +34,7 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index($userType = null)
     {
         $user = Auth::user();
 
@@ -109,14 +109,6 @@ class HomeController extends Controller
             ->get();
 
         $dates = $appointmentData->pluck('date')->toArray();
-        // Convert dates to 'dd MMM YYYY' format
-        // $formattedData = $appointmentData->map(function ($item) {
-        //     $item->date = Carbon::parse($item->date)->format('d M Y'); // Format date
-        //     return $item;
-        // });
-
-        // // If you need to get the dates as an array
-        // $dates = $formattedData->pluck('date')->toArray();
 
         $chartTotalPatients = $appointmentData->pluck('total_patients')->toArray();
         $chartfollowupPatients = $appointmentData->pluck('followup_patients')->toArray();
@@ -137,7 +129,7 @@ class HomeController extends Controller
         if ($hasBranches && $hasClinics) {
             $doctorAvailabilityService = new DoctorAvaialbilityService();
             $currentDayName = Carbon::now()->englishDayOfWeek;
-            $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors(null, $currentDayName);
+            $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors(null, $currentDayName, date('Y-m-d'));
             $totalPatients = PatientProfile::where('status', 'Y')->count(); // Replace with your actual logic to get the total
             $totalStaffs = StaffProfile::where('status', 'Y')->count();
             // $totalDoctors = StaffProfile::where('status', 'Y')->whereNot('license_number', null)->count();
@@ -146,7 +138,7 @@ class HomeController extends Controller
             $totalOthers = $totalStaffs - $totalDoctors;
             $totalTreatments = ToothExamination::distinct('treatment_id')->count('treatment_id');
 
-            $staffProfile = StaffProfile::where('user_id', $user->id)->first();
+            $staffProfile = StaffProfile::with('user')->where('user_id', $user->id)->first();
             $username = str_replace('<br>', ' ', $user->name);
             $appointments = null;
             if ($user->is_doctor) {
@@ -204,28 +196,18 @@ class HomeController extends Controller
                     ->with(['patient', 'doctor', 'branch']) // Eager load relationships
                     ->get();
             }
-            if ($user->is_admin) {
-                $role = 'Admin';
-                $dashboardView = 'dashboard.admin';
+            $userType = $userType ?? ($user->is_admin ? 'admin' : ($user->is_doctor ? 'doctor' : ($user->is_nurse ? 'nurse' : 'user')));
 
-            } elseif ($user->is_doctor) {
-                $role = 'Doctor';
-                $dashboardView = 'dashboard.doctor';
-            } elseif ($user->is_nurse) {
-                $role = 'Nurse';
-                $dashboardView = 'dashboard.reception';
-            } else {
-                $role = 'User';
-                $dashboardView = 'dashboard.reception';
-            }
+            // Map user type to role and dashboard view
+            $roleMapping = [
+                'admin' => ['Admin', 'dashboard.admin'],
+                'doctor' => ['Doctor', 'dashboard.doctor'],
+                'nurse' => ['Nurse', 'dashboard.reception'],
+                'user' => ['User', 'dashboard.reception'],
+            ];
 
-            //for logo and name as per user entry
-            // $clinicDetails = ClinicBasicDetail::first();
-            // // Set session variable
-            // session(['logoPath' => $clinicDetails->clinic_logo]);
-            // session(['clinicName' => $clinicDetails->clinic_name]);
-
-            // return view($dashboardView);
+            // Retrieve role and dashboard view based on user type
+            [$role, $dashboardView] = $roleMapping[$userType] ?? ['User', 'dashboard.reception'];
 
             session(['username' => $username]);
             session(['role' => $role]);
@@ -237,18 +219,17 @@ class HomeController extends Controller
             $staffId = '';
             if ($staffProfile) {
                 session(['staffPhoto' => $staffProfile->photo]);
-                $staffId = $staffProfile->id;
-
+                $staffId = $staffProfile->user->id;
                 $base64Id = base64_encode($staffId);
                 $pstaffidEncrypted = Crypt::encrypt($base64Id);
+                session(['pstaffidEncrypted' => $pstaffidEncrypted]);
             }
 
-            // echo "<pre>";
-            // print_r($workingDoctors);
-            // echo "</pre>";
-            // exit;
+            $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])
+                ->where('clinic_status', 'Y')
+                ->get();
 
-            return view($dashboardView, compact('workingDoctors', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients', 'totalUniquePatients', 'malePatientsCount', 'femalePatientsCount', 'newPatientsCount', 'followupPatientsCount', 'currentappointments', 'pstaffidEncrypted', 'childrenCount', 'otherCount'));
+            return view($dashboardView, compact('workingDoctors', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients', 'totalUniquePatients', 'malePatientsCount', 'femalePatientsCount', 'newPatientsCount', 'followupPatientsCount', 'currentappointments', 'pstaffidEncrypted', 'childrenCount', 'otherCount', 'clinicBranches'));
 
         } else {
             $countries = Country::all();

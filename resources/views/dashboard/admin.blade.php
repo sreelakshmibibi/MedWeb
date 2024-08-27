@@ -131,7 +131,7 @@ use Illuminate\Support\Facades\Crypt;
                                                 </div>
                                                 @php
                                                     // Get the ID from the related model
-                                                    $id = $workingDoctor->user->staffProfile->id;
+                                                    $id = $workingDoctor->user->id;
 
                                                     // Base64 encode the ID
                                                     $base64Id = base64_encode($id);

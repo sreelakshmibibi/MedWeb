@@ -34,9 +34,9 @@
                                 <thead class="bg-primary-light">
                                     <tr>
                                         <th width="10px">No</th>
-                                        <th>Treatments</th>
-                                        <th>Total Treatment Amount</th>
-                                        <th>Offer Amount</th>
+                                        <th class="text-center">Treatments</th>
+                                        <th width="120px">Total Treatment Amount</th>
+                                        <th width="80px">Offer Amount</th>
                                         <th width="80px">Offer From</th>
                                         <th width="80px">Offer To</th>
                                         <th width="20px">Status</th>
@@ -84,6 +84,7 @@
                     {
                         data: 'treatments',
                         name: 'treatments',
+                        className: 'text-start',
                         orderable: false,
                         searchable: false
                     },

@@ -20,18 +20,45 @@
 }
 .dashboardpatients {
     height: 218px;
-    overflow: scroll;
+    /* overflow: scroll; */
 }
 .dashboardchart {
     height: 250px;
 }
+.vtabs .tab-content {
+    display: block;
+}
+.vtabs .tabs-vertical {
+    width: 150px !important;
+}
+#verticaltabmenu {
+    width: 150px !important;
+    min-width: 150px !important;
+}
+/* table.dataTable {
+    border-collapse: collapse !important;
+} */
+/* @media print {
+    table {
+        width: 100%; /* Ensure the table fits within the page width */
+/*    page-break-inside: auto; /* Prevent page breaks inside the table */
+/*  }
+    thead {
+        display: table-header-group;
+    } /* Repeat table header on each page */
+/*  tfoot {
+        display: table-footer-group;
+    } /* Repeat table footer on each page */
+/*} */
+
 @media (max-width: 857px) {
     .dental-chart {
         transform: scale(0.8);
     }
     .tooth_body {
         border: 1px solid;
-        overflow: scroll;
+        /* overflow: scroll; */
+        overflow-x: scroll;
         justify-content: flex-start;
         width: calc(75vw);
     }
@@ -74,7 +101,8 @@
     .tooth_body {
         width: 65%;
         border: 1px solid;
-        overflow: scroll;
+        /* overflow: scroll; */
+        overflow-x: scroll;
         justify-content: flex-start;
         width: calc(65vw);
     }
@@ -101,10 +129,17 @@
     .doctodaydash {
         flex-direction: column;
         gap: 2px;
+        gap: 4px;
+        align-items: start !important;
     }
     .dashboarddoclistdiv {
         flex-direction: column;
         gap: 2px;
+    }
+    .dashboardbtnwrapper {
+        margin-right: 0;
+        margin-left: auto;
+        justify-content: end;
     }
 }
 

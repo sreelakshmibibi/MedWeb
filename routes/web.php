@@ -2,7 +2,11 @@
 
 use App\Http\Controllers\Appointment\AppointmentController;
 use App\Http\Controllers\Appointment\TreatmentController;
+use App\Http\Controllers\AuditController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\ResetProfilePasswordController;
 use App\Http\Controllers\Auth\StaffVerificationController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\Billing\BillingController;
 use App\Http\Controllers\Billing\PaymentController;
 use App\Http\Controllers\HelperController;
@@ -23,6 +27,7 @@ use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\TreatmentCostController;
 use App\Http\Controllers\Settings\TreatmentPlanController;
 use App\Http\Controllers\Settings\UserController;
+use App\Http\Controllers\SmsController;
 use App\Http\Controllers\Staff\StaffListController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -45,7 +50,8 @@ Auth::routes(['verify' => true]);
 // });
 Route::middleware(['auth', 'check.session'])->group(function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
+    Route::get('/home/{usertype}', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard.userType');
+   
     Route::group(['middleware' => ['role:Superadmin|Admin']], function () {
 
         Route::resource('/permissions', PermissionController::class);
@@ -81,7 +87,7 @@ Route::middleware(['auth', 'check.session'])->group(function () {
             ],
         ]);
     });
-
+    Route::post('/resetPassword', [ResetProfilePasswordController::class, 'resetProfilePassword'])->name('reset.password');
     Route::get('/get-states/{countryId}', [HelperController::class, 'getStates'])->name('get.states');
     Route::get('/get-cities/{stateId}', [HelperController::class, 'getCities'])->name('get.cities');
     Route::get('/session-data', [HelperController::class, 'getSessionData']);
@@ -108,7 +114,7 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/disease/update', [DiseaseController::class, 'update'])->name('settings.disease.update');
     Route::delete('/disease/{disease}', [DiseaseController::class, 'destroy'])->name('settings.disease.destroy');
 
-    Route::group(['middleware' => ['permission:departments']], function () {
+    Route::group(['middleware' => ['permission:settings departments']], function () {
         Route::get('/department', [DepartmentController::class, 'index'])->name('settings.department');
         Route::post('/department/store', [DepartmentController::class, 'store'])->name('settings.department.store');
         Route::get('/department/{department}/edit', [DepartmentController::class, 'edit'])->name('settings.department.edit');
@@ -226,6 +232,9 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/report/service', [ReportController::class, 'service'])->name('report.service');
     Route::post('/report/patient', [ReportController::class, 'patient'])->name('report.patient');
     Route::post('/report/disease', [ReportController::class, 'disease'])->name('report.disease');
+    Route::post('/report/audit_cancell', [AuditController::class, 'auditCancell'])->name('report.audit_cancell');
+    Route::post('/report/audit_patient', [ReportController::class, 'auditPatient'])->name('report.auditPatient');
+    Route::post('/report/audit_bill', [ReportController::class, 'auditBill'])->name('report.auditBill');
 
     Route::get('/appointments-by-hour', [App\Http\Controllers\HomeController::class, 'getAppointmentsByHour'])->name('appointments-by-hour');
     Route::get('/appointments-by-month', [App\Http\Controllers\HomeController::class, 'getAppointmentsByMonth'])->name('appointments-by-month');
@@ -238,4 +247,8 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::delete('/leave/{leave}', [LeaveController::class, 'destroy'])->name('leave.destroy');
     Route::get('/leave/approve/{leave}', [LeaveController::class, 'approveLeave'])->name('leave.approve');
     Route::post('/leave/reject/{leave}', [LeaveController::class, 'rejectLeave'])->name('leave.reject');
+
+    Route::get('/db_backup', [BackupController::class, 'index'])->name('settings.db_backup');
+    Route::post('send-sms', [SmsController::class, 'sendSms'])->name('send.sms');
+
 });

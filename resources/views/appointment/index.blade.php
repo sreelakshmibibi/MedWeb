@@ -21,6 +21,7 @@
                 @endif
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Appointment List</h3>
+
                 </div>
             </div>
 
@@ -37,14 +38,18 @@
                                     <tr>
                                         <th width="10px">Token No</th>
                                         <th width="60px">Patient ID</th>
-                                        <th>Patient Name</th>
-                                        <th>Consulting Doctor</th>
+                                        <th class="text-center">Patient Name</th>
+                                        <th class="text-center">Consulting Doctor</th>
                                         <th width="60px">Phone number</th>
-                                        <th width="180px">Branch</th>
+                                        <th class="text-center" width="180px">Branch</th>
                                         <th width="10px">Time</th>
                                         <th width="10px">Type</th>
                                         <th>Status</th>
-                                        <th width="144px">Action</th>
+                                        <th width="144px">
+                                            <button type="button" class="waves-effect waves-light btn btn-sm btn-primary"
+                                                id="smsbtn">
+                                                <i class="fa fa-paper-plane"></i> Send SMS</button>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -80,9 +85,10 @@
                 },
             });
 
-            // var initialDate = $("#paginator").datepaginator("getDate");
-            // alert(initialDate)
-            // selectedDate = moment(initialDate).format("YYYY-MM-DD");
+            $(document).on('click', '#smsbtn', function() {
+
+            });
+
             selectedDate = moment().format("YYYY-MM-DD");
         });
 
@@ -108,11 +114,13 @@
 
                     {
                         data: 'name',
-                        name: 'name'
+                        name: 'name',
+                        className: 'text-start'
                     },
                     {
                         data: 'doctor',
-                        name: 'doctor'
+                        name: 'doctor',
+                        className: 'text-start'
                     },
                     {
                         data: 'phone',
@@ -120,7 +128,8 @@
                     },
                     {
                         data: 'branch',
-                        name: 'branch'
+                        name: 'branch',
+                        className: 'text-start'
                     },
 
                     {
@@ -490,5 +499,18 @@
         function reloadTableData() {
             table.ajax.reload();
         }
+        $(document).on('click', '#smsbtn', function() {
+            $.ajax({
+                url: '{{ route("send.sms") }}',
+                type: 'get',
+                success: function(response) {
+                    alert(response.success); // Show success message
+                },
+                error: function(xhr) {
+                    alert(xhr.responseJSON.error); // Show error message
+                }
+            });
+        });
+
     </script>
 @endsection

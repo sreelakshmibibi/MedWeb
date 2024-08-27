@@ -48,7 +48,6 @@
             processing: true,
             serverSide: true,
             responsive: true,
-            fixedColumns: true,
             ajax: "{{ route('permissions.index') }}",
             columns: [{
                     data: 'DT_RowIndex',

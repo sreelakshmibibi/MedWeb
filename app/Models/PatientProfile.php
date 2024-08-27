@@ -34,6 +34,7 @@ class PatientProfile extends Model
         'status',
         'created_by',
         'updated_by',
+        'deleted_by',
     ];
 
     protected $dates = ['deleted_at'];
@@ -49,6 +50,12 @@ class PatientProfile extends Model
         // Before updating an existing record
         static::updating(function ($patient) {
             $patient->updated_by = Auth::id(); // Set updated_by to current user's ID
+        });
+        static::deleting(function ($patient) {
+            // Optionally, handle logic before soft delete
+            // For example, log the deletion or modify fields
+            $patient->deleted_by = Auth::id(); // You would need to add a `deleted_by` column
+            $patient->save(); // Save changes before the record is actually deleted
         });
     }
 

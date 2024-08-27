@@ -23,9 +23,9 @@
                     <h3 class="page-title">Staff List</h3>
                     {{-- <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
                         data-bs-target="#modal-right"> <i class="fa fa-add"></i> Add New</button> --}}
-                    @if (Auth::user()->hasPermissionTo('create user')) 
+                    @if (Auth::user()->hasPermissionTo('staff create'))
                         <a type="button" class="waves-effect waves-light btn btn-primary"
-                        href="{{ route('staff.staff_list.create') }}"> <i class="fa fa-add"></i> Add New</a>
+                            href="{{ route('staff.staff_list.create') }}"> <i class="fa fa-add"></i> Add New</a>
                     @endif
                 </div>
             </div>
@@ -43,14 +43,14 @@
                                         <th width="10px">No</th>
                                         <th>Staff ID</th>
                                         <th>Photo</th>
-                                        <th>Name</th>
+                                        <th class="text-center">Name</th>
                                         <th>Role</th>
-                                        <th>Qualification</th>
+                                        <th class="text-center">Qualification</th>
                                         <!-- <th>Department</th> -->
-                                        <th>Phone Number</th>
+                                        <th width="100px">Phone Number</th>
                                         <!-- <th>Email</th> -->
                                         <th width="20px">Status</th>
-                                        <th width="150px">Action</th>
+                                        <th width="120px">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -111,7 +111,8 @@
                     },
                     {
                         data: 'name',
-                        name: 'name'
+                        name: 'name',
+                        className: 'text-start'
                     },
                     {
                         data: 'role',
@@ -119,9 +120,9 @@
                     },
                     {
                         data: 'qualification',
-                        name: 'qualification'
+                        name: 'qualification',
+                        className: 'text-start'
                     },
-
                     {
                         data: 'phone',
                         name: 'phone'

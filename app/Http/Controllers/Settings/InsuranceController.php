@@ -13,8 +13,8 @@ class InsuranceController extends Controller
     protected $commonService;
     public function __construct()
     {
-        $this->middleware('permission:insurance', ['only' => ['index', 'create', 'store', 'update', 'edit', 'destroy']]);
-        
+        $this->middleware('permission:settings insurance', ['only' => ['index', 'create', 'store', 'update', 'edit', 'destroy']]);
+
     }
 
     /**
@@ -59,16 +59,17 @@ class InsuranceController extends Controller
      */
     public function store(InsuranceCompanyRequest $request)
     {
-        
+
         try {
             // Create a new department instance
             $insurance = new InsuranceCompany();
             // $department->department = $request->input('department');
             // Capitalize each word in the department name before assigning it
-            $insurance->company_name = ucwords(strtolower($request->input('company_name')));
+            // $insurance->company_name = ucwords(strtolower($request->input('company_name')));
+            $insurance->company_name = $request->input('company_name');
             $insurance->claim_type = ucwords(strtolower($request->input('claim_type')));
             $insurance->status = $request->input('status');
-            
+
             // Save the department
             $i = $insurance->save();
             if ($i) {

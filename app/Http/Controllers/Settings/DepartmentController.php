@@ -19,7 +19,7 @@ class DepartmentController extends Controller
 
     public function __construct()
     {
-        $this->middleware('permission:departments', ['only' => ['index', 'create', 'store', 'update', 'edit', 'destroy']]);
+        $this->middleware('permission:settings departments', ['only' => ['index', 'create', 'store', 'update', 'edit', 'destroy']]);
         
     }
 

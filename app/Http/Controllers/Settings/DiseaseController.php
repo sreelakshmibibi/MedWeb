@@ -13,7 +13,7 @@ class DiseaseController extends Controller
 
     public function __construct()
     {
-        $this->middleware('permission:diseases', ['only' => ['index', 'store', 'update', 'edit', 'destroy']]);
+        $this->middleware('permission:settings diseases', ['only' => ['index', 'store', 'update', 'edit', 'destroy']]);
         
     }
     /**

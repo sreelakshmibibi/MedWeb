@@ -12,12 +12,21 @@ use App\Services\DoctorAvaialbilityService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
 class AppointmentController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:appointments', ['only' => ['index']]);
+        $this->middleware('permission:appointment create', ['only' => ['store']]);
+        $this->middleware('permission:appointment reschedule', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:appointment cancel', ['only' => ['destroy']]);
+
+    }
     /**
      * Display a listing of the resource.
      */
@@ -31,8 +40,26 @@ class AppointmentController extends Controller
 
         if ($request->ajax()) {
             $selectedDate = $request->input('selectedDate');
-            $appointments = Appointment::whereDate('app_date', $selectedDate)
-                ->with(['patient', 'doctor', 'branch'])
+
+            // $query = Appointment::whereDate('app_date', $selectedDate)
+            //     ->with(['patient', 'doctor', 'branch']);
+
+            // // Filter by doctor if the authenticated user is a doctor
+            // // if (Auth::user()->is_doctor) {
+            // //     $query->where('doctor_id', Auth::user()->id);
+            // // }
+
+            // // Get appointments
+            // $appointments = $query->get();
+
+            $appointments = Appointment::whereDate('app_date', $selectedDate);
+            if (Auth::user()->is_doctor) {
+                if (!Auth::user()->is_admin) {
+                    $appointments = $appointments->where('doctor_id', Auth::user()->id);
+                }
+            }
+            $appointments = $appointments->with(['patient', 'doctor', 'branch'])
+                ->orderBy('token_no', 'ASC')
                 ->get();
 
             return DataTables::of($appointments)
@@ -73,18 +100,6 @@ class AppointmentController extends Controller
                     return $row->patient->phone;
                 })
                 ->addColumn('status', function ($row) {
-                    // $statusMap = [
-                    //     AppointmentStatus::SCHEDULED => 'badge-success',
-                    //     AppointmentStatus::WAITING => 'badge-warning',
-                    //     AppointmentStatus::UNAVAILABLE => 'badge-warning-light',
-                    //     AppointmentStatus::CANCELLED => 'badge-danger',
-                    //     AppointmentStatus::COMPLETED => 'badge-success-light',
-                    //     AppointmentStatus::BILLING => 'badge-primary',
-                    //     AppointmentStatus::PROCEDURE => 'badge-secondary',
-                    //     AppointmentStatus::MISSED => 'badge-danger-light',
-                    //     AppointmentStatus::RESCHEDULED => 'badge-info',
-                    // ];
-    
                     $statusMap = [
                         AppointmentStatus::SCHEDULED => 'text-success',
                         AppointmentStatus::WAITING => 'text-warning',
@@ -111,20 +126,27 @@ class AppointmentController extends Controller
                     $base64Id = base64_encode($row->id);
                     $idEncrypted = Crypt::encrypt($base64Id);
                     // Check if the appointment date is less than the selected date
-                    if ($row->app_date < date('Y-m-d') && $row->app_status == AppointmentStatus::COMPLETED) {
-                        // If appointment date is less than the selected date, show view icon
-                        $buttons[] = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa-solid fa-eye'></i></a>";
-                    } elseif ($row->app_date == date('Y-m-d')) {
-                        // Otherwise, show treatment icon
-                        $buttons[] = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa-solid fa-stethoscope'></i></a>";
-                    } else {
-                        $buttons[] = '';
+                    if (Auth::user()->can('treatments') && (Auth::user()->id == $row->doctor_id || Auth::user()->is_admin)) {
+                        if ($row->app_date < date('Y-m-d') && $row->app_status == AppointmentStatus::COMPLETED) {
+                            // If appointment date is less than the selected date, show view icon
+                            $buttons[] = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa-solid fa-eye'></i></a>";
+                        } elseif ($row->app_date == date('Y-m-d')) {
+                            // Otherwise, show treatment icon
+                            $buttons[] = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa-solid fa-stethoscope'></i></a>";
+                        } else {
+                            $buttons[] = '';
+                        }
                     }
-                    $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1' title='follow up' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>";
+                    if (Auth::user()->can('appointment create')) {
+                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1' title='follow up' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>";
+                    }
                     if ($row->app_status != AppointmentStatus::COMPLETED) {
-
-                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-reschedule btn-xs me-1' title='reschedule' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' data-bs-target='#modal-reschedule'><i class='fa-solid fa-calendar-days'></i></button>";
-                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-xs' id='btn-cancel' data-bs-toggle='modal' data-bs-target='#modal-cancel' data-id='{$row->id}' title='cancel'><i class='fa fa-times'></i></button>";
+                        if (Auth::user()->can('appointment reschedule')) {
+                            $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-reschedule btn-xs me-1' title='reschedule' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' data-bs-target='#modal-reschedule'><i class='fa-solid fa-calendar-days'></i></button>";
+                        }
+                        if (Auth::user()->can('appointment cancel')) {
+                            $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-xs' id='btn-cancel' data-bs-toggle='modal' data-bs-target='#modal-cancel' data-id='{$row->id}' title='cancel'><i class='fa fa-times'></i></button>";
+                        }
                     }
                     if ($row->app_status == AppointmentStatus::COMPLETED) {
                         $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-secondary btn-treatment-pdf-generate btn-xs me-1' title='Download Treatment Summary' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}'  data-bs-target='#modal-download'><i class='fa fa-download'></i></button>";
@@ -143,7 +165,7 @@ class AppointmentController extends Controller
         $firstBranchId = $clinicBranches->first()?->id;
         $currentDayName = Carbon::now()->englishDayOfWeek;
         $doctorAvailabilityService = new DoctorAvaialbilityService();
-        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($firstBranchId, $currentDayName);
+        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($firstBranchId, $currentDayName, date('Y-m-d'));
         $appointmentTypes = AppointmentType::all();
 
         return view('appointment.index', compact('clinicBranches', 'firstBranchId', 'currentDayName', 'workingDoctors', 'appointmentTypes'));
@@ -166,7 +188,7 @@ class AppointmentController extends Controller
             $tokenNo = $commonService->generateTokenNo($doctorId, $appDate);
             $clinicBranchId = $request->input('clinic_branch_id');
             // Check if an appointment with the same date, time, and doctor exists
-            $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId);
+            $existingAppointment = $commonService->checkexisting($doctorId, $appDate, $appTime, $clinicBranchId, $patientId);
             $existingAppointmentPatient = $doctorAvailabilityService->checkAppointmentDate($clinicBranchId, $appDate, $doctorId, $patientId);
             if ($existingAppointmentPatient) {
                 return response()->json(['errorPatient' => 'An appointment already exists for the given date and doctor.'], 422);
@@ -247,7 +269,7 @@ class AppointmentController extends Controller
             $commonService = new CommonService();
             $tokenNo = $commonService->generateTokenNo($doctorId, $appDate);
             // Check if an appointment with the same date, time, and doctor exists
-            $appointmentExists = $commonService->checkexisting($doctorId, $appDate, $appTime, $existingAppointment->app_branch);
+            $appointmentExists = $commonService->checkexisting($doctorId, $appDate, $appTime, $existingAppointment->app_branch, $existingAppointment->patient_id);
 
             if ($appointmentExists) {
                 return response()->json(['error' => 'An appointment already exists for the given date, time, and doctor.'], 422);

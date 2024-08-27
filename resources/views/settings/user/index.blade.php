@@ -20,7 +20,7 @@
                             <th>Email</th>
                             <th>Roles</th>
                             <th width="200px">
-                                @can('create user')
+                                @can('staff create')
                                     {{-- <a href="{{ url('users/create') }}" class="btn btn-sm btn-primary"><i
                                             class="fa fa-plus"> </i> Add
                                         User</a> --}}
@@ -64,7 +64,16 @@
                 },
                 {
                     data: 'name',
-                    name: 'name'
+                    name: 'name',
+                    render: function(data, type, row, meta) {
+                        if (data) {
+                            return data
+                                .replace(/&lt;br\s*\/?&gt;/gi, ' ')
+                                .replace(/<br\s*\/?>/gi, ' ')
+                                .trim();
+                        }
+                        return data;
+                    }
                 },
                 {
                     data: 'email',

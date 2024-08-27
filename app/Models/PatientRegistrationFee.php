@@ -14,10 +14,20 @@ class PatientRegistrationFee extends Model
 
     protected $fillable = [
         'bill_id',
+        'appointment_id',
         'patient_id',
         'amount',
-        'paid_at',
+        'tax_percentile',
+        'tax',
+        'amount_to_be_paid',
         'payment_method',
+        'gpay',
+        'cash',
+        'card',
+        'card_pay_id',
+        'amount_paid',
+        'balance_given',
+        'bill_paid_date',
         'created_by',
         'updated_by',
         'status',
@@ -44,6 +54,11 @@ class PatientRegistrationFee extends Model
         return $this->belongsTo(PatientProfile::class, 'patient_id', 'patient_id');
     }
 
+    public function appointment()
+    {
+        return $this->belongsTo(Appointment::class, 'appointment_id');
+    }
+
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -52,5 +67,10 @@ class PatientRegistrationFee extends Model
     public function updatedBy()
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function cardPay()
+    {
+        return $this->belongsTo(CardPay::class, 'card_pay_id');
     }
 }
