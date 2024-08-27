@@ -10,7 +10,6 @@
                 </div>
             </div>
             <div class="box-body px-0 ">
-
                 <div class="row">
                     <div class="col-md-3 col-lg-2">
                         <div class="form-group">
@@ -65,8 +64,8 @@
                         <th>Patient Name</th>
                         <th>Table Name</th>
                         <th>Action</th>
-                        <th>Old Data</th>
-                        <th>New Data</th>
+                        <th class="text-center">Old Data</th>
+                        <th class="text-center">New Data</th>
                         <th>Changed By</th>
                     </tr>
                 </thead>
@@ -124,13 +123,14 @@
                     columns: [{
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex',
+                            className: 'align-top',
                             orderable: false,
                             searchable: false
                         },
                         {
                             data: 'date',
                             name: 'date',
-                            className: 'min-w-60',
+                            className: 'min-w-60 align-top',
                             render: function(data, type, row) {
                                 if (data) {
                                     var date = new Date(data);
@@ -148,27 +148,33 @@
                         },
                         {
                             data: 'billId',
-                            name: 'billId'
+                            name: 'billId',
+                            className: 'align-top',
                         },
                         {
                             data: 'patientId',
-                            name: 'patientId'
+                            name: 'patientId',
+                            className: 'align-top',
                         },
                         {
                             data: 'patientName',
-                            name: 'patientName'
+                            name: 'patientName',
+                            className: 'min-w-120 align-top',
                         },
                         {
                             data: 'tableName',
-                            name: 'tableName'
+                            name: 'tableName',
+                            className: 'align-top',
                         },
                         {
                             data: 'action',
-                            name: 'action'
+                            name: 'action',
+                            className: 'align-top',
                         },
                         {
                             data: 'oldData',
                             name: 'oldData',
+                            className: 'text-start align-top',
                             render: function(data, type, row) {
                                 // Render the oldData as HTML
                                 return data ? $('<div/>').html(data).text() : '-';
@@ -177,13 +183,15 @@
                         {
                             data: 'newData',
                             name: 'newData',
+                            className: 'text-start align-top',
                             render: function(data, type, row) {
                                 return data ? $('<div/>').html(data).text() : '-';
                             }
                         },
                         {
                             data: 'changedBy',
-                            name: 'changedBy'
+                            name: 'changedBy',
+                            className: 'align-top',
                         }
                     ],
                     dom: 'Bfrtlp',

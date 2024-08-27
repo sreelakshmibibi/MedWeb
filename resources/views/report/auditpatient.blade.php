@@ -47,7 +47,7 @@
         </div>
     </div>
     <div class="auditpatientdiv container" style="display: none;">
-        <div class="table-responsive" style=" width: 100%; overflow-x: auto;">
+        <div class="table-responsive" style="width:100%; overflow-x: auto;">
             <table class="table table-bordered table-hover table-striped mb-0 data-table text-center"
                 id="auditPatientTable" width="100%">
                 <thead class="bg-primary-light">
@@ -55,11 +55,11 @@
                         <th>#</th>
                         <th>Date</th>
                         <th>Patient ID</th>
-                        <th>Patient Name</th>
+                        <th width="200px">Patient Name</th>
                         <th>Table Name</th>
                         <th>Action</th>
-                        <th>Old Data</th>
-                        <th>New Data</th>
+                        <th class="text-center">Old Data</th>
+                        <th class="text-center">New Data</th>
                         <th>Changed By</th>
                     </tr>
                 </thead>
@@ -113,13 +113,14 @@
                     columns: [{
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex',
+                            className: 'align-top',
                             orderable: false,
                             searchable: false
                         },
                         {
                             data: 'date',
                             name: 'date',
-                            className: 'min-w-60',
+                            className: 'min-w-60 align-top',
                             render: function(data, type, row) {
                                 if (data) {
                                     var date = new Date(data);
@@ -137,23 +138,28 @@
                         },
                         {
                             data: 'patientId',
-                            name: 'patientId'
+                            name: 'patientId',
+                            className: 'align-top',
                         },
                         {
                             data: 'patientName',
-                            name: 'patientName'
+                            name: 'patientName',
+                            className: 'min-w-120 text-start align-top',
                         },
                         {
                             data: 'tableName',
-                            name: 'tableName'
+                            name: 'tableName',
+                            className: 'align-top',
                         },
                         {
                             data: 'action',
-                            name: 'action'
+                            name: 'action',
+                            className: 'align-top',
                         },
                         {
                             data: 'oldData',
                             name: 'oldData',
+                            className: 'min-w-200 text-start align-top',
                             render: function(data, type, row) {
                                 // Render the oldData as HTML
                                 return data ? $('<div/>').html(data).text() : '-';
@@ -162,13 +168,15 @@
                         {
                             data: 'newData',
                             name: 'newData',
+                            className: 'text-start align-top',
                             render: function(data, type, row) {
                                 return data ? $('<div/>').html(data).text() : '-';
                             }
                         },
                         {
                             data: 'changedBy',
-                            name: 'changedBy'
+                            name: 'changedBy',
+                            className: 'align-top',
                         }
                     ],
                     dom: 'Bfrtlp',
