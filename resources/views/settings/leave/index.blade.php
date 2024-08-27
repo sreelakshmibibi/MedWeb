@@ -38,13 +38,13 @@
                                     <tr>
                                         <th width="10px">No</th>
                                         @if (Auth::user()->can('leave approve'))
-                                            <th>Staff</th>
+                                            <th width="150px">Staff</th>
                                         @endif
-                                        <th width="10%">Leave Type</th>
-                                        <th width="25%">Dates (Days)</th>
-                                        <th width="30%">Reason</th>
-                                        <th width="20px">Status</th>
-                                        <th width="200px">Action</th>
+                                        <th>Leave Type</th>
+                                        <th>Dates (Days)</th>
+                                        <th>Reason</th>
+                                        <th>Status</th>
+                                        <th width="150px">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -67,6 +67,7 @@
 
 
     <script type="text/javascript">
+        var table;
         var today = new Date().toISOString().split('T')[0];
         document.getElementById('leave_from').setAttribute('min', today);
         document.getElementById('leave_to').setAttribute('min', today);
@@ -74,7 +75,7 @@
         document.getElementById('editleave_to').setAttribute('min', today);
 
         jQuery(function($) {
-            var table = $(".data-table").DataTable({
+            table = $(".data-table").DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('leave') }}",
@@ -159,8 +160,9 @@
                         "_token": "{{ csrf_token() }}"
                     },
                     success: function(response) {
-                        $('#modal-approve').modal('hide');
-                        table.draw();
+                        // $('#modal-approve').modal('hide');
+                        table.ajax.reload();
+                        // table.draw();
                         $('#successMessage').text(response.success).fadeIn().delay(3000)
                             .fadeOut();
                     },
@@ -175,12 +177,13 @@
             $(document).on('click', '.btn-reject', function() {
                 var leaveId = $(this).data('id');
                 $('#reject_leave_id').val(leaveId);
-                $('#modal-reject').modal('show');
+                // $('#modal-reject').modal('show');
             });
 
-            $('#btn-confirm-reject').click(function() {
+            $('#btn-confirm-reject').click(function(event) {
                 var leaveId = $('#reject_leave_id').val();
                 var reason = $('#reject_reason').val();
+                event.preventDefault();
 
                 if (reason.length === 0) {
                     $('#reject_reason').addClass('is-invalid');
@@ -196,13 +199,38 @@
                         "reject_reason": reason
                     },
                     success: function(response) {
-                        table.draw();
-                        $('#modal-reject').modal('hide');
+                        table.ajax.reload();
+                        // table.draw();
+                        // $('#modal-reject').modal('hide');
+
+                        var modalElement = document.getElementById('modal-reject');
+                        var modal = bootstrap.Modal.getInstance(
+                            modalElement); // Get existing instance
+
+                        if (modal) {
+                            modal.hide(); // Hide the modal
+                        } else {
+                            // If modal instance does not exist, create a new instance and hide it
+                            var newModal = new bootstrap.Modal(modalElement);
+                            newModal.hide();
+                        }
                         $('#successMessage').text(response.success).fadeIn().delay(3000)
                             .fadeOut();
                     },
                     error: function(xhr) {
-                        $('#modal-reject').modal('hide');
+                        // $('#modal-reject').modal('hide');
+
+                        var modalElement = document.getElementById('modal-reject');
+                        var modal = bootstrap.Modal.getInstance(
+                            modalElement); // Get existing instance
+
+                        if (modal) {
+                            modal.hide(); // Hide the modal
+                        } else {
+                            // If modal instance does not exist, create a new instance and hide it
+                            var newModal = new bootstrap.Modal(modalElement);
+                            newModal.hide();
+                        }
                         console.log("Error:", xhr.responseJSON.message);
                     }
                 });
@@ -224,7 +252,8 @@
                         "_token": "{{ csrf_token() }}"
                     },
                     success: function(response) {
-                        table.draw();
+                        table.ajax.reload();
+                        // table.draw();
                         $('#successMessage').text('Leave application deleted successfully')
                             .fadeIn().delay(3000).fadeOut();
                     },

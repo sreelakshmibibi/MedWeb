@@ -11,13 +11,13 @@
                 <div class="modal-body">
                     <p>Reject leave request?</p>
                     <input type="hidden" id="reject_leave_id" name="reject_leave_id" value="">
-                    <textarea  class="form-control" id="reject_reason" name="reject_reason" placeholder="Reason for leave rejection" required></textarea>
+                    <textarea class="form-control" id="reject_reason" name="reject_reason" placeholder="Reason for leave rejection"
+                        required></textarea>
                     <div id="rejectionError" class="invalid-feedback"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger float-end" data-bs-dismiss="modal"
-                        id="btn-confirm-reject">Reject</button>
+                    <button type="submit" class="btn btn-danger float-end" id="btn-confirm-reject">Reject</button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -25,3 +25,15 @@
         <!-- /.modal-dialog -->
     </div>
 </form>
+
+<script>
+    $(function() {
+        // Reset form and errors on modal close
+        $('#modal-reject').on('hidden.bs.modal', function() {
+            $('#form-approve')[0].reset();
+            $('#reject_reason').val('');
+            $('#reject_reason').removeClass('is-invalid');
+            $('#rejectionError').text('');
+        });
+    });
+</script>
