@@ -25,7 +25,7 @@ class AppointmentController extends Controller
         $this->middleware('permission:appointment create', ['only' => ['store']]);
         $this->middleware('permission:appointment reschedule', ['only' => ['edit', 'update']]);
         $this->middleware('permission:appointment cancel', ['only' => ['destroy']]);
-        
+
     }
     /**
      * Display a listing of the resource.
@@ -40,18 +40,27 @@ class AppointmentController extends Controller
 
         if ($request->ajax()) {
             $selectedDate = $request->input('selectedDate');
-           
-            $query = Appointment::whereDate('app_date', $selectedDate)
-                ->with(['patient', 'doctor', 'branch']);
 
-            // Filter by doctor if the authenticated user is a doctor
-            // if (Auth::user()->is_doctor) {
-            //     $query->where('doctor_id', Auth::user()->id);
-            // }
+            // $query = Appointment::whereDate('app_date', $selectedDate)
+            //     ->with(['patient', 'doctor', 'branch']);
 
-            // Get appointments
-            $appointments = $query->get();
-            
+            // // Filter by doctor if the authenticated user is a doctor
+            // // if (Auth::user()->is_doctor) {
+            // //     $query->where('doctor_id', Auth::user()->id);
+            // // }
+
+            // // Get appointments
+            // $appointments = $query->get();
+
+            $appointments = Appointment::whereDate('app_date', $selectedDate);
+            if (Auth::user()->is_doctor) {
+                if (!Auth::user()->is_admin) {
+                    $appointments = $appointments->where('doctor_id', Auth::user()->id);
+                }
+            }
+            $appointments = $appointments->with(['patient', 'doctor', 'branch'])
+                ->orderBy('token_no', 'ASC')
+                ->get();
 
             return DataTables::of($appointments)
                 ->addIndexColumn()
@@ -260,7 +269,7 @@ class AppointmentController extends Controller
             $commonService = new CommonService();
             $tokenNo = $commonService->generateTokenNo($doctorId, $appDate);
             // Check if an appointment with the same date, time, and doctor exists
-            $appointmentExists = $commonService->checkexisting($doctorId, $appDate, $appTime, $existingAppointment->app_branch,$existingAppointment->patient_id);
+            $appointmentExists = $commonService->checkexisting($doctorId, $appDate, $appTime, $existingAppointment->app_branch, $existingAppointment->patient_id);
 
             if ($appointmentExists) {
                 return response()->json(['error' => 'An appointment already exists for the given date, time, and doctor.'], 422);

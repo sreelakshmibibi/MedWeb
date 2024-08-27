@@ -122,7 +122,7 @@ use Illuminate\Support\Facades\Crypt;
                                                     }
                                                 @endphp
 
-                                                <div class="col-xl-4 col-12">
+                                                <div class="col-xl-4 col-md-4 col-12">
                                                     <div class="box box-body no-border p-0 mb-0">
                                                         <div class="fs-14 flexbox align-items-center">
                                                             <span>Tokens</span>
