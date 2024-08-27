@@ -57,7 +57,8 @@
     }
     .tooth_body {
         border: 1px solid;
-        overflow: scroll;
+        /* overflow: scroll; */
+        overflow-x: scroll;
         justify-content: flex-start;
         width: calc(75vw);
     }
@@ -100,7 +101,8 @@
     .tooth_body {
         width: 65%;
         border: 1px solid;
-        overflow: scroll;
+        /* overflow: scroll; */
+        overflow-x: scroll;
         justify-content: flex-start;
         width: calc(65vw);
     }

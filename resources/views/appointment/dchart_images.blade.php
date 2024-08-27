@@ -199,13 +199,13 @@ $lower_teethImages = [
                     </div>
                 </div>
             </div>
-            <!-- <div class="row position-absolute" style="left:2rem; top:0;">
+            <div class="row position-absolute" style="left:2rem; top:0;">
                 {{-- <div class="row position-absolute" style="left:2rem; top:-1.5rem;"> --}}
                 <div class="select-div">
                     <input type="checkbox" id="checkbox_all" class="filled-in chk-col-success">
-                    <label for="checkbox_all">Select All</label>
+                    <label for="checkbox_all">Other</label>
                 </div>
-            </div> -->
+            </div>
             <div>
                 <ul class="list-style-none ps-0">
                     <li><span class="badge badge-dot badge-danger"></span>&nbsp; Treatment ongoing</li>

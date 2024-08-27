@@ -310,7 +310,8 @@
     .tooth_body {
         width: 60% !important;
         border: 1px solid;
-        overflow: scroll;
+        /* overflow: scroll; */
+        overflow-x: scroll;
         justify-content: flex-start;
     }
 }
