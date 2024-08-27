@@ -254,7 +254,9 @@ date_default_timezone_set('Asia/Kolkata');
                             @case(TeethRow::Row4)
                                 Row: {{ TeethRow::Row_4_Desc }}
                             @break
-
+                            @case(TeethRow::RowAll)
+                                Row: {{ TeethRow::Row_All_Desc }};
+                            @break
                             @default
                                 Unknown Row
                         @endswitch

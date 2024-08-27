@@ -202,7 +202,7 @@ $lower_teethImages = [
             <div class="row position-absolute" style="left:2rem; top:0;">
                 {{-- <div class="row position-absolute" style="left:2rem; top:-1.5rem;"> --}}
                 <div class="select-div">
-                    <input type="checkbox" id="checkbox_all" class="filled-in chk-col-success">
+                    <input type="checkbox" id="checkbox_all" class="filled-in chk-col-success" value="<?= TeethRow::RowAll ?>">
                     <label for="checkbox_all">Other</label>
                 </div>
             </div>
@@ -633,6 +633,32 @@ $lower_teethImages = [
             }
         });
 
+        if ($('#checkbox_all').is(':checked')) {
+            $('.exam_toothdiv').hide();
+            $('#row_id').val(5);
+            getRowData(5, patientId, appId);
+            $('#modal-teeth').modal('show');
+            
+        } else {
+            $('.exam_toothdiv').show();
+            
+        }
+
+
+        $('#checkbox_all').change(function() {
+            if ($(this).is(':checked')) {
+                $('.exam_toothdiv').hide();
+                $('.exam_chiefComplaint').show();
+                $('#row_id').val(5);
+                getRowData(5, patientId, appId);
+                $('#modal-teeth').modal('show');
+                
+            } else {
+                $('.exam_toothdiv').show();
+                $('.exam_chiefComplaint').hide();
+                
+            }
+        });
 
         if ($('#checkbox_row1').is(':checked')) {
             $('.exam_toothdiv').hide();

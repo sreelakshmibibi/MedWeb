@@ -194,6 +194,9 @@ class TreatmentController extends Controller
                                 case TeethRow::Row4:
                                     $teethName = 'Row : ' . TeethRow::Row_4_Desc;
                                     break;
+                                case TeethRow::RowAll:
+                                    $teethName = TeethRow::Row_All_Desc;
+                                    break;
                                 default:
                                     $teethName = '';
                                     break;
@@ -254,7 +257,7 @@ class TreatmentController extends Controller
     public function fetchExistingExamination($toothId, $appId, $patientId)
     {
         $toothExamination = [];
-        if (in_array($toothId, [1, 2, 3, 4])) {
+        if (in_array($toothId, [1, 2, 3, 4, 5])) {
             $toothExamination = ToothExamination::where('row_id', $toothId)
                 ->where('patient_id', $patientId)
                 ->where('app_id', $appId)
@@ -306,7 +309,7 @@ class TreatmentController extends Controller
         try {
             DB::beginTransaction();
             $checkExists = [];
-            if (in_array($request->row_id, [1, 2, 3, 4])) {
+            if (in_array($request->row_id, [1, 2, 3, 4, 5])) {
                 
                 $checkExists = ToothExamination::where('row_id', $request->row_id)
                     ->where('patient_id', $request->patient_id)
