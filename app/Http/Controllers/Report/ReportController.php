@@ -1153,15 +1153,7 @@ class ReportController extends Controller
         $startDate = $request->auditPatientFromDate;
         $endDate = $request->auditPatientToDate;
         $patientId = $request->auditPatientId;
-        // Log::info('startDate Data:' . $startDate);
-        // Log::info('endDate:' . $endDate);
-        // DB::listen(function ($query) {
-        //     Log::info('SQL Query:', [
-        //         'query' => $query->sql,
-        //         'bindings' => $query->bindings,
-        //         'time' => $query->time,
-        //     ]);
-        // });
+
         $query = DB::table('patient_profile_audits')
             ->join('users', 'patient_profile_audits.changed_by', '=', 'users.id')
             ->join('patient_profiles', 'patient_profile_audits.patient_id', '=', 'patient_profiles.patient_id')
@@ -1170,12 +1162,12 @@ class ReportController extends Controller
                 'users.name as changed_by_name',
                 'patient_profiles.first_name',
                 'patient_profiles.last_name'
-            );
-            
+            )->orderBy('patient_profile_audits.id');
+
         if ($startDate && $endDate) {
             $query->whereBetween(DB::raw('DATE(patient_profile_audits.created_at)'), [$startDate, $endDate]);
         }
-        
+
         if ($patientId) {
             $query->where('patient_profile_audits.patient_id', $patientId);
         }
@@ -1200,14 +1192,104 @@ class ReportController extends Controller
                 return $row->action ?? '';
             })
             ->addColumn('oldData', function ($row) {
-                return $row->old_data ?? '';
-                
+                //return $row->old_data ?? '';
+                return $this->formatAuditData($row->old_data);
+
             })
             ->addColumn('newData', function ($row) {
-                return $row->new_data ?? '';
+                //return $row->new_data ?? '';
+                return $this->formatAuditData($row->new_data);
+
             })
             ->addColumn('changedBy', function ($row) {
                 return str_replace('<br>', ' ', $row->changed_by_name ?? '');
+            })
+            ->make(true);
+    }
+
+    public function formatAuditData($dataString)
+    {
+        if (is_null($dataString)) {
+            return 'N/A';
+        }
+
+        // Split the string into key-value pairs
+        $dataPairs = explode(',', $dataString);
+
+        // Group them into a formatted string
+        $formattedData = '<ul>';
+        for ($i = 0; $i < count($dataPairs); $i += 2) {
+            $key = trim($dataPairs[$i]);
+            $value = isset($dataPairs[$i + 1]) ? trim($dataPairs[$i + 1]) : '';
+            $formattedData .= '<li><strong>' . $key . ' - </strong> ' . $value . '</li>';
+        }
+        $formattedData .= '</ul>';
+
+        return $formattedData;
+    }
+
+    public function auditBill(Request $request)
+    {
+        $startDate = $request->input('auditBillFromDate');
+        $endDate = $request->input('auditBillToDate');
+        $patientId = $request->input('auditBillPatientId');
+        $billNo = $request->input('auditBillNo');
+
+        $query = DB::table('patient_billing_audits')
+            ->join('users', 'patient_billing_audits.changed_by', '=', 'users.id')
+            ->join('patient_profiles', 'patient_billing_audits.patient_id', '=', 'patient_profiles.patient_id')
+            ->select(
+                'patient_billing_audits.*',
+                'users.name as changed_by_name',
+                'patient_profiles.first_name',
+                'patient_profiles.last_name'
+            )->orderBy('patient_billing_audits.id');
+
+        // Apply filters based on the provided input
+        if ($startDate && $endDate) {
+            $query->whereBetween(DB::raw('DATE(patient_billing_audits.created_at)'), [$startDate, $endDate]);
+        }
+
+        if ($patientId) {
+            $query->where('patient_billing_audits.patient_id', $patientId);
+        }
+
+        if ($billNo) {
+            $query->where('patient_billing_audits.billing_id', $billNo);
+        }
+        $audits = $query->get();
+
+        // Format data for DataTables
+        return DataTables::of($audits)
+            ->addIndexColumn()
+            ->addColumn('date', function ($row) {
+                return $row->created_at;
+            })
+            ->addColumn('billId', function ($row) {
+                return $row->billing_id;
+            })
+            ->addColumn('patientId', function ($row) {
+                return $row->patient_id;
+            })
+            ->addColumn('patientName', function ($row) {
+                return $row->first_name . ' ' . $row->last_name;
+            })
+            ->addColumn('tableName', function ($row) {
+                return $row->billing_type;
+            })
+            ->addColumn('action', function ($row) {
+                return $row->action;
+            })
+            ->addColumn('oldData', function ($row) {
+                //return $row->old_data;
+                return $this->formatAuditData($row->old_data);
+            })
+            ->addColumn('newData', function ($row) {
+                //return $row->new_data;
+                return $this->formatAuditData($row->new_data);
+            })
+            ->addColumn('changedBy', function ($row) {
+                return $row->changed_by_name;
             })
             ->make(true);
     }
