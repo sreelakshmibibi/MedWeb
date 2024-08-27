@@ -499,5 +499,18 @@
         function reloadTableData() {
             table.ajax.reload();
         }
+        $(document).on('click', '#smsbtn', function() {
+            $.ajax({
+                url: '{{ route("send.sms") }}',
+                type: 'get',
+                success: function(response) {
+                    alert(response.success); // Show success message
+                },
+                error: function(xhr) {
+                    alert(xhr.responseJSON.error); // Show error message
+                }
+            });
+        });
+
     </script>
 @endsection

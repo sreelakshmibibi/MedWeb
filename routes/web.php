@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Appointment\AppointmentController;
 use App\Http\Controllers\Appointment\TreatmentController;
+use App\Http\Controllers\AuditController;
 use App\Http\Controllers\Auth\StaffVerificationController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\Billing\BillingController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\TreatmentCostController;
 use App\Http\Controllers\Settings\TreatmentPlanController;
 use App\Http\Controllers\Settings\UserController;
+use App\Http\Controllers\SmsController;
 use App\Http\Controllers\Staff\StaffListController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -228,6 +230,8 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/report/service', [ReportController::class, 'service'])->name('report.service');
     Route::post('/report/patient', [ReportController::class, 'patient'])->name('report.patient');
     Route::post('/report/disease', [ReportController::class, 'disease'])->name('report.disease');
+    Route::post('/report/audit_cancell', [AuditController::class, 'auditCancell'])->name('report.audit_cancell');
+
 
     Route::get('/appointments-by-hour', [App\Http\Controllers\HomeController::class, 'getAppointmentsByHour'])->name('appointments-by-hour');
     Route::get('/appointments-by-month', [App\Http\Controllers\HomeController::class, 'getAppointmentsByMonth'])->name('appointments-by-month');
@@ -242,5 +246,6 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/leave/reject/{leave}', [LeaveController::class, 'rejectLeave'])->name('leave.reject');
 
     Route::get('/db_backup', [BackupController::class, 'index'])->name('settings.db_backup');
+    Route::post('send-sms', [SmsController::class, 'sendSms'])->name('send.sms');
 
 });
