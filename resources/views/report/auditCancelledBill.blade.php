@@ -5,7 +5,7 @@
             <div class="box-header p-0">
                 <div class="d-flex align-items-center justify-content-between">
                     <h4 class="box-title ">
-                        Audit Staff
+                        Cancelled Bills
                     </h4>
                 </div>
             </div>
@@ -31,8 +31,9 @@
                     </div>
                     <div class="col-md-3 col-lg-2">
                         <div class="form-group">
-                            <label class="form-label" for="branch">Branch</label>
-                            <select class="form-control " type="text" id="branch" name="branch">
+                            <label class="form-label" for="branch">Branch<span class="text-danger">
+                            *</span></label></label>
+                            <select class="form-control " type="text" id="branch" name="branch" required>
                                 <option value="">All</option>
                                 @foreach ($branches as $branch)
                                     <option value="{{ $branch['id'] }}"> {{ $branch['name'] }}</option>
@@ -69,69 +70,27 @@
                         </div>
                     </div>
 
-                    <div class="col-md-3 col-lg-2">
-                        <div class="form-group">
-                            <label class="form-label" for="outstanding">Outstanding</label>
-                            <select class="form-control " type="text" id="outstanding" name="outstanding">
-                                <option value="">All</option>
-                                @foreach ($billStaffs as $billStaff)
-                                    <option value="{{ $billStaff->id }}">
-                                        {{ str_replace('<br>', ' ', $billStaff->name) }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3 col-lg-2">
-                        <div class="form-group">
-                            <label class="form-label" for="combooffer">Combo Offer</label>
-                            <select class="form-control " type="text" id="combooffer" name="combooffer">
-                                <option value="">All</option>
-                                @foreach ($comboOffers as $comboOffer)
-                                    <option value="{{ $comboOffer->id }}">
-                                        {{ $comboOffer->treatments->pluck('treat_name')->implode(', ') }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3 col-lg-2">
-                        <div class="form-group">
-                            <label class="form-label" for="registration">Registration</label>
-                            <select class="form-control " type="text" id="registration" name="registration">
-                                <option value="">All</option>
-                                @foreach ($billStaffs as $billStaff)
-                                    <option value="{{ $billStaff->id }}">
-                                        {{ str_replace('<br>', ' ', $billStaff->name) }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
                 </div>
 
             </div>
             <div class="box-footer p-3 px-0 text-end " style="border-radius: 0px;">
-                <button type="submit" class="btn btn-success" id="searchauditstaffbtn">
+                <button type="submit" class="btn btn-success" id="searchauditcancelBillbtn">
                     <i class="fa fa-search"></i> Search
                 </button>
             </div>
         </div>
     </div>
-    <div class="auditstaffdiv container" style="display: none;">
+    <div class="auditcancelBilldiv container" style="display: none;">
         <div class="table-responsive" style=" width: 100%;
     overflow-x: auto;">
             <table class="table table-bordered table-hover table-striped mb-0 data-table text-center"
-                id="collectionTable" width="100%">
+                id="auditcancelBillTable" width="100%">
                 <thead class="bg-primary-light">
                     <tr>
                         <th>#</th>
                         <th>Date</th>
                         <th>Patient ID</th>
-                        <th>Patient Name</th>
-                        <th>Branch</th>
-                        <th>Visit</th>
+                        <th>Bill No</th>
                         <th>Bill Type</th>
                         <th>Total</th>
                         <th>Discount</th>
@@ -143,8 +102,8 @@
                         <th>Total Paid</th>
                         <th>Balance Given</th>
                         <th>Outstanding</th>
-                        <th>Created By</th>
-                        <th>Updated By</th>
+                        <th>Cancelled By</th>
+                        <th>Reason</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -153,7 +112,7 @@
                 <tfoot>
                     <tr class="bt-3 border-primary">
                         {{-- <th colspan="7">Total:</th> --}}
-                        <th colspan="6"></th>
+                        <th colspan="5"></th>
                         <th>Total:</th>
                         <th id="total-sum"></th>
                         <th id="total-dis"></th>
@@ -177,10 +136,10 @@
     jQuery(function($) {
         var clinicBasicDetails = @json($clinicBasicDetails);
 
-        $('#searchauditstaffbtn').click(function(e) {
+        $('#searchauditcancelBillbtn').click(function(e) {
             e.preventDefault(); // Prevent form submission
 
-            $('.auditstaffdiv').show();
+            $('.auditcancelBilldiv').show();
         });
 
     });
