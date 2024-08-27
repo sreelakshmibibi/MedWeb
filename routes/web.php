@@ -231,7 +231,8 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/report/patient', [ReportController::class, 'patient'])->name('report.patient');
     Route::post('/report/disease', [ReportController::class, 'disease'])->name('report.disease');
     Route::post('/report/audit_cancell', [AuditController::class, 'auditCancell'])->name('report.audit_cancell');
-
+    Route::post('/report/audit_patient', [ReportController::class, 'auditPatient'])->name('report.auditPatient');
+    Route::post('/report/audit_bill', [ReportController::class, 'auditBill'])->name('report.auditBill');
 
     Route::get('/appointments-by-hour', [App\Http\Controllers\HomeController::class, 'getAppointmentsByHour'])->name('appointments-by-hour');
     Route::get('/appointments-by-month', [App\Http\Controllers\HomeController::class, 'getAppointmentsByMonth'])->name('appointments-by-month');

@@ -362,6 +362,9 @@ class TreatmentController extends Controller
             ]));
             $anatomyService = new AnatomyService();
             $anatomyImage = $anatomyService->getAnatomyImage($toothId, $occulusal_condn, $palatal_condn, $mesial_condn, $distal_condn, $buccal_condn);
+            if ((TreatmentType::find($request->treatment_id))->treat_name == "Tooth Extraction" ) {
+                $anatomyImage = "images/tooth/noteeth.svg";
+            }
             $toothExaminationEdit = ToothExamination::find($toothExamination->id);
             if ($request->hasFile('xray')) {
                 $toothExaminationEdit->xray = 1;

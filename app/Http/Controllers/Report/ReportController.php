@@ -894,14 +894,14 @@ class ReportController extends Controller
                 return $row->quantity ?? 0;
             })
             ->addColumn('total', function ($row) {
-                return $row->total ? $row->quantity*$row->total : 0 ;
+                return $row->total ? $row->quantity * $row->total : 0;
             })
             ->make(true);
-    }  
+    }
 
     public function patient(Request $request)
     {
-        
+
         $startDate = $request->patientFromDate;
         $endDate = $request->patientToDate;
         $branchId = $request->patientBranch;
@@ -911,32 +911,32 @@ class ReportController extends Controller
         $gender = $request->patientGender;
         $ageFrom = $request->patientAgeFrom;
         $ageTo = $request->patientAgeTo;
-        
+
         $query = DB::table('appointments')
-        ->select(
-            'appointments.app_date',
-            'appointments.app_branch',
-            'patient_profiles.first_name',
-            'patient_profiles.last_name',
-            'patient_profiles.date_of_birth',
-            'patient_profiles.gender',
-            'patient_profiles.phone',
-            'tooth_examinations.patient_id',
-            'tooth_examinations.disease_id',
-            'tooth_examinations.treatment_id',
-            'diseases.name as disease_name',
-            'treatment_types.treat_name as treatment_name',
-            'users.name as doctor_name',
-            'clinic_branches.clinic_address'
-        )
-        ->join('patient_profiles', 'appointments.patient_id', '=', 'patient_profiles.patient_id')
-        ->join('users', 'users.id', '=', 'appointments.doctor_id')
-        ->join('clinic_branches', 'clinic_branches.id', '=', 'appointments.app_branch')
-        ->join('tooth_examinations', 'appointments.id', '=', 'tooth_examinations.app_id')
-        ->join('diseases', 'tooth_examinations.disease_id', '=', 'diseases.id')
-        ->join('treatment_types', 'tooth_examinations.treatment_id', '=', 'treatment_types.id')
-        ->whereBetween('appointments.app_date', [$startDate, $endDate])
-        ->where('tooth_examinations.status', 'Y');
+            ->select(
+                'appointments.app_date',
+                'appointments.app_branch',
+                'patient_profiles.first_name',
+                'patient_profiles.last_name',
+                'patient_profiles.date_of_birth',
+                'patient_profiles.gender',
+                'patient_profiles.phone',
+                'tooth_examinations.patient_id',
+                'tooth_examinations.disease_id',
+                'tooth_examinations.treatment_id',
+                'diseases.name as disease_name',
+                'treatment_types.treat_name as treatment_name',
+                'users.name as doctor_name',
+                'clinic_branches.clinic_address'
+            )
+            ->join('patient_profiles', 'appointments.patient_id', '=', 'patient_profiles.patient_id')
+            ->join('users', 'users.id', '=', 'appointments.doctor_id')
+            ->join('clinic_branches', 'clinic_branches.id', '=', 'appointments.app_branch')
+            ->join('tooth_examinations', 'appointments.id', '=', 'tooth_examinations.app_id')
+            ->join('diseases', 'tooth_examinations.disease_id', '=', 'diseases.id')
+            ->join('treatment_types', 'tooth_examinations.treatment_id', '=', 'treatment_types.id')
+            ->whereBetween('appointments.app_date', [$startDate, $endDate])
+            ->where('tooth_examinations.status', 'Y');
 
         // Apply filters if provided
         if ($branchId) {
@@ -983,9 +983,9 @@ class ReportController extends Controller
             'users.name',
             'clinic_branches.clinic_address'
         )
-        ->orderBy('appointments.app_date')
-        ->orderBy('appointments.patient_id');
-    
+            ->orderBy('appointments.app_date')
+            ->orderBy('appointments.patient_id');
+
         $data = $query->get();
         //Log::info('Patient Data:', $data->toArray());
         // Format data for DataTables
@@ -1030,7 +1030,7 @@ class ReportController extends Controller
             ->make(true);
     }
 
-    
+
 
     /**
      * Report Collection.
@@ -1044,36 +1044,36 @@ class ReportController extends Controller
         $gender = $request->diseaseGender;
         $ageFrom = $request->diseaseAgeFrom;
         $ageTo = $request->diseaseAgeTo;
-        
+
         $query = DB::table('appointments')
-        ->select(
-            'appointments.app_date',
-            'appointments.app_branch',
-            'patient_profiles.first_name',
-            'patient_profiles.last_name',
-            'patient_profiles.date_of_birth',
-            'patient_profiles.gender',
-            'patient_profiles.phone',
-            'tooth_examinations.patient_id',
-            'tooth_examinations.disease_id',
-            'diseases.name as disease_name',
-            'users.name as doctor_name',
-            'clinic_branches.clinic_address'
-        )
-        ->join('patient_profiles', 'appointments.patient_id', '=', 'patient_profiles.patient_id')
-        ->join('users', 'users.id', '=', 'appointments.doctor_id')
-        ->join('clinic_branches', 'clinic_branches.id', '=', 'appointments.app_branch')
-        ->join('tooth_examinations', 'appointments.id', '=', 'tooth_examinations.app_id')
-        ->join('diseases', 'tooth_examinations.disease_id', '=', 'diseases.id')
-        ->whereBetween('appointments.app_date', [$startDate, $endDate])
-        ->where('tooth_examinations.status', 'Y');
+            ->select(
+                'appointments.app_date',
+                'appointments.app_branch',
+                'patient_profiles.first_name',
+                'patient_profiles.last_name',
+                'patient_profiles.date_of_birth',
+                'patient_profiles.gender',
+                'patient_profiles.phone',
+                'tooth_examinations.patient_id',
+                'tooth_examinations.disease_id',
+                'diseases.name as disease_name',
+                'users.name as doctor_name',
+                'clinic_branches.clinic_address'
+            )
+            ->join('patient_profiles', 'appointments.patient_id', '=', 'patient_profiles.patient_id')
+            ->join('users', 'users.id', '=', 'appointments.doctor_id')
+            ->join('clinic_branches', 'clinic_branches.id', '=', 'appointments.app_branch')
+            ->join('tooth_examinations', 'appointments.id', '=', 'tooth_examinations.app_id')
+            ->join('diseases', 'tooth_examinations.disease_id', '=', 'diseases.id')
+            ->whereBetween('appointments.app_date', [$startDate, $endDate])
+            ->where('tooth_examinations.status', 'Y');
 
         // Apply filters if provided
         if ($branchId) {
             $query->where('appointments.app_branch', $branchId);
         }
 
-       
+
         if ($diseaseId) {
             $query->where('tooth_examinations.disease_id', $diseaseId);
         }
@@ -1104,9 +1104,9 @@ class ReportController extends Controller
             'users.name',
             'clinic_branches.clinic_address'
         )
-        ->orderBy('appointments.app_date')
-        ->orderBy('appointments.patient_id');
-    
+            ->orderBy('appointments.app_date')
+            ->orderBy('appointments.patient_id');
+
         $data = $query->get();
         //Log::info('Disease Data:', $data->toArray());
         // Format data for DataTables
@@ -1144,6 +1144,70 @@ class ReportController extends Controller
             })
             ->addColumn('branch', function ($row) {
                 return str_replace('<br>', ', ', $row->clinic_address ?? '');
+            })
+            ->make(true);
+    }
+
+    public function auditPatient(Request $request)
+    {
+        $startDate = $request->auditPatientFromDate;
+        $endDate = $request->auditPatientToDate;
+        $patientId = $request->auditPatientId;
+        // Log::info('startDate Data:' . $startDate);
+        // Log::info('endDate:' . $endDate);
+        // DB::listen(function ($query) {
+        //     Log::info('SQL Query:', [
+        //         'query' => $query->sql,
+        //         'bindings' => $query->bindings,
+        //         'time' => $query->time,
+        //     ]);
+        // });
+        $query = DB::table('patient_profile_audits')
+            ->join('users', 'patient_profile_audits.changed_by', '=', 'users.id')
+            ->join('patient_profiles', 'patient_profile_audits.patient_id', '=', 'patient_profiles.patient_id')
+            ->select(
+                'patient_profile_audits.*',
+                'users.name as changed_by_name',
+                'patient_profiles.first_name',
+                'patient_profiles.last_name'
+            );
+            
+        if ($startDate && $endDate) {
+            $query->whereBetween(DB::raw('DATE(patient_profile_audits.created_at)'), [$startDate, $endDate]);
+        }
+        
+        if ($patientId) {
+            $query->where('patient_profile_audits.patient_id', $patientId);
+        }
+        $audits = $query->get();
+        //Log::info('audits Data:', $audits->toArray());
+        // Format data for DataTables
+        return DataTables::of($audits)
+            ->addIndexColumn()
+            ->addColumn('date', function ($row) {
+                return $row->created_at;
+            })
+            ->addColumn('patientId', function ($row) {
+                return $row->patient_id;
+            })
+            ->addColumn('patientName', function ($row) {
+                return str_replace('<br>', ' ', $row->first_name ?? '') . ' ' . ($row->last_name ?? '');
+            })
+            ->addColumn('tableName', function ($row) {
+                return $row->table_name ?? '';
+            })
+            ->addColumn('action', function ($row) {
+                return $row->action ?? '';
+            })
+            ->addColumn('oldData', function ($row) {
+                return $row->old_data ?? '';
+                
+            })
+            ->addColumn('newData', function ($row) {
+                return $row->new_data ?? '';
+            })
+            ->addColumn('changedBy', function ($row) {
+                return str_replace('<br>', ' ', $row->changed_by_name ?? '');
             })
             ->make(true);
     }
