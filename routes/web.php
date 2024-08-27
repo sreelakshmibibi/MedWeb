@@ -3,6 +3,8 @@
 use App\Http\Controllers\Appointment\AppointmentController;
 use App\Http\Controllers\Appointment\TreatmentController;
 use App\Http\Controllers\AuditController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\ResetProfilePasswordController;
 use App\Http\Controllers\Auth\StaffVerificationController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\Billing\BillingController;
@@ -85,7 +87,7 @@ Route::middleware(['auth', 'check.session'])->group(function () {
             ],
         ]);
     });
-
+    Route::post('/resetPassword', [ResetProfilePasswordController::class, 'resetProfilePassword'])->name('reset.password');
     Route::get('/get-states/{countryId}', [HelperController::class, 'getStates'])->name('get.states');
     Route::get('/get-cities/{stateId}', [HelperController::class, 'getCities'])->name('get.cities');
     Route::get('/session-data', [HelperController::class, 'getSessionData']);

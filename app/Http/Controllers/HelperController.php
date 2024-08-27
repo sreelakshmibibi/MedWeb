@@ -225,8 +225,8 @@ class HelperController extends Controller
                             $teethName = TeethRow::Row_4_Desc;
                             break;
                         case TeethRow::RowAll:
-                                $teethName = TeethRow::Row_All_Desc;
-                                break;
+                            $teethName = TeethRow::Row_All_Desc;
+                            break;
                         default:
                             $teethName = 'Unknown Row';
                             break;
