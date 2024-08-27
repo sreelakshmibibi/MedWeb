@@ -65,10 +65,12 @@ class PatientListController extends Controller
             ]);
 
             if ($doctorId) {
-                // If the user is a doctor, filter patients who have appointments with them
-                $query->whereHas('appointments', function ($query) use ($doctorId) {
-                    $query->where('doctor_id', $doctorId);
-                });
+                if (!Auth::user()->is_admin) {
+                    // If the user is a doctor, filter patients who have appointments with them
+                    $query->whereHas('appointments', function ($query) use ($doctorId) {
+                        $query->where('doctor_id', $doctorId);
+                    });
+                }
             }
 
             $patients = $query->get();
@@ -346,7 +348,7 @@ class PatientListController extends Controller
                         'gpay' => $request->input('paymode') == 'GPay' ? $request->input('regfee') : 0,
                         'cash' => $request->input('paymode') == 'Cash' ? $request->input('regfee') : 0,
                         'card' => $request->input('paymode') == 'Card' ? $request->input('regfee') : 0,
-                        'card_pay_id' => $request->input('paymode') == 'Card' ?$request->input('cardmachine'):null,
+                        'card_pay_id' => $request->input('paymode') == 'Card' ? $request->input('cardmachine') : null,
                         'amount_paid' => $request->input('regfee'),
                         'balance_given' => null,
                         'bill_paid_date' => $billPaidDate,
@@ -361,9 +363,9 @@ class PatientListController extends Controller
                         'gpay' => $request->input('paymode') == 'GPay' ? $request->input('regfee') : 0,
                         'cash' => $request->input('paymode') == 'Cash' ? $request->input('regfee') : 0,
                         'card' => $request->input('paymode') == 'Card' ? $request->input('regfee') : 0,
-                        'card_pay_id' => $request->input('paymode') == 'Card' ?$request->input('cardmachine'):null,
+                        'card_pay_id' => $request->input('paymode') == 'Card' ? $request->input('cardmachine') : null,
                         'balance_given' => 0,
-                        'created_by' => auth()->user()->id, 
+                        'created_by' => auth()->user()->id,
                     ];
                     $incomeReport = $billingService->saveIncomeReport($incomeData);
                     DB::commit();
