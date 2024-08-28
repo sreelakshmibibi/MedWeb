@@ -54,23 +54,41 @@ class AppointmentController extends Controller
             // $appointments = $query->get();
 
             $appointments = Appointment::whereDate('app_date', $selectedDate);
-            if (Auth::user()->is_doctor) {
-                if (!Auth::user()->is_admin) {
-                    $appointments = $appointments->where('doctor_id', Auth::user()->id);
-                }
-                $appointments = $appointments->with(['patient', 'doctor', 'branch'])
-                    ->orderBy('token_no', 'ASC')
-                    ->get();
+            // if (Auth::user()->is_doctor) {
+            //     if (!Auth::user()->is_admin) {
+            //         $appointments = $appointments->where('doctor_id', Auth::user()->id);
+            //     }
+            //     $appointments = $appointments->with(['patient', 'doctor', 'branch'])
+            //         ->orderBy('token_no', 'ASC')
+            //         ->get();
+            // } else {
+            //     $clinicBranchId = StaffProfile::where('user_id', Auth::user()->id)
+            //         ->pluck('clinic_branch_id')
+            //         ->first();
+
+            //     $appointments = $appointments->where('app_branch', $clinicBranchId)
+            //         ->with(['patient', 'doctor', 'branch'])
+            //         ->orderBy('token_no', 'ASC')
+            //         ->get();
+            // }
+
+            if (Auth::user()->is_admin) {
+                // $appointments = $appointments->with(['patient', 'doctor', 'branch'])
+                //     ->orderBy('token_no', 'ASC')
+                //     ->get();
+            } else if (Auth::user()->is_doctor) {
+                $appointments = $appointments->where('doctor_id', Auth::user()->id);
             } else {
                 $clinicBranchId = StaffProfile::where('user_id', Auth::user()->id)
                     ->pluck('clinic_branch_id')
                     ->first();
 
-                $appointments = $appointments->where('app_branch', $clinicBranchId)
-                    ->with(['patient', 'doctor', 'branch'])
-                    ->orderBy('token_no', 'ASC')
-                    ->get();
+                $appointments = $appointments->where('app_branch', $clinicBranchId);
             }
+
+            $appointments = $appointments->with(['patient', 'doctor', 'branch'])
+                ->orderBy('token_no', 'ASC')
+                ->get();
 
             return DataTables::of($appointments)
                 ->addIndexColumn()

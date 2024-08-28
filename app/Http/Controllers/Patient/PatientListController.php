@@ -74,11 +74,13 @@ class PatientListController extends Controller
                 }
                 // $patients = $query->get();
             } else {
-                $clinicBranchId = StaffProfile::where('user_id', Auth::user()->id)
-                    ->pluck('clinic_branch_id')
-                    ->first();
+                if (!Auth::user()->is_admin) {
+                    $clinicBranchId = StaffProfile::where('user_id', Auth::user()->id)
+                        ->pluck('clinic_branch_id')
+                        ->first();
 
-                $query = $query->where('app_branch', $clinicBranchId);
+                    $query = $query->where('app_branch', $clinicBranchId);
+                }
             }
 
             $patients = $query->get();
