@@ -330,6 +330,7 @@ class HomeController extends Controller
         $appointments = DB::table('appointments')
             ->select(DB::raw('MONTH(app_date) as month'), DB::raw('COUNT(*) as count'))
             ->where('doctor_id', Auth::user()->id)
+            ->where('app_status', '5')
             ->whereBetween('app_date', [$startDate, $endDate])
             ->groupBy(DB::raw('MONTH(app_date)'))
             ->orderBy(DB::raw('MONTH(app_date)'))
