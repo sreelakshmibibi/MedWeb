@@ -14,7 +14,7 @@ date_default_timezone_set('Asia/Kolkata');
             <div class="content-header">
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Billing :<span class="fs-20 text-info">
-                            {{ $appointment->patient_id }}-
+                            {{ $appointment->patient_id }}
                             {{ str_replace('<br>', ' ', $appointment->patient->first_name . ' ' . $appointment->patient->last_name) }}
                         </span>
                     </h3>
@@ -268,7 +268,7 @@ date_default_timezone_set('Asia/Kolkata');
                                                         <!-- Checkbox for Gpay -->
                                                         <input type="checkbox" class="filled-in chk-col-success"
                                                             id="mode_of_payment_gpay" name="mode_of_payment[]"
-                                                            value="gpay" <?php if ($billExists->gpay != null) { ?> checked
+                                                            value="gpay" <?php if ($billExists->gpay > 0) { ?> checked
                                                             <?php } ?>>
                                                         <label class="form-check-label me-2"
                                                             for="mode_of_payment_gpay">Gpay</label>
@@ -287,7 +287,7 @@ date_default_timezone_set('Asia/Kolkata');
                                                             for="mode_of_payment_cash">Cash</label>
                                                         <input type="text" name="cash" id="cash"
                                                             class="form-control  w-100" style="display: none;"
-                                                            value="<?php if ($billExists->cash != null) {
+                                                            value="<?php if ($billExists->cash > 0) {
                                                                 echo $billExists->cash;
                                                             } ?>">
                                                         &nbsp;
@@ -300,7 +300,7 @@ date_default_timezone_set('Asia/Kolkata');
                                                             for="mode_of_payment_card">Card</label>
                                                         <input type="text" name="cardcash" id="cardcash"
                                                             class="form-control  w-100 " style="display: none;"
-                                                            value="<?php if ($billExists->card != null) {
+                                                            value="<?php if ($billExists->card > 0) {
                                                                 echo $billExists->card;
                                                             } ?>">
                                                         <select class="ms-2 form-select w-150" id="machine"
