@@ -13,6 +13,7 @@ use App\Models\Insurance;
 use App\Models\Log;
 use App\Models\PatientDetailBilling;
 use App\Models\PatientProfile;
+use App\Models\StaffProfile;
 use App\Models\PatientTreatmentBilling;
 use App\Models\Prescription;
 use App\Models\PatientPrescriptionBilling;
@@ -45,9 +46,25 @@ class BillingController extends Controller
 
         if ($request->ajax()) {
             $selectedDate = $request->input('selectedDate');
-            $appointments = Appointment::whereDate('app_date', $selectedDate)
-                ->with(['patient', 'doctor', 'branch'])
-                // ->where('app_status', AppointmentStatus::COMPLETED)
+            // $appointments = Appointment::whereDate('app_date', $selectedDate)
+            //     ->with(['patient', 'doctor', 'branch'])
+            //     // ->where('app_status', AppointmentStatus::COMPLETED)
+            //     ->get();
+            $appointments = Appointment::whereDate('app_date', $selectedDate);
+            if (Auth::user()->is_admin) {
+
+            } else if (Auth::user()->is_doctor) {
+                $appointments = $appointments->where('doctor_id', Auth::user()->id);
+            } else {
+                $clinicBranchId = StaffProfile::where('user_id', Auth::user()->id)
+                    ->pluck('clinic_branch_id')
+                    ->first();
+
+                $appointments = $appointments->where('app_branch', $clinicBranchId);
+            }
+
+            $appointments = $appointments->with(['patient', 'doctor', 'branch'])
+                ->orderBy('token_no', 'ASC')
                 ->get();
 
             return DataTables::of($appointments)
@@ -158,10 +175,10 @@ class BillingController extends Controller
                     $hasPrescriptionBill = PatientPrescriptionBilling::where('appointment_id', $row->id)->first();
                     if ($row->app_status == AppointmentStatus::COMPLETED && !empty($billing) && ($billing->bill_status == PatientTreatmentBilling::BILL_CANCELLED || $billing->bill_status == PatientTreatmentBilling::BILL_GENERATED)) {
                         // if ( Auth::user()->can('bill view')) {
-                            $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='receive payment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-money-bill'></i></a>";
+                        $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='receive payment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-money-bill'></i></a>";
                         // }
                     } elseif ($row->app_status == AppointmentStatus::COMPLETED && empty($billing)) {
-                        if ( Auth::user()->can('bill generate')) {
+                        if (Auth::user()->can('bill generate')) {
                             $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='generate bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-plus'></i></a>";
                         }
                     }
@@ -175,7 +192,7 @@ class BillingController extends Controller
                         // $buttons[] = "<button type='button' data-id='{$billidEncrypted}' data-appid='{$appidEncrypted}'
                         //     class='waves-effect waves-light btn btn-circle btn-secondary btn-xs me-1 printTreatmentBillbtn'
                         //     title='Download Treatment Bill'><i class='fa fa-download'></i></button>";
-
+    
                         // if ($hasPrescriptionBill) {
                         //     $base64medbillId = base64_encode($hasPrescriptionBill->bill_id);
                         //     $medbillidEncrypted = Crypt::encrypt($base64medbillId);
@@ -183,10 +200,10 @@ class BillingController extends Controller
                         //     class='waves-effect waves-light btn btn-circle btn-warning btn-xs me-1 printMedicineBillbtn'
                         //     title='Print Medicine Bill'><i class='fa fa-print'></i></button>";
                         // }
-
+    
                     }
                     if (!empty($billing) && ($billing->bill_status == PatientTreatmentBilling::PAYMENT_DONE || $billing->bill_status == PatientTreatmentBilling::BILL_GENERATED)) {
-                        if ( Auth::user()->can('bill cancel')) {
+                        if (Auth::user()->can('bill cancel')) {
                             $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-xs' id='btn-cancel-bill' data-bs-toggle='modal' data-bs-target='#modal-cancel-bill' data-id='{$billing->id}' title='cancel'><i class='fa fa-times'></i></button>
                             ";
                         }
@@ -516,7 +533,7 @@ class BillingController extends Controller
                 'card' => $request['cardcash'] ?? 0,
                 'card_pay_id' => $request['machine'] ?? null,
                 'balance_given' => isset($request['balance_given']) ? $request['balanceToGiveBack'] : 0,
-                'created_by' => auth()->user()->id, 
+                'created_by' => auth()->user()->id,
             ];
             $billingService = new BillingService();
             $incomeReport = $billingService->saveIncomeReport($incomeData);
@@ -583,7 +600,7 @@ class BillingController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-        print_r($e->getMessage());
+            print_r($e->getMessage());
             exit;
             // Log the error
             Log::create([
