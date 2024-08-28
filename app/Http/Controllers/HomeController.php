@@ -129,7 +129,14 @@ class HomeController extends Controller
         if ($hasBranches && $hasClinics) {
             $doctorAvailabilityService = new DoctorAvaialbilityService();
             $currentDayName = Carbon::now()->englishDayOfWeek;
-            $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors(null, $currentDayName, date('Y-m-d'));
+            // $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors(null, $currentDayName, date('Y-m-d'));
+            $branchid = null;
+            if (!Auth::user()->is_admin) {
+                $branchid = StaffProfile::where('user_id', Auth::user()->id)
+                    ->pluck('clinic_branch_id')
+                    ->first();
+            }
+            $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($branchid, $currentDayName, date('Y-m-d'));
             $totalPatients = PatientProfile::where('status', 'Y')->count(); // Replace with your actual logic to get the total
             $totalStaffs = StaffProfile::where('status', 'Y')->count();
             // $totalDoctors = StaffProfile::where('status', 'Y')->whereNot('license_number', null)->count();
