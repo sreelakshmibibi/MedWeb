@@ -339,7 +339,34 @@ class TreatmentController extends Controller
             $mesial_condn = $request->mesial_condn != null ? 1 : 0;
             $buccal_condn = $request->buccal_condn != null ? 1 : 0;
             $distal_condn = $request->distal_condn != null ? 1 : 0;
+            $diseaseId = $request->disease_id;
 
+            if (is_numeric($diseaseId)) {
+                $existingDisease = Disease::find($diseaseId);
+                if ($existingDisease) {
+                    $diseaseId = $existingDisease->id;
+                } else {
+                    // Create new Disease record
+                    $disease = Disease::create([
+                        'name' => ucwords(strtolower($request->disease_id)),
+                        'status' => 'Y',
+                        'created_by' => auth()->user()->id,
+                        'updated_by' => auth()->user()->id,
+                    ]);
+                    $diseaseId = $disease->id;
+
+                }
+            } else {
+                // Create new Disease record
+                $disease = Disease::create([
+                    'name' => ucwords(strtolower($request->disease_id)),
+                    'status' => 'Y',
+                    'created_by' => auth()->user()->id,
+                    'updated_by' => auth()->user()->id,
+                ]);
+                $diseaseId = $disease->id;
+            }
+            $request->merge(['disease_id' => $diseaseId]);
             $toothExamination = ToothExamination::create($request->only([
                 'app_id',
                 'patient_id',
