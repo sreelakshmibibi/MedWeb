@@ -15,8 +15,8 @@
                         <div class="form-group">
                             <label class="form-label" for="leave_type">Leave Type <span class="text-danger">
                                     *</span></label>
-                            <select class="form-control" id="leave_type" name="leave_type">
-                                <option value="" disabled selected>Select type</option>
+                            <select class="form-control" id="leave_type" name="leave_type" required>
+                                <option value="">Select type</option>
                                 <option value="Casual Leave">Casual Leave</option>
                                 <option value="Medical Leave">Medical Leave</option>
                                 <option value="Loss of Pay">Loss of Pay</option>
@@ -48,7 +48,7 @@
 
                         <div class="form-group">
                             <label class="form-label" for="reason">Reason</label>
-                            <textarea class="form-control" id="reason" name="reason" placeholder="Leave Reason"></textarea>
+                            <textarea class="form-control" id="reason" name="reason" placeholder="Leave Reason" required></textarea>
                             <div id="reasonError" class="invalid-feedback"></div>
                         </div>
 
@@ -81,7 +81,7 @@
             var leaveTo = $('#leave_to').val();
 
             // Basic client-side validation (you can add more as needed)
-            if (leaveType.length === 0) {
+            if (leaveType.length == 0) {
                 $('#leave_type').addClass('is-invalid');
                 $('#leaveTypeError').text('Leave Type is required.');
                 return; // Prevent further execution
@@ -90,7 +90,7 @@
                 $('#leaveTypeError').text('');
             }
 
-            if (reason.length === 0) {
+            if (reason.length == 0) {
                 $('#reason').addClass('is-invalid');
                 $('#reasonError').text('Reason is required.');
                 return; // Prevent further execution
@@ -98,21 +98,34 @@
                 $('#reason').removeClass('is-invalid');
                 $('#reasonError').text('');
             }
+            var currentDate = new Date().toISOString().split('T')[0];
 
-            if (leaveFrom.length === 0) {
+            if (leaveFrom.length == 0) {
                 $('#leave_from').addClass('is-invalid');
                 $('#leaveFromError').text('From Date is required.');
+                return; // Prevent further execution
+            }  else if (leaveFrom < currentDate) { // Compare leaveFrom with currentDate
+                $('#leave_from').addClass('is-invalid');
+                $('#leaveFromError').text('From Date cannot be in the past.');
                 return; // Prevent further execution
             } else {
                 $('#leave_from').removeClass('is-invalid');
                 $('#leaveFromError').text('');
             }
 
-            if (leaveTo.length === 0) {
+            if (leaveTo.length == 0) {
                 $('#leave_to').addClass('is-invalid');
                 $('#leaveToError').text('To date is required.');
                 return; // Prevent further execution
-            } else {
+            } else if (leaveTo < currentDate) { // Compare leaveFrom with currentDate
+                $('#leave_to').addClass('is-invalid');
+                $('#leaveToError').text('To Date cannot be in the past.');
+                return; // Prevent further execution
+            } else if ( leaveTo < leaveFrom ){
+                $('#leave_to').addClass('is-invalid');
+                $('#leaveToError').text('To Date cannot be less than from date.');
+                return; // Prevent further execution
+            }else {
                 $('#leave_to').removeClass('is-invalid');
                 $('#leaveToError').text('');
             }
