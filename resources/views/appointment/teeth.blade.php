@@ -328,71 +328,71 @@ use App\Models\Appointment;
     $(document).ready(function() {
         // Initialize Select2 when modal is shown
         $('#modal-teeth').on('shown.bs.modal', function() {
-            $(".treatment_id_select").select2({
-                dropdownParent: $('#modal-teeth'),
-                width: "100%",
-                placeholder: "Select a Treatment",
-                tags: true,
-                tokenSeparators: [","],
-                createTag: function(params) {
-                    var term = $.trim(params.term);
-                    if (term === "") {
-                        return null;
-                    }
-                    // Check if the term already exists as an option
-                    var found = false;
-                    $(".treatment_id_select option").each(function() {
-                        if ($.trim($(this).text()) === term) {
-                            found = true;
-                            return false; // Exit the loop early
-                        }
-                    });
-                    if (!found) {
-                        return {
-                            id: term,
-                            text: term,
-                            newTag: true
-                        };
-                    }
-                    return null;
-                },
-                insertTag: function(data, tag) {
-                    data.push(tag);
-                }
-            });
+            // $(".treatment_id_select").select2({
+            //     dropdownParent: $('#modal-teeth'),
+            //     width: "100%",
+            //     placeholder: "Select a Treatment",
+            //     tags: true,
+            //     tokenSeparators: [","],
+            //     createTag: function(params) {
+            //         var term = $.trim(params.term);
+            //         if (term === "") {
+            //             return null;
+            //         }
+            //         // Check if the term already exists as an option
+            //         var found = false;
+            //         $(".treatment_id_select option").each(function() {
+            //             if ($.trim($(this).text()) === term) {
+            //                 found = true;
+            //                 return false; // Exit the loop early
+            //             }
+            //         });
+            //         if (!found) {
+            //             return {
+            //                 id: term,
+            //                 text: term,
+            //                 newTag: true
+            //             };
+            //         }
+            //         return null;
+            //     },
+            //     insertTag: function(data, tag) {
+            //         data.push(tag);
+            //     }
+            // });
 
-            $(".treatment_plan_select").select2({
-                dropdownParent: $('#modal-teeth'),
-                width: "100%",
-                placeholder: "Select a Plan",
-                tags: true,
-                tokenSeparators: [","],
-                createTag: function(params) {
-                    var term = $.trim(params.term);
-                    if (term === "") {
-                        return null;
-                    }
-                    // Check if the term already exists as an option
-                    var found = false;
-                    $(".treatment_id_select option").each(function() {
-                        if ($.trim($(this).text()) === term) {
-                            found = true;
-                            return false; // Exit the loop early
-                        }
-                    });
-                    if (!found) {
-                        return {
-                            id: term,
-                            text: term,
-                            newTag: true
-                        };
-                    }
-                    return null;
-                },
-                insertTag: function(data, tag) {
-                    data.push(tag);
-                }
-            });
+            // $(".treatment_plan_select").select2({
+            //     dropdownParent: $('#modal-teeth'),
+            //     width: "100%",
+            //     placeholder: "Select a Plan",
+            //     tags: true,
+            //     tokenSeparators: [","],
+            //     createTag: function(params) {
+            //         var term = $.trim(params.term);
+            //         if (term === "") {
+            //             return null;
+            //         }
+            //         // Check if the term already exists as an option
+            //         var found = false;
+            //         $(".treatment_id_select option").each(function() {
+            //             if ($.trim($(this).text()) === term) {
+            //                 found = true;
+            //                 return false; // Exit the loop early
+            //             }
+            //         });
+            //         if (!found) {
+            //             return {
+            //                 id: term,
+            //                 text: term,
+            //                 newTag: true
+            //             };
+            //         }
+            //         return null;
+            //     },
+            //     insertTag: function(data, tag) {
+            //         data.push(tag);
+            //     }
+            // });
 
             $(".disease_id_select").select2({
                 dropdownParent: $('#modal-teeth'),
@@ -430,8 +430,8 @@ use App\Models\Appointment;
 
         // Reset Select2 when modal is hidden
         $('#modal-teeth').on('hidden.bs.modal', function() {
-            $(".treatment_id_select").select2("destroy");
-            $(".treatment_plan_select").select2("destroy");
+            // $(".treatment_id_select").select2("destroy");
+            // $(".treatment_plan_select").select2("destroy");
             $(".disease_id_select").select2("destroy");
         });
 

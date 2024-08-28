@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('diseases', function (Blueprint $table) {
             $table->id();
-            $table->string('icd_code');
+            $table->string('icd_code')->nullable();
             $table->string('name');
             $table->string('description')->nullable();
             $table->string('status')->nullable();
