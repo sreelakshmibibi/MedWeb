@@ -64,84 +64,91 @@
         </li>
     </ul> --}}
     <ul id="main-menu" class="sm sm-blue">
-        @foreach ($menuItems as $item)
-            @if (auth()->user()->hasAnyRole($item->roles->pluck('name')->toArray()))
-                <li>
-                    <a href="{{ $item->route_name != '#' ? route($item->route_name) : '#' }}">
-                        <i class="{{ $item->icon }}">
-                            <span class="path1"></span>
-                            <span class="path2"></span>
-                        </i>
-                        {{ $item->name }}
-                    </a>
-                    @if ($item->name == 'Dashboard')
-                        <ul>
-                            @if(auth()->user()->is_admin)
+        @if (auth()->check())
+            @foreach ($menuItems as $item)
+                @if (auth()->user()->hasAnyRole($item->roles->pluck('name')->toArray()))
+                    <li>
+                        <a href="{{ $item->route_name != '#' ? route($item->route_name) : '#' }}">
+                            <i class="{{ $item->icon }}">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                            </i>
+                            {{ $item->name }}
+                        </a>
+                        @if ($item->name == 'Dashboard')
+                            <ul>
+                                @if(auth()->user()->is_admin)
+                                    <li>
+                                        <a href="{{route('dashboard.userType', 'admin')}}">
+                                            <i>
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                            </i>
+                                        Admin Dashboard
+                                        </a>
+                                    </li>
+                                @endif
+                                @if(auth()->user()->is_doctor)
                                 <li>
-                                    <a href="{{route('dashboard.userType', 'admin')}}">
+                                    <a href="{{route('dashboard.userType', 'doctor')}}">
                                         <i>
                                             <span class="path1"></span>
                                             <span class="path2"></span>
                                         </i>
-                                    Admin Dashboard
+                                    Doctor Dashboard
                                     </a>
                                 </li>
-                            @endif
-                            @if(auth()->user()->is_doctor)
-                            <li>
-                                <a href="{{route('dashboard.userType', 'doctor')}}">
-                                    <i>
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                    </i>
-                                   Doctor Dashboard
-                                </a>
-                            </li>
-                            @endif
-                            @if(auth()->user()->is_nurse)
-                            <li>
-                                <a href="{{route('dashboard.userType', 'nurse')}}">
-                                    <i>
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                    </i>
-                                   Nurse Dashboard
-                                </a>
-                            </li>
-                            @endif
-                            @if(auth()->user()->is_reception)
-                            <li>
-                                <a href="{{route('dashboard.userType', 'reception')}}">
-                                    <i>
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                    </i>
-                                   Reception Dashboard
-                                </a>
-                            </li>
-                            @endif
-                        </ul>
-                    @else
-                        @if ($item->children->count())
-                            <ul>
-                                @foreach ($item->children as $child)
-                                    @if (auth()->user()->hasAnyRole($child->roles->pluck('name')->toArray()))
-                                        <li>
-                                            <a href="{{ $child->route_name != '#' ? route($child->route_name) : '#' }}">
-                                                <i class="{{ $child->icon }}">
-                                                    <span class="path1"></span>
-                                                    <span class="path2"></span>
-                                                </i>
-                                                {{ $child->name }}
-                                            </a>
-                                        </li>
-                                    @endif
-                                @endforeach
+                                @endif
+                                @if(auth()->user()->is_nurse)
+                                <li>
+                                    <a href="{{route('dashboard.userType', 'nurse')}}">
+                                        <i>
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                    Nurse Dashboard
+                                    </a>
+                                </li>
+                                @endif
+                                @if(auth()->user()->is_reception)
+                                <li>
+                                    <a href="{{route('dashboard.userType', 'reception')}}">
+                                        <i>
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                    Reception Dashboard
+                                    </a>
+                                </li>
+                                @endif
                             </ul>
+                        @else
+                            @if ($item->children->count())
+                                <ul>
+                                    @foreach ($item->children as $child)
+                                        @if (auth()->user()->hasAnyRole($child->roles->pluck('name')->toArray()))
+                                            <li>
+                                                <a href="{{ $child->route_name != '#' ? route($child->route_name) : '#' }}">
+                                                    <i class="{{ $child->icon }}">
+                                                        <span class="path1"></span>
+                                                        <span class="path2"></span>
+                                                    </i>
+                                                    {{ $child->name }}
+                                                </a>
+                                            </li>
+                                        @endif
+                                    @endforeach
+                                </ul>
+                            @endif
                         @endif
-                    @endif
-                </li>
-            @endif
-        @endforeach
+                    </li>
+                @endif
+            @endforeach
+        @else
+            <script type="text/javascript">
+                window.location.href = "{{ route('login') }}"; // Redirect to login page
+            </script>
+
+        @endif
     </ul>
 </nav>
