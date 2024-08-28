@@ -348,8 +348,15 @@
             }
         });
 
+        $('#modal-right').on('shown.bs.modal', function() {
+            $('.form-select').select2({
+                dropdownParent: $('#modal-right'),
+                width: "100%",
+            });
+        });
         // Reset form and errors on modal close
         $('#modal-right').on('hidden.bs.modal', function() {
+            $(".form-select").select2("destroy");
             $('#createClinicForm').trigger('reset');
             resetErrors();
             formSubmitting = false; // Reset the flag

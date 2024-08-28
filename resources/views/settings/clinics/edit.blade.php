@@ -379,10 +379,16 @@
             $('#edit_clinicPincodeError').text('');
         }
 
-
+        $('#modal-edit-clinic').on('shown.bs.modal', function() {
+            $('.form-select').select2({
+                dropdownParent: $('#modal-edit-clinic'),
+                width: "100%",
+            });
+        });
 
         // Reset form and errors on modal close
         $('#modal-edit-clinic').on('hidden.bs.modal', function() {
+            $(".form-select").select2("destroy");
             $('#editClinicForm').trigger('reset');
             resetErrors();
         });
