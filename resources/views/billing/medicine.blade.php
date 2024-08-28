@@ -332,6 +332,6 @@ if ($hasPrescriptionBill) {
 
 <script>
     var prescriptionReceiptRoute = "{{ route('medicineBilling.paymentReceipt') }}";
-    var billingRoute = "{{ route('billing') }}";
+    var prescriptionBillingRoute = "{{ route('billing') }}";
 </script>
 <script src="{{ asset('js/prescription_billing.js') }}"></script>
