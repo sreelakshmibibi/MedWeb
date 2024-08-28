@@ -27,10 +27,10 @@
                                     <tr>
                                         <th width="10px">Token No</th>
                                         <th width="60px">Patient ID</th>
-                                        <th>Patient Name</th>
+                                        <th class="text-center">Patient Name</th>
                                         <th width="60px">Phone number</th>
-                                        <th width="180px">Branch</th>
-                                        <th>Consulted Doctor</th>
+                                        <th class="text-center" width="180px">Branch</th>
+                                        <th class="text-center">Consulted Doctor</th>
                                         <!-- <th>Bill Amount</th> -->
                                         <th>Status</th>
                                         <th width="144px">Action</th>
@@ -87,7 +87,8 @@
 
                     {
                         data: 'name',
-                        name: 'name'
+                        name: 'name',
+                        className: 'text-start'
                     },
                     {
                         data: 'phone',
@@ -95,12 +96,14 @@
                     },
                     {
                         data: 'branch',
-                        name: 'branch'
+                        name: 'branch',
+                        className: 'text-start'
                     },
 
                     {
                         data: 'doctor',
-                        name: 'doctor'
+                        name: 'doctor',
+                        className: 'text-start'
                     },
                     // {
                     //     data: 'amount',
