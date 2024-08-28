@@ -128,22 +128,33 @@ class AppointmentController extends Controller
                     return $row->patient->phone;
                 })
                 ->addColumn('status', function ($row) {
+                    // $statusMap = [
+                    //     AppointmentStatus::SCHEDULED => 'text-success',
+                    //     AppointmentStatus::WAITING => 'text-warning',
+                    //     AppointmentStatus::UNAVAILABLE => 'text-dark',
+                    //     AppointmentStatus::CANCELLED => 'text-danger',
+                    //     AppointmentStatus::COMPLETED => 'text-muted',
+                    //     AppointmentStatus::BILLING => 'text-primary',
+                    //     AppointmentStatus::PROCEDURE => 'text-secondary',
+                    //     AppointmentStatus::MISSED => 'text-white',
+                    //     AppointmentStatus::RESCHEDULED => 'text-info',
+                    // ];
                     $statusMap = [
-                        AppointmentStatus::SCHEDULED => 'text-success',
-                        AppointmentStatus::WAITING => 'text-warning',
-                        AppointmentStatus::UNAVAILABLE => 'text-dark',
-                        AppointmentStatus::CANCELLED => 'text-danger',
-                        AppointmentStatus::COMPLETED => 'text-muted',
-                        AppointmentStatus::BILLING => 'text-primary',
-                        AppointmentStatus::PROCEDURE => 'text-secondary',
-                        AppointmentStatus::MISSED => 'text-white',
-                        AppointmentStatus::RESCHEDULED => 'text-info',
+                        AppointmentStatus::SCHEDULED => 'badge-success',
+                        AppointmentStatus::WAITING => 'badge-warning',
+                        AppointmentStatus::UNAVAILABLE => 'badge-gray',
+                        AppointmentStatus::CANCELLED => 'badge-danger',
+                        AppointmentStatus::COMPLETED => 'badge-light',
+                        AppointmentStatus::BILLING => 'badge-primary',
+                        AppointmentStatus::PROCEDURE => 'badge-secondary',
+                        AppointmentStatus::MISSED => 'badge-dark',
+                        AppointmentStatus::RESCHEDULED => 'badge-info',
                     ];
                     $btnClass = isset($statusMap[$row->app_status]) ? $statusMap[$row->app_status] : '';
 
-                    return "<span class=' {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . '</span>';
-
-                    // return "<span class='btn d-block btn-xs badge {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . '</span>';
+                    // return "<span class=' {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . '</span>';
+    
+                    return "<span class='btn d-block btn-xs badge {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . '</span>';
                 })
                 ->addColumn('action', function ($row) {
                     if ($row->app_status == AppointmentStatus::CANCELLED || $row->app_status == AppointmentStatus::RESCHEDULED) {

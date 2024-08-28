@@ -127,38 +127,49 @@ class BillingController extends Controller
                         // ->whereNot('bill_status', PatientTreatmentBilling::BILL_CANCELLED)
                         ->first();
 
+                    // $statusMap = [
+                    //     AppointmentStatus::SCHEDULED => 'text-success',
+                    //     AppointmentStatus::WAITING => 'text-warning',
+                    //     AppointmentStatus::UNAVAILABLE => 'text-dark',
+                    //     AppointmentStatus::CANCELLED => 'text-danger',
+                    //     AppointmentStatus::COMPLETED => 'text-muted',
+                    //     AppointmentStatus::BILLING => 'text-primary',
+                    //     AppointmentStatus::PROCEDURE => 'text-secondary',
+                    //     AppointmentStatus::MISSED => 'text-white',
+                    //     AppointmentStatus::RESCHEDULED => 'text-info',
+                    // ];
                     $statusMap = [
-                        AppointmentStatus::SCHEDULED => 'text-success',
-                        AppointmentStatus::WAITING => 'text-warning',
-                        AppointmentStatus::UNAVAILABLE => 'text-dark',
-                        AppointmentStatus::CANCELLED => 'text-danger',
-                        AppointmentStatus::COMPLETED => 'text-muted',
-                        AppointmentStatus::BILLING => 'text-primary',
-                        AppointmentStatus::PROCEDURE => 'text-secondary',
-                        AppointmentStatus::MISSED => 'text-white',
-                        AppointmentStatus::RESCHEDULED => 'text-info',
+                        AppointmentStatus::SCHEDULED => 'badge-success',
+                        AppointmentStatus::WAITING => 'badge-warning',
+                        AppointmentStatus::UNAVAILABLE => 'badge-gray',
+                        AppointmentStatus::CANCELLED => 'badge-danger',
+                        AppointmentStatus::COMPLETED => 'badge-light',
+                        AppointmentStatus::BILLING => 'badge-primary',
+                        AppointmentStatus::PROCEDURE => 'badge-secondary',
+                        AppointmentStatus::MISSED => 'badge-dark',
+                        AppointmentStatus::RESCHEDULED => 'badge-info',
                     ];
                     $status = $row->app_status;
                     $bill_status = null;
                     $btnClass = isset($statusMap[$row->app_status]) ? $statusMap[$row->app_status] : '';
                     if ($status == AppointmentStatus::COMPLETED) {
                         if (!empty($billing) && $billing->bill_status == PatientTreatmentBilling::BILL_GENERATED) {
-                            // $btnClass = 'badge-warning';
-                            $btnClass = 'text-warning';
+                            $btnClass = 'badge-warning';
+                            // $btnClass = 'text-warning';
                             $bill_status = PatientTreatmentBilling::BILL_GENERATED_WORDS;
                         } elseif (!empty($billing) && $billing->bill_status == PatientTreatmentBilling::PAYMENT_DONE) {
-                            // $btnClass = 'badge-success';
-                            $btnClass = 'text-success';
+                            $btnClass = 'badge-success';
+                            // $btnClass = 'text-success';
                             $bill_status = PatientTreatmentBilling::PAYMENT_DONE_WORDS;
                         } elseif (!empty($billing) && $billing->bill_status == PatientTreatmentBilling::BILL_CANCELLED) {
-                            // $btnClass = 'badge-danger';
-                            $btnClass = 'text-danger';
+                            $btnClass = 'badge-danger';
+                            // $btnClass = 'text-danger';
                             $bill_status = PatientTreatmentBilling::BILL_CANCELLED_WORDS;
                         }
                     }
-                    return "<span class='{$btnClass}'>" . ($bill_status != null ? $bill_status : AppointmentStatus::statusToWords($row->app_status)) . '</span>';
-
-                    // return "<span class='btn d-block btn-xs badge {$btnClass}'>" . ($bill_status != null ? $bill_status : AppointmentStatus::statusToWords($row->app_status)) . '</span>';
+                    // return "<span class='{$btnClass}'>" . ($bill_status != null ? $bill_status : AppointmentStatus::statusToWords($row->app_status)) . '</span>';
+    
+                    return "<span class='btn d-block btn-xs badge {$btnClass}'>" . ($bill_status != null ? $bill_status : AppointmentStatus::statusToWords($row->app_status)) . '</span>';
                 })
                 ->addColumn('action', function ($row) {
                     if ($row->app_status == AppointmentStatus::CANCELLED || $row->app_status == AppointmentStatus::RESCHEDULED) {
