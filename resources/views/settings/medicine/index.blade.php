@@ -67,7 +67,10 @@
     {{-- </div> --}}
 
     <!-- JsBarcode library -->
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode/dist/JsBarcode.all.min.js"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/jsbarcode/dist/JsBarcode.all.min.js"></script> --}}
+    <!-- JsBarcode library -->
+    <script src="{{ asset('js/JsBarcode.all.min.js') }}"></script>
+
 
     <script type="text/javascript">
         var table;
