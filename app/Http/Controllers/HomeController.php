@@ -161,6 +161,17 @@ class HomeController extends Controller
             $patients = $appointments->pluck('patient')->unique('id');
             // Extract the patients from the appointments
             $appointmentstype = $appointments->unique('patient_id');
+            if ($user->is_nurse || $user->is_reception) {
+                $clinicBranchId = StaffProfile::where('user_id', Auth::user()->id)
+                    ->pluck('clinic_branch_id')
+                    ->first();
+
+                $patients = $appointments->where('app_branch', $clinicBranchId)
+                    ->pluck('patient')->unique('id');
+
+                $appointmentstype = $appointments->where('app_branch', $clinicBranchId)->unique('patient_id');
+            }
+
 
             // Count the total number of unique patients
             $totalUniquePatients = $patients->count();
