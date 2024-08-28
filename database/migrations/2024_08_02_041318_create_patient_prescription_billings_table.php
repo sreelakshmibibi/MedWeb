@@ -58,7 +58,7 @@ return new class extends Migration
                     billing_id, patient_id, billing_type, action, new_data, changed_by, created_at, updated_at
                 )
                 VALUES (
-                    NEW.id,
+                    NEW.bill_id,
                     NEW.patient_id,
                     "prescription",
                     \'INSERT\',
@@ -99,7 +99,7 @@ return new class extends Migration
                     billing_id, patient_id, billing_type, action, old_data, new_data, changed_by, created_at, updated_at
                 )
                 VALUES (
-                    OLD.id,
+                    OLD.bill_id,
                     OLD.patient_id,
                     "prescription",
                     \'UPDATE\',
@@ -161,7 +161,7 @@ return new class extends Migration
                     billing_id, patient_id, billing_type, action, old_data, changed_by, created_at, updated_at
                 )
                 VALUES (
-                    OLD.id,
+                    OLD.bill_id,
                     OLD.patient_id,
                     "prescription",
                     \'DELETE\',
