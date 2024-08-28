@@ -132,12 +132,40 @@ class MedicineBillController extends Controller
             $incomeReport = $billingService->saveIncomeReport($incomeData);
             DB::commit();
 
-            return redirect()->route('billing')->with('success', 'Billing recorded successfully!');
+            //download receipt
+            $patientPrescriptionBilling = PatientPrescriptionBilling::with('createdBy')->findOrFail($billing->id);
+            // Generate PDF
+            $appointment = Appointment::with(['patient', 'doctor', 'branch'])
+                ->find($appId);
+            $billDetails = PrescriptionDetailBilling::with('medicine')->where('bill_id', $billing->id)->get();
+            $clinicDetails = ClinicBasicDetail::first();
+            if ($clinicDetails->clinic_logo == '') {
+                $clinicLogo = 'public/images/logo-It.png';
+            } else {
+                $clinicLogo = 'storage/' . $clinicDetails->clinic_logo;
+            }
+            $pdf = Pdf::loadView('pdf.prescriptionBill_pdf', [
+                'billDetails' => $billDetails,
+                'patientPrescriptionBilling' => $patientPrescriptionBilling,
+                'appointment' => $appointment,
+                'patient' => $appointment->patient,
+                'clinicDetails' => $clinicDetails,
+                'clinicLogo' => $clinicLogo,
+                'currency' => $clinicDetails->currency,
+            ])->setPaper('A5', 'portrait');
+            return response()->json([
+                'success' => true,
+                'message' => 'Medicine bill payment successfully recorded.',
+                'pdf' => base64_encode($pdf->output()),
+            ]);
+
+            //return redirect()->route('billing')->with('success', 'Billing recorded successfully!');
         } catch (\Exception $e) {
             // Rollback the transaction on error
             DB::rollBack();
 
-            return redirect()->back()->with('error', 'Failed to create bill: ' . $e->getMessage());
+            //return redirect()->back()->with('error', 'Failed to create bill: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'An error occurred while processing the payment.', 'error' => 'An error occurred while processing the payment.: '.$e->getMessage()], 500);
         }
     }
 
