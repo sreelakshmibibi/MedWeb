@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PatientTreatmentBilling;
+use DateTime;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -46,33 +47,33 @@ class AuditController extends Controller
         ->where('bill_status', PatientTreatmentBilling::BILL_CANCELLED);
         
         // Check if 'fromdate' and 'todate' are present and apply date range filter
-        if ($request->filled('fromdate') && $request->filled('todate')) {
-        $fromDate = $request->fromdate . " 00:00:00";
-        $toDate = $request->todate . " 23:59:59";
+        if ($request->filled('fromdateaudit') && $request->filled('todateaudit')) {
+        $fromDate = $request->fromdateaudit . " 00:00:00";
+        $toDate = $request->todateaudit . " 23:59:59";
         $treatmentQuery->whereBetween('updated_at', [$fromDate, $toDate]);
-        } elseif ($request->filled('fromdate')) {
-        $fromDate = $request->fromdate . " 00:00:00";
+        } elseif ($request->filled('fromdateaudit')) {
+        $fromDate = $request->fromdateaudit . " 00:00:00";
         $treatmentQuery->where('updated_at', '>=', $fromDate);
-        } elseif ($request->filled('todate')) {
-        $toDate = $request->todate . " 23:59:59";
+        } elseif ($request->filled('todateaudit')) {
+        $toDate = $request->todateaudit . " 23:59:59";
         $treatmentQuery->where('updated_at', '<=', $toDate);
         }
 
         // Check if 'branch' is present and apply filter on related 'appointment'
-        if ($request->filled('branch')) {
+        if ($request->filled('branchaudit')) {
         $treatmentQuery->whereHas('appointment', function ($q) use ($request) {
-            $q->where('app_branch', $request->branch);
+            $q->where('app_branch', $request->branchaudit);
         });
         }
 
         // Check if 'billedby' is present and apply filter
-        if ($request->filled('billedby')) {
-        $treatmentQuery->where('billed_by', $request->billedby);
+        if ($request->filled('billedbyaudit')) {
+        $treatmentQuery->where('billed_by', $request->billedbyaudit);
         }
 
         // Check if 'generatedby' is present and apply filter
-        if ($request->filled('generatedby')) {
-        $treatmentQuery->where('created_by', $request->generatedby);
+        if ($request->filled('generatedbyaudit')) {
+        $treatmentQuery->where('created_by', $request->generatedbyaudit);
         }
 
         // Execute the query and retrieve results
@@ -130,6 +131,11 @@ class AuditController extends Controller
             })
             ->addColumn('deletedBy', function ($row) {
                 return str_replace('<br>', ' ', $row->deletedBy->name ?? 'N/A');
+            })
+            ->addColumn('deleted_at', function ($row) {
+                $dateTime = new DateTime($row->updated_at);
+                // Format the datetime as a single string
+                return $dateTime->format('Y-m-d H:i:s');
             })
             ->make(true);
     }
