@@ -49,8 +49,8 @@ date_default_timezone_set('Asia/Kolkata');
             <!-- Nav tabs -->
             <ul class="nav nav-tabs " role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" data-bs-toggle="tab" href="#treatgbilltabcontent" role="tab"
-                        id="treatgbilltabtitle">
+                    <a class="nav-link {{ $activeTab == 'treatbill' ? 'active' : '' }}" data-bs-toggle="tab"
+                        href="#treatgbilltabcontent" role="tab" id="treatgbilltabtitle">
                         <span class="hidden-sm-up"><i class="fa-solid fa-file-medical"></i></span>
                         <span class="hidden-xs-down"><i class="fa-solid fa-file-medical me-10"></i>Treatment Bill</span>
                     </a>
@@ -58,8 +58,8 @@ date_default_timezone_set('Asia/Kolkata');
 
                 <?php if (sizeof($prescriptions) > 0 && $isMedicineProvided == 'Y') { ?>
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#medgbilltabcontent" role="tab"
-                        id="medgbilltabtitle">
+                    <a class="nav-link {{ $activeTab == 'medbill' ? 'active' : '' }}" data-bs-toggle="tab"
+                        href="#medgbilltabcontent" role="tab" id="medgbilltabtitle">
                         <span class="hidden-sm-up"><i class="fa-solid fa-capsules"></i> </span>
                         <span class="hidden-xs-down"><i class="fa-solid fa-capsules me-10"></i>Medicine Bill</span>
                     </a>
@@ -68,7 +68,8 @@ date_default_timezone_set('Asia/Kolkata');
             </ul>
 
             <div class="tab-content">
-                <div class="tab-pane active" id="treatgbilltabcontent" role="tabpanel">
+                <div class="tab-pane {{ $activeTab == 'treatbill' ? 'active' : '' }}" id="treatgbilltabcontent"
+                    role="tabpanel">
                     <div class="py-15">
                         <form method="post" id="billingForm" action="{{ route('billing.payment') }}"
                             enctype="multipart/form-data">
@@ -386,7 +387,8 @@ date_default_timezone_set('Asia/Kolkata');
                     </div>
                 </div>
 
-                <div class="tab-pane" id="medgbilltabcontent" role="tabpanel">
+                <div class="tab-pane {{ $activeTab == 'medbill' ? 'active' : '' }}" id="medgbilltabcontent"
+                    role="tabpanel">
                     <div class="py-15">
                         @include('billing.medicine')
                     </div>

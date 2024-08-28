@@ -51,7 +51,7 @@ Auth::routes(['verify' => true]);
 Route::middleware(['auth', 'check.session'])->group(function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/home/{usertype}', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard.userType');
-   
+
     Route::group(['middleware' => ['role:Superadmin|Admin']], function () {
 
         Route::resource('/permissions', PermissionController::class);
@@ -252,3 +252,4 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('send-sms', [SmsController::class, 'sendSms'])->name('send.sms');
 
 });
+Route::get('/billing/add', [BillingController::class, 'add'])->name('billing.add');

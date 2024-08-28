@@ -192,10 +192,19 @@ class BillingController extends Controller
                         if (Auth::user()->can('bill generate')) {
                             $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='generate bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-plus'></i></a>";
                         }
+                        $buttons[] = "<a href='" . route('billing.add', ['idEncrypted' => $idEncrypted, 'tab' => 'treatbill']) . "' class='waves-effect waves-light btn btn-circle btn-secondary text-dark btn-xs me-1' title='treatment bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-plus'></i></a>";
+
+                        $buttons[] = "<a href='" . route('billing.add', ['idEncrypted' => $idEncrypted, 'tab' => 'medbill']) . "' class='waves-effect waves-light btn btn-circle btn-warning btn-xs me-1' title='medicine bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-plus'></i></a>";
+
                     }
 
                     if (!empty($billing) && $billing->bill_status == PatientTreatmentBilling::PAYMENT_DONE) {
                         $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='View bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-eye'></i></a>";
+
+                        $buttons[] = "<a href='" . route('billing.add', ['idEncrypted' => $idEncrypted, 'tab' => 'treatbill']) . "' class='waves-effect waves-light btn btn-circle btn-secondary text-dark btn-xs me-1' title='treatment bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-download'></i></a>";
+
+                        $buttons[] = "<a href='" . route('billing.add', ['idEncrypted' => $idEncrypted, 'tab' => 'medbill']) . "' class='waves-effect waves-light btn btn-circle btn-warning btn-xs me-1' title='medicine bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-download'></i></a>";
+
                         // $base64billId = base64_encode($billing->bill_id);
                         // $billidEncrypted = Crypt::encrypt($base64billId);
                         // $base64appId = base64_encode($row->app_id);
@@ -220,6 +229,10 @@ class BillingController extends Controller
                         }
                     }
 
+                    // $buttons[] = "<a href='" . route('billing.add', ['idEncrypted' => $idEncrypted, 'tab' => 'treatbill']) . "' class='waves-effect waves-light btn btn-circle btn-dark btn-xs me-1' title='treatment bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-plus'></i></a>";
+    
+                    // $buttons[] = "<a href='" . route('billing.add', ['idEncrypted' => $idEncrypted, 'tab' => 'medbill']) . "' class='waves-effect waves-light btn btn-circle btn-warning btn-xs me-1' title='medicine bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-plus'></i></a>";
+    
                     return implode('', $buttons);
                 })
 
@@ -228,6 +241,160 @@ class BillingController extends Controller
         }
 
         return view('billing.index');
+    }
+
+    public function add(Request $request)
+    {
+
+        $activeTab = $request->query('tab', 'treatbill');
+        $appointmentId = $request->query('idEncrypted');
+        $id = base64_decode(Crypt::decrypt($appointmentId));
+        $appointment = Appointment::with(['patient', 'doctor', 'branch'])
+            ->find($id);
+        $billExists = PatientTreatmentBilling::where('status', 'Y')
+            ->where('appointment_id', $id)
+            ->where('patient_id', $appointment->patient_id)
+            ->first();
+        // if (!empty($billExists)) {
+        //     $detailBills = PatientDetailBilling::with('treatment')->where('billing_id', $billExists->id)->get();
+
+        //     return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills'));
+        // }
+        // if (!empty($billExists)) {
+        //     $detailBills = PatientDetailBilling::with('treatment')->where('billing_id', $billExists->id)->get();
+        //     $previousOutStanding = 0;
+        //     $previousBill = PatientTreatmentBilling::where('patient_id', $appointment->patient_id)
+        //         ->where('appointment_id', '<', $appointment->id)
+        //         ->where('status', 'Y')
+        //         ->orderBy('appointment_id', 'desc') // Order by descending to get the most recent previous appointment
+        //         ->first(); // Get the first result which will be the closest previous appointment
+
+        //     // Check if a previous appointment was found
+        //     if ($previousBill) {
+        //         if ($previousBill->bill_status == PatientTreatmentBilling::PAYMENT_DONE) {
+        //             $previousOutStanding += $previousBill->balance_due;
+        //         }
+        //         if ($previousBill->bill_status == PatientTreatmentBilling::BILL_GENERATED) {
+        //             $previousOutStanding += $previousBill->amount_to_be_paid;
+        //         }
+
+        //     }
+
+        //     return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'previousOutStanding'));
+        // }
+        $billingService = new BillingService();
+        $treatmentAmounts = $billingService->individualTreatmentAmounts($id, $appointment->patient_id);
+        $individualTreatmentAmounts = $treatmentAmounts['individualTreatmentAmounts'];
+        $selectedTreatments = $treatmentAmounts['selectedTreatmentIds'] != null ? $treatmentAmounts['selectedTreatmentIds'] : [];
+        $totalCost = $treatmentAmounts['totalCost'];
+        // Fetch the doctor discount from the appointment
+        $insuranceApproved = 0;
+        $doctorDiscount = $appointment->doctor_discount;
+        $clinicBasicDetails = ClinicBasicDetail::first();
+        $feesFrequency = $clinicBasicDetails->consultation_fees_frequency;
+        $checkAppointmentCount = $billingService->getAppointmentCount($appointment->patient_id, $appointment->id);
+        $consultationFees = 1;
+        $fees = $appointment->doctor->staffProfile->consultation_fees;
+        if ($checkAppointmentCount > 1) {
+            $consultationFees = $billingService->getConsultationFees($appointment->patient_id, $feesFrequency);
+
+        }
+        $insuranceDetails = Insurance::where('patient_id', $appointment->patient_id)
+            ->where('status', 'Y')
+            ->where('policy_end_date', '>=', $appointment->app_date)
+            ->first();
+        $combOffers = $billingService->getOffers($selectedTreatments, $appointment->combo_offer_id);
+        $isMedicineProvided = (ClinicBranch::find($appointment->app_branch))->is_medicine_provided;
+        // $prescriptions = Prescription::where('app_id', $appointment->id)
+        //     ->where('patient_id', $appointment->patient_id)
+        //     ->where('status', 'Y')
+        //     ->get();
+        $comboOfferId = $appointment->combo_offer_id ? $appointment->combo_offer_id : 0;
+        $comboOfferApplied = 0;
+        $comboOfferDeduction = 0;
+        if (!empty($insuranceDetails)) {
+            foreach ($individualTreatmentAmounts as &$individualTreatmentAmount) {
+                $individualTreatmentAmount['discount_percentage'] = 0;
+                $individualTreatmentAmount['treat_cost'] = $individualTreatmentAmount['cost'];
+                $individualTreatmentAmount['subtotal'] = $individualTreatmentAmount['quantity'] * $individualTreatmentAmount['treat_cost'];                    // $actualCost += $individualTreatmentAmount->cost;
+            }
+        }
+        if ($comboOfferId) {
+            $comboOfferTreatments = TreatmentComboOffer::with('treatments')->find($comboOfferId);
+            if ($comboOfferTreatments) {
+                $comboOfferApplied = $comboOfferTreatments->offer_amount;
+                $comboOfferActualAmount = $comboOfferTreatments->treatments->sum('treat_cost');
+                $actualCost = 0;
+                foreach ($individualTreatmentAmounts as &$individualTreatmentAmount) {
+                    $individualTreatmentAmount['discount_percentage'] = 0;
+                    $individualTreatmentAmount['treat_cost'] = $individualTreatmentAmount['cost'];
+                    $individualTreatmentAmount['subtotal'] = $individualTreatmentAmount['quantity'] * $individualTreatmentAmount['treat_cost'];
+                }
+                $comboOfferDeduction = $comboOfferActualAmount - $comboOfferApplied;
+            }
+        }
+        $prescriptions = Prescription::with(['medicine', 'dosage'])
+            ->where('app_id', $appointment->id)
+            ->where('patient_id', $appointment->patient_id)
+            ->where('status', 'Y')
+            ->get();
+        $medicineTotal = 0;
+        $hasPrescriptionBill = PatientPrescriptionBilling::where('appointment_id', $appointment->id)->first();
+
+        // Initialize prescription bill details
+        if ($hasPrescriptionBill) {
+
+            $prescriptionBillDetails = PrescriptionDetailBilling::where('bill_id', $hasPrescriptionBill->id)->get();
+        } else {
+            $prescriptionBillDetails = collect(); // Use an empty collection
+        }
+
+        $insurance = 0;
+        // Pass variables to the view
+        // if (!empty($billExists)) {
+        //     $detailBills = PatientDetailBilling::with('treatment')->where('billing_id', $billExists->id)->get();
+
+        //     return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'isMedicineProvided', 'clinicBasicDetails', 'medicineTotal', 'prescriptions', 'hasPrescriptionBill', 'prescriptionBillDetails'));
+        // }
+        if (!empty($billExists)) {
+            $detailBills = PatientDetailBilling::with('treatment')->where('billing_id', $billExists->id)->get();
+            $previousOutStanding = $billingService->previousOutstanding($appointment->id, $appointment->patient_id);
+            // $previousBill = PatientTreatmentBilling::where('patient_id', $appointment->patient_id)
+            //     ->where('appointment_id', '<', $appointment->id)
+            //     ->where('status', 'Y')
+            //     ->orderBy('appointment_id', 'desc') // Order by descending to get the most recent previous appointment
+            //     ->first(); // Get the first result which will be the closest previous appointment
+
+            // // Check if a previous appointment was found
+            // if ($previousBill) {
+            //     if ($previousBill->bill_status == PatientTreatmentBilling::PAYMENT_DONE) {
+            //         $previousOutStanding += $previousBill->balance_due;
+            //     }
+            //     if ($previousBill->bill_status == PatientTreatmentBilling::BILL_GENERATED) {
+            //         $previousOutStanding += $previousBill->amount_to_be_paid;
+            //     }
+
+            // }
+            $cardPay = CardPay::where('status', 'Y')->get();
+            if ($billExists->bill_status = PatientTreatmentBilling::BILL_GENERATED) {
+                return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'previousOutStanding', 'clinicBasicDetails', 'isMedicineProvided', 'medicineTotal', 'prescriptions', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab'));
+            } else if ($billExists->bill_status = PatientTreatmentBilling::PAYMENT_DONE) {
+                return redirect()->route('billing.paymentReceipt')->with([
+                    'billId' => $billExists->id,
+                    'appointmentId' => $appointment->id,
+
+                ]);
+            }
+
+        }
+        $cardPay = CardPay::where('status', "Y")->get();
+        // if (!empty($insuranceDetails)) {
+        return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction', 'insuranceDetails', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab'));
+        // }
+        //  else {
+        //     return view('billing.generateBill', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction'));
+        // }
+
     }
 
     public function comboOffer(Request $request, $appointmentId)
@@ -252,6 +419,7 @@ class BillingController extends Controller
 
     public function create($appointmentId)
     {
+
         $id = base64_decode(Crypt::decrypt($appointmentId));
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])
             ->find($id);

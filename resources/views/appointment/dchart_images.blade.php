@@ -202,7 +202,8 @@ $lower_teethImages = [
             <div class="row position-absolute" style="left:2rem; top:0;">
                 {{-- <div class="row position-absolute" style="left:2rem; top:-1.5rem;"> --}}
                 <div class="select-div">
-                    <input type="checkbox" id="checkbox_all" class="filled-in chk-col-success" value="<?= TeethRow::RowAll ?>">
+                    <input type="checkbox" id="checkbox_all" class="filled-in chk-col-success"
+                        value="<?= TeethRow::RowAll ?>">
                     <label for="checkbox_all">Other</label>
                 </div>
             </div>
@@ -316,13 +317,26 @@ $lower_teethImages = [
                             var disease_id = examination.disease_id;
                             $('#disease_id').val(disease_id);
 
+                            var diseaseName = response
+                                .diseaseName.name;
+                            var found = false;
                             // Loop through options to find the corresponding text and select it
                             $('#disease_id option').each(function() {
                                 if ($(this).val() == disease_id) {
                                     $(this).prop('selected', true);
+                                    found = true; // Set the flag to true
                                     return false; // Exit the loop once found
                                 }
                             });
+
+                            if (!found) {
+                                var newOption = new Option(diseaseName,
+                                    disease_id, true, true
+                                ); // Customize 'New Disease Name' as needed
+                                $('#disease_id').append(newOption).trigger(
+                                    'change'
+                                    ); // Append and trigger change to update Select2 if used
+                            }
 
                             var treatment_id = examination.treatment_id;
                             $('#treatment_id').val(treatment_id);
@@ -638,10 +652,10 @@ $lower_teethImages = [
             $('#row_id').val(5);
             getRowData(5, patientId, appId);
             $('#modal-teeth').modal('show');
-            
+
         } else {
             $('.exam_toothdiv').show();
-            
+
         }
 
 
@@ -652,11 +666,11 @@ $lower_teethImages = [
                 $('#row_id').val(5);
                 getRowData(5, patientId, appId);
                 $('#modal-teeth').modal('show');
-                
+
             } else {
                 $('.exam_toothdiv').show();
                 $('.exam_chiefComplaint').hide();
-                
+
             }
         });
 
