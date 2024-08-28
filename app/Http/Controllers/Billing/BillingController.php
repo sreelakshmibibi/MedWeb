@@ -419,7 +419,7 @@ class BillingController extends Controller
 
     public function create($appointmentId)
     {
-
+        $activeTab = 'treatbill';
         $id = base64_decode(Crypt::decrypt($appointmentId));
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])
             ->find($id);
@@ -549,7 +549,7 @@ class BillingController extends Controller
             // }
             $cardPay = CardPay::where('status', 'Y')->get();
             if ($billExists->bill_status = PatientTreatmentBilling::BILL_GENERATED) {
-                return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'previousOutStanding', 'clinicBasicDetails', 'isMedicineProvided', 'medicineTotal', 'prescriptions', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay'));
+                return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'previousOutStanding', 'clinicBasicDetails', 'isMedicineProvided', 'medicineTotal', 'prescriptions', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab'));
             } else if ($billExists->bill_status = PatientTreatmentBilling::PAYMENT_DONE) {
                 return redirect()->route('billing.paymentReceipt')->with([
                     'billId' => $billExists->id,
@@ -561,7 +561,7 @@ class BillingController extends Controller
         }
         $cardPay = CardPay::where('status', "Y")->get();
         // if (!empty($insuranceDetails)) {
-        return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction', 'insuranceDetails', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay'));
+        return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction', 'insuranceDetails', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab'));
         // }
         //  else {
         //     return view('billing.generateBill', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction'));
