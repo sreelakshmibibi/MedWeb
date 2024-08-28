@@ -87,7 +87,7 @@ use App\Models\Appointment;
                                 <div class="form-group">
                                     <label class="form-label" for="disease_id">Disease <span class="text-danger">
                                             *</span></label>
-                                    <select class="form-select" id="disease_id" name="disease_id">
+                                    <select class="form-select disease_id_select" id="disease_id" name="disease_id">
                                         <option value="">Select disease</option>
                                         @foreach ($diseases as $disease)
                                             <option value="<?= $disease->id ?>"><?= $disease->name ?></option>
@@ -132,7 +132,8 @@ use App\Models\Appointment;
                                 <div class="form-group">
                                     <label class="form-label" for="treatment_id">Treatment <span class="text-danger">
                                             *</span></label>
-                                    <select class="form-select" id="treatment_id" name="treatment_id">
+                                    <select class="form-select treatment_id_select" id="treatment_id"
+                                        name="treatment_id">
                                         <option value="">Select a Treatment</option>
                                         @foreach ($treatments as $treatment)
                                             <option value="<?= $treatment->id ?>"><?= $treatment->treat_name ?>
@@ -184,7 +185,8 @@ use App\Models\Appointment;
                                     <label class="form-label" for="treatment_plan_id">Treatment Plan <span
                                             class="text-danger">
                                             *</span></label>
-                                    <select class="form-select" id="treatment_plan_id" name="treatment_plan_id">
+                                    <select class="form-select treatment_plan_select" id="treatment_plan_id"
+                                        name="treatment_plan_id">
                                         <option value="">Select a Plan</option>
                                         @foreach ($plans as $plan)
                                             <option value="<?= $plan->id ?>"><?= $plan->plan ?>
@@ -322,7 +324,116 @@ use App\Models\Appointment;
 </form>
 
 <script>
-    $(function() {
+    // $(function() {
+    $(document).ready(function() {
+        // Initialize Select2 when modal is shown
+        $('#modal-teeth').on('shown.bs.modal', function() {
+            $(".treatment_id_select").select2({
+                dropdownParent: $('#modal-teeth'),
+                width: "100%",
+                placeholder: "Select a Treatment",
+                tags: true,
+                tokenSeparators: [","],
+                createTag: function(params) {
+                    var term = $.trim(params.term);
+                    if (term === "") {
+                        return null;
+                    }
+                    // Check if the term already exists as an option
+                    var found = false;
+                    $(".treatment_id_select option").each(function() {
+                        if ($.trim($(this).text()) === term) {
+                            found = true;
+                            return false; // Exit the loop early
+                        }
+                    });
+                    if (!found) {
+                        return {
+                            id: term,
+                            text: term,
+                            newTag: true
+                        };
+                    }
+                    return null;
+                },
+                insertTag: function(data, tag) {
+                    data.push(tag);
+                }
+            });
+
+            $(".treatment_plan_select").select2({
+                dropdownParent: $('#modal-teeth'),
+                width: "100%",
+                placeholder: "Select a Plan",
+                tags: true,
+                tokenSeparators: [","],
+                createTag: function(params) {
+                    var term = $.trim(params.term);
+                    if (term === "") {
+                        return null;
+                    }
+                    // Check if the term already exists as an option
+                    var found = false;
+                    $(".treatment_id_select option").each(function() {
+                        if ($.trim($(this).text()) === term) {
+                            found = true;
+                            return false; // Exit the loop early
+                        }
+                    });
+                    if (!found) {
+                        return {
+                            id: term,
+                            text: term,
+                            newTag: true
+                        };
+                    }
+                    return null;
+                },
+                insertTag: function(data, tag) {
+                    data.push(tag);
+                }
+            });
+
+            $(".disease_id_select").select2({
+                dropdownParent: $('#modal-teeth'),
+                width: "100%",
+                placeholder: "Select a Disease",
+                tags: true,
+                tokenSeparators: [","],
+                createTag: function(params) {
+                    var term = $.trim(params.term);
+                    if (term === "") {
+                        return null;
+                    }
+                    // Check if the term already exists as an option
+                    var found = false;
+                    $(".treatment_id_select option").each(function() {
+                        if ($.trim($(this).text()) === term) {
+                            found = true;
+                            return false; // Exit the loop early
+                        }
+                    });
+                    if (!found) {
+                        return {
+                            id: term,
+                            text: term,
+                            newTag: true
+                        };
+                    }
+                    return null;
+                },
+                insertTag: function(data, tag) {
+                    data.push(tag);
+                }
+            });
+        });
+
+        // Reset Select2 when modal is hidden
+        $('#modal-teeth').on('hidden.bs.modal', function() {
+            $(".treatment_id_select").select2("destroy");
+            $(".treatment_plan_select").select2("destroy");
+            $(".disease_id_select").select2("destroy");
+        });
 
         function addChiefComplaintInput(classname) {
             var input = document.createElement('input');
