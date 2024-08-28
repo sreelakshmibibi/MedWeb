@@ -2,7 +2,7 @@
     @csrf
     <input type="hidden" id="edit_app_id" name="edit_app_id" value="">
     <input type="hidden" id="edit_clinic_branch_id" name="edit_clinic_branch_id" value="">
-    <input type="hidden" id="edit_doctor_id" name="edit_doctor_id" value="">
+    <!-- <input type="hidden" id="edit_doctor_id" name="edit_doctor_id" value=""> -->
     <div class="modal fade modal-right slideInRight" id="modal-reschedule" tabindex="-1">
         <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
@@ -33,22 +33,12 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="edit_doctor">Doctor</label>
-                                    <input type="text" class="form-control" id="edit_doctor" name="edit_doctor"
-                                        required style="width: 100%;" readonly>
-
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
                                     <label class="form-label" for="clinic_branch_id">Branch</label>
                                     <input type="text" class="form-control" id="edit_clinic_branch"
                                         name="edit_clinic_branch" required style="width: 100%;" readonly>
 
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="scheduled_appdate">Scheduled Date & Time</label>
@@ -56,6 +46,8 @@
                                         name="scheduled_appdate" required readonly>
                                 </div>
                             </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="rescheduledAppdate">Reschedule Date &
@@ -63,6 +55,23 @@
                                     <input class="form-control" type="datetime-local" id="rescheduledAppdate"
                                         name="rescheduledAppdate" required>
                                     <div id="rescheduledAppdateError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="edit_doctor">Doctor</label>
+                                    <!-- <input type="text" class="form-control" id="edit_doctor" name="edit_doctor"
+                                        required style="width: 100%;" readonly> -->
+                                        <select class="form-select" id="edit_doctor" name="edit_doctor" required
+                                        data-placeholder="Select a Doctor" style="width: 100%;">
+                                        <option value="">Select a doctor</option>
+                                        @foreach ($allDoctors as $doctor)
+                                            <?php $doctorName = str_replace('<br>', ' ', $doctor->user->name); ?>
+                                            <option value="{{ $doctor->user_id }}">{{ $doctorName }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div id="editdoctorError" class="invalid-feedback"></div>
+
                                 </div>
                             </div>
                         </div>
@@ -118,6 +127,7 @@
             $('#rescheduledAppdateError').text('');
             $('#reschedule_reason').removeClass('is-invalid');
             $('#rescheduleReasonError').text('');
+            $('#editdoctorError').text('');
             $('#rescheduleDoctorNotAvailable').hide();
         });
 
@@ -130,6 +140,7 @@
 
             var rescheduledAppdate = $('#rescheduledAppdate').val();
             var rescheduleReason = $('#reschedule_reason').val();
+            var editDoctor = $('#edit_doctor').val();
             // Basic client-side validation (you can add more as needed)
             var isValid = true;
             if (rescheduledAppdate.length === 0) {
@@ -140,6 +151,15 @@
             } else {
                 $('#rescheduledAppdate').removeClass('is-invalid');
                 $('#rescheduledAppdateError').text('');
+            }
+            if (editDoctor.length === 0) {
+                $('#edit_doctor').addClass('is-invalid');
+                $('#editdoctorError').text('Doctor is required.');
+                // Prevent further execution
+                isValid = false;
+            } else {
+                $('#edit_doctor').removeClass('is-invalid');
+                $('#editdoctorError').text('');
             }
 
             if (rescheduleReason.length === 0) {

@@ -78,19 +78,20 @@ class DoctorAvaialbilityService
         return $availableBranches;
     }
 
-    public function getTodayWorkingDoctors($branchId, $weekday, $date)
+    public function getTodayWorkingDoctors($branchId, $weekday, $date, $time)
     {
-
+        // Start with a query for working hours based on weekday and status
         $query = DoctorWorkingHour::where('week_day', $weekday)
             ->where('status', 'Y');
-
+    
+        // Apply branch filter if provided
         if ($branchId) {
             $query->where('clinic_branch_id', $branchId);
         }
-
-        
-        // Count appointments for each working doctor
+    
+        // Get the list of working doctors
         $workingDoctors = $query->with('user')->get();
+    
         // Filter out doctors who are on leave
         $workingDoctors = $workingDoctors->filter(function ($workingHour) use ($date) {
             $doctorId = $workingHour->user_id;
@@ -105,25 +106,40 @@ class DoctorAvaialbilityService
                                     ->where('leave_to', '>=', $date);
                           });
                 })
-                ->whereNot('leave_status', LeaveApplication::Rejected)
+                ->where('leave_status', '<>', LeaveApplication::Rejected)
                 ->exists();
     
             return !$isOnLeave;
         });
     
-        foreach ($workingDoctors as $doctor) {
+        // Filter out doctors based on their working hours for the given time
+        $workingDoctors = $workingDoctors->filter(function ($workingHour) use ($time, $branchId) {
+            $doctorId = $workingHour->user_id;
+    
+            return DoctorWorkingHour::where('user_id', $doctorId)
+                ->where('week_day', $workingHour->week_day)
+                ->where('status', 'Y') // Assuming 'Y' indicates the doctor is available
+                ->where('clinic_branch_id', $branchId)
+                ->whereTime('from_time', '<=', $time)
+                ->whereTime('to_time', '>=', $time)
+                ->exists();
+        });
+    
+        // Add appointment counts to each doctor
+        $workingDoctors->each(function ($doctor) {
             $doctor->appointments_count = Appointment::where('doctor_id', $doctor->user_id)
                 ->whereDate('app_date', today()) // Assuming appointments are filtered by today’s date
                 ->count();
+    
             $doctor->appointments_completed_count = Appointment::where('doctor_id', $doctor->user_id)
-                ->where('app_status', 5)
+                ->where('app_status', 5) // Assuming '5' indicates completed status
                 ->whereDate('app_date', today()) // Assuming appointments are filtered by today’s date
                 ->count();
-        }
-
+        });
+    
         return $workingDoctors;
     }
-
+    
     public function getExistingAppointments($branchId, $appDate, $doctorId)
     {
         $query = Appointment::where('status', 'Y')

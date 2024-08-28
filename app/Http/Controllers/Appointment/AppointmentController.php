@@ -7,6 +7,7 @@ use App\Models\Appointment;
 use App\Models\AppointmentStatus;
 use App\Models\AppointmentType;
 use App\Models\ClinicBranch;
+use App\Models\DoctorWorkingHour;
 use App\Models\StaffProfile;
 use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
@@ -204,10 +205,15 @@ class AppointmentController extends Controller
         $firstBranchId = $clinicBranches->first()?->id;
         $currentDayName = Carbon::now()->englishDayOfWeek;
         $doctorAvailabilityService = new DoctorAvaialbilityService();
-        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($firstBranchId, $currentDayName, date('Y-m-d'));
+        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($firstBranchId, $currentDayName, date('Y-m-d'), date('H:i'));
+        $allDoctors = StaffProfile::with('user')
+                        ->whereHas('user', function ($query) {
+                            $query->where('is_doctor', 1);
+                        })
+                        ->get();
         $appointmentTypes = AppointmentType::all();
 
-        return view('appointment.index', compact('clinicBranches', 'firstBranchId', 'currentDayName', 'workingDoctors', 'appointmentTypes'));
+        return view('appointment.index', compact('clinicBranches', 'firstBranchId', 'currentDayName', 'workingDoctors', 'appointmentTypes', 'allDoctors'));
     }
 
     /**
@@ -287,7 +293,10 @@ class AppointmentController extends Controller
         $appointment->clinic_branch = $clinicAddress;
         $appointment->app_date = date('d-m-Y', strtotime($appointment->app_date));
         $appointment->app_time = date('H:i', strtotime($appointment->app_time));
-
+        // $currentDayName = Carbon::createFromFormat('d-m-Y', $appointment->app_date)->englishDayOfWeek;
+        // $doctorAvailabilityService = new DoctorAvaialbilityService();
+        // $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($appointment->app_branch, $currentDayName, $appointment->app_date);
+        // $appointment->workingDoctors =$workingDoctors;
         return $appointment;
     }
 
@@ -304,12 +313,14 @@ class AppointmentController extends Controller
             $appDateTime = Carbon::parse($request->input('rescheduledAppdate'));
             $appDate = $appDateTime->toDateString(); // 'Y-m-d'
             $appTime = $appDateTime->toTimeString(); // 'H:i:s'
-            $doctorId = $existingAppointment->doctor_id;
+            $doctorId = $request->edit_doctor;
             $commonService = new CommonService();
             $tokenNo = $commonService->generateTokenNo($doctorId, $appDate);
             // Check if an appointment with the same date, time, and doctor exists
+            $doctorAvailabilityService = new DoctorAvaialbilityService();
+            $carbonDate = Carbon::parse($appDate);
+            $weekDay = $carbonDate->format('l');
             $appointmentExists = $commonService->checkexisting($doctorId, $appDate, $appTime, $existingAppointment->app_branch, $existingAppointment->patient_id);
-
             if ($appointmentExists) {
                 return response()->json(['error' => 'An appointment already exists for the given date, time, and doctor.'], 422);
             }
@@ -361,4 +372,22 @@ class AppointmentController extends Controller
             return response()->json(['error', 'Appointment not cancelled.'], 200);
         }
     }
+    public function showForm($appBranch)
+    {
+        $availableDoctorIds = DoctorWorkingHour::
+        where('status', 'Y') // Assuming 'Y' indicates availability
+        ->where('clinic_branch_id', $appBranch)
+        ->pluck('user_id'); // Get user IDs of available doctors
+
+        // Step 2: Fetch doctors from StaffProfile and ensure they are actual doctors
+        $allDoctors = StaffProfile::with('user')
+        ->whereIn('user_id', $availableDoctorIds)
+        ->whereHas('user', function ($query) {
+            $query->where('is_doctor', 1); // Ensure the user is a doctor
+        })
+        ->get();
+        
+        return response()->json($allDoctors);
+        
+}
 }

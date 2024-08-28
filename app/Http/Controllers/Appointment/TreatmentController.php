@@ -82,7 +82,7 @@ class TreatmentController extends Controller
 
         // Initialize DoctorAvaialbilityService and fetch working doctors
         $doctorAvailabilityService = new DoctorAvaialbilityService();
-        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($appointmentBranchId, $currentDayName, date('Y-m-d'));
+        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($appointmentBranchId, $currentDayName, date('Y-m-d'), date('H:i'));
 
         // Fetch all appointment types
         $appointmentTypes = AppointmentType::all();
