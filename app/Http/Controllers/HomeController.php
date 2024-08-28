@@ -253,6 +253,7 @@ class HomeController extends Controller
         $appointments = DB::table('appointments')
             ->select(DB::raw('HOUR(app_time) as hour'), DB::raw('COUNT(*) as count'))
             ->whereDate('app_date', '=', now()->toDateString()) // Filter by the current date or your desired date
+            ->where('doctor_id', Auth::user()->id)
             ->groupBy('hour')
             ->orderBy('hour')
             ->get();
@@ -310,6 +311,7 @@ class HomeController extends Controller
         // Fetch appointment counts within the range
         $appointments = DB::table('appointments')
             ->select(DB::raw('MONTH(app_date) as month'), DB::raw('COUNT(*) as count'))
+            ->where('doctor_id', Auth::user()->id)
             ->whereBetween('app_date', [$startDate, $endDate])
             ->groupBy(DB::raw('MONTH(app_date)'))
             ->orderBy(DB::raw('MONTH(app_date)'))
@@ -317,7 +319,5 @@ class HomeController extends Controller
 
         return response()->json($appointments);
     }
-
-
 
 }

@@ -9,6 +9,7 @@ use App\Http\Requests\Patient\PatientListRequest;
 use App\Models\Appointment;
 use App\Models\AppointmentStatus;
 use App\Models\AppointmentType;
+use App\Models\StaffProfile;
 use App\Models\City;
 use App\Models\ClinicBasicDetail;
 use App\Models\ClinicBranch;
@@ -71,6 +72,13 @@ class PatientListController extends Controller
                         $query->where('doctor_id', $doctorId);
                     });
                 }
+                // $patients = $query->get();
+            } else {
+                $clinicBranchId = StaffProfile::where('user_id', Auth::user()->id)
+                    ->pluck('clinic_branch_id')
+                    ->first();
+
+                $query = $query->where('app_branch', $clinicBranchId);
             }
 
             $patients = $query->get();

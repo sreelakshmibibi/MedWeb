@@ -46,10 +46,22 @@ class TodayController extends Controller
                 if (!Auth::user()->is_admin) {
                     $appointments = $appointments->where('doctor_id', Auth::user()->id);
                 }
+                $appointments = $appointments->with(['patient', 'doctor', 'branch'])
+                    ->orderBy('token_no', 'ASC')
+                    ->get();
+            } else {
+                $clinicBranchId = StaffProfile::where('user_id', Auth::user()->id)
+                    ->pluck('clinic_branch_id')
+                    ->first();
+
+                $appointments = $appointments->where('app_branch', $clinicBranchId)
+                    ->with(['patient', 'doctor', 'branch'])
+                    ->orderBy('token_no', 'ASC')
+                    ->get();
             }
-            $appointments = $appointments->with(['patient', 'doctor', 'branch'])
-                ->orderBy('token_no', 'ASC')
-                ->get();
+            // $appointments = $appointments->with(['patient', 'doctor', 'branch'])
+            //     ->orderBy('token_no', 'ASC')
+            //     ->get();
             return DataTables::of($appointments)
                 ->addIndexColumn()
                 ->addColumn('name', function ($row) {
