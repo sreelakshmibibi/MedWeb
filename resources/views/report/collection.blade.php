@@ -377,12 +377,7 @@
                             doc.styles.tableHeader.fontSize = 10;
 
                         }
-                    }, 'colvis', {
-                        extend: 'collection',
-                        text: 'Show columns',
-                        buttons: ['columnsVisibility'],
-                        visibility: true
-                    },
+                    }
                 ],
                 footerCallback: function(row, data, start, end, display) {
                     var api = this.api();
