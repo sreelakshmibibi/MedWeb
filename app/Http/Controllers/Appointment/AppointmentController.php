@@ -188,6 +188,14 @@ class AppointmentController extends Controller
                             $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-xs' id='btn-cancel' data-bs-toggle='modal' data-bs-target='#modal-cancel' data-id='{$row->id}' title='cancel'><i class='fa fa-times'></i></button>";
                         }
                     }
+                    if ($row->app_status == AppointmentStatus::SCHEDULED) {
+                         
+                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' id='btn-appStatus' data-id='$row->id' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='change status to waiting'><i class='fa-solid fa-sliders'></i></a>";
+                      
+                    }
+                    if ($row->app_status == AppointmentStatus::WAITING) {
+                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' id='btn-appStatus' data-id='$row->id' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='change status to scheduled'><i class='fa-solid fa-sliders'></i></a>";
+                    }
                     if ($row->app_status == AppointmentStatus::COMPLETED) {
                         $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-secondary btn-treatment-pdf-generate btn-xs me-1' title='Download Treatment Summary' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}'  data-bs-target='#modal-download'><i class='fa fa-download'></i></button>";
                         $buttons[] = "<a href='#' class='waves-effect waves-light btn btn-circle btn-prescription-pdf-generate btn-warning btn-xs me-1' title='Download Prescription' data-app-id='{$row->id}' data-patient-id='{$row->patient->patient_id}' ><i class='fa fa-prescription'></i></a>";
@@ -199,6 +207,7 @@ class AppointmentController extends Controller
                 ->rawColumns(['patient_id', 'name', 'status', 'action'])
                 ->make(true);
         }
+
         $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])
             ->where('clinic_status', 'Y')
             ->get();
@@ -385,5 +394,24 @@ class AppointmentController extends Controller
         
         return response()->json($allDoctors);
         
-}
+    }
+    public function changeStatus($id)
+    {
+        $appointment = Appointment::find($id);
+        if(!$appointment)
+            abort(404);
+        $message = null;
+        if ($appointment->app_status == AppointmentStatus::SCHEDULED){
+            $appointment->app_status = AppointmentStatus::WAITING;
+            $message = 'Appointment Status changed to Waiting';
+        } else if ($appointment->app_status == AppointmentStatus::WAITING){
+            $appointment->app_status = AppointmentStatus::SCHEDULED;
+            $message = 'Appointment Status changed back to Scheduled';
+        }
+        if ($appointment->save()) {
+            return response()->json(['success', $message ]);
+        } else{
+            return response()->json(['error', 'Error occured while updating status' ]);
+        }
+    }
 }

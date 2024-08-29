@@ -456,7 +456,26 @@
                 console.log('Missing required parameters for fetching existing appointments.');
             }
         }
-
+        $(document).on('click', '#btn-appStatus', function() {
+            var appId = $(this).data('id');
+            var url = "{{ route('appointment.changeStatus', [':appointment']) }}";
+            url = url.replace(':appointment', appId);
+            $.ajax({
+                    type: 'GET',
+                    url: url,
+                    success: function(response) {
+                        console.log(response);
+                        $('#successMessage').text('updated');
+                        $('#successMessage').fadeIn().delay(3000)
+                            .fadeOut(); // Show for 3 seconds
+                        table.draw(); // Assuming 'table' is your DataTable instance
+                    },
+                    error: function(xhr) {
+                        // Handle error response, e.g., hide modal and show error message
+                        console.log("Error!", xhr.responseJSON.message, "error");
+                    }
+                });
+        });
         $(document).on('click', '#btn-cancel', function() {
             var appId = $(this).data('id');
             $('#delete_app_id').val(appId); // Set staff ID in the hidden input

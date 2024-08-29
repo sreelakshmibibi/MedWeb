@@ -182,6 +182,7 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::get('/appointment/{appointment}/edit', [AppointmentController::class, 'edit'])->name('appointment.edit');
     Route::post('/appointment/update', [AppointmentController::class, 'update'])->name('appointment.update');
     Route::post('/appointment/{appointment}', [AppointmentController::class, 'destroy'])->name('appointment.destroy');
+    Route::get('/appointment/changeStatus/{appointment}', [AppointmentController::class, 'changeStatus'])->name('appointment.changeStatus');
     Route::get('/appointment/getbranchDoctors/{branchId}', [AppointmentController::class, 'showForm'])->name('appointment.getBranchDoctors');
 
 
