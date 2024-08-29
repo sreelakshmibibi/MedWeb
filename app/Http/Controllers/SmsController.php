@@ -2,37 +2,54 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Appointment;
+use App\Models\AppointmentStatus;
+use App\Models\ClinicBasicDetail;
+use App\Models\StaffProfile;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SmsController extends Controller
 {
     public function sendSms(Request $request)
     {
-        echo "hi";
-exit;
-        // $request->validate([
-        //     'phone' => 'required|numeric',
-        //     'message' => 'required|string',
-        // ]);
-
-        // $sid = env('TWILIO_SID');
-        // $token = env('TWILIO_AUTH_TOKEN');
-        // $twilioNumber = env('TWILIO_PHONE_NUMBER');
-
-        // $client = new Client($sid, $token);
-
-        // try {
-        //     $client->messages->create(
-        //         $request->input('phone'),
-        //         [
-        //             'from' => $twilioNumber,
-        //             'body' => $request->input('message'),
-        //         ]
-        //     );
-
-        //     return response()->json(['success' => 'SMS sent successfully!']);
-        // } catch (\Exception $e) {
-        //     return response()->json(['error' => 'Failed to send SMS: ' . $e->getMessage()], 500);
-        // }
+        try {
+            $date = $request->selectedDate;
+            $appointments = Appointment::with(['patient', 'branch'])
+                ->where('app_status', AppointmentStatus::SCHEDULED)
+                ->where('app_date', $date);
+            
+            if (!Auth::user()->is_doctor && !Auth::user()->is_admin) {
+                $clinicBranchId = StaffProfile::where('user_id', Auth::user()->id)
+                    ->pluck('clinic_branch_id')
+                    ->first();
+                $appointments = $appointments->where('app_branch', $clinicBranchId);
+            }
+            
+            $appointments = $appointments->get();
+            $patientContacts = [];
+            $clinicDetails = ClinicBasicDetail::first();
+            
+            foreach ($appointments as $appointment) {
+                $patientName = str_replace('<br>', ' ', $appointment->patient->first_name . ' ' . $appointment->patient->last_name);
+                
+                if ($appointment->patient->phone != null) {
+                    $patientContacts[] = [
+                        'name' => $patientName,
+                        'phone' => $appointment->patient->phone,
+                        'message' => "Hello {$patientName},\n\n" .
+                        "This is a friendly reminder from {$clinicDetails->clinic_name} about your upcoming appointment on {$date} at {$appointment->app_time}. Please arrive 10 minutes early.\n\n" .
+                        "If you need to reschedule or have any questions, contact us at {$appointment->branch->clinic_phone}.\n\n" .
+                        "Thank you!\n\n" .
+                        "{$clinicDetails->clinic_name}",
+                    ];
+                }
+            }
+            
+            return redirect()->back()->with('success', 'SMS sent successfully');
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
     }
 }

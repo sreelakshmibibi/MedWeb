@@ -554,12 +554,18 @@
         $(document).on('click', '#smsbtn', function() {
             $.ajax({
                 url: '{{ route("send.sms") }}',
-                type: 'get',
+                type: 'POST',
+                data: {
+                    selectedDate: selectedDate, // Add selectedDate as a query parameter
+                    _token: '{{ csrf_token() }}' // Include CSRF token for security
+                },
                 success: function(response) {
-                    alert(response.success); // Show success message
+                    $('#successMessage').text('SMS sent successfully');
+                    $('#successMessage').fadeIn().delay(3000)
+                        .fadeOut(); // Show for 3 seconds
                 },
                 error: function(xhr) {
-                    alert(xhr.responseJSON.error); // Show error message
+                    console.log(xhr.responseJSON.error); // Show error message
                 }
             });
         });
