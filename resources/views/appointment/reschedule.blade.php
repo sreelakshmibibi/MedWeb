@@ -62,6 +62,12 @@
                                     <label class="form-label" for="edit_doctor">Doctor</label>
                                     <!-- <input type="text" class="form-control" id="edit_doctor" name="edit_doctor"
                                         required style="width: 100%;" readonly> -->
+                                        <?php
+
+use App\Services\DoctorAvaialbilityService;
+
+$doctorAvailabilityService = new DoctorAvaialbilityService();
+ $allDoctors = $doctorAvailabilityService->getAllDoctors();?>
                                         <select class="form-select" id="edit_doctor" name="edit_doctor" required
                                         data-placeholder="Select a Doctor" style="width: 100%;">
                                         <option value="">Select a doctor</option>

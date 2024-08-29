@@ -145,11 +145,11 @@ class AppointmentController extends Controller
                         AppointmentStatus::WAITING => 'badge-warning',
                         AppointmentStatus::UNAVAILABLE => 'badge-gray',
                         AppointmentStatus::CANCELLED => 'badge-danger',
-                        AppointmentStatus::COMPLETED => 'badge-light',
+                        AppointmentStatus::COMPLETED => 'badge-info',
                         AppointmentStatus::BILLING => 'badge-primary',
                         AppointmentStatus::PROCEDURE => 'badge-secondary',
                         AppointmentStatus::MISSED => 'badge-dark',
-                        AppointmentStatus::RESCHEDULED => 'badge-info',
+                        AppointmentStatus::RESCHEDULED => 'badge-gray',
                     ];
                     $btnClass = isset($statusMap[$row->app_status]) ? $statusMap[$row->app_status] : '';
 
@@ -206,14 +206,10 @@ class AppointmentController extends Controller
         $currentDayName = Carbon::now()->englishDayOfWeek;
         $doctorAvailabilityService = new DoctorAvaialbilityService();
         $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($firstBranchId, $currentDayName, date('Y-m-d'), date('H:i'));
-        $allDoctors = StaffProfile::with('user')
-                        ->whereHas('user', function ($query) {
-                            $query->where('is_doctor', 1);
-                        })
-                        ->get();
+        
         $appointmentTypes = AppointmentType::all();
 
-        return view('appointment.index', compact('clinicBranches', 'firstBranchId', 'currentDayName', 'workingDoctors', 'appointmentTypes', 'allDoctors'));
+        return view('appointment.index', compact('clinicBranches', 'firstBranchId', 'currentDayName', 'workingDoctors', 'appointmentTypes'));
     }
 
     /**

@@ -25,7 +25,7 @@ class AppointmentStatus extends Model
     const UNAVAILABLE_WORDS = "UNAVAILABLE";
     const CANCELLED_WORDS = "CANCELLED";
 
-    const COMPLETED_WORDS = "COMPLETED_";
+    const COMPLETED_WORDS = "COMPLETED";
     const BILLING_WORDS = "BILLING";
     const PROCEDURE_WORDS = "PROCEDURE";
     const MISSED_WORDS = "MISSED";
