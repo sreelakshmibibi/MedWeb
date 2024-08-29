@@ -329,7 +329,7 @@
                         title: clinicBasicDetails.clinic_name,
                         messageTop: 'Collection Report',
                         orientation: 'landscape',
-                        pageSize: 'A3',
+                        pageSize: 'A4',
                         footer: true,
                         filename: 'Collection Report',
                         exportOptions: {
