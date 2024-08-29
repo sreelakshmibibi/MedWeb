@@ -78,7 +78,7 @@ class DoctorAvaialbilityService
         return $availableBranches;
     }
 
-    public function getTodayWorkingDoctors($branchId, $weekday, $date, $time)
+    public function getTodayWorkingDoctors($branchId, $weekday, $date, $time = null)
     {
         // Start with a query for working hours based on weekday and status
         $query = DoctorWorkingHour::where('week_day', $weekday)
@@ -111,20 +111,22 @@ class DoctorAvaialbilityService
     
             return !$isOnLeave;
         });
-    
-        // Filter out doctors based on their working hours for the given time
-        $workingDoctors = $workingDoctors->filter(function ($workingHour) use ($time, $branchId) {
-            $doctorId = $workingHour->user_id;
-    
-            return DoctorWorkingHour::where('user_id', $doctorId)
-                ->where('week_day', $workingHour->week_day)
-                ->where('status', 'Y') // Assuming 'Y' indicates the doctor is available
-                ->where('clinic_branch_id', $branchId)
-                ->whereTime('from_time', '<=', $time)
-                ->whereTime('to_time', '>=', $time)
-                ->exists();
+        if ($time != null) {
+             // Filter out doctors based on their working hours for the given time
+            $workingDoctors = $workingDoctors->filter(function ($workingHour) use ($time, $branchId) {
+                $doctorId = $workingHour->user_id;
+        
+                return DoctorWorkingHour::where('user_id', $doctorId)
+                    ->where('week_day', $workingHour->week_day)
+                    ->where('status', 'Y') // Assuming 'Y' indicates the doctor is available
+                    ->where('clinic_branch_id', $branchId)
+                    ->whereTime('from_time', '<=', $time)
+                    ->whereTime('to_time', '>=', $time)
+                    ->exists();
         });
     
+        }
+       
         // Add appointment counts to each doctor
         $workingDoctors->each(function ($doctor) {
             $doctor->appointments_count = Appointment::where('doctor_id', $doctor->user_id)

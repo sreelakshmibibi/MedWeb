@@ -136,7 +136,7 @@ class HomeController extends Controller
                     ->pluck('clinic_branch_id')
                     ->first();
             }
-            $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($branchid, $currentDayName, date('Y-m-d'), date('H:i'));
+            $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($branchid, $currentDayName, date('Y-m-d'), null);
             $totalPatients = PatientProfile::where('status', 'Y')->count(); // Replace with your actual logic to get the total
             $totalStaffs = StaffProfile::where('status', 'Y')->count();
             // $totalDoctors = StaffProfile::where('status', 'Y')->whereNot('license_number', null)->count();
