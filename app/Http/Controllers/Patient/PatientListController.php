@@ -9,6 +9,7 @@ use App\Http\Requests\Patient\PatientListRequest;
 use App\Models\Appointment;
 use App\Models\AppointmentStatus;
 use App\Models\AppointmentType;
+use App\Models\StaffProfile;
 use App\Models\City;
 use App\Models\ClinicBasicDetail;
 use App\Models\ClinicBranch;
@@ -70,6 +71,15 @@ class PatientListController extends Controller
                     $query->whereHas('appointments', function ($query) use ($doctorId) {
                         $query->where('doctor_id', $doctorId);
                     });
+                }
+                // $patients = $query->get();
+            } else {
+                if (!Auth::user()->is_admin) {
+                    $clinicBranchId = StaffProfile::where('user_id', Auth::user()->id)
+                        ->pluck('clinic_branch_id')
+                        ->first();
+
+                    $query = $query->where('app_branch', $clinicBranchId);
                 }
             }
 
@@ -147,7 +157,7 @@ class PatientListController extends Controller
 
         // Initialize DoctorAvaialbilityService and fetch working doctors
         $doctorAvailabilityService = new DoctorAvaialbilityService();
-        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($firstBranchId, $currentDayName, date('Y-m-d'));
+        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($firstBranchId, $currentDayName, date('Y-m-d'), date('H:i'));
 
         // Fetch all appointment statuses
         $appointmentStatuses = AppointmentStatus::all();
@@ -169,7 +179,7 @@ class PatientListController extends Controller
         $date = date('Y-m-d');
         $currentDayName = Carbon::now()->englishDayOfWeek;
         $doctorAvailabilityService = new DoctorAvaialbilityService();
-        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($firstBranchId, $currentDayName, $date);
+        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($firstBranchId, $currentDayName, $date, date('H:i'));
         $appointmentStatuses = AppointmentStatus::all(); // Get all appointment statuses
         $clinic = ClinicBasicDetail::first();
         $registrationFees = $clinic->patient_registration_fees;
@@ -183,10 +193,12 @@ class PatientListController extends Controller
     {
         // Extract the date part from appdate
         $date = Carbon::parse($request->input('appdate'))->toDateString(); // 'Y-m-d'
+        $time = Carbon::parse($request->input('appdate'))->toTimeString(); // 'Y-m-d'
+        
         $carbonDate = Carbon::parse($date);
         $weekday = $carbonDate->format('l');
         $doctorAvailabilityService = new DoctorAvaialbilityService();
-        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($branchId, $weekday, $date);
+        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($branchId, $weekday, $date, $time);
 
         return response()->json($workingDoctors);
     }
@@ -468,10 +480,11 @@ class PatientListController extends Controller
         $appointmentStatuses = AppointmentStatus::all();
         $name = $commonService->splitNames($patientProfile->first_name);
         $date = Carbon::parse($patientProfile->lastAppointment->app_date)->toDateString(); // 'Y-m-d'
+        $time = Carbon::parse($patientProfile->lastAppointment->app_date)->toTimeString(); // 'Y-m-d'
         $carbonDate = Carbon::parse($date);
         $weekday = $carbonDate->format('l');
         $doctorAvailabilityService = new DoctorAvaialbilityService();
-        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($patientProfile->lastAppointment->app_branch, $weekday, $date);
+        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($patientProfile->lastAppointment->app_branch, $weekday, $date, $time);
         $appDate = $appointment->app_date;
         $appTime = $appointment->app_time;
         // Combine date and time into a single datetime string

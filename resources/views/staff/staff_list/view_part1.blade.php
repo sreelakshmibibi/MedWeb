@@ -162,6 +162,17 @@
                                     {{ '- ' . $staffProfile->pincode }}
                                 </div>
                             </li>
+                            <li class="nav-item d-flex justify-start align-items-center">
+                                <div class="min-w-120 text-muted">
+                                    Total Leaves taken
+                                </div>
+                                <div>
+                                    @php
+                                        echo $totalLeaves
+                                    @endphp
+                                </div>
+                            </li>
+
                         </div>
                     </div>
                 </ul>
@@ -307,6 +318,17 @@
                                                 {{ '- ' . $staffProfile->pincode }}
                                             </div>
                                         </li>
+                                        <li class="nav-item d-flex justify-start align-items-center">
+                                            <div class="min-w-120 text-muted">
+                                                Total Leaves taken
+                                            </div>
+                                            <div>
+                                                @php
+                                                    echo $totalLeaves
+                                                @endphp
+                                            </div>
+                                        </li>
+
                                     </div>
                                 </div>
                             </ul>

@@ -6,7 +6,9 @@ use App\Models\Appointment;
 use App\Models\AppointmentStatus;
 use App\Models\DoctorWorkingHour;
 use App\Models\LeaveApplication;
+use App\Models\StaffProfile;
 use App\Models\WeekDay;
+use Carbon\Carbon;
 
 class DoctorAvaialbilityService
 {
@@ -78,19 +80,20 @@ class DoctorAvaialbilityService
         return $availableBranches;
     }
 
-    public function getTodayWorkingDoctors($branchId, $weekday, $date)
+    public function getTodayWorkingDoctors($branchId, $weekday, $date, $time = null)
     {
-
+        // Start with a query for working hours based on weekday and status
         $query = DoctorWorkingHour::where('week_day', $weekday)
             ->where('status', 'Y');
-
+    
+        // Apply branch filter if provided
         if ($branchId) {
             $query->where('clinic_branch_id', $branchId);
         }
-
-        
-        // Count appointments for each working doctor
+    
+        // Get the list of working doctors
         $workingDoctors = $query->with('user')->get();
+    
         // Filter out doctors who are on leave
         $workingDoctors = $workingDoctors->filter(function ($workingHour) use ($date) {
             $doctorId = $workingHour->user_id;
@@ -105,25 +108,42 @@ class DoctorAvaialbilityService
                                     ->where('leave_to', '>=', $date);
                           });
                 })
-                ->whereNot('leave_status', LeaveApplication::Rejected)
+                ->where('leave_status', '<>', LeaveApplication::Rejected)
                 ->exists();
     
             return !$isOnLeave;
         });
+        if ($time != null) {
+             // Filter out doctors based on their working hours for the given time
+            $workingDoctors = $workingDoctors->filter(function ($workingHour) use ($time, $branchId) {
+                $doctorId = $workingHour->user_id;
+        
+                return DoctorWorkingHour::where('user_id', $doctorId)
+                    ->where('week_day', $workingHour->week_day)
+                    ->where('status', 'Y') // Assuming 'Y' indicates the doctor is available
+                    ->where('clinic_branch_id', $branchId)
+                    ->whereTime('from_time', '<=', $time)
+                    ->whereTime('to_time', '>=', $time)
+                    ->exists();
+        });
     
-        foreach ($workingDoctors as $doctor) {
+        }
+       
+        // Add appointment counts to each doctor
+        $workingDoctors->each(function ($doctor) {
             $doctor->appointments_count = Appointment::where('doctor_id', $doctor->user_id)
                 ->whereDate('app_date', today()) // Assuming appointments are filtered by today’s date
                 ->count();
+    
             $doctor->appointments_completed_count = Appointment::where('doctor_id', $doctor->user_id)
-                ->where('app_status', 5)
+                ->where('app_status', 5) // Assuming '5' indicates completed status
                 ->whereDate('app_date', today()) // Assuming appointments are filtered by today’s date
                 ->count();
-        }
-
+        });
+    
         return $workingDoctors;
     }
-
+    
     public function getExistingAppointments($branchId, $appDate, $doctorId)
     {
         $query = Appointment::where('status', 'Y')
@@ -204,5 +224,41 @@ class DoctorAvaialbilityService
             ->first();
 
         return !is_null($workingHour);
+    }
+
+    public function getAllDoctors()
+    {
+        return StaffProfile::with('user')
+        ->whereHas('user', function ($query) {
+            $query->where('is_doctor', 1);
+        })
+        ->get();
+    }
+
+    function calculateLeavesTaken($userId)
+    {
+        // Define the start and end dates of the financial year
+        $financialYearStart = Carbon::create(date('Y'), 4, 1); // April 1st of the current year
+        $financialYearEnd = Carbon::create(date('Y') + 1, 3, 31); // March 31st of the next year
+        $startMonthYear = $financialYearStart->format('F Y'); // Example: "April 2024"
+        $endMonthYear = $financialYearEnd->format('F Y'); // Example: "March 2025"
+    
+        // Query leave applications for the user within the financial year
+        $leaves = LeaveApplication::where('user_id', $userId)
+            ->whereBetween('leave_from', [$financialYearStart, $financialYearEnd])
+            ->orWhereBetween('leave_to', [$financialYearStart, $financialYearEnd])
+            ->where('leave_status', 2) // Only include approved leaves
+            ->get();
+
+        $totalLeaves = 0;
+
+        foreach ($leaves as $leave) {
+            // Calculate the number of days for each leave record
+            $start = Carbon::parse($leave->leave_from);
+            $end = Carbon::parse($leave->leave_to);
+            $totalLeaves += $end->diffInDays($start) + 1; // +1 to include the end day
+        }
+
+        return $totalLeaves. ' ( ' . $startMonthYear . ' - ' . $endMonthYear . ' ) ';
     }
 }

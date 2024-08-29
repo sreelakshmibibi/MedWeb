@@ -321,6 +321,7 @@
                     [10, 25, 50, -1],
                     [10, 25, 50, 'All']
                 ],
+                // select: true,
                 buttons: [{
                         extend: 'print',
                         text: 'Print',
@@ -328,7 +329,7 @@
                         title: clinicBasicDetails.clinic_name,
                         messageTop: 'Collection Report',
                         orientation: 'landscape',
-                        pageSize: 'A3',
+                        pageSize: 'A4',
                         footer: true,
                         filename: 'Collection Report',
                         exportOptions: {

@@ -14,7 +14,7 @@ date_default_timezone_set('Asia/Kolkata');
             <div class="content-header">
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Billing :<span class="fs-20 text-info">
-                            {{ $appointment->patient_id }}-
+                            {{ $appointment->patient_id }}
                             {{ str_replace('<br>', ' ', $appointment->patient->first_name . ' ' . $appointment->patient->last_name) }}
                         </span>
                     </h3>
@@ -49,8 +49,8 @@ date_default_timezone_set('Asia/Kolkata');
             <!-- Nav tabs -->
             <ul class="nav nav-tabs " role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" data-bs-toggle="tab" href="#treatgbilltabcontent" role="tab"
-                        id="treatgbilltabtitle">
+                    <a class="nav-link {{ $activeTab == 'treatbill' ? 'active' : '' }}" data-bs-toggle="tab"
+                        href="#treatgbilltabcontent" role="tab" id="treatgbilltabtitle">
                         <span class="hidden-sm-up"><i class="fa-solid fa-file-medical"></i></span>
                         <span class="hidden-xs-down"><i class="fa-solid fa-file-medical me-10"></i>Treatment Bill</span>
                     </a>
@@ -58,8 +58,8 @@ date_default_timezone_set('Asia/Kolkata');
 
                 <?php if (sizeof($prescriptions) > 0 && $isMedicineProvided == 'Y') { ?>
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#medgbilltabcontent" role="tab"
-                        id="medgbilltabtitle">
+                    <a class="nav-link {{ $activeTab == 'medbill' ? 'active' : '' }}" data-bs-toggle="tab"
+                        href="#medgbilltabcontent" role="tab" id="medgbilltabtitle">
                         <span class="hidden-sm-up"><i class="fa-solid fa-capsules"></i> </span>
                         <span class="hidden-xs-down"><i class="fa-solid fa-capsules me-10"></i>Medicine Bill</span>
                     </a>
@@ -68,7 +68,8 @@ date_default_timezone_set('Asia/Kolkata');
             </ul>
 
             <div class="tab-content">
-                <div class="tab-pane active" id="treatgbilltabcontent" role="tabpanel">
+                <div class="tab-pane {{ $activeTab == 'treatbill' ? 'active' : '' }}" id="treatgbilltabcontent"
+                    role="tabpanel">
                     <div class="py-15">
                         <form method="post" id="billingForm" action="{{ route('billing.payment') }}"
                             enctype="multipart/form-data">
@@ -267,7 +268,7 @@ date_default_timezone_set('Asia/Kolkata');
                                                         <!-- Checkbox for Gpay -->
                                                         <input type="checkbox" class="filled-in chk-col-success"
                                                             id="mode_of_payment_gpay" name="mode_of_payment[]"
-                                                            value="gpay" <?php if ($billExists->gpay != null) { ?> checked
+                                                            value="gpay" <?php if ($billExists->gpay > 0) { ?> checked
                                                             <?php } ?>>
                                                         <label class="form-check-label me-2"
                                                             for="mode_of_payment_gpay">Gpay</label>
@@ -286,7 +287,7 @@ date_default_timezone_set('Asia/Kolkata');
                                                             for="mode_of_payment_cash">Cash</label>
                                                         <input type="text" name="cash" id="cash"
                                                             class="form-control  w-100" style="display: none;"
-                                                            value="<?php if ($billExists->cash != null) {
+                                                            value="<?php if ($billExists->cash > 0) {
                                                                 echo $billExists->cash;
                                                             } ?>">
                                                         &nbsp;
@@ -299,7 +300,7 @@ date_default_timezone_set('Asia/Kolkata');
                                                             for="mode_of_payment_card">Card</label>
                                                         <input type="text" name="cardcash" id="cardcash"
                                                             class="form-control  w-100 " style="display: none;"
-                                                            value="<?php if ($billExists->card != null) {
+                                                            value="<?php if ($billExists->card > 0) {
                                                                 echo $billExists->card;
                                                             } ?>">
                                                         <select class="ms-2 form-select w-150" id="machine"
@@ -386,7 +387,8 @@ date_default_timezone_set('Asia/Kolkata');
                     </div>
                 </div>
 
-                <div class="tab-pane" id="medgbilltabcontent" role="tabpanel">
+                <div class="tab-pane {{ $activeTab == 'medbill' ? 'active' : '' }}" id="medgbilltabcontent"
+                    role="tabpanel">
                     <div class="py-15">
                         @include('billing.medicine')
                     </div>

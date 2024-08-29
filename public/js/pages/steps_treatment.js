@@ -165,7 +165,7 @@ function handlePrescription(isChecked) {
             width: "100%",
             placeholder: "Select a Medicine",
             tags: true, // Allow user to add new tags (medicines)
-            tokenSeparators: [",", " "], // Define how tags are separated
+            tokenSeparators: [","], // Define how tags are separated
             createTag: function (params) {
                 var term = $.trim(params.term);
 

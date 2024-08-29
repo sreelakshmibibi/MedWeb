@@ -82,7 +82,7 @@ class TreatmentController extends Controller
 
         // Initialize DoctorAvaialbilityService and fetch working doctors
         $doctorAvailabilityService = new DoctorAvaialbilityService();
-        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($appointmentBranchId, $currentDayName, date('Y-m-d'));
+        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($appointmentBranchId, $currentDayName, date('Y-m-d'), date('H:i'));
 
         // Fetch all appointment types
         $appointmentTypes = AppointmentType::all();
@@ -271,13 +271,16 @@ class TreatmentController extends Controller
                 ->first();
         }
         $xrays = null;
+        $diseaseName = null;
         if ($toothExamination) {
             if ($toothExamination->xray == 1) {
                 $xrays = XRayImage::where('tooth_examination_id', $toothExamination->id)->get();
             }
+            $diseaseName = Disease::where('id', $toothExamination->disease_id)
+                ->first();
         }
 
-        return response()->json(['examination' => $toothExamination, 'xrays' => $xrays]);
+        return response()->json(['examination' => $toothExamination, 'xrays' => $xrays, 'diseaseName' => $diseaseName]);
     }
 
     public function getImages($toothExaminationId)
@@ -310,13 +313,13 @@ class TreatmentController extends Controller
             DB::beginTransaction();
             $checkExists = [];
             if (in_array($request->row_id, [1, 2, 3, 4, 5])) {
-                
+
                 $checkExists = ToothExamination::where('row_id', $request->row_id)
                     ->where('patient_id', $request->patient_id)
                     ->where('app_id', $request->app_id)
                     ->where('status', 'Y')
                     ->get();
-                    
+
             } else {
                 $checkExists = ToothExamination::where('tooth_id', $request->tooth_id)
                     ->where('patient_id', $request->patient_id)
@@ -339,7 +342,34 @@ class TreatmentController extends Controller
             $mesial_condn = $request->mesial_condn != null ? 1 : 0;
             $buccal_condn = $request->buccal_condn != null ? 1 : 0;
             $distal_condn = $request->distal_condn != null ? 1 : 0;
+            $diseaseId = $request->disease_id;
 
+            if (is_numeric($diseaseId)) {
+                $existingDisease = Disease::find($diseaseId);
+                if ($existingDisease) {
+                    $diseaseId = $existingDisease->id;
+                } else {
+                    // Create new Disease record
+                    $disease = Disease::create([
+                        'name' => ucwords(strtolower($request->disease_id)),
+                        'status' => 'Y',
+                        'created_by' => auth()->user()->id,
+                        'updated_by' => auth()->user()->id,
+                    ]);
+                    $diseaseId = $disease->id;
+
+                }
+            } else {
+                // Create new Disease record
+                $disease = Disease::create([
+                    'name' => ucwords(strtolower($request->disease_id)),
+                    'status' => 'Y',
+                    'created_by' => auth()->user()->id,
+                    'updated_by' => auth()->user()->id,
+                ]);
+                $diseaseId = $disease->id;
+            }
+            $request->merge(['disease_id' => $diseaseId]);
             $toothExamination = ToothExamination::create($request->only([
                 'app_id',
                 'patient_id',
@@ -365,7 +395,7 @@ class TreatmentController extends Controller
             ]));
             $anatomyService = new AnatomyService();
             $anatomyImage = $anatomyService->getAnatomyImage($toothId, $occulusal_condn, $palatal_condn, $mesial_condn, $distal_condn, $buccal_condn);
-            if ((TreatmentType::find($request->treatment_id))->treat_name == "Tooth Extraction" ) {
+            if ((TreatmentType::find($request->treatment_id))->treat_name == "Tooth Extraction") {
                 $anatomyImage = "images/tooth/noteeth.svg";
             }
             $toothExaminationEdit = ToothExamination::find($toothExamination->id);

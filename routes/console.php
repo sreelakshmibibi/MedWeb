@@ -9,4 +9,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 Schedule::command('db:backup')->twiceDaily(1, 13);	
+Schedule::command('app:appointment-missed-status-update')->dailyAt('23:50');
 

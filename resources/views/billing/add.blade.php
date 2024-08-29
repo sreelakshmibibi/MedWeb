@@ -42,8 +42,8 @@ date_default_timezone_set('Asia/Kolkata');
             <!-- Nav tabs -->
             <ul class="nav nav-tabs " role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" data-bs-toggle="tab" href="#treatbilltabcontent" role="tab"
-                        id="treatbilltabtitle">
+                    <a class="nav-link {{ $activeTab == 'treatbill' ? 'active' : '' }}" data-bs-toggle="tab"
+                        href="#treatbilltabcontent" role="tab" id="treatbilltabtitle">
                         <span class="hidden-sm-up"><i class="fa-solid fa-file-medical"></i></span>
                         <span class="hidden-xs-down"><i class="fa-solid fa-file-medical me-10"></i>Treatment Bill</span>
                     </a>
@@ -51,7 +51,8 @@ date_default_timezone_set('Asia/Kolkata');
 
                 <?php if (sizeof($prescriptions) > 0 && $isMedicineProvided == 'Y') { ?>
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#medbilltabcontent" role="tab" id="medbilltabtitle">
+                    <a class="nav-link {{ $activeTab == 'medbill' ? 'active' : '' }}" data-bs-toggle="tab"
+                        href="#medbilltabcontent" role="tab" id="medbilltabtitle">
                         <span class="hidden-sm-up"><i class="fa-solid fa-capsules"></i> </span>
                         <span class="hidden-xs-down"><i class="fa-solid fa-capsules me-10"></i>Medicine Bill</span>
                     </a>
@@ -61,7 +62,8 @@ date_default_timezone_set('Asia/Kolkata');
 
             <!-- Tab panes -->
             <div class="tab-content">
-                <div class="tab-pane active" id="treatbilltabcontent" role="tabpanel">
+                <div class="tab-pane {{ $activeTab == 'treatbill' ? 'active' : '' }}" id="treatbilltabcontent"
+                    role="tabpanel">
                     <div class="py-15">
                         <!-- Main content -->
                         <form method="post" id="billingForm" action="{{ route('billing.store') }}"
@@ -305,7 +307,8 @@ date_default_timezone_set('Asia/Kolkata');
                     </div>
                 </div>
 
-                <div class="tab-pane" id="medbilltabcontent" role="tabpanel">
+                <div class="tab-pane {{ $activeTab == 'medbill' ? 'active' : '' }}" id="medbilltabcontent"
+                    role="tabpanel">
                     <div class="py-15">
                         @include('billing.medicine')
                     </div>

@@ -615,87 +615,60 @@ document.addEventListener("DOMContentLoaded", function () {
                     $("#prescModePaymentError").text("");
                     $("#prescBalanceToGiveBackError").text("");
                     $("#prescCheckError").text("");
-                    form.submit();
+                    //form.submit();
+                    $.ajax({
+                        url: form.action,
+                        method: form.method,
+                        data: $(form).serialize(),
+                        success: function(response) {
+
+                            if (response.success) {
+                                // Create a Blob from the base64-encoded PDF data
+                                var blob = new Blob([new Uint8Array(atob(response.pdf)
+                                    .split("").map(function(c) {
+                                        return c.charCodeAt(0)
+                                    }))], {
+                                    type: "application/pdf"
+                                });
+
+
+                                var url = window.URL.createObjectURL(blob);
+
+                                var link = document.createElement("a");
+                                link.href = url;
+                                link.download = "Medicine_bill_receipt.pdf";
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+
+                                var printWindow = window.open(url, "_blank");
+                                printWindow.onload = function() {
+                                    printWindow.print();
+                                };
+                                window.location.href = prescriptionBillingRoute;
+
+                                // window.location.href = prescriptionBillingRoute + "?success_message=" +
+                                //     encodeURIComponent(
+                                //         "Medicine bill payment successfully recorded.");
+                            } else {
+                                // Handle any other success messages
+                                var message = "Medicine bill payment successfully recorded.";
+                                window.location.href = prescriptionBillingRoute + "?success_message=" +
+                                    encodeURIComponent(message);
+                            }
+                        },
+                        error: function(xhr) {
+                            // Handle the error
+                            console.log(xhr.responseText);
+                        }
+                    });
                 } else {
                     return;
                 }
             });
     }
 
-    document
-        .getElementById("prescPrintPayment1")
-        .addEventListener("click", function () {
-            var billId = document.getElementById("medbillId").value;
-            var appointmentId = document.getElementById("appointmentId").value;
-
-            // AJAX request to generate the PDF
-            // fetch(receiptRoute, {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            //     },
-            //     body: JSON.stringify({ billId: billId, appointmentId: appointmentId })
-            // })
-            //     .then(response => response.json())
-            //     .then(data => {
-            //         if (data.pdfUrl) {
-            //             // Open the PDF in a new window and trigger print dialog
-            //             var printWindow = window.open(data.pdfUrl, '_blank');
-            //             printWindow.addEventListener('load', function () {
-            //                 printWindow.print();
-            //             });
-
-            //             // Redirect after printing
-            //             printWindow.addEventListener('afterprint', function () {
-            //                 window.location.href = "{{ route('billing') }}";
-            //             });
-            //         } else {
-            //             alert('Failed to generate PDF.');
-            //         }
-
-            //     })
-            //     .catch(error => {
-            //         console.error('Error:', error);
-            //     });
-
-            $.ajax({
-                url: prescriptionReceiptRoute,
-                type: "POST",
-                data: {
-                    medbillId: billId,
-                    appointmentId: appointmentId,
-                    _token: $('meta[name="csrf-token"]').attr("content"), // Include CSRF token for security
-                },
-                xhrFields: {
-                    responseType: "blob", // Important for handling binary data like PDFs
-                },
-                success: function (response) {
-                    var blob = new Blob([response], {
-                        type: "application/pdf",
-                    });
-                    var link = document.createElement("a");
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = "prescription.pdf";
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-
-                    // For printing, open the PDF in a new window or iframe and call print
-                    var printWindow = window.open(link.href, "_blank");
-                    printWindow.onload = function () {
-                        printWindow.print();
-                    };
-                    printWindow.addEventListener("afterprint", function () {
-                        //window.location.href = "{{ route('billing') }}";
-                        window.location.href = billingRoute;
-                    });
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error:", error);
-                },
-            });
-        });
+    
     document
         .getElementById("prescPrintPayment")
         .addEventListener("click", function () {
@@ -731,11 +704,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     printWindow.onload = function () {
                         printWindow.print();
                     };
-
+                    window.location.href = prescriptionBillingRoute;
                     // Redirect after printing
-                    printWindow.addEventListener("afterprint", function () {
-                        window.location.href = billingRoute;
-                    });
+                    // printWindow.addEventListener("afterprint", function () {
+                    //     window.location.href = prescriptionBillingRoute;
+                    // });
                 },
                 error: function (xhr, status, error) {
                     console.error("Error:", error);

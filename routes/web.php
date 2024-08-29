@@ -51,7 +51,7 @@ Auth::routes(['verify' => true]);
 Route::middleware(['auth', 'check.session'])->group(function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/home/{usertype}', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard.userType');
-   
+
     Route::group(['middleware' => ['role:Superadmin|Admin']], function () {
 
         Route::resource('/permissions', PermissionController::class);
@@ -182,6 +182,9 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::get('/appointment/{appointment}/edit', [AppointmentController::class, 'edit'])->name('appointment.edit');
     Route::post('/appointment/update', [AppointmentController::class, 'update'])->name('appointment.update');
     Route::post('/appointment/{appointment}', [AppointmentController::class, 'destroy'])->name('appointment.destroy');
+    Route::get('/appointment/changeStatus/{appointment}', [AppointmentController::class, 'changeStatus'])->name('appointment.changeStatus');
+    Route::get('/appointment/getbranchDoctors/{branchId}', [AppointmentController::class, 'showForm'])->name('appointment.getBranchDoctors');
+
 
     Route::get('/combo_offer', [ComboOfferController::class, 'index'])->name('settings.combo_offer');
     Route::post('/combo_offer/store', [ComboOfferController::class, 'store'])->name('settings.combo_offer.store');
@@ -252,3 +255,4 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('send-sms', [SmsController::class, 'sendSms'])->name('send.sms');
 
 });
+Route::get('/billing/add', [BillingController::class, 'add'])->name('billing.add');

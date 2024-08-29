@@ -150,10 +150,12 @@ class MenuItemsSeeder extends Seeder
             'view_dashboard',
             'appointments',
             'appointment create',
+            'patients',
             'patient_list',
             'patient_details',
             'leave',
             'leave apply',
+            'staff_list',
         ]);
 
         $reception->syncPermissions([
@@ -163,11 +165,13 @@ class MenuItemsSeeder extends Seeder
             'appointment reschedule',
             'appointment cancel',
             'patient_list',
+            'patients',
             'patient create',
             'bill payment',
             'bill view',
             'leave',
             'leave apply',
+            'staff_list',
         ]);
 
         // Create menu items
@@ -268,11 +272,11 @@ class MenuItemsSeeder extends Seeder
         // Attach roles to menu items
         $dashboard->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $nurse->id, $reception->id]);
         $appointments->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $nurse->id, $reception->id]);
-        $staffs->roles()->attach([$superadmin->id, $admin->id, $doctor->id]);
+        $staffs->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $reception->id, $nurse->id]);
         $patients->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $nurse->id, $reception->id]);
         $settings->roles()->attach([$superadmin->id, $admin->id]);
-        $reports->roles()->attach([$superadmin->id, $admin->id]);
-        $billing->roles()->attach([$superadmin->id, $admin->id]);
+        $reports->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $reception->id, $nurse->id]);
+        $billing->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $reception->id, $nurse->id]);
 
         // Attach roles to submenu items
         foreach ($billingSubmenus as $submenu) {
@@ -286,7 +290,7 @@ class MenuItemsSeeder extends Seeder
         }
         // Fetching the created submenus
         $staffList = $staffSubmenus->where('name', 'Staff List')->first();
-        $staffDetails = $staffSubmenus->where('name', 'Leave')->first();
+        $leave = $staffSubmenus->where('name', 'Leave')->first();
         foreach ($patientSubmenus as $submenu) {
             $submenu->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $nurse->id, $reception->id]);
         }
@@ -297,6 +301,6 @@ class MenuItemsSeeder extends Seeder
 
         // Assigning roles to submenus
         $staffList->roles()->attach([$admin->id, $doctor->id]);
-        $staffDetails->roles()->attach($admin->id);
+        $leave->roles()->attach([$admin->id, $doctor->id, $nurse->id, $reception->id]);
     }
 }

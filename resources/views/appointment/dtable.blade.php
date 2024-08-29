@@ -304,10 +304,75 @@ use Illuminate\Support\Facades\Session;
                     $('#disease_id').val(disease_id);
 
                     // Loop through options to find the corresponding text and select it
+                    // $('#disease_id option').each(function() {
+                    //     if ($(this).val() == disease_id) {
+                    //         $(this).prop('selected', true);
+                    //         return false; // Exit the loop once found
+                    //     }
+                    // });
+                    var diseaseName = response
+                        .diseaseName.name;
+                    var found = false;
+                    // Loop through options to find the corresponding text and select it
                     $('#disease_id option').each(function() {
                         if ($(this).val() == disease_id) {
                             $(this).prop('selected', true);
+                            found = true; // Set the flag to true
                             return false; // Exit the loop once found
+                        }
+                    });
+
+                    if (!found) {
+                        $('.disease_id_select').empty();
+                        var diseaseSelect = $('.disease_id_select');
+                        var option = new Option(diseaseName, disease_id,
+                            true, true);
+                        diseaseSelect.append(option).trigger(
+                            'change');
+                        $('.disease_id_select').val(disease_id);
+                        // manually trigger the `select2:select` event
+                        // diseaseSelect.trigger({
+                        //     type: 'select2:select',
+                        //     params: {
+                        //         data: data
+                        //     }
+                        // });
+                    }
+
+                    $(".disease_id_select").select2("destroy");
+                    $(".disease_id_select").select2({
+                        dropdownParent: $('#modal-teeth'),
+                        width: "100%",
+                        placeholder: "Select a Disease",
+                        tags: true,
+                        tokenSeparators: [","],
+                        createTag: function(params) {
+                            var term = $.trim(params.term);
+                            if (term === "") {
+                                return null;
+                            }
+                            // Check if the term already exists as an option
+                            var found = false;
+                            $(".treatment_id_select option")
+                                .each(function() {
+                                    if ($.trim($(this)
+                                            .text()) ===
+                                        term) {
+                                        found = true;
+                                        return false; // Exit the loop early
+                                    }
+                                });
+                            if (!found) {
+                                return {
+                                    id: term,
+                                    text: term,
+                                    newTag: true
+                                };
+                            }
+                            return null;
+                        },
+                        insertTag: function(data, tag) {
+                            data.push(tag);
                         }
                     });
 
@@ -621,10 +686,75 @@ use Illuminate\Support\Facades\Session;
                     $('#disease_id').val(disease_id);
 
                     // Loop through options to find the corresponding text and select it
+                    // $('#disease_id option').each(function() {
+                    //     if ($(this).val() == disease_id) {
+                    //         $(this).prop('selected', true);
+                    //         return false; // Exit the loop once found
+                    //     }
+                    // });
+                    var diseaseName = response
+                        .diseaseName.name;
+                    var found = false;
+                    // Loop through options to find the corresponding text and select it
                     $('#disease_id option').each(function() {
                         if ($(this).val() == disease_id) {
                             $(this).prop('selected', true);
+                            found = true; // Set the flag to true
                             return false; // Exit the loop once found
+                        }
+                    });
+
+                    if (!found) {
+                        $('.disease_id_select').empty();
+                        var diseaseSelect = $('.disease_id_select');
+                        var option = new Option(diseaseName, disease_id,
+                            true, true);
+                        diseaseSelect.append(option).trigger(
+                            'change');
+                        $('.disease_id_select').val(disease_id);
+                        // manually trigger the `select2:select` event
+                        // diseaseSelect.trigger({
+                        //     type: 'select2:select',
+                        //     params: {
+                        //         data: data
+                        //     }
+                        // });
+                    }
+
+                    $(".disease_id_select").select2("destroy");
+                    $(".disease_id_select").select2({
+                        dropdownParent: $('#modal-teeth'),
+                        width: "100%",
+                        placeholder: "Select a Disease",
+                        tags: true,
+                        tokenSeparators: [","],
+                        createTag: function(params) {
+                            var term = $.trim(params.term);
+                            if (term === "") {
+                                return null;
+                            }
+                            // Check if the term already exists as an option
+                            var found = false;
+                            $(".treatment_id_select option")
+                                .each(function() {
+                                    if ($.trim($(this)
+                                            .text()) ===
+                                        term) {
+                                        found = true;
+                                        return false; // Exit the loop early
+                                    }
+                                });
+                            if (!found) {
+                                return {
+                                    id: term,
+                                    text: term,
+                                    newTag: true
+                                };
+                            }
+                            return null;
+                        },
+                        insertTag: function(data, tag) {
+                            data.push(tag);
                         }
                     });
 

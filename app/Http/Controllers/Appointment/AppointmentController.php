@@ -7,6 +7,9 @@ use App\Models\Appointment;
 use App\Models\AppointmentStatus;
 use App\Models\AppointmentType;
 use App\Models\ClinicBranch;
+use App\Models\DoctorWorkingHour;
+use App\Models\PatientTreatmentBilling;
+use App\Models\StaffProfile;
 use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
 use Carbon\Carbon;
@@ -53,11 +56,38 @@ class AppointmentController extends Controller
             // $appointments = $query->get();
 
             $appointments = Appointment::whereDate('app_date', $selectedDate);
-            if (Auth::user()->is_doctor) {
-                if (!Auth::user()->is_admin) {
-                    $appointments = $appointments->where('doctor_id', Auth::user()->id);
-                }
+            // if (Auth::user()->is_doctor) {
+            //     if (!Auth::user()->is_admin) {
+            //         $appointments = $appointments->where('doctor_id', Auth::user()->id);
+            //     }
+            //     $appointments = $appointments->with(['patient', 'doctor', 'branch'])
+            //         ->orderBy('token_no', 'ASC')
+            //         ->get();
+            // } else {
+            //     $clinicBranchId = StaffProfile::where('user_id', Auth::user()->id)
+            //         ->pluck('clinic_branch_id')
+            //         ->first();
+
+            //     $appointments = $appointments->where('app_branch', $clinicBranchId)
+            //         ->with(['patient', 'doctor', 'branch'])
+            //         ->orderBy('token_no', 'ASC')
+            //         ->get();
+            // }
+
+            if (Auth::user()->is_admin) {
+                // $appointments = $appointments->with(['patient', 'doctor', 'branch'])
+                //     ->orderBy('token_no', 'ASC')
+                //     ->get();
+            } else if (Auth::user()->is_doctor) {
+                $appointments = $appointments->where('doctor_id', Auth::user()->id);
+            } else {
+                $clinicBranchId = StaffProfile::where('user_id', Auth::user()->id)
+                    ->pluck('clinic_branch_id')
+                    ->first();
+
+                $appointments = $appointments->where('app_branch', $clinicBranchId);
             }
+
             $appointments = $appointments->with(['patient', 'doctor', 'branch'])
                 ->orderBy('token_no', 'ASC')
                 ->get();
@@ -100,22 +130,33 @@ class AppointmentController extends Controller
                     return $row->patient->phone;
                 })
                 ->addColumn('status', function ($row) {
+                    // $statusMap = [
+                    //     AppointmentStatus::SCHEDULED => 'text-success',
+                    //     AppointmentStatus::WAITING => 'text-warning',
+                    //     AppointmentStatus::UNAVAILABLE => 'text-dark',
+                    //     AppointmentStatus::CANCELLED => 'text-danger',
+                    //     AppointmentStatus::COMPLETED => 'text-muted',
+                    //     AppointmentStatus::BILLING => 'text-primary',
+                    //     AppointmentStatus::PROCEDURE => 'text-secondary',
+                    //     AppointmentStatus::MISSED => 'text-white',
+                    //     AppointmentStatus::RESCHEDULED => 'text-info',
+                    // ];
                     $statusMap = [
-                        AppointmentStatus::SCHEDULED => 'text-success',
-                        AppointmentStatus::WAITING => 'text-warning',
-                        AppointmentStatus::UNAVAILABLE => 'text-dark',
-                        AppointmentStatus::CANCELLED => 'text-danger',
-                        AppointmentStatus::COMPLETED => 'text-muted',
-                        AppointmentStatus::BILLING => 'text-primary',
-                        AppointmentStatus::PROCEDURE => 'text-secondary',
-                        AppointmentStatus::MISSED => 'text-white',
-                        AppointmentStatus::RESCHEDULED => 'text-info',
+                        AppointmentStatus::SCHEDULED => 'badge-success',
+                        AppointmentStatus::WAITING => 'badge-warning',
+                        AppointmentStatus::UNAVAILABLE => 'badge-gray',
+                        AppointmentStatus::CANCELLED => 'badge-danger',
+                        AppointmentStatus::COMPLETED => 'badge-info',
+                        AppointmentStatus::BILLING => 'badge-primary',
+                        AppointmentStatus::PROCEDURE => 'badge-secondary',
+                        AppointmentStatus::MISSED => 'badge-dark',
+                        AppointmentStatus::RESCHEDULED => 'badge-gray',
                     ];
                     $btnClass = isset($statusMap[$row->app_status]) ? $statusMap[$row->app_status] : '';
 
-                    return "<span class=' {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . '</span>';
-
-                    // return "<span class='btn d-block btn-xs badge {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . '</span>';
+                    // return "<span class=' {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . '</span>';
+    
+                    return "<span class='btn d-block btn-xs badge {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . '</span>';
                 })
                 ->addColumn('action', function ($row) {
                     if ($row->app_status == AppointmentStatus::CANCELLED || $row->app_status == AppointmentStatus::RESCHEDULED) {
@@ -130,14 +171,19 @@ class AppointmentController extends Controller
                         if ($row->app_date < date('Y-m-d') && $row->app_status == AppointmentStatus::COMPLETED) {
                             // If appointment date is less than the selected date, show view icon
                             $buttons[] = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa-solid fa-eye'></i></a>";
-                        } elseif ($row->app_date == date('Y-m-d')) {
-                            // Otherwise, show treatment icon
-                            $buttons[] = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa-solid fa-stethoscope'></i></a>";
+                        } elseif ($row->app_date == date('Y-m-d') && $row->app_status != AppointmentStatus::MISSED) {
+                            $bills = PatientTreatmentBilling::where('appointment_id', $row->id)->where('status', 'Y')->get();
+
+                            if ($bills->isEmpty()) {
+                                $buttons[] = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa-solid fa-stethoscope'></i></a>";
+                            } else {
+                                $buttons[] = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa-solid fa-eye'></i></a>";
+                            }
                         } else {
                             $buttons[] = '';
                         }
                     }
-                    if (Auth::user()->can('appointment create')) {
+                    if (Auth::user()->can('appointment create') && $row->app_status != AppointmentStatus::MISSED) {
                         $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1' title='follow up' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>";
                     }
                     if ($row->app_status != AppointmentStatus::COMPLETED) {
@@ -145,8 +191,16 @@ class AppointmentController extends Controller
                             $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-reschedule btn-xs me-1' title='reschedule' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' data-bs-target='#modal-reschedule'><i class='fa-solid fa-calendar-days'></i></button>";
                         }
                         if (Auth::user()->can('appointment cancel')) {
-                            $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-xs' id='btn-cancel' data-bs-toggle='modal' data-bs-target='#modal-cancel' data-id='{$row->id}' title='cancel'><i class='fa fa-times'></i></button>";
+                            $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-xs me-1' id='btn-cancel' data-bs-toggle='modal' data-bs-target='#modal-cancel' data-id='{$row->id}' title='cancel'><i class='fa fa-times'></i></button>";
                         }
+                    }
+                    if ($row->app_status == AppointmentStatus::SCHEDULED) {
+
+                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' id='btn-appStatus' data-id='$row->id' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='change status to waiting'><i class='fa-solid fa-sliders'></i></a>";
+
+                    }
+                    if ($row->app_status == AppointmentStatus::WAITING) {
+                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' id='btn-appStatus' data-id='$row->id' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='change status to scheduled'><i class='fa-solid fa-sliders'></i></a>";
                     }
                     if ($row->app_status == AppointmentStatus::COMPLETED) {
                         $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-secondary btn-treatment-pdf-generate btn-xs me-1' title='Download Treatment Summary' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}'  data-bs-target='#modal-download'><i class='fa fa-download'></i></button>";
@@ -159,13 +213,15 @@ class AppointmentController extends Controller
                 ->rawColumns(['patient_id', 'name', 'status', 'action'])
                 ->make(true);
         }
+
         $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])
             ->where('clinic_status', 'Y')
             ->get();
         $firstBranchId = $clinicBranches->first()?->id;
         $currentDayName = Carbon::now()->englishDayOfWeek;
         $doctorAvailabilityService = new DoctorAvaialbilityService();
-        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($firstBranchId, $currentDayName, date('Y-m-d'));
+        $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($firstBranchId, $currentDayName, date('Y-m-d'), date('H:i'));
+
         $appointmentTypes = AppointmentType::all();
 
         return view('appointment.index', compact('clinicBranches', 'firstBranchId', 'currentDayName', 'workingDoctors', 'appointmentTypes'));
@@ -248,7 +304,10 @@ class AppointmentController extends Controller
         $appointment->clinic_branch = $clinicAddress;
         $appointment->app_date = date('d-m-Y', strtotime($appointment->app_date));
         $appointment->app_time = date('H:i', strtotime($appointment->app_time));
-
+        // $currentDayName = Carbon::createFromFormat('d-m-Y', $appointment->app_date)->englishDayOfWeek;
+        // $doctorAvailabilityService = new DoctorAvaialbilityService();
+        // $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($appointment->app_branch, $currentDayName, $appointment->app_date);
+        // $appointment->workingDoctors =$workingDoctors;
         return $appointment;
     }
 
@@ -265,12 +324,14 @@ class AppointmentController extends Controller
             $appDateTime = Carbon::parse($request->input('rescheduledAppdate'));
             $appDate = $appDateTime->toDateString(); // 'Y-m-d'
             $appTime = $appDateTime->toTimeString(); // 'H:i:s'
-            $doctorId = $existingAppointment->doctor_id;
+            $doctorId = $request->edit_doctor;
             $commonService = new CommonService();
             $tokenNo = $commonService->generateTokenNo($doctorId, $appDate);
             // Check if an appointment with the same date, time, and doctor exists
+            $doctorAvailabilityService = new DoctorAvaialbilityService();
+            $carbonDate = Carbon::parse($appDate);
+            $weekDay = $carbonDate->format('l');
             $appointmentExists = $commonService->checkexisting($doctorId, $appDate, $appTime, $existingAppointment->app_branch, $existingAppointment->patient_id);
-
             if ($appointmentExists) {
                 return response()->json(['error' => 'An appointment already exists for the given date, time, and doctor.'], 422);
             }
@@ -320,6 +381,43 @@ class AppointmentController extends Controller
 
         } catch (Exception $e) {
             return response()->json(['error', 'Appointment not cancelled.'], 200);
+        }
+    }
+    public function showForm($appBranch)
+    {
+        $availableDoctorIds = DoctorWorkingHour::
+            where('status', 'Y') // Assuming 'Y' indicates availability
+            ->where('clinic_branch_id', $appBranch)
+            ->pluck('user_id'); // Get user IDs of available doctors
+
+        // Step 2: Fetch doctors from StaffProfile and ensure they are actual doctors
+        $allDoctors = StaffProfile::with('user')
+            ->whereIn('user_id', $availableDoctorIds)
+            ->whereHas('user', function ($query) {
+                $query->where('is_doctor', 1); // Ensure the user is a doctor
+            })
+            ->get();
+
+        return response()->json($allDoctors);
+
+    }
+    public function changeStatus($id)
+    {
+        $appointment = Appointment::find($id);
+        if (!$appointment)
+            abort(404);
+        $message = null;
+        if ($appointment->app_status == AppointmentStatus::SCHEDULED) {
+            $appointment->app_status = AppointmentStatus::WAITING;
+            $message = 'Appointment Status changed to Waiting';
+        } else if ($appointment->app_status == AppointmentStatus::WAITING) {
+            $appointment->app_status = AppointmentStatus::SCHEDULED;
+            $message = 'Appointment Status changed back to Scheduled';
+        }
+        if ($appointment->save()) {
+            return response()->json(['success', $message]);
+        } else {
+            return response()->json(['error', 'Error occured while updating status']);
         }
     }
 }

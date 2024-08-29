@@ -129,7 +129,14 @@ class HomeController extends Controller
         if ($hasBranches && $hasClinics) {
             $doctorAvailabilityService = new DoctorAvaialbilityService();
             $currentDayName = Carbon::now()->englishDayOfWeek;
-            $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors(null, $currentDayName, date('Y-m-d'));
+            // $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors(null, $currentDayName, date('Y-m-d'));
+            $branchid = null;
+            if (!Auth::user()->is_admin) {
+                $branchid = StaffProfile::where('user_id', Auth::user()->id)
+                    ->pluck('clinic_branch_id')
+                    ->first();
+            }
+            $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($branchid, $currentDayName, date('Y-m-d'), null);
             $totalPatients = PatientProfile::where('status', 'Y')->count(); // Replace with your actual logic to get the total
             $totalStaffs = StaffProfile::where('status', 'Y')->count();
             // $totalDoctors = StaffProfile::where('status', 'Y')->whereNot('license_number', null)->count();
@@ -154,6 +161,17 @@ class HomeController extends Controller
             $patients = $appointments->pluck('patient')->unique('id');
             // Extract the patients from the appointments
             $appointmentstype = $appointments->unique('patient_id');
+            if ($user->is_nurse || $user->is_reception) {
+                $clinicBranchId = StaffProfile::where('user_id', Auth::user()->id)
+                    ->pluck('clinic_branch_id')
+                    ->first();
+
+                $patients = $appointments->where('app_branch', $clinicBranchId)
+                    ->pluck('patient')->unique('id');
+
+                $appointmentstype = $appointments->where('app_branch', $clinicBranchId)->unique('patient_id');
+            }
+
 
             // Count the total number of unique patients
             $totalUniquePatients = $patients->count();
@@ -181,7 +199,8 @@ class HomeController extends Controller
             $currentappointments = null;
             if ($user->is_doctor) {
                 $currentappointments = Appointment::where('doctor_id', $user->id)
-                    ->where('app_status', 1)
+                    // ->where('app_status', 1)
+                    ->whereIn('app_status', [1, 2])
                     ->whereDate('app_date', today())
                     ->orderBy('token_no') // Order by token_no to get the first three
                     ->limit(3) // Limit the results to the first three
@@ -253,6 +272,7 @@ class HomeController extends Controller
         $appointments = DB::table('appointments')
             ->select(DB::raw('HOUR(app_time) as hour'), DB::raw('COUNT(*) as count'))
             ->whereDate('app_date', '=', now()->toDateString()) // Filter by the current date or your desired date
+            ->where('doctor_id', Auth::user()->id)
             ->groupBy('hour')
             ->orderBy('hour')
             ->get();
@@ -310,6 +330,8 @@ class HomeController extends Controller
         // Fetch appointment counts within the range
         $appointments = DB::table('appointments')
             ->select(DB::raw('MONTH(app_date) as month'), DB::raw('COUNT(*) as count'))
+            ->where('doctor_id', Auth::user()->id)
+            ->where('app_status', '5')
             ->whereBetween('app_date', [$startDate, $endDate])
             ->groupBy(DB::raw('MONTH(app_date)'))
             ->orderBy(DB::raw('MONTH(app_date)'))
@@ -317,7 +339,5 @@ class HomeController extends Controller
 
         return response()->json($appointments);
     }
-
-
 
 }

@@ -159,7 +159,8 @@
                         $('#currentClinicLogoImg').hide(); // Hide image element
                     }
                     // Load states based on selected country (assuming you have this function)
-                    loadStates(response.country_id);
+                    // loadStates(response.country_id);
+                    loadStatesEdit(response.country_id, response.state_id)
                     $('#edit_clinic_state').val(response.state_id);
                     loadCitiesEdit(response.state_id, response.city_id);
                     // Set selected state after a short delay to ensure options are loaded
@@ -247,6 +248,32 @@
             });
         } else {
             $('#clinic_state').empty();
+        }
+    }
+
+    // Function to load states based on country ID
+    function loadStatesEdit(countryId, stateId) {
+        if (countryId) {
+            $.ajax({
+                url: '{{ route('get.states', '') }}' + '/' + countryId,
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    $('#edit_clinic_state').empty();
+                    $.each(data, function(key, value) {
+                        var selected = "";
+                        if (key == stateId) {
+                            selected = "selected";
+                        }
+                        $('#edit_clinic_state').append('<option value="' + key + '" ' + selected +
+                            '>' + value + '</option>');
+                    });
+                }
+
+            });
+        } else {
+            $('#edit_clinic_state').empty();
+            $('#edit_clinic_state').append('<option value="">Select City</option>');
         }
     }
 

@@ -42,11 +42,39 @@ class TodayController extends Controller
             //     ->get();
 
             // Check if the user is a doctor
-            if (Auth::user()->is_doctor) {
-                if (!Auth::user()->is_admin) {
-                    $appointments = $appointments->where('doctor_id', Auth::user()->id);
-                }
+            // if (Auth::user()->is_doctor) {
+            //     if (!Auth::user()->is_admin) {
+            //         $appointments = $appointments->where('doctor_id', Auth::user()->id);
+            //     }
+            //     $appointments = $appointments->with(['patient', 'doctor', 'branch'])
+            //         ->orderBy('token_no', 'ASC')
+            //         ->get();
+            // } else {
+            //     $clinicBranchId = StaffProfile::where('user_id', Auth::user()->id)
+            //         ->pluck('clinic_branch_id')
+            //         ->first();
+
+            //     $appointments = $appointments->where('app_branch', $clinicBranchId)
+            //         ->with(['patient', 'doctor', 'branch'])
+            //         ->orderBy('token_no', 'ASC')
+            //         ->get();
+
+            // }
+
+            if (Auth::user()->is_admin) {
+                // $appointments = $appointments->with(['patient', 'doctor', 'branch'])
+                //     ->orderBy('token_no', 'ASC')
+                //     ->get();
+            } else if (Auth::user()->is_doctor) {
+                $appointments = $appointments->where('doctor_id', Auth::user()->id);
+            } else {
+                $clinicBranchId = StaffProfile::where('user_id', Auth::user()->id)
+                    ->pluck('clinic_branch_id')
+                    ->first();
+
+                $appointments = $appointments->where('app_branch', $clinicBranchId);
             }
+
             $appointments = $appointments->with(['patient', 'doctor', 'branch'])
                 ->orderBy('token_no', 'ASC')
                 ->get();
@@ -93,21 +121,33 @@ class TodayController extends Controller
                     //     AppointmentStatus::RESCHEDULED => 'badge-info',
                     // ];
     
+                    // $statusMap = [
+                    //     AppointmentStatus::SCHEDULED => 'text-success',
+                    //     AppointmentStatus::WAITING => 'text-warning',
+                    //     AppointmentStatus::UNAVAILABLE => 'text-dark',
+                    //     AppointmentStatus::CANCELLED => 'text-danger',
+                    //     AppointmentStatus::COMPLETED => 'text-muted',
+                    //     AppointmentStatus::BILLING => 'text-primary',
+                    //     AppointmentStatus::PROCEDURE => 'text-secondary',
+                    //     AppointmentStatus::MISSED => 'text-white',
+                    //     AppointmentStatus::RESCHEDULED => 'text-info',
+                    // ];
+    
                     $statusMap = [
-                        AppointmentStatus::SCHEDULED => 'text-success',
-                        AppointmentStatus::WAITING => 'text-warning',
-                        AppointmentStatus::UNAVAILABLE => 'text-dark',
-                        AppointmentStatus::CANCELLED => 'text-danger',
-                        AppointmentStatus::COMPLETED => 'text-muted',
-                        AppointmentStatus::BILLING => 'text-primary',
-                        AppointmentStatus::PROCEDURE => 'text-secondary',
-                        AppointmentStatus::MISSED => 'text-white',
-                        AppointmentStatus::RESCHEDULED => 'text-info',
+                        AppointmentStatus::SCHEDULED => 'badge-success',
+                        AppointmentStatus::WAITING => 'badge-warning',
+                        AppointmentStatus::UNAVAILABLE => 'badge-gray',
+                        AppointmentStatus::CANCELLED => 'badge-danger',
+                        AppointmentStatus::COMPLETED => 'badge-info',
+                        AppointmentStatus::BILLING => 'badge-primary',
+                        AppointmentStatus::PROCEDURE => 'badge-secondary',
+                        AppointmentStatus::MISSED => 'badge-dark',
+                        AppointmentStatus::RESCHEDULED => 'badge-gray',
                     ];
                     $btnClass = isset($statusMap[$row->app_status]) ? $statusMap[$row->app_status] : '';
-                    return "<span class=' {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . "</span>";
-
-                    // return "<span class='btn d-block btn-xs badge {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . "</span>";
+                    // return "<span class=' {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . "</span>";
+    
+                    return "<span class='btn d-block btn-xs badge {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . "</span>";
                 })
 
                 ->addColumn('action', function ($row) {

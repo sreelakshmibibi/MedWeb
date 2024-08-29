@@ -1,4 +1,8 @@
 <?php
+
+use App\Models\AppointmentStatus;
+use App\Models\PatientTreatmentBilling;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 ?>
 @extends('layouts.dashboard')
@@ -123,13 +127,21 @@ use Illuminate\Support\Facades\Crypt;
                                                         $idEncrypted = Crypt::encrypt($base64Id);
                                                     @endphp
                                                     <div class="d-flex dashboardbtnwrapper">
-                                                        <a href='{{ route('treatment', $idEncrypted) }}'
-                                                            class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1'
-                                                            title='treatment'><i class='fa-solid fa-stethoscope'></i></a>
+                                                    <?php 
+                                                        if (Auth::user()->can('treatments') && (Auth::user()->id == $currentappointment->doctor_id || Auth::user()->is_admin)) { 
+                                                            if ($currentappointment->app_date == date('Y-m-d') && $currentappointment->app_status != AppointmentStatus::MISSED) {
+                                                                    $bills = PatientTreatmentBilling::where('appointment_id', $currentappointment->id)->where('status', 'Y')->get();
+                                                                    if ($bills->isEmpty()) {?>
+                                                                        <a href='{{ route('treatment', $idEncrypted) }}'
+                                                                        class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1'
+                                                                        title='treatment'><i class='fa-solid fa-stethoscope'></i></a>
+                                                                   <?php } 
+                                                            }
+                                                        } ?>
                                                         {{-- <a href=''
                                                             class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1'
                                                             title='view'><i class='fa-solid fa-eye'></i></a> --}}
-                                                        <button type='button'
+                                                        <!-- <button type='button'
                                                             class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1'
                                                             title='follow up' data-bs-toggle='modal'
                                                             data-id='{{ $currentappointment->id }}'
@@ -156,7 +168,7 @@ use Illuminate\Support\Facades\Crypt;
                                                             data-id='{{ $currentappointment->id }}'><i
                                                                 class='fa fa-times'></i></button>
 
-                                                    </div>
+                                                    </div> -->
                                                 </div>
                                             </div>
                                         @endforeach
