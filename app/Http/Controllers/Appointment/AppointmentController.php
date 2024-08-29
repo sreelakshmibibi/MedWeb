@@ -183,7 +183,7 @@ class AppointmentController extends Controller
                             $buttons[] = '';
                         }
                     }
-                    if (Auth::user()->can('appointment create')) {
+                    if (Auth::user()->can('appointment create') && $row->app_status != AppointmentStatus::MISSED) {
                         $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1' title='follow up' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' data-bs-target='#modal-booking'><i class='fa fa-plus'></i></button>";
                     }
                     if ($row->app_status != AppointmentStatus::COMPLETED) {
