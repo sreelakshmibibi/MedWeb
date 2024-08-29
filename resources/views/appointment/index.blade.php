@@ -38,14 +38,15 @@
                                     <tr>
                                         <th width="10px">Token No</th>
                                         <th width="60px">Patient ID</th>
-                                        <th class="text-center">Patient Name</th>
+                                        <th width="100px" class="text-center">Patient Name</th>
                                         <th class="text-center">Consulting Doctor</th>
                                         <th width="60px">Phone number</th>
                                         <th class="text-center" width="180px">Branch</th>
                                         <th width="10px">Time</th>
                                         <th width="10px">Type</th>
                                         <th width="10px">Status</th>
-                                        <th width="144px">
+                                        {{-- <th width="144px"> --}}
+                                        <th width="180px">
                                             <button type="button" class="waves-effect waves-light btn btn-sm btn-primary"
                                                 id="smsbtn">
                                                 <i class="fa fa-paper-plane"></i> Send SMS</button>
@@ -205,7 +206,7 @@
                 var appId = $(this).data('id');
                 var patientId = $(this).data('patient-id');
                 var patientName = $(this).data('patient-name');
-                
+
                 $('#reschedule_app_id').val(appId); // Set app ID in the hidden input
                 $.ajax({
                     url: '{{ url('appointment', '') }}' + "/" + appId + "/edit",
@@ -215,26 +216,38 @@
                         $('#edit_patient_id').val(response.patient_id);
                         $('#edit_patient_name').val(patientName);
                         $('#edit_clinic_branch').val(response.clinic_branch);
-                        var selectedDoctorId = response.doctor_id; // Store the currently selected doctor ID
+                        var selectedDoctorId = response
+                            .doctor_id; // Store the currently selected doctor ID
                         var clinicBranch = response.clinic_branch;
                         if (clinicBranch) {
                             // Example: Fetch and update available doctors based on clinic branch
                             $.ajax({
-                                url: '{{ route("appointment.getBranchDoctors", "") }}' + "/" + response.app_branch,
+                                url: '{{ route('appointment.getBranchDoctors', '') }}' +
+                                    "/" + response.app_branch,
                                 method: 'GET',
                                 success: function(doctorsResponse) {
                                     console.log('doctorsResponse', doctorsResponse);
                                     var doctorSelect = $('#edit_doctor');
                                     doctorSelect.empty(); // Clear existing options
-                                    doctorSelect.append('<option value="">Select a doctor</option>');
-                                    $.each(doctorsResponse, function(index, doctor) {
+                                    doctorSelect.append(
+                                        '<option value="">Select a doctor</option>'
+                                    );
+                                    $.each(doctorsResponse, function(index,
+                                        doctor) {
                                         var doctorId = doctor.user_id;
-                                        var doctorName = doctor.user.name.replace(/<br\s*\/?>/gi, ' '); // Replace <br> tags with space
-                                        var isSelected = (selectedDoctorId == doctorId) ? ' selected' : '';
-                                        var option = $('<option' + isSelected + '></option>').val(doctorId).text(doctorName);
+                                        var doctorName = doctor.user.name
+                                            .replace(/<br\s*\/?>/gi,
+                                                ' '
+                                                ); // Replace <br> tags with space
+                                        var isSelected = (
+                                            selectedDoctorId == doctorId
+                                        ) ? ' selected' : '';
+                                        var option = $('<option' +
+                                                isSelected + '></option>')
+                                            .val(doctorId).text(doctorName);
                                         doctorSelect.append(option);
                                     });
-                                    
+
                                 },
                                 error: function(error) {
                                     console.log(error);
@@ -296,6 +309,7 @@
                 $('#doctor_id').empty();
             }
         }
+
         function loadDoctorsedit(branchId, appDate) {
             if (branchId && appDate) {
                 $.ajax({
@@ -306,7 +320,7 @@
                     },
                     dataType: "json",
                     success: function(data) {
-                        console.log(data,'data');
+                        console.log(data, 'data');
                         $('#edit_doctor').empty();
                         $('#edit_doctor').append('<option value="">Select a doctor</option>');
                         $.each(data, function(key, value) {
@@ -461,20 +475,20 @@
             var url = "{{ route('appointment.changeStatus', [':appointment']) }}";
             url = url.replace(':appointment', appId);
             $.ajax({
-                    type: 'GET',
-                    url: url,
-                    success: function(response) {
-                        console.log(response);
-                        $('#successMessage').text('updated');
-                        $('#successMessage').fadeIn().delay(3000)
-                            .fadeOut(); // Show for 3 seconds
-                        table.draw(); // Assuming 'table' is your DataTable instance
-                    },
-                    error: function(xhr) {
-                        // Handle error response, e.g., hide modal and show error message
-                        console.log("Error!", xhr.responseJSON.message, "error");
-                    }
-                });
+                type: 'GET',
+                url: url,
+                success: function(response) {
+                    console.log(response);
+                    $('#successMessage').text('updated');
+                    $('#successMessage').fadeIn().delay(3000)
+                        .fadeOut(); // Show for 3 seconds
+                    table.draw(); // Assuming 'table' is your DataTable instance
+                },
+                error: function(xhr) {
+                    // Handle error response, e.g., hide modal and show error message
+                    console.log("Error!", xhr.responseJSON.message, "error");
+                }
+            });
         });
         $(document).on('click', '#btn-cancel', function() {
             var appId = $(this).data('id');
@@ -572,7 +586,7 @@
         }
         $(document).on('click', '#smsbtn', function() {
             $.ajax({
-                url: '{{ route("send.sms") }}',
+                url: '{{ route('send.sms') }}',
                 type: 'POST',
                 data: {
                     selectedDate: selectedDate, // Add selectedDate as a query parameter
@@ -588,6 +602,5 @@
                 }
             });
         });
-
     </script>
 @endsection

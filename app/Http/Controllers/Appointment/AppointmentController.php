@@ -173,7 +173,7 @@ class AppointmentController extends Controller
                             $buttons[] = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa-solid fa-eye'></i></a>";
                         } elseif ($row->app_date == date('Y-m-d')) {
                             $bills = PatientTreatmentBilling::where('appointment_id', $row->id)->where('status', 'Y')->get();
-                    
+
                             if ($bills->isEmpty()) {
                                 $buttons[] = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='treatment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa-solid fa-stethoscope'></i></a>";
                             } else {
@@ -191,13 +191,13 @@ class AppointmentController extends Controller
                             $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-warning btn-reschedule btn-xs me-1' title='reschedule' data-bs-toggle='modal' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' data-bs-target='#modal-reschedule'><i class='fa-solid fa-calendar-days'></i></button>";
                         }
                         if (Auth::user()->can('appointment cancel')) {
-                            $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-xs' id='btn-cancel' data-bs-toggle='modal' data-bs-target='#modal-cancel' data-id='{$row->id}' title='cancel'><i class='fa fa-times'></i></button>";
+                            $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-danger btn-xs me-1' id='btn-cancel' data-bs-toggle='modal' data-bs-target='#modal-cancel' data-id='{$row->id}' title='cancel'><i class='fa fa-times'></i></button>";
                         }
                     }
                     if ($row->app_status == AppointmentStatus::SCHEDULED) {
-                         
+
                         $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' id='btn-appStatus' data-id='$row->id' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='change status to waiting'><i class='fa-solid fa-sliders'></i></a>";
-                      
+
                     }
                     if ($row->app_status == AppointmentStatus::WAITING) {
                         $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' id='btn-appStatus' data-id='$row->id' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='change status to scheduled'><i class='fa-solid fa-sliders'></i></a>";
@@ -221,7 +221,7 @@ class AppointmentController extends Controller
         $currentDayName = Carbon::now()->englishDayOfWeek;
         $doctorAvailabilityService = new DoctorAvaialbilityService();
         $workingDoctors = $doctorAvailabilityService->getTodayWorkingDoctors($firstBranchId, $currentDayName, date('Y-m-d'), date('H:i'));
-        
+
         $appointmentTypes = AppointmentType::all();
 
         return view('appointment.index', compact('clinicBranches', 'firstBranchId', 'currentDayName', 'workingDoctors', 'appointmentTypes'));
@@ -386,38 +386,38 @@ class AppointmentController extends Controller
     public function showForm($appBranch)
     {
         $availableDoctorIds = DoctorWorkingHour::
-        where('status', 'Y') // Assuming 'Y' indicates availability
-        ->where('clinic_branch_id', $appBranch)
-        ->pluck('user_id'); // Get user IDs of available doctors
+            where('status', 'Y') // Assuming 'Y' indicates availability
+            ->where('clinic_branch_id', $appBranch)
+            ->pluck('user_id'); // Get user IDs of available doctors
 
         // Step 2: Fetch doctors from StaffProfile and ensure they are actual doctors
         $allDoctors = StaffProfile::with('user')
-        ->whereIn('user_id', $availableDoctorIds)
-        ->whereHas('user', function ($query) {
-            $query->where('is_doctor', 1); // Ensure the user is a doctor
-        })
-        ->get();
-        
+            ->whereIn('user_id', $availableDoctorIds)
+            ->whereHas('user', function ($query) {
+                $query->where('is_doctor', 1); // Ensure the user is a doctor
+            })
+            ->get();
+
         return response()->json($allDoctors);
-        
+
     }
     public function changeStatus($id)
     {
         $appointment = Appointment::find($id);
-        if(!$appointment)
+        if (!$appointment)
             abort(404);
         $message = null;
-        if ($appointment->app_status == AppointmentStatus::SCHEDULED){
+        if ($appointment->app_status == AppointmentStatus::SCHEDULED) {
             $appointment->app_status = AppointmentStatus::WAITING;
             $message = 'Appointment Status changed to Waiting';
-        } else if ($appointment->app_status == AppointmentStatus::WAITING){
+        } else if ($appointment->app_status == AppointmentStatus::WAITING) {
             $appointment->app_status = AppointmentStatus::SCHEDULED;
             $message = 'Appointment Status changed back to Scheduled';
         }
         if ($appointment->save()) {
-            return response()->json(['success', $message ]);
-        } else{
-            return response()->json(['error', 'Error occured while updating status' ]);
+            return response()->json(['success', $message]);
+        } else {
+            return response()->json(['error', 'Error occured while updating status']);
         }
     }
 }

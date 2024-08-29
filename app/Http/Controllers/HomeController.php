@@ -199,7 +199,8 @@ class HomeController extends Controller
             $currentappointments = null;
             if ($user->is_doctor) {
                 $currentappointments = Appointment::where('doctor_id', $user->id)
-                    ->where('app_status', 1)
+                    // ->where('app_status', 1)
+                    ->whereIn('app_status', [1, 2])
                     ->whereDate('app_date', today())
                     ->orderBy('token_no') // Order by token_no to get the first three
                     ->limit(3) // Limit the results to the first three
