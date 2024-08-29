@@ -32,7 +32,7 @@
                                         <th class="text-center" width="180px">Branch</th>
                                         <th class="text-center">Consulted Doctor</th>
                                         <!-- <th>Bill Amount</th> -->
-                                        <th>Status</th>
+                                        <th width="10px">Status</th>
                                         <th width="144px">Action</th>
                                     </tr>
                                 </thead>

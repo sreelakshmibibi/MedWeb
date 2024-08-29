@@ -44,7 +44,7 @@
                                         <th class="text-center" width="180px">Branch</th>
                                         <th width="10px">Time</th>
                                         <th width="10px">Type</th>
-                                        <th>Status</th>
+                                        <th width="10px">Status</th>
                                         <th width="144px">
                                             <button type="button" class="waves-effect waves-light btn btn-sm btn-primary"
                                                 id="smsbtn">

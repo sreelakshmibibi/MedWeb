@@ -64,18 +64,18 @@
                                         required style="width: 100%;" readonly> -->
                                         <?php
 
-use App\Services\DoctorAvaialbilityService;
+                                            use App\Services\DoctorAvaialbilityService;
 
-$doctorAvailabilityService = new DoctorAvaialbilityService();
- $allDoctors = $doctorAvailabilityService->getAllDoctors();?>
-                                        <select class="form-select" id="edit_doctor" name="edit_doctor" required
-                                        data-placeholder="Select a Doctor" style="width: 100%;">
-                                        <option value="">Select a doctor</option>
-                                        @foreach ($allDoctors as $doctor)
-                                            <?php $doctorName = str_replace('<br>', ' ', $doctor->user->name); ?>
-                                            <option value="{{ $doctor->user_id }}">{{ $doctorName }}</option>
-                                        @endforeach
-                                    </select>
+                                            $doctorAvailabilityService = new DoctorAvaialbilityService();
+                                            $allDoctors = $doctorAvailabilityService->getAllDoctors();?>
+                                            <select class="form-select" id="edit_doctor" name="edit_doctor" required
+                                            data-placeholder="Select a Doctor" style="width: 100%;">
+                                                <option value="">Select a doctor</option>
+                                                @foreach ($allDoctors as $doctor)
+                                                    <?php $doctorName = str_replace('<br>', ' ', $doctor->user->name); ?>
+                                                    <option value="{{ $doctor->user_id }}">{{ $doctorName }}</option>
+                                                @endforeach
+                                            </select>
                                     <div id="editdoctorError" class="invalid-feedback"></div>
 
                                 </div>
