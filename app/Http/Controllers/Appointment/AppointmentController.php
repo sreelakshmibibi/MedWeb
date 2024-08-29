@@ -171,7 +171,7 @@ class AppointmentController extends Controller
                         if ($row->app_date < date('Y-m-d') && $row->app_status == AppointmentStatus::COMPLETED) {
                             // If appointment date is less than the selected date, show view icon
                             $buttons[] = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa-solid fa-eye'></i></a>";
-                        } elseif ($row->app_date == date('Y-m-d')) {
+                        } elseif ($row->app_date == date('Y-m-d') && $row->app_status != AppointmentStatus::MISSED) {
                             $bills = PatientTreatmentBilling::where('appointment_id', $row->id)->where('status', 'Y')->get();
 
                             if ($bills->isEmpty()) {

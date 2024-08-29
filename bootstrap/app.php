@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\AppointmentMissedStatusUpdate;
 use App\Console\Commands\DatabaseBackup;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -23,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withCommands([
         DatabaseBackup::class,
+        AppointmentMissedStatusUpdate::class,
     ])
 
     ->withExceptions(function (Exceptions $exceptions) {

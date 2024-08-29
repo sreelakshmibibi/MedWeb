@@ -46,7 +46,7 @@ return new class extends Migration
             $table->foreignId('combo_offer_id')->nullable()->constrained('treatment_combo_offers');
             $table->string('status', 5)->default('Y');
             $table->foreignId('created_by')->constrained('users');
-            $table->foreignId('updated_by')->constrained('users');
+            $table->foreignId('updated_by')->nullable()->constrained('users');
             $table->timestamps();
             $table->softDeletes();
 
