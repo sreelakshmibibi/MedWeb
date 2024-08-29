@@ -8,6 +8,7 @@ use App\Models\DoctorWorkingHour;
 use App\Models\LeaveApplication;
 use App\Models\StaffProfile;
 use App\Models\WeekDay;
+use Carbon\Carbon;
 
 class DoctorAvaialbilityService
 {
@@ -232,5 +233,32 @@ class DoctorAvaialbilityService
             $query->where('is_doctor', 1);
         })
         ->get();
+    }
+
+    function calculateLeavesTaken($userId)
+    {
+        // Define the start and end dates of the financial year
+        $financialYearStart = Carbon::create(date('Y'), 4, 1); // April 1st of the current year
+        $financialYearEnd = Carbon::create(date('Y') + 1, 3, 31); // March 31st of the next year
+        $startMonthYear = $financialYearStart->format('F Y'); // Example: "April 2024"
+        $endMonthYear = $financialYearEnd->format('F Y'); // Example: "March 2025"
+    
+        // Query leave applications for the user within the financial year
+        $leaves = LeaveApplication::where('user_id', $userId)
+            ->whereBetween('leave_from', [$financialYearStart, $financialYearEnd])
+            ->orWhereBetween('leave_to', [$financialYearStart, $financialYearEnd])
+            ->where('leave_status', 2) // Only include approved leaves
+            ->get();
+
+        $totalLeaves = 0;
+
+        foreach ($leaves as $leave) {
+            // Calculate the number of days for each leave record
+            $start = Carbon::parse($leave->leave_from);
+            $end = Carbon::parse($leave->leave_to);
+            $totalLeaves += $end->diffInDays($start) + 1; // +1 to include the end day
+        }
+
+        return $totalLeaves. ' ( ' . $startMonthYear . ' - ' . $endMonthYear . ' ) ';
     }
 }

@@ -404,6 +404,7 @@ class StaffListController extends Controller
         // Count the number of male and female patients
         $malePatientsCount = $patients->where('gender', 'M')->count();
         $femalePatientsCount = $patients->where('gender', 'F')->count();
+        $totalLeaves = $doctorAvailability->calculateLeavesTaken($staffProfile->user_id);
 
         return view(
             'staff.staff_list.view',
@@ -423,7 +424,8 @@ class StaffListController extends Controller
                 'availableBranches',
                 'totalUniquePatients',
                 'malePatientsCount',
-                'femalePatientsCount'
+                'femalePatientsCount',
+                'totalLeaves'
             )
         );
     }
