@@ -138,11 +138,11 @@ class TodayController extends Controller
                         AppointmentStatus::WAITING => 'badge-warning',
                         AppointmentStatus::UNAVAILABLE => 'badge-gray',
                         AppointmentStatus::CANCELLED => 'badge-danger',
-                        AppointmentStatus::COMPLETED => 'badge-light',
+                        AppointmentStatus::COMPLETED => 'badge-info',
                         AppointmentStatus::BILLING => 'badge-primary',
                         AppointmentStatus::PROCEDURE => 'badge-secondary',
                         AppointmentStatus::MISSED => 'badge-dark',
-                        AppointmentStatus::RESCHEDULED => 'badge-info',
+                        AppointmentStatus::RESCHEDULED => 'badge-gray',
                     ];
                     $btnClass = isset($statusMap[$row->app_status]) ? $statusMap[$row->app_status] : '';
                     // return "<span class=' {$btnClass}'>" . AppointmentStatus::statusToWords($row->app_status) . "</span>";
