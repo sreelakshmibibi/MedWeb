@@ -188,13 +188,17 @@ class BillingController extends Controller
                         // if ( Auth::user()->can('bill view')) {
                         $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='receive payment' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-money-bill'></i></a>";
                         // }
-                    } elseif ($row->app_status == AppointmentStatus::COMPLETED && empty($billing)) {
+                        // } elseif ($row->app_status == AppointmentStatus::COMPLETED && empty($billing)) {
+                    } elseif ($row->app_status == AppointmentStatus::COMPLETED) {
                         if (Auth::user()->can('bill generate')) {
-                            $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='generate bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-plus'></i></a>";
+                            if (empty($billing)) {
+                                $buttons[] = "<a href='" . route('billing.create', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1' title='generate bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-plus'></i></a>";
 
-                            $buttons[] = "<a href='" . route('billing.add', ['idEncrypted' => $idEncrypted, 'tab' => 'treatbill']) . "' class='waves-effect waves-light btn btn-circle btn-secondary text-dark btn-xs me-1' title='treatment bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-t'></i></a>";
-
-                            $buttons[] = "<a href='" . route('billing.add', ['idEncrypted' => $idEncrypted, 'tab' => 'medbill']) . "' class='waves-effect waves-light btn btn-circle btn-warning btn-xs me-1' title='medicine bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-m'></i></a>";
+                                $buttons[] = "<a href='" . route('billing.add', ['idEncrypted' => $idEncrypted, 'tab' => 'treatbill']) . "' class='waves-effect waves-light btn btn-circle btn-secondary text-dark btn-xs me-1' title='treatment bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-t'></i></a>";
+                            }
+                            if (empty($hasPrescriptionBill)) {
+                                $buttons[] = "<a href='" . route('billing.add', ['idEncrypted' => $idEncrypted, 'tab' => 'medbill']) . "' class='waves-effect waves-light btn btn-circle btn-warning btn-xs me-1' title='medicine bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-m'></i></a>";
+                            }
                         }
                     }
 
@@ -203,8 +207,8 @@ class BillingController extends Controller
 
                         $buttons[] = "<a href='" . route('billing.add', ['idEncrypted' => $idEncrypted, 'tab' => 'treatbill']) . "' class='waves-effect waves-light btn btn-circle btn-secondary text-dark btn-xs me-1' title='treatment bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-download'></i></a>";
 
-                        $buttons[] = "<a href='" . route('billing.add', ['idEncrypted' => $idEncrypted, 'tab' => 'medbill']) . "' class='waves-effect waves-light btn btn-circle btn-warning btn-xs me-1' title='medicine bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-download'></i></a>";
-
+                        // $buttons[] = "<a href='" . route('billing.add', ['idEncrypted' => $idEncrypted, 'tab' => 'medbill']) . "' class='waves-effect waves-light btn btn-circle btn-warning btn-xs me-1' title='medicine bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-download'></i></a>";
+    
                         // $base64billId = base64_encode($billing->bill_id);
                         // $billidEncrypted = Crypt::encrypt($base64billId);
                         // $base64appId = base64_encode($row->app_id);
@@ -221,6 +225,10 @@ class BillingController extends Controller
                         //     title='Print Medicine Bill'><i class='fa fa-print'></i></button>";
                         // }
     
+                    }
+                    if (!empty($hasPrescriptionBill)) {
+                        $buttons[] = "<a href='" . route('billing.add', ['idEncrypted' => $idEncrypted, 'tab' => 'medbill']) . "' class='waves-effect waves-light btn btn-circle btn-warning btn-xs me-1' title='medicine bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-download'></i></a>";
+
                     }
                     if (!empty($billing) && ($billing->bill_status == PatientTreatmentBilling::PAYMENT_DONE || $billing->bill_status == PatientTreatmentBilling::BILL_GENERATED)) {
                         if (Auth::user()->can('bill cancel')) {
