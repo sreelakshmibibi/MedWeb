@@ -6,6 +6,7 @@ use App\Models\Appointment;
 use App\Models\AppointmentStatus;
 use App\Models\DoctorWorkingHour;
 use App\Models\LeaveApplication;
+use App\Models\StaffProfile;
 use App\Models\WeekDay;
 
 class DoctorAvaialbilityService
@@ -222,5 +223,14 @@ class DoctorAvaialbilityService
             ->first();
 
         return !is_null($workingHour);
+    }
+
+    public function getAllDoctors()
+    {
+        return StaffProfile::with('user')
+        ->whereHas('user', function ($query) {
+            $query->where('is_doctor', 1);
+        })
+        ->get();
     }
 }
