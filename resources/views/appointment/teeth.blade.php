@@ -182,9 +182,7 @@ use App\Models\Appointment;
                             </div> --}}
                             <div class="col-md-6 ">
                                 <div class="form-group">
-                                    <label class="form-label" for="treatment_plan_id">Treatment Plan <span
-                                            class="text-danger">
-                                            *</span></label>
+                                    <label class="form-label" for="treatment_plan_id">Treatment Plan</label>
                                     <select class="form-select treatment_plan_select" id="treatment_plan_id"
                                         name="treatment_plan_id">
                                         <option value="">Select a Plan</option>
@@ -484,6 +482,7 @@ use App\Models\Appointment;
             var xray = $('#xray').prop('files');
             var treatment = $('#treatment_id').val();
             var remarks = $('#remarks').val();
+            var treatment_status = $('#treatment_status').val();
 
             // Basic client-side validation
             if (!toothScore) {
@@ -501,10 +500,10 @@ use App\Models\Appointment;
                 $('#diseaseError').text('Disease is required.');
             }
 
-            if (!hpi) {
-                $('#hpi').addClass('is-invalid');
-                $('#hpiError').text('HPI is required.');
-            }
+            // if (!hpi) {
+            //     $('#hpi').addClass('is-invalid');
+            //     $('#hpiError').text('HPI is required.');
+            // }
 
             if (!dexam) {
                 $('#dental_examination').addClass('is-invalid');
@@ -522,6 +521,11 @@ use App\Models\Appointment;
                 $('#treatment_id').addClass('is-invalid');
                 $('#treatmentError').text('Treatment is required.');
             }
+            if (!treatment_status) {
+                $('#treatment_status').addClass('is-invalid');
+                $('#treatmentStatusError').text('Status is required.');
+            }
+
 
             // If all validations pass, submit the form via AJAX
             var form = $('#form-teeth');
