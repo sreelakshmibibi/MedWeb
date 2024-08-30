@@ -174,6 +174,11 @@ use Illuminate\Support\Facades\Crypt;
     <!-- /.content-wrapper -->
     <!-- ./wrapper -->
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.history.replaceState) {
+                window.history.replaceState(null, null, window.location.href);
+            }
+        });
         $(document).ready(function() {
 
             var totalUniquePatients = @json($totalUniquePatients);

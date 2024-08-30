@@ -166,6 +166,11 @@ use Illuminate\Support\Facades\Crypt;
     <!-- ./wrapper -->
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.history.replaceState) {
+                window.history.replaceState(null, null, window.location.href);
+            }
+        });
         var revisitedPatientsData = @json(array_values($revisitedPatientsData));
         var newlyRegisteredData = @json(array_values($newlyRegisteredData));
         var allData = revisitedPatientsData.concat(newlyRegisteredData);
