@@ -58,7 +58,7 @@ class PaymentController extends Controller
                     'latestAppointment.billingDetails',  // Load the billing details
                 ])->find($patient->id);
                 if ($previousBill && $previousBill->latestAppointment && $previousBill->latestAppointment->billingDetails->isNotEmpty()) {
-                    $treatmentBillDetails = $previousBill->latestAppointment->billingDetails->first();
+                    $treatmentBillDetails = $previousBill->latestAppointment->billingDetails->last();
                     $billAppId = $treatmentBillDetails->appointment_id;
                     $base64Id = base64_encode($billAppId);
                     $billAppIdEncrypted = Crypt::encrypt($base64Id);

@@ -101,12 +101,18 @@ class HelperController extends Controller
             if (!$appointment) {
                 return response()->json(['message' => 'Appointment not found'], 404);
             }
-
+            $clinicLogo = "";
+            if ($clinicDetails->clinic_logo == '') {
+                $clinicLogo = 'public/images/logo-It.png';
+            } else {
+                $clinicLogo = 'storage/' . $clinicDetails->clinic_logo;
+            }
             $view = 'pdf.treatment_pdf';
             $data = [
                 'appointment' => $appointment,
                 'toothExamDetails' => $toothExamDetails,
                 'clinicDetails' => $clinicDetails,
+                'clinicLogo' => $clinicLogo,
             ];
 
             $fileName = 'appointment_' . $appointmentId . '.pdf';
@@ -170,11 +176,18 @@ class HelperController extends Controller
             }
 
             $view = 'pdf.treatment_pdf';
+            $clinicLogo = "";
+            if ($clinicDetails->clinic_logo == '') {
+                $clinicLogo = 'public/images/logo-It.png';
+            } else {
+                $clinicLogo = 'storage/' . $clinicDetails->clinic_logo;
+            }
             $toothExamDetails = $tooth->toothExamination;
             $data = [
                 'appointment' => $tooth,
                 'toothExamDetails' => $toothExamDetails,
                 'clinicDetails' => $clinicDetails,
+                'clinicLogo' => $clinicLogo,
             ];
 
             $fileName = 'tooth_' . $toothIds->map(function ($id) {
