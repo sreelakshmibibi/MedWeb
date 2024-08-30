@@ -55,7 +55,8 @@ class ReportController extends Controller
             'billedBy:id,name',
             'updatedBy:id,name',
             'createdBy:id,name',
-        ]);
+        ])
+        ->where('status', 'Y');
 
 
         if ($request->filled('fromdate')) {
