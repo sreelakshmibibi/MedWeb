@@ -86,6 +86,7 @@
     <script src="{{ asset('js/pages/steps.js') }}"></script>
     <script src="{{ asset('js/pages/steps_patient.js') }}"></script>
     <script src="{{ asset('js/pages/steps_treatment.js') }}"></script>
+    <script src="{{ asset('js/pages/steps_viewpatient.js') }}"></script>
 
     <script src="{{ asset('assets/vendor_components/bootstrap-select/dist/js/bootstrap-select.js') }}"></script>
     <script src="{{ asset('assets/vendor_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.js') }}"></script>
