@@ -61,7 +61,7 @@ header('Content-Type: text/html; charset=UTF-8');
         }
 
         .pdfbody {
-            margin-top: 75px;
+            margin-top: 110px;
             position: relative;
             height: 75%;
         }
@@ -193,6 +193,7 @@ header('Content-Type: text/html; charset=UTF-8');
     <div class="header">
         {{-- <img src="'{{ asset('storage/') }}/' + {{ $clinicDetails->clinic_logo }}" alt="Clinic Logo" width="50px"> --}}
         <!-- Clinic Logo -->
+        <img src="{{ $clinicLogo }}" alt="Clinic Logo" height="40px">
         <div class="headingdiv">
             <div class="clinic-name">{{ $clinicDetails->clinic_name ?? 'Clinic Name' }}</div> <!-- Clinic Name -->
             <div class="clinic-address">
