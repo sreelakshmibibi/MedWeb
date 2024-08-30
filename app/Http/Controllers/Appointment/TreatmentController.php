@@ -14,6 +14,7 @@ use App\Models\Dosage;
 use App\Models\Medicine;
 use App\Models\MedicineRoute;
 use App\Models\PatientProfile;
+use App\Models\PatientTreatmentBilling;
 use App\Models\Prescription;
 use App\Models\SurfaceCondition;
 use App\Models\Teeth;
@@ -59,7 +60,8 @@ class TreatmentController extends Controller
 
         }
         $appAction = 'Treatment';
-        if ($appointment->app_date < date('Y-m-d') && $appointment->app_status == AppointmentStatus::COMPLETED) {
+        $bills = PatientTreatmentBilling::where('appointment_id', $appointment->id)->where('status', 'Y')->get();
+        if (($appointment->app_date < date('Y-m-d') || $bills->isNotEmpty()) && ($appointment->app_status == AppointmentStatus::COMPLETED  && $appointment->app_status != AppointmentStatus::MISSED )) {
             $appAction = 'Show';
         }
         $doctorDiscount = $appointment->doctor_discount;
