@@ -61,12 +61,12 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="tab" href="#userstabcontent" role="tab" id="userstabtitle">
                         <span class="hidden-sm-up"><i class="fa-solid fa-users"></i> </span>
                         <span class="hidden-xs-down"><i class="fa-solid fa-users me-10"></i>Users</span>
                     </a>
-                </li>
+                </li> -->
             </ul>
 
             <!-- Tab panes -->
