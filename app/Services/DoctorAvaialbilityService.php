@@ -242,11 +242,17 @@ class DoctorAvaialbilityService
         $financialYearEnd = Carbon::create(date('Y') + 1, 3, 31); // March 31st of the next year
         $startMonthYear = $financialYearStart->format('F Y'); // Example: "April 2024"
         $endMonthYear = $financialYearEnd->format('F Y'); // Example: "March 2025"
-    
+
         // Query leave applications for the user within the financial year
         $leaves = LeaveApplication::where('user_id', $userId)
-            ->whereBetween('leave_from', [$financialYearStart, $financialYearEnd])
-            ->orWhereBetween('leave_to', [$financialYearStart, $financialYearEnd])
+            ->where(function($query) use ($financialYearStart, $financialYearEnd) {
+                $query->whereBetween('leave_from', [$financialYearStart, $financialYearEnd])
+                    ->orWhereBetween('leave_to', [$financialYearStart, $financialYearEnd])
+                    ->orWhere(function($query) use ($financialYearStart, $financialYearEnd) {
+                        $query->where('leave_from', '<=', $financialYearEnd)
+                                ->where('leave_to', '>=', $financialYearStart);
+                    });
+            })
             ->where('leave_status', 2) // Only include approved leaves
             ->get();
 
@@ -256,9 +262,18 @@ class DoctorAvaialbilityService
             // Calculate the number of days for each leave record
             $start = Carbon::parse($leave->leave_from);
             $end = Carbon::parse($leave->leave_to);
+
+            // Adjust for cases where leave spans across financial year boundaries
+            if ($start < $financialYearStart) {
+                $start = $financialYearStart;
+            }
+            if ($end > $financialYearEnd) {
+                $end = $financialYearEnd;
+            }
+
             $totalLeaves += $end->diffInDays($start) + 1; // +1 to include the end day
         }
 
-        return $totalLeaves. ' ( ' . $startMonthYear . ' - ' . $endMonthYear . ' ) ';
+        return $totalLeaves . ' ( ' . $startMonthYear . ' - ' . $endMonthYear . ' ) ';
     }
 }
