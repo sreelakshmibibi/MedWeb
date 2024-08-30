@@ -115,6 +115,12 @@
                                 <div>{{ $staffProfile->license_number }}</div>
                             </li>
                             <?php } ?>
+                            <li class="nav-item d-flex justify-start">
+                                <div class="min-w-120 text-muted">
+                                    Leaves taken
+                                </div>
+                                <div>{{ $totalLeaves }}</div>
+                            </li>
                         </div>
 
                         <div class="col  ps-20">
@@ -162,16 +168,16 @@
                                     {{ '- ' . $staffProfile->pincode }}
                                 </div>
                             </li>
-                            <li class="nav-item d-flex justify-start align-items-center">
+                            {{-- <li class="nav-item d-flex justify-start align-items-center">
                                 <div class="min-w-120 text-muted">
                                     Total Leaves taken
                                 </div>
                                 <div>
                                     @php
-                                        echo $totalLeaves
+                                        echo $totalLeaves;
                                     @endphp
                                 </div>
-                            </li>
+                            </li> --}}
 
                         </div>
                     </div>
@@ -183,7 +189,7 @@
                 <p>@php echo str_replace('<br>', ' ', $userDetails->name); @endphp is an experienced dentist specializing in {{ $staffProfile->specialization }},
                     with
                     {{-- over 15 years of  --}}
-                    practice in {{ $staffProfile->years_of_experience }}. He qualified
+                    practice of {{ $staffProfile->years_of_experience }}. He qualified
                     {{ $staffProfile->qualification }} and is dedicated to providing
                     compassionate care and achieving optimal oral health outcomes for his patients.</p>
                 <ul class="flexbox flex-justified text-center p-0">
@@ -251,12 +257,12 @@
                                                 @endphp
                                             </div>
                                         </li>
-                                        <li class="nav-item d-flex justify-start align-items-center">
+                                        {{-- <li class="nav-item d-flex justify-start align-items-center">
                                             <div class="min-w-120 text-muted">
                                                 Aadhaar no
                                             </div>
                                             <div>{{ $staffProfile->aadhaar_no }}</div>
-                                        </li>
+                                        </li> --}}
                                         <li class="nav-item d-flex justify-start align-items-center">
                                             <div class="min-w-120 text-muted">
                                                 License No.
@@ -269,6 +275,13 @@
                                             </div>
                                             <div>&#8377; {{ $staffProfile->consultation_fees }}</div>
                                         </li>
+                                        <li class="nav-item d-flex justify-start">
+                                            <div class="min-w-120 text-muted">
+                                                Leaves taken
+                                            </div>
+                                            <div>{{ $totalLeaves }}</div>
+                                        </li>
+
                                     </div>
                                     <div class="col ps-20">
                                         <li class="nav-item d-flex justify-start align-items-center">
@@ -286,6 +299,12 @@
                                                     }
                                                 @endphp
                                             </div>
+                                        </li>
+                                        <li class="nav-item d-flex justify-start align-items-center">
+                                            <div class="min-w-120 text-muted">
+                                                Aadhaar no
+                                            </div>
+                                            <div>{{ $staffProfile->aadhaar_no }}</div>
                                         </li>
                                         <li class="nav-item d-flex justify-start align-items-center">
                                             <div class="min-w-120 text-muted">
@@ -318,16 +337,16 @@
                                                 {{ '- ' . $staffProfile->pincode }}
                                             </div>
                                         </li>
-                                        <li class="nav-item d-flex justify-start align-items-center">
+                                        {{-- <li class="nav-item d-flex justify-start align-items-center">
                                             <div class="min-w-120 text-muted">
                                                 Total Leaves taken
                                             </div>
                                             <div>
                                                 @php
-                                                    echo $totalLeaves
+                                                    echo $totalLeaves;
                                                 @endphp
                                             </div>
-                                        </li>
+                                        </li> --}}
 
                                     </div>
                                 </div>

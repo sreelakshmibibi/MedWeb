@@ -139,8 +139,11 @@ use Illuminate\Support\Facades\Crypt;
                                                     // Encrypt the Base64 encoded ID
                                                     $idEncrypted = Crypt::encrypt($base64Id);
                                                 @endphp
-                                                <a class="px-10 pt-5"
+                                                {{-- <a class="px-10 pt-5"
                                                     href="{{ route('staff.staff_list.view', $idEncrypted) }}"><i
+                                                        class="fa fa-eye"></i></a> --}}
+                                                <a class="px-10 pt-5"
+                                                    href="{{ route('staff.staff_list.view', ['id' => $idEncrypted, 'from' => 'menu']) }}"><i
                                                         class="fa fa-eye"></i></a>
                                             </div>
                                         @endforeach

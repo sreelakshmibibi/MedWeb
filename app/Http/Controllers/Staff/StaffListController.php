@@ -88,7 +88,8 @@ class StaffListController extends Controller
                     $idEncryptedUser = Crypt::encrypt($base64Iduser);
                     $btn = null;
                     if (Auth::user()->hasPermissionTo('staff view')) {
-                        $btn = '<a href="' . route('staff.staff_list.view', $idEncryptedUser) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
+                        // $btn = '<a href="' . route('staff.staff_list.view', $idEncryptedUser) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
+                        $btn = '<a href="' . route('staff.staff_list.view', ['id' => $idEncryptedUser, 'from' => 'menu']) . '" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="view"><i class="fa fa-eye"></i></a>';
                     }
                     if (Auth::user()->hasPermissionTo('staff update')) {
                         $btn .= '<a href="' . route('staff.staff_list.edit', $idEncrypted) . '" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit"><i class="fa fa-pencil"></i></a>';
@@ -296,7 +297,7 @@ class StaffListController extends Controller
         $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])->where('clinic_status', 'Y')->get();
         $availability = DoctorWorkingHour::where('user_id', $staffProfile->user_id)->get();
         $availabilityCount = DoctorWorkingHour::where('user_id', $staffProfile->user_id)
-        ->where('status', 'Y')->distinct('clinic_branch_id')->count();
+            ->where('status', 'Y')->distinct('clinic_branch_id')->count();
         $doctorAvailability = new DoctorAvaialbilityService();
         $availableBranches = $doctorAvailability->availableBranchAndTimings($staffProfile->user_id);
         $countries = Country::all();
@@ -334,8 +335,11 @@ class StaffListController extends Controller
         return response()->json(['success', 'Staff deleted successfully.'], 201);
     }
 
-    public function view(string $id, Request $request)
+    // public function view(string $id, Request $request)
+    public function view(Request $request)
     {
+        $from = $request->query('from', 'menu');
+        $id = $request->query('id');
         $id = base64_decode(Crypt::decrypt($id));
         $staffProfile = StaffProfile::with('user')->where('user_id', $id)->first();
 
@@ -425,7 +429,8 @@ class StaffListController extends Controller
                 'totalUniquePatients',
                 'malePatientsCount',
                 'femalePatientsCount',
-                'totalLeaves'
+                'totalLeaves',
+                'from'
             )
         );
     }
