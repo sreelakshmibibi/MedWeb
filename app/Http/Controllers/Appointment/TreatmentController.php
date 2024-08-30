@@ -257,18 +257,35 @@ class TreatmentController extends Controller
     public function fetchExistingExamination($toothId, $appId, $patientId)
     {
         $toothExamination = [];
+        $appointment = Appointment::find($appId);
+        $parentAppId = $appointment->app_parent_id;
         if (in_array($toothId, [1, 2, 3, 4, 5])) {
             $toothExamination = ToothExamination::where('row_id', $toothId)
                 ->where('patient_id', $patientId)
                 ->where('app_id', $appId)
                 ->where('status', 'Y')
                 ->first();
-        } else {
-            $toothExamination = ToothExamination::where('tooth_id', $toothId)
+            if ($parentAppId != null && $toothExamination == null) {
+                $toothExamination = ToothExamination::where('row_id', $toothId)
                 ->where('patient_id', $patientId)
-                ->where('app_id', $appId)
+                ->where('app_id', $parentAppId)
                 ->where('status', 'Y')
                 ->first();
+            }
+        } else {
+            $toothExamination = ToothExamination::where('tooth_id', $toothId)
+            ->where('patient_id', $patientId)
+            ->where('app_id', $appId)
+            ->where('status', 'Y')
+            ->first();
+            if ($parentAppId != null && $toothExamination == null) {
+                $toothExamination = ToothExamination::where('tooth_id', $toothId)
+                ->where('patient_id', $patientId)
+                ->where('app_id', $parentAppId)
+                ->where('status', 'Y')
+                ->first();
+            }
+           
         }
         $xrays = null;
         $diseaseName = null;
@@ -475,6 +492,24 @@ class TreatmentController extends Controller
     {
         // Retrieve patient_id from the query parameters
         $patientId = $request->query('patient_id');
+        $appointmentPrevious = Appointment::find($appointment);
+
+        // Fetch previous tooth examinations if a parent appointment exists
+        $toothExaminationsPrevious = null;
+        if ($appointmentPrevious->app_parent_id != null) {
+            $toothExaminationsPrevious = ToothExamination::with([
+                'teeth:id,teeth_name,teeth_image',
+                'treatment',
+                'treatmentPlan',
+                'toothScore:id,score',
+                'disease:id,name',
+                'xRayImages:id,tooth_examination_id,xray,status',
+            ])
+            ->where('app_id', $appointmentPrevious->app_parent_id)
+            ->where('patient_id', $patientId)
+            ->where('status', 'Y')
+            ->get();
+        }
 
         // Fetch ToothExamination data with related teeth and treatment details
         $toothExaminations = ToothExamination::with([
@@ -495,8 +530,23 @@ class TreatmentController extends Controller
         $individualTreatmentAmounts = [];
         $comboOffersResult = [];
 
+        $previousTreatments = [];
+        if ($toothExaminationsPrevious) {
+            foreach ($toothExaminationsPrevious as $prevExam) {
+                    $treatmentId = $prevExam->treatment_id;
+                    $teethId = $prevExam->teeth_id;
+
+                    // Mark treatment as follow-up
+                    if ($prevExam->treatment_status === TreatmentStatus::FOLLOWUP) {
+                        $previousTreatments[$teethId][$treatmentId] = true;
+                    }
+                
+            }
+        }
+        
         // Process each tooth examination
         foreach ($toothExaminations as $toothExamination) {
+
             // Collect treatment IDs
             $treatments[] = $toothExamination->treatment->id;
 
@@ -534,14 +584,28 @@ class TreatmentController extends Controller
                 // If no combo offer, set comboOffersResult to empty array for this treatment
                 $comboOffersResult[$toothExamination->treatment->id] = [];
             }
+            // Skip if treatment is marked as follow-up in previous examinations
+            if (isset($previousTreatments[$toothExamination->teeth_id]) &&
+                isset($previousTreatments[$toothExamination->teeth_id][$toothExamination->treatment_id])) {
+                    continue;
+            }
 
             // Store individual treatment amount
             $individualTreatmentAmounts[$toothExamination->treatment->id] = [
                 'treat_name' => $toothExamination->treatment->treat_name,
                 'treat_cost' => $discountCost, // Use discounted cost
+                'treat_id' => $toothExamination->treatment_id,
+                'cost' => $toothExamination->treatment->treat_cost,
+                'discount_percentage' => $toothExamination->treatment->discount_percentage,
+                    
+                
             ];
         }
 
+// Filter toothExaminations to only include those with treatments in individualTreatmentAmounts
+    $toothExaminations = $toothExaminations->filter(function ($toothExamination) use ($individualTreatmentAmounts) {
+        return isset($individualTreatmentAmounts[$toothExamination->treatment_id]);
+    });
         $doctorDiscountApp = Appointment::findOrFail($appointment);
         $doctorDiscount = $doctorDiscountApp->doctor_discount;
 
