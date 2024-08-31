@@ -461,6 +461,95 @@
         //     // Open the print view in a new window
         //     window.open(url, '_blank');
         // });
+
+        jQuery(function($) {
+            var table;
+
+            if ($.fn.DataTable.isDataTable("#history_table")) {
+                $('#history_table').DataTable().destroy();
+            }
+
+            table = $('#history_table').DataTable({
+                // deferRender: true,
+                // fixedColumns: true,
+                responsive: true,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "",
+                    type: 'GET',
+                },
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        className: 'max-w-10',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'treat_date',
+                        name: 'treat_date',
+                        className: 'w-20',
+                        render: function(data, type, row) {
+                            return moment(data).format('DD-MM-YYYY');
+                        }
+                    },
+                    {
+                        data: 'teeth',
+                        name: 'teeth',
+                        className: 'text-start',
+                    },
+                    {
+                        data: 'problem',
+                        name: 'problem',
+                        className: 'text-start',
+                    },
+                    {
+                        data: 'disease',
+                        name: 'disease',
+                        className: 'text-start',
+                    },
+                    {
+                        data: 'treatment',
+                        name: 'treatment',
+                        className: 'text-start',
+                    },
+                    {
+                        data: 'doctor',
+                        name: 'doctor',
+                        className: 'text-left w-30',
+                    },
+                    // {
+                    //     data: 'branch',
+                    //     name: 'branch',
+                    //     className: 'text-left w-120',
+                    // },
+                    {
+                        data: 'status',
+                        name: 'status',
+                        className: 'w-10 text-start',
+                        orderable: false,
+                        searchable: true
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        className: 'w-20',
+                        orderable: false,
+                        searchable: true
+                    }
+                ]
+            });
+
+            // Debug column widths after table draw
+            // $('#history_table').on('draw.dt', function() {
+            //     console.log('Table drawn with column widths:', table.columns().header().toArray().map(
+            //         function(header) {
+            //             return $(header).css('width');
+            //         }));
+            // });
+            // }
+        });
     </script>
 
     @include('appointment.teeth')
