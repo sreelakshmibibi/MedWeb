@@ -121,5 +121,80 @@ use Illuminate\Support\Facades\Session;
                 });
             });
         });
+        jQuery(function($) {
+            var table;
+
+            if (apphistoryStepAdded) {
+                if ($.fn.DataTable.isDataTable("#apphistory_table")) {
+                    $("#apphistory_table").DataTable().destroy();
+                }
+
+                table = $("#apphistory_table").DataTable({
+                    responsive: true,
+                    processing: true,
+                    serverSide: true,
+                    ajax: {
+                        url: "",
+                        type: "GET",
+                    },
+                    columns: [{
+                            data: "DT_RowIndex",
+                            name: "DT_RowIndex",
+                            className: "max-w-10",
+                            orderable: false,
+                            searchable: false,
+                        },
+                        {
+                            data: "treat_date",
+                            name: "treat_date",
+                            className: "w-20",
+                            render: function(data, type, row) {
+                                return moment(data).format("DD-MM-YYYY");
+                            },
+                        },
+                        {
+                            data: "teeth",
+                            name: "teeth",
+                        },
+                        {
+                            data: "problem",
+                            name: "problem",
+                        },
+                        {
+                            data: "disease",
+                            name: "disease",
+                        },
+                        {
+                            data: "treatment",
+                            name: "treatment",
+                        },
+                        {
+                            data: "doctor",
+                            name: "doctor",
+                            className: "text-left w-30",
+                        },
+                        {
+                            data: "branch",
+                            name: "branch",
+                            className: "text-left w-120",
+                        },
+                        {
+                            data: "status",
+                            name: "status",
+                            className: "w-10",
+                            orderable: false,
+                            searchable: true,
+                        },
+                        {
+                            data: "action",
+                            name: "action",
+                            className: "w-20",
+                            orderable: false,
+                            searchable: true,
+                        },
+                    ],
+                });
+            }
+        });
     </script>
 @endsection
