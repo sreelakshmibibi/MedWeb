@@ -160,7 +160,7 @@ use Illuminate\Support\Facades\Session;
                         {
                             data: "treat_date",
                             name: "treat_date",
-                            className: "w-20",
+                            className: "w-60",
                             render: function(data, type, row) {
                                 return moment(data).format("DD-MM-YYYY");
                             },
@@ -168,23 +168,27 @@ use Illuminate\Support\Facades\Session;
                         {
                             data: "teeth",
                             name: "teeth",
+                            className: 'text-start',
                         },
                         {
                             data: "problem",
                             name: "problem",
+                            className: 'text-start',
                         },
                         {
                             data: "disease",
                             name: "disease",
+                            className: 'text-start',
                         },
                         {
                             data: "treatment",
                             name: "treatment",
+                            className: 'text-start',
                         },
                         {
                             data: "doctor",
                             name: "doctor",
-                            className: "text-left w-30",
+                            className: "text-start min-w-100",
                         },
                         // {
                         //     data: "branch",
@@ -194,14 +198,14 @@ use Illuminate\Support\Facades\Session;
                         {
                             data: "status",
                             name: "status",
-                            className: "w-10",
+                            className: "w-10 text-start",
                             orderable: false,
                             searchable: true,
                         },
                         {
                             data: "action",
                             name: "action",
-                            className: "w-20",
+                            className: "min-w-40",
                             orderable: false,
                             searchable: true,
                         },

@@ -6,13 +6,13 @@
             <tr>
                 <th>No</th>
                 <th>Date</th>
-                <th>Teeth</th>
-                <th>Problem</th>
-                <th>Disease</th>
-                <th>Treatment</th>
-                <th>Consulted Doctor</th>
-                <!-- <th>Branch</th> -->
-                <th>Status</th>
+                <th class="text-center">Teeth</th>
+                <th class="text-center">Problem</th>
+                <th class="text-center">Disease</th>
+                <th class="text-center">Treatment</th>
+                <th class="text-center">Consulted Doctor</th>
+                {{-- <th class="text-center">Branch</th> --}}
+                <th class="text-center">Status</th>
                 <th>Action</th>
             </tr>
         </thead>
