@@ -11,7 +11,7 @@
                 <th>Disease</th>
                 <th>Treatment</th>
                 <th>Consulted Doctor</th>
-                <th>Branch</th>
+                <!-- <th>Branch</th> -->
                 <th>Status</th>
                 <th>Action</th>
             </tr>
@@ -72,11 +72,11 @@
                     name: 'doctor',
                     className: 'text-left w-30',
                 },
-                {
-                    data: 'branch',
-                    name: 'branch',
-                    className: 'text-left w-120',
-                },
+                // {
+                //     data: 'branch',
+                //     name: 'branch',
+                //     className: 'text-left w-120',
+                // },
                 {
                     data: 'status',
                     name: 'status',
