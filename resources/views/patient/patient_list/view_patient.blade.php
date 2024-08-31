@@ -71,7 +71,7 @@ use Illuminate\Support\Facades\Session;
             </section>
         </div>
     </div>
-
+    @include('appointment.pdf_option')
     <script>
         $(document).ready(function() {
             $("#patientviewform .actions ul li:last-child").addClass("disabled").attr("aria-hidden", "true").attr(
@@ -119,6 +119,19 @@ use Illuminate\Support\Facades\Session;
                         console.error('Error:', error);
                     }
                 });
+            });
+
+            $(document).on('click', '.btn-treatment-pdf-generate', function() {
+                var appId = $(this).data('app-id');
+                var parentId = $(this).data('parent-id');
+                var patientId = $(this).data('patient-id');
+
+                $('#pdf_appointment_id').val(appId);
+                $('#pdf_patient_id').val(patientId);
+                $('#pdf_app_parent_id').val(parentId);
+                $('#pdfType').val('appointment'); // Default to 'appointment'
+                $('#toothSelection').addClass('d-none'); // Hide tooth selection by default
+                $('#modal-download').modal('show'); // Show the modal
             });
         });
         jQuery(function($) {
@@ -206,7 +219,7 @@ use Illuminate\Support\Facades\Session;
                     processing: true,
                     serverSide: true,
                     ajax: {
-                        
+
                         url: '{{ url('patient_list') }}' + "/" + patientId + "/bill",
                         type: "GET",
 
