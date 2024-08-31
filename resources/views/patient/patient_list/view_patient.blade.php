@@ -173,11 +173,11 @@ use Illuminate\Support\Facades\Session;
                             name: "doctor",
                             className: "text-left w-30",
                         },
-                        {
-                            data: "branch",
-                            name: "branch",
-                            className: "text-left w-120",
-                        },
+                        // {
+                        //     data: "branch",
+                        //     name: "branch",
+                        //     className: "text-left w-120",
+                        // },
                         {
                             data: "status",
                             name: "status",

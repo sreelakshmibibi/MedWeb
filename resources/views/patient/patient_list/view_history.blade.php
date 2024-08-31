@@ -11,7 +11,7 @@
                 <th>Disease</th>
                 <th>Treatment</th>
                 <th>Consulted Doctor</th>
-                <th>Branch</th>
+                <!-- <th>Branch</th> -->
                 <th>Status</th>
                 <th>Action</th>
             </tr>

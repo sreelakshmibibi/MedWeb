@@ -468,7 +468,7 @@ class PatientListController extends Controller
 
         $appointid = $appointment->id;
         $appointmentService = new AppointmentService();
-        $previousAppointments = $appointmentService->getPreviousAppointments($appointid, $appointment->app_date, $patientProfile->patient_id);
+        $previousAppointments = $appointmentService->getPreviousAppointments($appointid, date('Y-m-d'), $patientProfile->patient_id);
         $patientName = str_replace('<br>', ' ', $patientProfile->first_name) . ' ' . $patientProfile->last_name;
 
         // if ($request->ajax()) {
