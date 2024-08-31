@@ -14,6 +14,7 @@ use App\Models\Dosage;
 use App\Models\Medicine;
 use App\Models\MedicineRoute;
 use App\Models\PatientProfile;
+use App\Models\PatientTreatmentBilling;
 use App\Models\Prescription;
 use App\Models\SurfaceCondition;
 use App\Models\Teeth;
@@ -59,7 +60,8 @@ class TreatmentController extends Controller
 
         }
         $appAction = 'Treatment';
-        if ($appointment->app_date < date('Y-m-d') && $appointment->app_status == AppointmentStatus::COMPLETED) {
+        $bills = PatientTreatmentBilling::where('appointment_id', $appointment->id)->where('status', 'Y')->get();
+        if (($appointment->app_date < date('Y-m-d') || $bills->isNotEmpty()) && ($appointment->app_status == AppointmentStatus::COMPLETED  && $appointment->app_status != AppointmentStatus::MISSED )) {
             $appAction = 'Show';
         }
         $doctorDiscount = $appointment->doctor_discount;
@@ -141,93 +143,105 @@ class TreatmentController extends Controller
                     return implode(', ', [$address, $row->branch->city->city, $row->branch->state->state]);
                 })
                 ->addColumn('status', function ($row) {
-                    // $statusMap = [
-                    //     TreatmentStatus::COMPLETED => 'badge-success-light',
-                    //     TreatmentStatus::FOLLOWUP => 'badge-warning-light',
-                    // ];
-    
+                    // Map treatment statuses to FontAwesome classes
                     $statusMap = [
                         TreatmentStatus::COMPLETED => 'fa-circle-check text-success',
                         TreatmentStatus::FOLLOWUP => 'fa-circle-exclamation text-warning',
                     ];
-
-                    // Ensure $row->toothExamination is not null and properly loaded
-                    $treatmentStatusId = $row->toothExamination->isNotEmpty()
-                        ? $row->toothExamination->first()->treatment_status
-                        : null;
-
-                    $btnClass = isset($statusMap[$treatmentStatusId]) ? $statusMap[$treatmentStatusId] : '';
-                    //$btnClass = isset($statusMap[$treatmentStatusId]) ? $statusMap[$treatmentStatusId] : 'badge-secondary';
-                    $statusWords = TreatmentStatus::statusToWords($treatmentStatusId);
-
-                    // return "<span class='btn-sm d-block badge {$btnClass}'>{$statusWords}</span>";
-                    return "<i class='fa-solid {$btnClass} fs-16' title='{$statusWords}'></i>";
+                
+                    // Check if toothExamination is not null and properly loaded
+                    if (!$row->toothExamination) {
+                        return '';
+                    }
+                
+                    // Generate list items for each tooth's status
+                    $statusListItems = $row->toothExamination->map(function ($examination) use ($statusMap) {
+                        $treatmentStatusId = $examination->treatment_status;
+                        $btnClass = isset($statusMap[$treatmentStatusId]) ? $statusMap[$treatmentStatusId] : 'fa-circle text-secondary';
+                        $statusWords = TreatmentStatus::statusToWords($treatmentStatusId);
+                
+                        return "<li><i class='fa-solid {$btnClass} fs-16' title='{$statusWords}'></i></li>";
+                    })->implode('');
+                
+                    // Wrap list items in a <ul> element
+                    return $statusListItems ? "<ul>{$statusListItems}</ul>" : '';
                 })
+                
+                
                 ->addColumn('treat_date', function ($row) {
                     return $row->app_date;
                 })
 
                 ->addColumn('teeth', function ($row) {
-                    $teethName = '';
                     if ($row->toothExamination->isEmpty()) {
                         return '';
                     }
                     $teethData = $row->toothExamination->map(function ($examination) {
                         if ($examination->teeth) {
                             $teethName = $examination->teeth->teeth_name;
-                            $teethImage = $examination->teeth->teeth_image;
-
-                            return $teethName;
-                            //return '<div>'.$teethName.'<br><img src="'.asset($teethImage).'" alt="'.$teethName.'" width="50" height="50"></div>';
+                            return "<li>{$teethName}</li>";
                         } elseif ($examination->tooth_id == null && $examination->row_id != null) {
-                            // Use TeethRow constants for descriptions
-                            switch ($examination->row_id) {
-                                case TeethRow::Row1:
-                                    $teethName = 'Row : ' . TeethRow::Row_1_Desc;
-                                    break;
-                                case TeethRow::Row2:
-                                    $teethName = 'Row : ' . TeethRow::Row_2_Desc;
-                                    break;
-                                case TeethRow::Row3:
-                                    $teethName = 'Row : ' . TeethRow::Row_3_Desc;
-                                    break;
-                                case TeethRow::Row4:
-                                    $teethName = 'Row : ' . TeethRow::Row_4_Desc;
-                                    break;
-                                case TeethRow::RowAll:
-                                    $teethName = TeethRow::Row_All_Desc;
-                                    break;
-                                default:
-                                    $teethName = '';
-                                    break;
-                            }
-
-                            return $teethName;
+                            $teethName = match ($examination->row_id) {
+                                TeethRow::Row1 => 'Row : ' . TeethRow::Row_1_Desc,
+                                TeethRow::Row2 => 'Row : ' . TeethRow::Row_2_Desc,
+                                TeethRow::Row3 => 'Row : ' . TeethRow::Row_3_Desc,
+                                TeethRow::Row4 => 'Row : ' . TeethRow::Row_4_Desc,
+                                TeethRow::RowAll => TeethRow::Row_All_Desc,
+                                default => '',
+                            };
+                            return "<li>{$teethName}</li>";
                         }
-
                         return '';
-                    })->implode(',<br>');
-
-                    return $teethData;
+                    })->implode('');
+                    
+                    return $teethData ? "<ul>{$teethData}</ul>" : '';
                 })
+                
                 ->addColumn('problem', function ($row) {
-                    return $row->toothExamination ? $row->toothExamination->pluck('chief_complaint')->implode(',') : '';
+                    if (!$row->toothExamination) {
+                        return '';
+                    }
+                    $problems = $row->toothExamination->pluck('chief_complaint')->filter()->map(function ($problem) {
+                        return "<li>{$problem}</li>";
+                    })->implode('');
+                    
+                    return $problems ? "<ul>{$problems}</ul>" : '';
                 })
+                
                 ->addColumn('disease', function ($row) {
-
-                    return $row->toothExamination ? $row->toothExamination->map(function ($examination) {
-                        return $examination->disease ? $examination->disease->name : 'No Disease';
-                    })->implode(', ') : '';
+                    if (!$row->toothExamination) {
+                        return '';
+                    }
+                    $diseases = $row->toothExamination->map(function ($examination) {
+                        return $examination->disease ? "<li>{$examination->disease->name}</li>" : "<li>No Disease</li>";
+                    })->implode('');
+                    
+                    return $diseases ? "<ul>{$diseases}</ul>" : '';
                 })
+                
                 ->addColumn('remarks', function ($row) {
-                    return $row->toothExamination ? $row->toothExamination->pluck('remarks')->implode(', ') : '';
+                    if (!$row->toothExamination) {
+                        return '';
+                    }
+                    $remarks = $row->toothExamination->pluck('remarks')->filter()->map(function ($remark) {
+                        return "<li>{$remark}</li>";
+                    })->implode('');
+                    
+                    return $remarks ? "<ul>{$remarks}</ul>" : '';
                 })
+                
                 ->addColumn('treatment', function ($row) {
-                    return $row->toothExamination ? $row->toothExamination->map(function ($examination) {
-                        return $examination->treatment ? $examination->treatment->treat_name : '';
-                    })->filter()->implode(', ') // Use comma and <br> to separate treatments
-                        : '';
+                    if (!$row->toothExamination) {
+                        return '';
+                    }
+                    $treatments = $row->toothExamination->map(function ($examination) {
+                        return $examination->treatment ? "<li>{$examination->treatment->treat_name}</li>" : '';
+                    })->filter()->implode('');
+                    
+                    return $treatments ? "<ul>{$treatments}</ul>" : '';
                 })
+                
+                    
                 ->addColumn('action', function ($row) use ($patientName) {
 
                     $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
@@ -243,7 +257,7 @@ class TreatmentController extends Controller
                     return implode('', $buttons);
                 })
 
-                ->rawColumns(['status', 'teeth', 'action'])
+                ->rawColumns(['status', 'teeth', 'problem', 'disease', 'remarks', 'treatment', 'action'])
                 ->make(true);
         }
 
@@ -257,18 +271,35 @@ class TreatmentController extends Controller
     public function fetchExistingExamination($toothId, $appId, $patientId)
     {
         $toothExamination = [];
+        $appointment = Appointment::find($appId);
+        $parentAppId = $appointment->app_parent_id;
         if (in_array($toothId, [1, 2, 3, 4, 5])) {
             $toothExamination = ToothExamination::where('row_id', $toothId)
                 ->where('patient_id', $patientId)
                 ->where('app_id', $appId)
                 ->where('status', 'Y')
                 ->first();
-        } else {
-            $toothExamination = ToothExamination::where('tooth_id', $toothId)
+            if ($parentAppId != null && $toothExamination == null) {
+                $toothExamination = ToothExamination::where('row_id', $toothId)
                 ->where('patient_id', $patientId)
-                ->where('app_id', $appId)
+                ->where('app_id', $parentAppId)
                 ->where('status', 'Y')
                 ->first();
+            }
+        } else {
+            $toothExamination = ToothExamination::where('tooth_id', $toothId)
+            ->where('patient_id', $patientId)
+            ->where('app_id', $appId)
+            ->where('status', 'Y')
+            ->first();
+            if ($parentAppId != null && $toothExamination == null) {
+                $toothExamination = ToothExamination::where('tooth_id', $toothId)
+                ->where('patient_id', $patientId)
+                ->where('app_id', $parentAppId)
+                ->where('status', 'Y')
+                ->first();
+            }
+           
         }
         $xrays = null;
         $diseaseName = null;
@@ -475,6 +506,24 @@ class TreatmentController extends Controller
     {
         // Retrieve patient_id from the query parameters
         $patientId = $request->query('patient_id');
+        $appointmentPrevious = Appointment::find($appointment);
+
+        // Fetch previous tooth examinations if a parent appointment exists
+        $toothExaminationsPrevious = null;
+        if ($appointmentPrevious->app_parent_id != null) {
+            $toothExaminationsPrevious = ToothExamination::with([
+                'teeth:id,teeth_name,teeth_image',
+                'treatment',
+                'treatmentPlan',
+                'toothScore:id,score',
+                'disease:id,name',
+                'xRayImages:id,tooth_examination_id,xray,status',
+            ])
+            ->where('app_id', $appointmentPrevious->app_parent_id)
+            ->where('patient_id', $patientId)
+            ->where('status', 'Y')
+            ->get();
+        }
 
         // Fetch ToothExamination data with related teeth and treatment details
         $toothExaminations = ToothExamination::with([
@@ -495,8 +544,23 @@ class TreatmentController extends Controller
         $individualTreatmentAmounts = [];
         $comboOffersResult = [];
 
+        $previousTreatments = [];
+        if ($toothExaminationsPrevious) {
+            foreach ($toothExaminationsPrevious as $prevExam) {
+                    $treatmentId = $prevExam->treatment_id;
+                    $teethId = $prevExam->teeth_id;
+
+                    // Mark treatment as follow-up
+                    if ($prevExam->treatment_status === TreatmentStatus::FOLLOWUP) {
+                        $previousTreatments[$teethId][$treatmentId] = true;
+                    }
+                
+            }
+        }
+        
         // Process each tooth examination
         foreach ($toothExaminations as $toothExamination) {
+
             // Collect treatment IDs
             $treatments[] = $toothExamination->treatment->id;
 
@@ -534,14 +598,28 @@ class TreatmentController extends Controller
                 // If no combo offer, set comboOffersResult to empty array for this treatment
                 $comboOffersResult[$toothExamination->treatment->id] = [];
             }
+            // Skip if treatment is marked as follow-up in previous examinations
+            if (isset($previousTreatments[$toothExamination->teeth_id]) &&
+                isset($previousTreatments[$toothExamination->teeth_id][$toothExamination->treatment_id])) {
+                    continue;
+            }
 
             // Store individual treatment amount
             $individualTreatmentAmounts[$toothExamination->treatment->id] = [
                 'treat_name' => $toothExamination->treatment->treat_name,
                 'treat_cost' => $discountCost, // Use discounted cost
+                'treat_id' => $toothExamination->treatment_id,
+                'cost' => $toothExamination->treatment->treat_cost,
+                'discount_percentage' => $toothExamination->treatment->discount_percentage,
+                    
+                
             ];
         }
 
+// Filter toothExaminations to only include those with treatments in individualTreatmentAmounts
+    $toothExaminations = $toothExaminations->filter(function ($toothExamination) use ($individualTreatmentAmounts) {
+        return isset($individualTreatmentAmounts[$toothExamination->treatment_id]);
+    });
         $doctorDiscountApp = Appointment::findOrFail($appointment);
         $doctorDiscount = $doctorDiscountApp->doctor_discount;
 

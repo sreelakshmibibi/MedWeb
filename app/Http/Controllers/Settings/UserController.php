@@ -84,7 +84,7 @@ class UserController extends Controller
         $isReception = in_array('Reception', $request->roles) ? 1 : 0;
 
         $user = User::create([
-            'name' => ucwords(strtolower($request->name)),
+            'name' => ucwords(strtolower($request->name)). "<br>",
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'is_admin' => $isAdmin,
@@ -123,7 +123,7 @@ class UserController extends Controller
         $isNurse = in_array('Nurse', $request->roles) ? 1 : 0;
         $isReception = in_array('Reception', $request->roles) ? 1 : 0;
         $data = [
-            'name' => ucwords(strtolower($request->name)),
+            'name' => ucwords(strtolower($request->name)). "<br>",
             'email' => $request->email,
             'is_admin' => $isAdmin,
             'is_doctor' => $isDoctor,

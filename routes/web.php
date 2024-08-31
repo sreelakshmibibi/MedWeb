@@ -156,6 +156,8 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/patient_list/appointment/store', [PatientListController::class, 'appointmentBooking'])->name('patient.patient_list.booking');
     Route::get('/patient_list/{patientId}/appointment', [PatientListController::class, 'appointmentDetails'])->name('patient.patient_list.appointment');
     Route::get('/patient_list/{patientId}/view', [PatientListController::class, 'show'])->name('patient.patient_list.view');
+    Route::get('/patient_list/{patientId}/bill/', [PatientListController::class, 'bill'])->name('patient.patient_list.allbill');
+
 
     Route::get('/today', [TodayController::class, 'index'])->name('patient.today');
     Route::post('/today/store', [TodayController::class, 'store'])->name('patient.today.store');
@@ -170,7 +172,8 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/staff_list/store', [StaffListController::class, 'store'])->name('staff.staff_list.store');
     Route::get('/staff_list/{staff_list}/edit', [StaffListController::class, 'edit'])->name('staff.staff_list.edit');
     Route::post('/staff_list/{staffId}', [StaffListController::class, 'changeStatus'])->name('staff.staff_list.changeStatus');
-    Route::get('/staff_list/{staff_list}/view', [StaffListController::class, 'view'])->name('staff.staff_list.view');
+    // Route::get('/staff_list/{staff_list}/view', [StaffListController::class, 'view'])->name('staff.staff_list.view');
+    Route::get('/staff_list/view', [StaffListController::class, 'view'])->name('staff.staff_list.view');
     Route::post('/staff_list/update', [StaffListController::class, 'update'])->name('staff.staff_list.update');
     Route::delete('/staff_list/{staffId}', [StaffListController::class, 'destroy'])->name('staff.staff_list.destroy');
 

@@ -23,7 +23,51 @@
                 @endif
                 <div id="successMessage" style="display:none;" class="alert alert-success">
                 </div>
-                @if ($role == 'Admin')
+                @if ($from == 'profile')
+                    <div class="d-flex align-items-center justify-content-between">
+                        <h3 class="page-title">My Profile</h3>
+                        <div>
+                            <button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-xs me-1"
+                                data-bs-toggle="modal" data-bs-target="#modal-resetpassword" id="resetpswdbtn"
+                                data-id="{{ $staffProfile->id }}" title="reset password"><i
+                                    class="fa-solid fa-sliders"></i></button>
+
+                            <a type="button" class="waves-effect waves-light btn btn-circle btn-primary btn-xs"
+                                title="back" href="{{ route('home') }}">
+                                <i class="fa-solid fa-angles-left"></i></a>
+                        </div>
+                    </div>
+                @else
+                    @php
+                        $base64Id = base64_encode($staffProfile->id);
+                        $idEncrypted = Crypt::encrypt($base64Id);
+                    @endphp
+                    <div class="d-flex align-items-center justify-content-between">
+                        <h3 class="page-title">Staff Details</h3>
+                        <div>
+                            @if ($role == 'Admin')
+                                @if (Auth::user()->can('staff update') || (Auth::user()->id = $staffProfile->user_id))
+                                    <a href="{{ route('staff.staff_list.edit', $idEncrypted) }}"
+                                        class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1"
+                                        title="edit"><i class="fa fa-pencil"></i></a>
+                                @endif
+                                @if (Auth::user()->can('staff change status'))
+                                    <button type="button"
+                                        class="waves-effect waves-light btn btn-circle btn-warning btn-status btn-xs me-1"
+                                        data-bs-toggle="modal" data-bs-target="#modal-status"
+                                        data-id="{{ $staffProfile->id }}" title="change status"><i
+                                            class="fa-solid fa-sliders"></i></button>
+                                @endif
+                            @endif
+                            @if (Auth::user()->can('staff_list'))
+                                <a type="button" class="waves-effect waves-light btn btn-circle btn-primary btn-xs"
+                                    title="back" href="{{ route('staff.staff_list') }}">
+                                    <i class="fa-solid fa-angles-left"></i></a>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+                {{-- @if ($role == 'Admin')
                     @php
                         $base64Id = base64_encode($staffProfile->id);
                         $idEncrypted = Crypt::encrypt($base64Id);
@@ -63,7 +107,7 @@
                                 <i class="fa-solid fa-angles-left"></i></a>
                         </div>
                     </div>
-                @endif
+                @endif --}}
             </div>
 
             <section class="content">

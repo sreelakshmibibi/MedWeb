@@ -423,7 +423,7 @@ use Illuminate\Support\Facades\Session;
             const phone = document.getElementById('phone').value;
             const patientId = document.getElementById('patientId').value;
             document.getElementById('duePatientNotfoundError').innerText = '';
-
+            $('#treatmentBillPage').empty();
             // Perform AJAX request to search for the patient
             fetch(`/search-patient?name=${name}&phone=${phone}&id=${patientId}`)
                 .then(response => response.json())

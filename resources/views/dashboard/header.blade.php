@@ -94,8 +94,11 @@
                         <ul class="dropdown-menu animated flipInX">
                             <li class="user-body">
                                 @if ($pstaffidEncrypted)
-                                    <a class="dropdown-item"
+                                    {{-- <a class="dropdown-item"
                                         href="{{ route('staff.staff_list.view', $pstaffidEncrypted) }}"><i
+                                            class="ti-user text-muted me-2"></i> Profile</a> --}}
+                                    <a class="dropdown-item"
+                                        href="{{ route('staff.staff_list.view', ['id' => $pstaffidEncrypted, 'from' => 'profile']) }}"><i
                                             class="ti-user text-muted me-2"></i> Profile</a>
                                 @else
                                     <a class="dropdown-item" href="#"><i class="ti-user text-muted me-2"></i>

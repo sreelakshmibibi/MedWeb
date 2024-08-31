@@ -53,10 +53,10 @@ date_default_timezone_set('Asia/Kolkata');
         }
 
         .pdfbody {
-            margin-top: 75px;
+            margin-top: 110px;
             position: relative;
             height: 75%;
-            margin-top: 65px;
+           
         }
 
         h1,
@@ -162,6 +162,7 @@ date_default_timezone_set('Asia/Kolkata');
 <body>
     <!-- Header -->
     <div class="header">
+    <img src="{{ $clinicLogo }}" alt="Clinic Logo" height="40px">
         {{-- <img src="{{ $clinicDetails->clinic_logo ?? '' }}" alt="Clinic Logo"> <!-- Clinic Logo --> --}}
         <div class="clinic-name">{{ $clinicDetails->clinic_name ?? 'Clinic Name' }}</div> <!-- Clinic Name -->
         <div class="clinic-address">

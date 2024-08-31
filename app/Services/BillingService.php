@@ -14,12 +14,33 @@ use Carbon\Carbon;
 use DateTime;
 use App\Models\IncomeReport;
 use App\Models\CardPay;
+use App\Models\TreatmentStatus;
 
 class BillingService
 {
     public function individualTreatmentAmounts($id, $patient_id)
     {
-        // Fetch tooth examinations with related data
+        // Find the appointment by ID
+        $appointment = Appointment::find($id);
+
+        // Fetch previous tooth examinations if a parent appointment exists
+        $toothExaminationsPrevious = null;
+        if ($appointment->app_parent_id != null) {
+            $toothExaminationsPrevious = ToothExamination::with([
+                'teeth:id,teeth_name,teeth_image',
+                'treatment',
+                'treatmentPlan',
+                'toothScore:id,score',
+                'disease:id,name',
+                'xRayImages:id,tooth_examination_id,xray,status',
+            ])
+            ->where('app_id', $appointment->app_parent_id)
+            ->where('patient_id', $patient_id)
+            ->where('status', 'Y')
+            ->get();
+        }
+
+        // Fetch current tooth examinations with related data
         $toothExaminations = ToothExamination::with([
             'teeth:id,teeth_name,teeth_image',
             'treatment',
@@ -28,26 +49,44 @@ class BillingService
             'disease:id,name',
             'xRayImages:id,tooth_examination_id,xray,status',
         ])
-            ->where('app_id', $id)
-            ->where('patient_id', $patient_id)
-            ->where('status', 'Y')
-            ->get();
+        ->where('app_id', $id)
+        ->where('patient_id', $patient_id)
+        ->where('status', 'Y')
+        ->get();
 
         // Initialize arrays and variables
         $individualTreatmentAmounts = [];
-        $selectedTreatmentIds = null;
+        $selectedTreatmentIds = [];
         $totalCost = 0;
 
+        // Create a map of previous treatments by tooth_id and treatment_id
+        $previousTreatments = [];
+        if ($toothExaminationsPrevious) {
+            foreach ($toothExaminationsPrevious as $prevExam) {
+                    $treatmentId = $prevExam->treatment_id;
+                    $teethId = $prevExam->teeth_id;
 
-        // Aggregate data by treatment
+                    // Mark treatment as follow-up
+                    if ($prevExam->treatment_status === TreatmentStatus::FOLLOWUP) {
+                        $previousTreatments[$teethId][$treatmentId] = true;
+                    }
+                
+            }
+        }
+        
+        // Process current tooth examinations and filter out follow-up treatments
         foreach ($toothExaminations as $toothExamination) {
             $treatment = $toothExamination->treatment;
+            if (!$treatment) {
+                continue; // Skip if no treatment data is found
+            }
+
             $treatmentId = $treatment->id;
             $treatmentName = $treatment->treat_name;
-            $treatmentCost = floatval($treatment->treat_cost); // Convert to float
+            $treatmentCost = floatval($treatment->treat_cost);
             $discount_from = $treatment->discount_from;
             $discount_to = $treatment->discount_to;
-            $discount_percentage = floatval($treatment->discount_percentage); // Convert to float
+            $discount_percentage = floatval($treatment->discount_percentage);
 
             // Calculate discounted cost if applicable
             $currentDate = date('Y-m-d');
@@ -61,6 +100,12 @@ class BillingService
                 $discountCost = $treatmentCost * (1 - $discount_percentage / 100);
             }
 
+            // Skip if treatment is marked as follow-up in previous examinations
+            if (isset($previousTreatments[$toothExamination->teeth_id]) &&
+                isset($previousTreatments[$toothExamination->teeth_id][$treatmentId])) {
+                    continue;
+            }
+
             // Initialize treatment entry if not already set
             if (!isset($individualTreatmentAmounts[$treatmentId])) {
                 $individualTreatmentAmounts[$treatmentId] = [
@@ -68,7 +113,7 @@ class BillingService
                     'treat_name' => $treatmentName,
                     'cost' => $treatmentCost,
                     'discount_percentage' => $discount_percentage,
-                    'treat_cost' => $discountCost, // Discounted cost
+                    'treat_cost' => $discountCost,
                     'quantity' => 0,
                     'subtotal' => 0,
                 ];
@@ -82,13 +127,15 @@ class BillingService
             // Accumulate total cost
             $totalCost += $discountCost;
         }
-        /* code to include */
-        /* consulting fees */
-        /* REgistration fees for new patient */
 
-        return ['individualTreatmentAmounts' => $individualTreatmentAmounts, 'totalCost' => $totalCost, 'selectedTreatmentIds' => $selectedTreatmentIds];
-
+        // Return the processed data
+        return [
+            'individualTreatmentAmounts' => $individualTreatmentAmounts,
+            'totalCost' => $totalCost,
+            'selectedTreatmentIds' => array_unique($selectedTreatmentIds), // Ensure unique treatment IDs
+        ];
     }
+
 
     public function getAppointmentCount($patient_id, $appointmentId)
     {

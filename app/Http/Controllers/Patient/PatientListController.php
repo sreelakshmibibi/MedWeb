@@ -14,6 +14,9 @@ use App\Models\City;
 use App\Models\ClinicBasicDetail;
 use App\Models\ClinicBranch;
 use App\Models\Country;
+use App\Services\AppointmentService;
+use App\Models\TreatmentStatus;
+use App\Models\TeethRow;
 use App\Models\DoctorWorkingHour;
 use App\Models\History;
 use App\Models\Insurance;
@@ -25,6 +28,9 @@ use App\Models\State;
 use App\Services\BillingService;
 use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
+use App\Models\PatientTreatmentBilling;
+use App\Models\PatientPrescriptionBilling;
+use App\Models\PatientDueBill;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -194,7 +200,7 @@ class PatientListController extends Controller
         // Extract the date part from appdate
         $date = Carbon::parse($request->input('appdate'))->toDateString(); // 'Y-m-d'
         $time = Carbon::parse($request->input('appdate'))->toTimeString(); // 'Y-m-d'
-        
+
         $carbonDate = Carbon::parse($date);
         $weekday = $carbonDate->format('l');
         $doctorAvailabilityService = new DoctorAvaialbilityService();
@@ -445,7 +451,7 @@ class PatientListController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id, Request $request)
     {
         $id = base64_decode(Crypt::decrypt($id));
         // Find the PatientProfile by its ID
@@ -459,6 +465,261 @@ class PatientListController extends Controller
         $history = $patientProfile->history;
         Session::put('patientId', $patientProfile->patient_id);
         Session::put('appId', $patientProfile->lastAppointment->id);
+
+        $appointid = $appointment->id;
+        $appointmentService = new AppointmentService();
+        $previousAppointments = $appointmentService->getPreviousAppointments($appointid, date('Y-m-d'), $patientProfile->patient_id);
+        $patientName = str_replace('<br>', ' ', $patientProfile->first_name) . ' ' . $patientProfile->last_name;
+
+        // if ($request->ajax()) {
+        //     return DataTables::of($previousAppointments)
+        //         ->addIndexColumn()
+        //         ->addColumn('doctor', function ($row) {
+        //             return str_replace('<br>', ' ', $row->doctor->name);
+        //         })
+        //         ->addColumn('branch', function ($row) {
+        //             if (!$row->branch) {
+        //                 return '';
+        //             }
+        //             $address = implode(', ', explode('<br>', $row->branch->clinic_address));
+
+        //             return implode(', ', [$address, $row->branch->city->city, $row->branch->state->state]);
+        //         })
+        //         ->addColumn('status', function ($row) {
+
+
+        //             $statusMap = [
+        //                 TreatmentStatus::COMPLETED => 'fa-circle-check text-success',
+        //                 TreatmentStatus::FOLLOWUP => 'fa-circle-exclamation text-warning',
+        //             ];
+
+        //             // Ensure $row->toothExamination is not null and properly loaded
+        //             $treatmentStatusId = $row->toothExamination->isNotEmpty()
+        //                 ? $row->toothExamination->first()->treatment_status
+        //                 : null;
+
+        //             $btnClass = isset($statusMap[$treatmentStatusId]) ? $statusMap[$treatmentStatusId] : '';
+        //             //$btnClass = isset($statusMap[$treatmentStatusId]) ? $statusMap[$treatmentStatusId] : 'badge-secondary';
+        //             $statusWords = TreatmentStatus::statusToWords($treatmentStatusId);
+
+        //             // return "<span class='btn-sm d-block badge {$btnClass}'>{$statusWords}</span>";
+        //             return "<i class='fa-solid {$btnClass} fs-16' title='{$statusWords}'></i>";
+        //         })
+        //         ->addColumn('treat_date', function ($row) {
+        //             return $row->app_date;
+        //         })
+
+        //         ->addColumn('teeth', function ($row) {
+        //             $teethName = '';
+        //             if ($row->toothExamination->isEmpty()) {
+        //                 return '';
+        //             }
+        //             $teethData = $row->toothExamination->map(function ($examination) {
+        //                 if ($examination->teeth) {
+        //                     $teethName = $examination->teeth->teeth_name;
+        //                     $teethImage = $examination->teeth->teeth_image;
+
+        //                     return $teethName;
+        //                     //return '<div>'.$teethName.'<br><img src="'.asset($teethImage).'" alt="'.$teethName.'" width="50" height="50"></div>';
+        //                 } elseif ($examination->tooth_id == null && $examination->row_id != null) {
+        //                     // Use TeethRow constants for descriptions
+        //                     switch ($examination->row_id) {
+        //                         case TeethRow::Row1:
+        //                             $teethName = 'Row : ' . TeethRow::Row_1_Desc;
+        //                             break;
+        //                         case TeethRow::Row2:
+        //                             $teethName = 'Row : ' . TeethRow::Row_2_Desc;
+        //                             break;
+        //                         case TeethRow::Row3:
+        //                             $teethName = 'Row : ' . TeethRow::Row_3_Desc;
+        //                             break;
+        //                         case TeethRow::Row4:
+        //                             $teethName = 'Row : ' . TeethRow::Row_4_Desc;
+        //                             break;
+        //                         case TeethRow::RowAll:
+        //                             $teethName = TeethRow::Row_All_Desc;
+        //                             break;
+        //                         default:
+        //                             $teethName = '';
+        //                             break;
+        //                     }
+
+        //                     return $teethName;
+        //                 }
+
+        //                 return '';
+        //             })->implode(',<br>');
+
+        //             return $teethData;
+        //         })
+        //         ->addColumn('problem', function ($row) {
+        //             return $row->toothExamination ? $row->toothExamination->pluck('chief_complaint')->implode(',') : '';
+        //         })
+        //         ->addColumn('disease', function ($row) {
+
+        //             return $row->toothExamination ? $row->toothExamination->map(function ($examination) {
+        //                 return $examination->disease ? $examination->disease->name : 'No Disease';
+        //             })->implode(', ') : '';
+        //         })
+        //         ->addColumn('remarks', function ($row) {
+        //             return $row->toothExamination ? $row->toothExamination->pluck('remarks')->implode(', ') : '';
+        //         })
+        //         ->addColumn('treatment', function ($row) {
+        //             return $row->toothExamination ? $row->toothExamination->map(function ($examination) {
+        //                 return $examination->treatment ? $examination->treatment->treat_name : '';
+        //             })->filter()->implode(', ') // Use comma and <br> to separate treatments
+        //                 : '';
+        //         })
+        //         ->addColumn('action', function ($row) use ($patientName) {
+
+        //             $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
+        //             $buttons = [];
+        //             // Check if the appointment date is less than the selected date
+        //             if ($row->app_status == AppointmentStatus::COMPLETED) {
+        //                 $base64Id = base64_encode($row->id);
+        //                 $idEncrypted = Crypt::encrypt($base64Id);
+        //                 $buttons[] = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='" . e($row->id) . "' data-parent-id='" . e($parent_id) . "' data-patient-id='" . e($row->patient_id) . "' data-patient-name='" . e($patientName) . "' target='_blank'><i class='fa-solid fa-eye'></i></a>";
+        //                 $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-secondary btn-treatment-pdf-generate btn-xs' title='Download Treatment Summary' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient_id}'  data-bs-target='#modal-download'><i class='fa fa-download'></i></button>";
+        //             }
+
+        //             return implode('', $buttons);
+        //         })
+
+        //         ->rawColumns(['status', 'teeth', 'action'])
+        //         ->make(true);
+        // }
+        if ($request->ajax()) {
+            return DataTables::of($previousAppointments)
+                ->addIndexColumn()
+                ->addColumn('doctor', function ($row) {
+                    return str_replace('<br>', ' ', $row->doctor->name);
+                })
+                ->addColumn('branch', function ($row) {
+                    if (!$row->branch) {
+                        return '';
+                    }
+                    $address = implode(', ', explode('<br>', $row->branch->clinic_address));
+
+                    return implode(', ', [$address, $row->branch->city->city, $row->branch->state->state]);
+                })
+                ->addColumn('status', function ($row) {
+                    // Map treatment statuses to FontAwesome classes
+                    $statusMap = [
+                        TreatmentStatus::COMPLETED => 'fa-circle-check text-success',
+                        TreatmentStatus::FOLLOWUP => 'fa-circle-exclamation text-warning',
+                    ];
+                
+                    // Check if toothExamination is not null and properly loaded
+                    if (!$row->toothExamination) {
+                        return '';
+                    }
+                
+                    // Generate list items for each tooth's status
+                    $statusListItems = $row->toothExamination->map(function ($examination) use ($statusMap) {
+                        $treatmentStatusId = $examination->treatment_status;
+                        $btnClass = isset($statusMap[$treatmentStatusId]) ? $statusMap[$treatmentStatusId] : 'fa-circle text-secondary';
+                        $statusWords = TreatmentStatus::statusToWords($treatmentStatusId);
+                
+                        return "<li><i class='fa-solid {$btnClass} fs-16' title='{$statusWords}'></i></li>";
+                    })->implode('');
+                
+                    // Wrap list items in a <ul> element
+                    return $statusListItems ? "<ul>{$statusListItems}</ul>" : '';
+                })
+                
+                
+                ->addColumn('treat_date', function ($row) {
+                    return $row->app_date;
+                })
+
+                ->addColumn('teeth', function ($row) {
+                    if ($row->toothExamination->isEmpty()) {
+                        return '';
+                    }
+                    $teethData = $row->toothExamination->map(function ($examination) {
+                        if ($examination->teeth) {
+                            $teethName = $examination->teeth->teeth_name;
+                            return "<li>{$teethName}</li>";
+                        } elseif ($examination->tooth_id == null && $examination->row_id != null) {
+                            $teethName = match ($examination->row_id) {
+                                TeethRow::Row1 => 'Row : ' . TeethRow::Row_1_Desc,
+                                TeethRow::Row2 => 'Row : ' . TeethRow::Row_2_Desc,
+                                TeethRow::Row3 => 'Row : ' . TeethRow::Row_3_Desc,
+                                TeethRow::Row4 => 'Row : ' . TeethRow::Row_4_Desc,
+                                TeethRow::RowAll => TeethRow::Row_All_Desc,
+                                default => '',
+                            };
+                            return "<li>{$teethName}</li>";
+                        }
+                        return '';
+                    })->implode('');
+                    
+                    return $teethData ? "<ul>{$teethData}</ul>" : '';
+                })
+                
+                ->addColumn('problem', function ($row) {
+                    if (!$row->toothExamination) {
+                        return '';
+                    }
+                    $problems = $row->toothExamination->pluck('chief_complaint')->filter()->map(function ($problem) {
+                        return "<li>{$problem}</li>";
+                    })->implode('');
+                    
+                    return $problems ? "<ul>{$problems}</ul>" : '';
+                })
+                
+                ->addColumn('disease', function ($row) {
+                    if (!$row->toothExamination) {
+                        return '';
+                    }
+                    $diseases = $row->toothExamination->map(function ($examination) {
+                        return $examination->disease ? "<li>{$examination->disease->name}</li>" : "<li>No Disease</li>";
+                    })->implode('');
+                    
+                    return $diseases ? "<ul>{$diseases}</ul>" : '';
+                })
+                
+                ->addColumn('remarks', function ($row) {
+                    if (!$row->toothExamination) {
+                        return '';
+                    }
+                    $remarks = $row->toothExamination->pluck('remarks')->filter()->map(function ($remark) {
+                        return "<li>{$remark}</li>";
+                    })->implode('');
+                    
+                    return $remarks ? "<ul>{$remarks}</ul>" : '';
+                })
+                
+                ->addColumn('treatment', function ($row) {
+                    if (!$row->toothExamination) {
+                        return '';
+                    }
+                    $treatments = $row->toothExamination->map(function ($examination) {
+                        return $examination->treatment ? "<li>{$examination->treatment->treat_name}</li>" : '';
+                    })->filter()->implode('');
+                    
+                    return $treatments ? "<ul>{$treatments}</ul>" : '';
+                })
+                
+                    
+                ->addColumn('action', function ($row) use ($patientName) {
+
+                    $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
+                    $buttons = [];
+                    // Check if the appointment date is less than the selected date
+                    if ($row->app_status == AppointmentStatus::COMPLETED) {
+                        $base64Id = base64_encode($row->id);
+                        $idEncrypted = Crypt::encrypt($base64Id);
+                        $buttons[] = "<a href='" . route('treatment', $idEncrypted) . "' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='view' data-id='" . e($row->id) . "' data-parent-id='" . e($parent_id) . "' data-patient-id='" . e($row->patient_id) . "' data-patient-name='" . e($patientName) . "' target='_blank'><i class='fa-solid fa-eye'></i></a>";
+                        $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-secondary btn-treatment-pdf-generate btn-xs' title='Download Treatment Summary' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient_id}'  data-bs-target='#modal-download'><i class='fa fa-download'></i></button>";
+                    }
+
+                    return implode('', $buttons);
+                })
+
+                ->rawColumns(['status', 'teeth', 'problem', 'disease', 'remarks', 'treatment', 'action'])
+                ->make(true);
+        }
 
         // Return a view with the PatientProfile data
         return view('patient.patient_list.view_patient', compact('patientProfile', 'appointment', 'history'));
@@ -747,5 +1008,183 @@ class PatientListController extends Controller
         $patient->delete();
 
         return response()->json(['success', 'Patient deleted successfully.'], 201);
+    }
+
+    public function bill($patientId)
+    {
+        $treatmentQuery = PatientTreatmentBilling::with([
+            'appointment.branch',
+            'billedBy:id,name',
+        ])
+        ->where('status', 'Y')
+        ->where('patient_id', $patientId);
+        
+        $treatmentBillings = $treatmentQuery->get();
+        $prescriptionQuery = PatientPrescriptionBilling::with([
+            'appointment.branch',
+        ])
+        ->where('status', 'Y')
+        ->where('patient_id', $patientId);
+        $prescriptionBillings = $prescriptionQuery->get();
+
+        $registrationFeeQuery = PatientRegistrationFee::with([
+            'appointment.branch',
+        ])
+        ->where('status', 'Y')
+        ->where('patient_id', $patientId);
+        $registrationBillings = $registrationFeeQuery->get();
+
+        $dueBillQuery = PatientDueBill::with([
+            'appointment.branch',
+        ])
+        ->where('status', 'Y')
+        ->where('patient_id', $patientId);
+        $dueBillngs = $dueBillQuery->get();
+
+
+
+        $allBillings = collect(); // Initialize an empty collection
+        $allBillings = $treatmentBillings
+                ->concat($prescriptionBillings)
+                ->concat($registrationBillings)
+                ->concat($dueBillngs);
+        
+        return DataTables::of($allBillings)
+            ->addIndexColumn()
+            ->addColumn('billDate', function ($row) {
+
+                if (isset($row->bill_paid_date)) {
+                    return $row->bill_paid_date;
+                } else {
+                    return '';
+                }
+            })
+            ->addColumn('branch', function ($row) {
+                if (isset($row->appointment->branch)) {
+                    return $row->appointment->branch ? str_replace('<br>', ', ', $row->appointment->branch->clinic_address) : '';
+                } else {
+                    return '';
+                }
+            })
+            ->addColumn('billType', function ($row) {
+                if (isset($row->treatment_total_amount)) {
+                    return 'Treatment Bill';
+                } elseif (isset($row->prescription_total_amount)) {
+                    return 'Medicine Bill';
+                } elseif (isset($row->payment_method)) {
+                    return 'Registration Bill';
+                } elseif (isset($row->treatment_bill_id)) {
+                    return 'Outstanding Bill';
+                } else {
+                    return '';
+                }
+            })
+            ->addColumn('total', function ($row) {
+                //return number_format($row->treatment_total_amount, 2);
+                if (isset($row->treatment_total_amount)) {
+                    // return number_format($row->treatment_total_amount, 2);
+                    return $row->treatment_total_amount;
+                } elseif (isset($row->prescription_total_amount)) {
+                    // return number_format($row->prescription_total_amount, 2);
+                    return $row->prescription_total_amount;
+                } elseif (isset($row->amount)) {
+                    // return number_format($row->amount, 2);
+                    return $row->amount;
+                } elseif (isset($row->total_amount)) {
+                    // return number_format($row->total_amount, 2);
+                    return $row->total_amount;
+                } else {
+                    return 0;
+                }
+            })
+            ->addColumn('discount', function ($row) {
+                //return number_format($row->doctor_discount, 2);
+                if (isset($row->doctor_discount) || isset($row->combo_offer_deduction)) {
+                    //return number_format($row->doctor_discount, 2);
+                    return $row->doctor_discount + $row->combo_offer_deduction;
+                } elseif (isset($row->discount)) {
+                    // return number_format($row->discount, 2);
+                    return $row->discount;
+                } else {
+                    return 0;
+                }
+            })
+            ->addColumn('tax', function ($row) {
+
+                if (isset($row->tax)) {
+                    // return number_format($row->tax, 2);
+                    return $row->tax;
+                } else {
+                    return 0;
+                }
+            })
+            ->addColumn('netAmount', function ($row) {
+                if (isset($row->amount_to_be_paid)) {
+                    // return number_format($row->amount_to_be_paid, 2);
+                    return $row->amount_to_be_paid;
+                } elseif (isset($row->total_amount)) {
+                    // return number_format($row->total_amount, 2);
+                    return $row->total_amount;
+                } else {
+                    return 0;
+                }
+            })
+            ->addColumn('cash', function ($row) {
+                if (isset($row->cash)) {
+                    //return number_format($row->cash, 2);
+                    return $row->cash;
+                } else {
+                    return 0;
+                }
+            })
+            ->addColumn('gpay', function ($row) {
+                if (isset($row->gpay)) {
+                    //return number_format($row->gpay, 2);
+                    return $row->gpay;
+                } else {
+                    return 0;
+                }
+            })
+            ->addColumn('card', function ($row) {
+                if (isset($row->card)) {
+                    //return number_format($row->card, 2);
+                    return $row->card;
+                } else {
+                    return 0;
+                }
+            })
+            ->addColumn('totalPaid', function ($row) {
+                //return number_format($row->amount_paid, 2);
+                if (isset($row->amount_paid)) {
+                    //return number_format($row->amount_paid, 2);
+                    return $row->amount_paid;
+                } elseif (isset($row->paid_amount)) {
+                    //return number_format($row->paid_amount, 2);
+                    return $row->paid_amount;
+                } else {
+                    return 0;
+                }
+            })
+            ->addColumn('balanceGiven', function ($row) {
+                // return number_format($row->balance_to_give_back, 2);
+                if (isset($row->balance_to_give_back)) {
+                    // return number_format($row->balance_to_give_back, 2);
+                    return $row->balance_to_give_back;
+                } elseif (isset($row->balance_given)) {
+                    //return number_format($row->balance_given, 2);
+                    return $row->balance_given;
+                } else {
+                    return 0;
+                }
+            })
+            ->addColumn('outstanding', function ($row) {
+                if (isset($row->balance_due)) {
+                    // return number_format($row->balance_due, 2);
+                    return $row->balance_due;
+                } else {
+                    return 0;
+                }
+            })
+            ->make(true);
     }
 }

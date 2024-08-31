@@ -104,8 +104,8 @@ use Illuminate\Support\Facades\Crypt;
                                                 <div class="fw-600 min-w-120">
                                                     <?= date('g:i A', strtotime($currentappointment->app_time)) ?>
                                                 </div>
-                                                <div
-                                                    class="w-p100 p-10 rounded10 justify-content-between align-items-center d-flex bg-lightest doctodaydash">
+                                                <div title="{{ $currentappointment->app_status == '2' ? 'patient is waiting' : '' }}"
+                                                    class="w-p100 p-10 rounded10 justify-content-between align-items-center d-flex doctodaydash {{ $currentappointment->app_status == '2' ? 'bg-lighter b-1 border-warning' : 'bg-lightest' }}">
                                                     <div class="d-flex justify-content-between align-items-center">
                                                         <span title="Token No"
                                                             class="me-10 avatar bg-primary-light rounded-circle b-1 text-bold">
@@ -127,48 +127,48 @@ use Illuminate\Support\Facades\Crypt;
                                                         $idEncrypted = Crypt::encrypt($base64Id);
                                                     @endphp
                                                     <div class="d-flex dashboardbtnwrapper">
-                                                    <?php 
+                                                        <?php 
                                                         if (Auth::user()->can('treatments') && (Auth::user()->id == $currentappointment->doctor_id || Auth::user()->is_admin)) { 
                                                             if ($currentappointment->app_date == date('Y-m-d') && $currentappointment->app_status != AppointmentStatus::MISSED) {
                                                                     $bills = PatientTreatmentBilling::where('appointment_id', $currentappointment->id)->where('status', 'Y')->get();
                                                                     if ($bills->isEmpty()) {?>
-                                                                        <a href='{{ route('treatment', $idEncrypted) }}'
-                                                                        class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1'
-                                                                        title='treatment'><i class='fa-solid fa-stethoscope'></i></a>
-                                                                   <?php } 
+                                                        <a href='{{ route('treatment', $idEncrypted) }}'
+                                                            class='waves-effect waves-light btn btn-circle btn-primary btn-xs me-1'
+                                                            title='treatment'><i class='fa-solid fa-stethoscope'></i></a>
+                                                        <?php } 
                                                             }
                                                         } ?>
                                                         {{-- <a href=''
                                                             class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1'
                                                             title='view'><i class='fa-solid fa-eye'></i></a> --}}
                                                         <!-- <button type='button'
-                                                            class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1'
-                                                            title='follow up' data-bs-toggle='modal'
-                                                            data-id='{{ $currentappointment->id }}'
-                                                            data-parent-id='{{ $parent_id }}'
-                                                            data-patient-id='{{ $currentappointment->patient->patient_id }}'
-                                                            data-patient-name='{{ str_replace('<br>', ' ', $currentappointment->patient->first_name . ' ' . $currentappointment->patient->last_name) }}'
-                                                            data-bs-target='#modal-booking'><i
-                                                                class='fa fa-plus'></i></button>
+                                                                                                class='waves-effect waves-light btn btn-circle btn-success btn-add btn-xs me-1'
+                                                                                                title='follow up' data-bs-toggle='modal'
+                                                                                                data-id='{{ $currentappointment->id }}'
+                                                                                                data-parent-id='{{ $parent_id }}'
+                                                                                                data-patient-id='{{ $currentappointment->patient->patient_id }}'
+                                                                                                data-patient-name='{{ str_replace('<br>', ' ', $currentappointment->patient->first_name . ' ' . $currentappointment->patient->last_name) }}'
+                                                                                                data-bs-target='#modal-booking'><i
+                                                                                                    class='fa fa-plus'></i></button>
 
-                                                        <button type='button'
-                                                            class='waves-effect waves-light btn btn-circle btn-warning btn-reschedule btn-xs me-1'
-                                                            title='reschedule' data-bs-toggle='modal'
-                                                            data-id='{{ $currentappointment->id }}'
-                                                            data-parent-id='{{ $parent_id }}'
-                                                            data-patient-id='{{ $currentappointment->patient->patient_id }}'
-                                                            data-patient-name='{{ str_replace('<br>', ' ', $currentappointment->patient->first_name . ' ' . $currentappointment->patient->last_name) }}'
-                                                            data-bs-target='#modal-reschedule'><i
-                                                                class='fa-solid fa-calendar-days'></i></button>
+                                                                                            <button type='button'
+                                                                                                class='waves-effect waves-light btn btn-circle btn-warning btn-reschedule btn-xs me-1'
+                                                                                                title='reschedule' data-bs-toggle='modal'
+                                                                                                data-id='{{ $currentappointment->id }}'
+                                                                                                data-parent-id='{{ $parent_id }}'
+                                                                                                data-patient-id='{{ $currentappointment->patient->patient_id }}'
+                                                                                                data-patient-name='{{ str_replace('<br>', ' ', $currentappointment->patient->first_name . ' ' . $currentappointment->patient->last_name) }}'
+                                                                                                data-bs-target='#modal-reschedule'><i
+                                                                                                    class='fa-solid fa-calendar-days'></i></button>
 
-                                                        <button type='button' id="cancelbtn"
-                                                            class='waves-effect waves-light btn btn-circle btn-danger btn-xs'
-                                                            title='cancel' data-bs-toggle='modal'
-                                                            data-bs-target='#modal-cancel'
-                                                            data-id='{{ $currentappointment->id }}'><i
-                                                                class='fa fa-times'></i></button>
-
-                                                    </div> -->
+                                                                                            <button type='button' id="cancelbtn"
+                                                                                                class='waves-effect waves-light btn btn-circle btn-danger btn-xs'
+                                                                                                title='cancel' data-bs-toggle='modal'
+                                                                                                data-bs-target='#modal-cancel'
+                                                                                                data-id='{{ $currentappointment->id }}'><i
+                                                                                                    class='fa fa-times'></i></button>
+                        -->
+                                                    </div>
                                                 </div>
                                             </div>
                                         @endforeach
@@ -224,6 +224,11 @@ use Illuminate\Support\Facades\Crypt;
     @include('appointment.cancel')
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.history.replaceState) {
+                window.history.replaceState(null, null, window.location.href);
+            }
+        });
         $(document).ready(function() {
 
             var totalUniquePatients = @json($totalUniquePatients);
