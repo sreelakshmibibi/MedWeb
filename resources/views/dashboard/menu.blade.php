@@ -80,7 +80,7 @@
                                 @if(auth()->user()->is_admin)
                                     <li>
                                         <a href="{{route('dashboard.userType', 'admin')}}">
-                                            <i>
+                                            <i class="icon-Commit">
                                                 <span class="path1"></span>
                                                 <span class="path2"></span>
                                             </i>
@@ -91,7 +91,7 @@
                                 @if(auth()->user()->is_doctor)
                                 <li>
                                     <a href="{{route('dashboard.userType', 'doctor')}}">
-                                        <i>
+                                        <i class="icon-Commit">
                                             <span class="path1"></span>
                                             <span class="path2"></span>
                                         </i>
@@ -102,7 +102,7 @@
                                 @if(auth()->user()->is_nurse)
                                 <li>
                                     <a href="{{route('dashboard.userType', 'nurse')}}">
-                                        <i>
+                                        <i class="icon-Commit">
                                             <span class="path1"></span>
                                             <span class="path2"></span>
                                         </i>
@@ -113,7 +113,7 @@
                                 @if(auth()->user()->is_reception)
                                 <li>
                                     <a href="{{route('dashboard.userType', 'reception')}}">
-                                        <i>
+                                        <i class="icon-Commit">
                                             <span class="path1"></span>
                                             <span class="path2"></span>
                                         </i>
