@@ -195,6 +195,99 @@ use Illuminate\Support\Facades\Session;
                     ],
                 });
             }
+            if (billhistoryStepAdded) {
+                var patientId = $('#pPatientId').val();
+                if ($.fn.DataTable.isDataTable("#billHistoryTable")) {
+                    $("#billHistoryTable").DataTable().destroy();
+                }
+
+                // Initialize DataTable
+                table = $("#billHistoryTable").DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: {
+                        
+                        url: '{{ url('patient_list') }}' + "/" + patientId + "/bill",
+                        type: "GET",
+
+                        dataSrc: function(json) {
+                            return json.data;
+                        },
+                    },
+                    columns: [{
+                            data: "DT_RowIndex",
+                            name: "DT_RowIndex",
+                            orderable: false,
+                            searchable: false,
+                        },
+                        {
+                            data: "billDate",
+                            name: "billDate",
+                            className: "min-w-60",
+                            render: function(data, type, row) {
+                                if (data) {
+                                    var date = new Date(data);
+                                    var day = ("0" + date.getDate()).slice(-2);
+                                    var month = ("0" + (date.getMonth() + 1)).slice(-2);
+                                    var year = date.getFullYear();
+
+                                    return day + "-" + month + "-" + year;
+                                } else {
+                                    return "-";
+                                }
+                            },
+                        },
+                        {
+                            data: "branch",
+                            name: "branch",
+                        },
+                        {
+                            data: "billType",
+                            name: "billType",
+                        },
+                        {
+                            data: "total",
+                            name: "total",
+                        },
+                        {
+                            data: "discount",
+                            name: "discount",
+                        },
+                        {
+                            data: "tax",
+                            name: "tax",
+                        },
+                        {
+                            data: "netAmount",
+                            name: "netAmount",
+                        },
+                        {
+                            data: "cash",
+                            name: "cash",
+                        },
+                        {
+                            data: "gpay",
+                            name: "gpay",
+                        },
+                        {
+                            data: "card",
+                            name: "card",
+                        },
+                        {
+                            data: "totalPaid",
+                            name: "totalPaid",
+                        },
+                        {
+                            data: "balanceGiven",
+                            name: "balanceGiven",
+                        },
+                        {
+                            data: "outstanding",
+                            name: "outstanding",
+                        },
+                    ],
+                });
+            }
         });
     </script>
 @endsection

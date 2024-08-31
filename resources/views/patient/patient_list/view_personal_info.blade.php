@@ -1,5 +1,6 @@
 <div class="row ">
     <input type="hidden" id="pvisitcount" name="pvisitcount" value="{{ $patientProfile->visit_count }}">
+    <input type="hidden" id="pPatientId" name="pPatientId" value="{{ $patientProfile->patient_id }}">
     <div class="col-xl-8 col-12">
         <div class="box" style="border-radius: 0px;">
             <div class="box-body bb-1" style="border-radius: 0px;">

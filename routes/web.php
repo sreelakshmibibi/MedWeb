@@ -156,6 +156,8 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/patient_list/appointment/store', [PatientListController::class, 'appointmentBooking'])->name('patient.patient_list.booking');
     Route::get('/patient_list/{patientId}/appointment', [PatientListController::class, 'appointmentDetails'])->name('patient.patient_list.appointment');
     Route::get('/patient_list/{patientId}/view', [PatientListController::class, 'show'])->name('patient.patient_list.view');
+    Route::get('/patient_list/{patientId}/bill/', [PatientListController::class, 'bill'])->name('patient.patient_list.allbill');
+
 
     Route::get('/today', [TodayController::class, 'index'])->name('patient.today');
     Route::post('/today/store', [TodayController::class, 'store'])->name('patient.today.store');
