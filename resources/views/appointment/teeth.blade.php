@@ -195,7 +195,32 @@ use App\Models\Appointment;
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-6 ">
+                                    <div class="form-group">
+                                        <label class="form-label" for="shade_id">Shade</label>
+                                        <select class="form-select shade_id_select" id="shade_id"
+                                            name="shade_id">
+                                            <option value="">Select a Shade</option>
+                                            @foreach ($shades as $shade)
+                                                <option value="<?= $shade->id ?>"><?= $shade->shade_name ?>
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <div id="shadeError" class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            
+                            <div class="col-md-6">
+                            <div class="form-group">
+                                    <label class="form-label" for="instructions">Instructions</label>
+                                    <textarea class="form-control" id="instructions" name="instructions" rows="1" placeholder="Instructions for technician"></textarea>
+                                    <div id="instructionsError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
 
+                        </div>
+                        
                         <div class="row">
                             <div class="col-md-12 ">
                                 <div class="form-group">

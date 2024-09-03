@@ -405,6 +405,21 @@ $lower_teethImages = [
                                     return false; // Exit the loop once found
                                 }
                             });
+                             var shade_id = examination
+                                .shade_id;
+                            $('#shade_id').val(shade_id);
+
+                            // Loop through options to find the corresponding text and select it
+                            $('#shade_id option').each(function() {
+                                if ($(this).val() ==
+                                    shade_id) {
+                                    $(this).prop('selected', true);
+                                    return false; // Exit the loop once found
+                                }
+                            });
+                             var instructions = examination
+                                .instructions;
+                            $('#instructions').val(instructions);
 
                             var treatment_status = examination.treatment_status;
                             $('#treatment_status').val(treatment_status);
@@ -905,6 +920,21 @@ $lower_teethImages = [
                                 return false; // Exit the loop once found
                             }
                         });
+                        var shade_id = examination
+                                .shade_id;
+                            $('#shade_id').val(shade_id);
+
+                            // Loop through options to find the corresponding text and select it
+                            $('#shade_id option').each(function() {
+                                if ($(this).val() ==
+                                    shade_id) {
+                                    $(this).prop('selected', true);
+                                    return false; // Exit the loop once found
+                                }
+                            });
+                             var instructions = examination
+                                .instructions;
+                            $('#instructions').val(instructions);
 
                         var treatment_status = examination.treatment_status;
                         $('#treatment_status').val(treatment_status);
