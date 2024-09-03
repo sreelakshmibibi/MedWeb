@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Run the migrations
      */
     public function up(): void
     {
@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('lab_name');
             $table->string('lab_address');
             $table->string('lab_contact');
+            $table->string('status')->default('Y');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->foreignId('updated_by')->constrained('users')->onDelete('cascade');
             $table->foreignId('deleted_by')->nullable()->constrained('users')->onDelete('set null');

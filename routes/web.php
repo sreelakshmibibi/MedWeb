@@ -29,6 +29,7 @@ use App\Http\Controllers\Settings\TreatmentPlanController;
 use App\Http\Controllers\Settings\UserController;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\Staff\StaffListController;
+use App\Http\Controllers\TechnicianController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -253,6 +254,11 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::delete('/leave/{leave}', [LeaveController::class, 'destroy'])->name('leave.destroy');
     Route::get('/leave/approve/{leave}', [LeaveController::class, 'approveLeave'])->name('leave.approve');
     Route::post('/leave/reject/{leave}', [LeaveController::class, 'rejectLeave'])->name('leave.reject');
+
+    Route::get('/technicians', [TechnicianController::class, 'index'])->name('technicians');
+    Route::post('/technicians/store', [TechnicianController::class, 'store'])->name('technicians.store');
+
+
 
     Route::get('/db_backup', [BackupController::class, 'index'])->name('settings.db_backup');
     Route::post('send-sms', [SmsController::class, 'sendSms'])->name('send.sms');

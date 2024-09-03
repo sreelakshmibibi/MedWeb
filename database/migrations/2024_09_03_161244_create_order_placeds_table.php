@@ -24,9 +24,11 @@ return new class extends Migration
             $table->date('order_received_on');
             $table->time('order_received_time');
             $table->integer('order_status'); /*1=order placed 2=order received 3=Order cancelled*/
+            $table->string('order_cancell_reason')->nullable();
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->foreignId('updated_by')->constrained('users')->onDelete('cascade');
-            $table->foreignId('deleted_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('cancelled_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->dateTime('cancelled_on')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
