@@ -293,6 +293,7 @@ class BillingController extends Controller
         $billingService = new BillingService();
         $treatmentAmounts = $billingService->individualTreatmentAmounts($id, $appointment->patient_id);
         $individualTreatmentAmounts = $treatmentAmounts['individualTreatmentAmounts'];
+        $individualTreatmentPlanAmounts = $treatmentAmounts['individualTreatmentPlanAmounts'];
         $selectedTreatments = $treatmentAmounts['selectedTreatmentIds'] != null ? $treatmentAmounts['selectedTreatmentIds'] : [];
         $totalCost = $treatmentAmounts['totalCost'];
         // Fetch the doctor discount from the appointment
@@ -365,7 +366,7 @@ class BillingController extends Controller
         //     return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'isMedicineProvided', 'clinicBasicDetails', 'medicineTotal', 'prescriptions', 'hasPrescriptionBill', 'prescriptionBillDetails'));
         // }
         if (!empty($billExists)) {
-            $detailBills = PatientDetailBilling::with('treatment')->where('billing_id', $billExists->id)->get();
+            $detailBills = PatientDetailBilling::with(['treatment', 'treatmentPlan'])->where('billing_id', $billExists->id)->get();
             $previousOutStanding = $billingService->previousOutstanding($appointment->id, $appointment->patient_id);
             // $previousBill = PatientTreatmentBilling::where('patient_id', $appointment->patient_id)
             //     ->where('appointment_id', '<', $appointment->id)
@@ -397,7 +398,7 @@ class BillingController extends Controller
         }
         $cardPay = CardPay::where('status', "Y")->get();
         // if (!empty($insuranceDetails)) {
-        return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction', 'insuranceDetails', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab'));
+        return view('billing.add', compact('appointment', 'individualTreatmentPlanAmounts','individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction', 'insuranceDetails', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab'));
         // }
         //  else {
         //     return view('billing.generateBill', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction'));
@@ -465,6 +466,7 @@ class BillingController extends Controller
         $billingService = new BillingService();
         $treatmentAmounts = $billingService->individualTreatmentAmounts($id, $appointment->patient_id);
         $individualTreatmentAmounts = $treatmentAmounts['individualTreatmentAmounts'];
+        $individualTreatmentPlanAmounts = $treatmentAmounts['individualTreatmentPlanAmounts'];
         $selectedTreatments = $treatmentAmounts['selectedTreatmentIds'] != null ? $treatmentAmounts['selectedTreatmentIds'] : [];
         $totalCost = $treatmentAmounts['totalCost'];
         // Fetch the doctor discount from the appointment
@@ -569,7 +571,7 @@ class BillingController extends Controller
         }
         $cardPay = CardPay::where('status', "Y")->get();
         // if (!empty($insuranceDetails)) {
-        return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction', 'insuranceDetails', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab'));
+        return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction', 'insuranceDetails', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab', 'individualTreatmentPlanAmounts'));
         // }
         //  else {
         //     return view('billing.generateBill', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction'));
@@ -758,7 +760,7 @@ class BillingController extends Controller
             }
 
             $appointment = Appointment::with(['patient', 'doctor', 'branch'])->find($appointmentId);
-            $billDetails = PatientDetailBilling::with('treatment')->where('billing_id', $billId)->get();
+            $billDetails = PatientDetailBilling::with(['treatment','treatmentPlan'])->where('billing_id', $billId)->get();
             $clinicDetails = ClinicBasicDetail::first();
             $clinicLogo = $clinicDetails->clinic_logo ? 'storage/' . $clinicDetails->clinic_logo : 'public/images/logo-It.png';
 
@@ -811,7 +813,7 @@ class BillingController extends Controller
         // Generate PDF
         $appointment = Appointment::with(['patient', 'doctor', 'branch'])
             ->find($appointmentId);
-        $billDetails = PatientDetailBilling::with('treatment')->where('billing_id', $billId)->get();
+        $billDetails = PatientDetailBilling::with(['treatment', 'treatmentPlan'])->where('billing_id', $billId)->get();
         $clinicDetails = ClinicBasicDetail::first();
         if ($clinicDetails->clinic_logo == '') {
             $clinicLogo = 'public/images/logo-It.png';

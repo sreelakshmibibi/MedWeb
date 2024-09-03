@@ -110,7 +110,7 @@ date_default_timezone_set('Asia/Kolkata');
                                             <tbody>
                                                 <?php $i = 0;
                                                 $treatmentTotal = 0; ?>
-                                                <input type="hidden" value="{{ sizeof($individualTreatmentAmounts) }}"
+                                                <input type="hidden" value="{{ sizeof($individualTreatmentAmounts) + sizeof($individualTreatmentPlanAmounts) }}"
                                                     name="treatmentCount">
                                                 <input type="hidden" value="{{ $appointment->id }}" name="appointment_id">
                                                 <input type="hidden" value="{{ $appointment->patient_id }}"
@@ -127,6 +127,8 @@ date_default_timezone_set('Asia/Kolkata');
                                                             {{ $individualTreatmentAmount['treat_name'] }}
                                                             <input type="hidden" name="treatmentId{{ $i }}"
                                                                 value="{{ $individualTreatmentAmount['treat_id'] }}">
+                                                                <input type="hidden" name="treatmentType{{ $i }}"
+                                                                value="{{ $individualTreatmentAmount['type'] }}">
                                                         </td>
                                                         <td><input type="text" readonly
                                                                 name="tquantity{{ $i }}"
@@ -148,6 +150,49 @@ date_default_timezone_set('Asia/Kolkata');
                                                                 name="subtotal{{ $i }}"
                                                                 class="form-control text-center"
                                                                 value="{{ number_format($individualTreatmentAmount['subtotal'], 3) }}">
+                                                        </td> <!-- Format the cost -->
+                                                        <?php
+                                                        
+                                                        // $treatmentTotal += number_format($individualTreatmentAmount['subtotal'], 3)
+                                                        $treatmentTotal += $subtotal;
+                                                        ?>
+                                                    </tr>
+                                                @endforeach
+                                                @foreach ($individualTreatmentPlanAmounts as $individualTreatmentPlanAmount)
+                                                    <?php
+                                                    $i++;
+                                                    $cost = is_numeric($individualTreatmentPlanAmount['cost']) ? floatval($individualTreatmentPlanAmount['cost']) : 0;
+                                                    $subtotal = is_numeric($individualTreatmentPlanAmount['subtotal']) ? floatval($individualTreatmentPlanAmount['subtotal']) : 0;
+                                                    ?>
+                                                    <tr>
+                                                        <td>{{ $i }}</td>
+                                                        <td class="text-start">
+                                                            {{ $individualTreatmentPlanAmount['treat_name'] }}
+                                                            <input type="hidden" name="treatmentId{{ $i }}"
+                                                                value="{{ $individualTreatmentPlanAmount['treat_id'] }}">
+                                                                <input type="hidden" name="treatmentType{{ $i }}"
+                                                                value="{{ $individualTreatmentPlanAmount['type'] }}">
+                                                        </td>
+                                                        <td><input type="text" readonly
+                                                                name="tquantity{{ $i }}"
+                                                                class="form-control text-center"
+                                                                value="{{ $individualTreatmentPlanAmount['quantity'] }}"></td>
+                                                        <!-- Add quantity if available -->
+                                                        <td><input type="text" readonly name="cost{{ $i }}"
+                                                                class="form-control text-center"
+                                                                value="{{ number_format($individualTreatmentPlanAmount['cost'], 3) }}">
+                                                        </td>
+                                                        <?php if (empty($insuranceDetails))  { ?>
+                                                        <td> <input type="text" readonly
+                                                                name="discount_percentage{{ $i }}"
+                                                                class="form-control text-center"
+                                                                value="{{ $individualTreatmentPlanAmount['discount_percentage'] }}">
+                                                        </td>
+                                                        <?php } ?>
+                                                        <td> <input type="text" readonly
+                                                                name="subtotal{{ $i }}"
+                                                                class="form-control text-center"
+                                                                value="{{ number_format($individualTreatmentPlanAmount['subtotal'], 3) }}">
                                                         </td> <!-- Format the cost -->
                                                         <?php
                                                         

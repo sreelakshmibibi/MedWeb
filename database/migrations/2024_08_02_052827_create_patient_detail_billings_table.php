@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('billing_id')->constrained('patient_treatment_billings');
             $table->foreignId('treatment_id')->nullable()->constrained('treatment_types');
+            $table->foreignId('plan_id')->nullable()->constrained('treatment_plans');
             $table->string('consultation_registration')->nullable();
             $table->integer('quantity')->default(1);
             $table->decimal('cost', 10, 3);

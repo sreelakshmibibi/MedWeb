@@ -287,6 +287,8 @@ header('Content-Type: text/html; charset=UTF-8');
                                 <td>{{ ++$i }}.</td>
                                 <?php if ($billDetail->treatment_id != null) {
                                     $treatment = $billDetail->treatment->treat_name;
+                                } else if ($billDetail->plan_id != null) {
+                                    $treatment = $billDetail->treatmentPlan->plan;
                                 } else {
                                     $treatment = $billDetail->consultation_registration;
                                 } ?>
