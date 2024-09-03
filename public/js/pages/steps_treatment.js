@@ -273,63 +273,67 @@ function getTreatmentTable(stepIndex) {
                 success: function (response) {
                     var tableBody = $("#chargetablebody");
                     tableBody.empty(); // Clear any existing rows
-
-                    var treatments = response.toothExaminations;
-                    var comboOffers = response.comboOffer;
-                    var doctorDiscount = response.doctorDiscount;
-                    if (
-                        doctorDiscount === null ||
-                        doctorDiscount === undefined
-                    ) {
-                        doctorDiscount = 0; // Or any default value you want to set
-                    }
+            
+                    var treatments = response.toothExaminations || [];
+                    var plans = Object.values(response.individualTreatmentPlanAmounts || {}); // Convert object to array
+                    var comboOffers = response.comboOffer || [];
+                    var doctorDiscount = response.doctorDiscount || 0;
                     var totalCost = 0;
-                    if (treatments && treatments.length > 0) {
+            
+                    function addRow(treat, index, type) {
+                        var treatCost = parseFloat(treat.treat_cost);
+                        var discountCost = parseFloat(treat.discount_cost);
+                    
+                        // Ensure treatCost and discountCost are valid numbers
+                        if (isNaN(treatCost)) treatCost = 0;
+                        if (isNaN(discountCost)) discountCost = 0;
+                    
+                        totalCost += discountCost;
+                        if (type == 'plan') {
+                            totalCost += treatCost;
+                        }
+                        var treatDiscount = treat.discount_percentage || 0;
+                    
+                        var row = `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td style="text-align:left;">${treat.treat_name} (${currency} ${treatCost.toFixed(3)})</td>
+                                <td>${discountCost} %</td>
+                                <td>${currency} ${treatCost.toFixed(3)}</td>
+                            </tr>
+                        `;
+                        tableBody.append(row);
+                    }
+                    
+            
+                    if (treatments.length > 0) {
                         treatments.forEach(function (exam, index) {
-                            var treatCost = parseFloat(
-                                exam.treatment.treat_cost
-                            );
-                            var discountCost = parseFloat(
-                                exam.treatment.discount_cost
-                            );
-                            totalCost += discountCost;
-                            var treatDiscount =
-                                exam.treatment.discount_percentage;
-
-                            var row = `
-                                <tr>
-                                    <td>${index + 1}</td>
-                                    <td style="text-align:left;">${
-                                        exam.treatment.treat_name
-                                    } (${currency} ${treatCost.toFixed(3)})</td>
-                                    <td>${
-                                        treatDiscount != null
-                                            ? treatDiscount
-                                            : 0
-                                    } %</td>
-                                    <td>${currency} ${discountCost.toFixed(
-                                3
-                            )}</td>
-                                </tr>
-                            `;
-                            tableBody.append(row);
+                            addRow(exam.treatment, index, 'treatment');
                         });
-
-                        // Update total charge table initially
-                        updateTotalCharge(totalCost, doctorDiscount);
-                    } else {
-                        var noDataRow = `
+                    }
+            
+                    if (plans.length > 0) {
+                        plans.forEach(function (plan, index) {
+                            addRow(plan, index, 'plan');
+                        });
+                    }
+            
+                    if (treatments.length === 0 && plans.length === 0) {
+                        tableBody.append(`
                             <tr>
                                 <td colspan="4">No data available</td>
                             </tr>
-                        `;
-                        tableBody.append(noDataRow);
+                        `);
+                    } else {
+                        updateTotalCharge(totalCost, doctorDiscount);
                     }
                 },
                 error: function (xhr) {
                     console.error("Error fetching treatment table data:", xhr);
                 },
             });
+            
+            
         })
         .fail(function (xhr) {
             console.error("Error fetching session data:", xhr);

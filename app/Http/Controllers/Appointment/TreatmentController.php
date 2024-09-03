@@ -563,7 +563,7 @@ class TreatmentController extends Controller
 
             // Collect treatment IDs
             $treatments[] = $toothExamination->treatment->id;
-
+            $treatmentPlans[] = $toothExamination->treatment_plan_id;
             // Fetch treatment cost and discount details
             $treatmentCost = $toothExamination->treatment->treat_cost;
             $discount_from = $toothExamination->treatment->discount_from;
@@ -614,6 +614,18 @@ class TreatmentController extends Controller
                     
                 
             ];
+
+            if ($toothExamination->treatment_plan_id) {
+                $individualTreatmentPlanAmounts[$toothExamination->treatment_plan_id] = [
+                    'treat_name' => $toothExamination->treatmentPlan->plan,
+                    'treat_cost' => $toothExamination->treatmentPlan->cost, // Use discounted cost
+                    'treat_id' => $toothExamination->treatment_plan_id,
+                    'cost' => $toothExamination->treatmentPlan->cost,
+                    'discount_percentage' => 0,
+                        
+                ];
+    
+            }
         }
 
 // Filter toothExaminations to only include those with treatments in individualTreatmentAmounts
@@ -627,6 +639,7 @@ class TreatmentController extends Controller
         return response()->json([
             'toothExaminations' => $toothExaminations,
             'individualTreatmentAmounts' => $individualTreatmentAmounts,
+            'individualTreatmentPlanAmounts' => $individualTreatmentPlanAmounts,
             'comboOffers' => $comboOffersResult,
             'doctorDiscount' => $doctorDiscount,
         ]);
