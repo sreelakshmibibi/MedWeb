@@ -14,21 +14,19 @@ return new class extends Migration
         Schema::create('order_placeds', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('patient_id');
+            $table->foreignId('tooth_examination_id')->constrained('tooth_examinations');
             $table->foreignId('treatment_plan_id')->constrained('treatment_plans');
-            $table->integer('teeth_id');
-            $table->string('shade');
-            $table->decimal('amount', 10, 3);
             $table->foreignId('technician_id')->constrained('technicians');
-            $table->date('order_placed_on');
-            $table->time('order_placed_time');
-            $table->date('order_received_on');
-            $table->time('order_received_time');
+            $table->dateTime('order_placed_on');
+            $table->dateTime('delivery_expected_on');
+            $table->dateTime('delivered_on')->nullable();
             $table->integer('order_status'); /*1=order placed 2=order received 3=Order cancelled*/
-            $table->string('order_cancell_reason')->nullable();
+            $table->string('order_cancel_reason')->nullable();
+            $table->dateTime('cancelled_on')->nullable();
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->foreignId('updated_by')->constrained('users')->onDelete('cascade');
-            $table->foreignId('cancelled_by')->nullable()->constrained('users')->onDelete('set null');
-            $table->dateTime('cancelled_on')->nullable();
+            $table->foreignId('canceled_by')->nullable()->constrained('users');
+            $table->foreignId('deleted_by')->nullable()->constrained('users');
             $table->softDeletes();
             $table->timestamps();
         });

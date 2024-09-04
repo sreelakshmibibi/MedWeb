@@ -115,4 +115,9 @@ class ToothExamination extends Model
     {
         return $this->belongsTo(SurfaceCondition::class, 'buccal_condn', 'id');
     }
+
+    public function shade()
+    {
+        return $this->belongsTo(Shade::class, 'shade_id', 'id');
+    }
 }

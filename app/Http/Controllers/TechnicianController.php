@@ -9,9 +9,14 @@ use Yajra\DataTables\DataTables;
 
 class TechnicianController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct()
+    {
+        $this->middleware('permission:technician', ['only' => ['index']]);
+        $this->middleware('permission:technician_add', ['only' => ['store']]);
+        $this->middleware('permission:technician_edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:technician_remove', ['only' => ['destroy']]);
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -46,11 +51,14 @@ class TechnicianController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     $btn = null;
-                    
+                    if (Auth::user()->can('technician_edit')) {
                         $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
-                        data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
-                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
+                        data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>';
+                    } 
+                    if (Auth::user()->can('technician_remove')) {
+                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
                         <i class="fa fa-trash"></i></button>';
+                    }
                     
                     return $btn;
                 });
@@ -87,28 +95,44 @@ class TechnicianController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
-        //
+        $technician = Technician::find($id);
+        if (!$technician) {
+            abort(404);
+        }
+
+        return $technician;
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        $technician = Technician::findorFail($request->edit_tech_id);
+        if (!$technician)
+            abort(404);
+        $technician->name = $request->edit_tech_name;
+        $technician->phone_number = $request->edit_tech_phone;
+        $technician->lab_name = $request->edit_lab_name;
+        $technician->lab_address = $request->edit_lab_address;
+        $technician->lab_contact = $request->edit_lab_phone;
+        $technician->status = $request->edit_status;
+    
+        if ($technician->save()) {
+            if ($request->ajax()) {
+                return response()->json(['success' => 'Technician details updated successfully.']);
+            }
+        } else {
+            if ($request->ajax()) {
+                return response()->json(['success' => 'Technician details updation failed.']);
+            }
+        }
     }
 
     /**
@@ -116,6 +140,13 @@ class TechnicianController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $technician = Technician::findOrFail($id);
+        if (!$technician)
+            abort(404);
+        $technician->deleted_by = Auth::user()->id;
+        $technician->save();
+        $technician->delete();
+
+        return response()->json(['success', 'Technician deleted successfully.'], 201);
     }
 }

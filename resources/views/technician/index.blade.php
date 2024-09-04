@@ -109,17 +109,17 @@
 
             // Edit Leave
             $(document).on('click', '.btn-edit', function() {
-                var leaveId = $(this).data('id');
-                $('#edit_leave_id').val(leaveId);
+                var techId = $(this).data('id');
+                $('#edit_tech_id').val(techId);
                 $.ajax({
-                    url: '{{ url('leave') }}/' + leaveId + '/edit',
+                    url: '{{ url("technicians") }}/' + techId + '/edit',
                     method: 'GET',
                     success: function(response) {
-                        $('#editleave_id').val(response.id);
-                        $('#editleave_type').val(response.leave_type);
-                        $('#editleave_from').val(response.leave_from);
-                        $('#editleave_to').val(response.leave_to);
-                        $('#editreason').val(response.leave_reason);
+                        $('#edit_tech_name').val(response.name);
+                        $('#edit_tech_phone').val(response.phone_number);
+                        $('#edit_lab_name').val(response.lab_name);
+                        $('#edit_lab_phone').val(response.lab_contact);
+                        $('#edit_lab_address').val(response.lab_address);
                         $('#modal-edit').modal('show');
                     },
                     error: function(error) {
@@ -130,23 +130,23 @@
 
             // Delete Leave
             $(document).on('click', '.btn-danger', function() {
-                var leaveId = $(this).data('id');
-                $('#delete_leave_id').val(leaveId);
+                var techId = $(this).data('id');
+                $('#delete_tech_id').val(techId);
                 $('#modal-delete').modal('show');
             });
 
             $('#btn-confirm-delete').click(function() {
-                var leaveId = $('#delete_leave_id').val();
+                var techId = $('#delete_tech_id').val();
                 $.ajax({
                     type: 'DELETE',
-                    url: "{{ route('leave.destroy', ':leave') }}".replace(':leave', leaveId),
+                    url: "{{ route('technicians.destroy', ':tech') }}".replace(':tech', techId),
                     data: {
                         "_token": "{{ csrf_token() }}"
                     },
                     success: function(response) {
                         table.ajax.reload();
                         // table.draw();
-                        $('#successMessage').text('Leave application deleted successfully')
+                        $('#successMessage').text('Technician deleted successfully')
                             .fadeIn().delay(3000).fadeOut();
                     },
                     error: function(xhr) {

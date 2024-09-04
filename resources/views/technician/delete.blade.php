@@ -10,8 +10,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete the leave?</p>
-                    <input type="hidden" id="delete_leave_id" name="delete_leave_id" value="">
+                    <p>Are you sure you want to delete the technician?</p>
+                    <input type="hidden" id="delete_tech_id" name="delete_tech_id" value="">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>

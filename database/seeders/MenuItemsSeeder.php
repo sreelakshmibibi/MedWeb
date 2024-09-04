@@ -42,7 +42,6 @@ class MenuItemsSeeder extends Seeder
             'technician_add',
             'technician_remove',
             'technician_edit',
-            'technician_status_change',
             'patient_list',
             'patient_details',
             'patients',
@@ -102,7 +101,6 @@ class MenuItemsSeeder extends Seeder
             'technician_add',
             'technician_remove',
             'technician_edit',
-            'technician_status_change',
             'patient_list',
             'patient_details',
             'patients',
@@ -246,6 +244,14 @@ class MenuItemsSeeder extends Seeder
             'order_no' => 7,
         ]);
 
+        $orders = MenuItem::create([
+            'name' => 'Orders',
+            'url' => '#',
+            'route_name' => '#',
+            'icon' => 'fa-solid fa-shopping-cart',
+            'order_no' => 8,
+        ]);
+
         $billingSubmenus = $billing->children()->createMany([
             ['name' => 'Treatment Billing', 'url' => '/billing', 'route_name' => 'billing', 'icon' => 'icon-Commit', 'order_no' => 1],
             ['name' => 'Outstanding Billing', 'url' => '/duepayment', 'route_name' => 'duePayment', 'icon' => 'icon-Commit', 'order_no' => 12],
@@ -281,6 +287,11 @@ class MenuItemsSeeder extends Seeder
             ['name' => 'Patient Details', 'url' => '#', 'route_name' => '#', 'icon' => 'icon-Commit', 'order_no' => 2],
         ]);
 
+        $orderSubmenus = $orders->children()->createMany([
+            ['name' => 'Place Order', 'url' => '/place_order', 'route_name' => 'order.place_order', 'icon' => 'icon-Commit', 'order_no' => 1],
+            ['name' => 'Update Order', 'url' => '#', 'route_name' => '#', 'icon' => 'icon-Commit', 'order_no' => 2],
+        ]);
+
         // $appointmentSubmenus = $patients->children()->createMany([
         //     ['name' => 'Appointment List', 'url' => '/appointment', 'route_name' => 'appointment', 'icon' => 'icon-Commit', 'order_no' => 1],
 
@@ -294,6 +305,7 @@ class MenuItemsSeeder extends Seeder
         $settings->roles()->attach([$superadmin->id, $admin->id]);
         $reports->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $reception->id, $nurse->id]);
         $billing->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $reception->id, $nurse->id]);
+        $orders->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $reception->id, $nurse->id]);
 
         // Attach roles to submenu items
         foreach ($billingSubmenus as $submenu) {
@@ -310,6 +322,9 @@ class MenuItemsSeeder extends Seeder
         $leave = $staffSubmenus->where('name', 'Leave')->first();
         $technicians = $staffSubmenus->where('name', 'Technicians')->first();
         foreach ($patientSubmenus as $submenu) {
+            $submenu->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $nurse->id, $reception->id]);
+        }
+        foreach ($orderSubmenus as $submenu) {
             $submenu->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $nurse->id, $reception->id]);
         }
 

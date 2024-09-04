@@ -13,6 +13,7 @@ use App\Http\Controllers\HelperController;
 use App\Http\Controllers\MedicineBillController;
 use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
+use App\Http\Controllers\PlaceOrderController;
 use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Settings\ClinicBranchController;
 use App\Http\Controllers\Settings\ComboOfferController;
@@ -257,8 +258,13 @@ Route::middleware(['auth', 'check.session'])->group(function () {
 
     Route::get('/technicians', [TechnicianController::class, 'index'])->name('technicians');
     Route::post('/technicians/store', [TechnicianController::class, 'store'])->name('technicians.store');
+    Route::get('/technicians/{technician}/edit', [TechnicianController::class, 'edit'])->name('technicians.edit');
+    Route::post('/technicians/update', [TechnicianController::class, 'update'])->name('technicians.update');
+    Route::delete('/technicians/{technician}', [TechnicianController::class, 'destroy'])->name('technicians.destroy');
 
-
+    Route::get('/place_order', [PlaceOrderController::class, 'index'])->name('order.place_order');
+    Route::post('/place_order/create', [PlaceOrderController::class, 'create'])->name('orders.create');
+    Route::post('/place_order/store', [PlaceOrderController::class, 'store'])->name('orders.store');
 
     Route::get('/db_backup', [BackupController::class, 'index'])->name('settings.db_backup');
     Route::post('send-sms', [SmsController::class, 'sendSms'])->name('send.sms');
