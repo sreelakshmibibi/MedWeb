@@ -21,7 +21,10 @@ return new class extends Migration
             $table->dateTime('delivery_expected_on');
             $table->dateTime('delivered_on')->nullable();
             $table->integer('order_status'); /*1=order placed 2=order received 3=Order cancelled*/
+            $table->string('billable')->default('Y');
             $table->string('order_cancel_reason')->nullable();
+             $table->integer('parent_order_id')->nullable();
+            $table->string('order_repeat_reason')->nullable();
             $table->dateTime('cancelled_on')->nullable();
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->foreignId('updated_by')->constrained('users')->onDelete('cascade');

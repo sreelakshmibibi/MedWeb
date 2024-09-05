@@ -31,6 +31,7 @@ use App\Http\Controllers\Settings\UserController;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\Staff\StaffListController;
 use App\Http\Controllers\TechnicianController;
+use App\Http\Controllers\UpdateOrderController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -265,6 +266,12 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::get('/place_order', [PlaceOrderController::class, 'index'])->name('order.place_order');
     Route::post('/place_order/create', [PlaceOrderController::class, 'create'])->name('orders.create');
     Route::post('/place_order/store', [PlaceOrderController::class, 'store'])->name('orders.store');
+    
+    Route::get('/track_order', [UpdateOrderController::class, 'index'])->name('order.track_order');
+    Route::post('/track_order/{orderId}', [UpdateOrderController::class, 'destroy'])->name('order.destroy');
+    Route::post('/track_order/delivered/{orderId}', [UpdateOrderController::class, 'update'])->name('order.update');
+    Route::get('/track_order/{orderId}/edit', [UpdateOrderController::class, 'edit'])->name('order.edit');
+    Route::post('/track_order/repeat/{orderId}', [UpdateOrderController::class, 'repeat'])->name('order.repeat');
 
     Route::get('/db_backup', [BackupController::class, 'index'])->name('settings.db_backup');
     Route::post('send-sms', [SmsController::class, 'sendSms'])->name('send.sms');

@@ -289,7 +289,7 @@ class MenuItemsSeeder extends Seeder
 
         $orderSubmenus = $orders->children()->createMany([
             ['name' => 'Place Order', 'url' => '/place_order', 'route_name' => 'order.place_order', 'icon' => 'icon-Commit', 'order_no' => 1],
-            ['name' => 'Update Order', 'url' => '#', 'route_name' => '#', 'icon' => 'icon-Commit', 'order_no' => 2],
+            ['name' => 'Track Order', 'url' => '/track_order', 'route_name' => 'order.track_order', 'icon' => 'icon-Commit', 'order_no' => 2],
         ]);
 
         // $appointmentSubmenus = $patients->children()->createMany([
