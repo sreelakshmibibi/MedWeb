@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Technician;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Yajra\DataTables\DataTables;
 
 class TechnicianController extends Controller
@@ -55,6 +56,11 @@ class TechnicianController extends Controller
                         $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
                         data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>';
                     } 
+                    if (Auth::user()->can('technician cost')) {
+                        $base64Id = base64_encode($row->id);
+                        $idEncrypted = Crypt::encrypt($base64Id);
+                        $btn .= '<a href="'. route('technicianCost', ['id' => $idEncrypted]).'" class="waves-effect waves-light btn btn-circle btn-info btn-xs me-1" title="Add lab cost for each treatment plan"><i class="fas fa-hand-holding-usd"></i></a>';
+                    }
                     if (Auth::user()->can('technician_remove')) {
                         $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
                         <i class="fa fa-trash"></i></button>';

@@ -41,6 +41,7 @@ class MenuItemsSeeder extends Seeder
             'technician',
             'technician_add',
             'technician_remove',
+            'technician cost',
             'technician_edit',
             'patient_list',
             'patient_details',
@@ -76,6 +77,13 @@ class MenuItemsSeeder extends Seeder
             'reports',
             'users',
             'settings db_backup',
+            'order place',
+            'order place store',
+            'order track',
+            'order cancel',
+            'order deliver',
+            'order repeat',
+
         ];
 
         foreach ($permissions as $permission) {
@@ -101,6 +109,7 @@ class MenuItemsSeeder extends Seeder
             'technician_add',
             'technician_remove',
             'technician_edit',
+            'technician cost',
             'patient_list',
             'patient_details',
             'patients',
@@ -128,6 +137,13 @@ class MenuItemsSeeder extends Seeder
             'leave apply',
             'leave approve',
             'settings db_backup',
+            'order place',
+            'order place store',
+            'order track',
+            'order cancel',
+            'order deliver',
+            'order repeat',
+
         ];
 
 
@@ -150,9 +166,17 @@ class MenuItemsSeeder extends Seeder
             'staff_list',
             'leave',
             'technician',
+            'technician cost',
             'settings insurance',
             'settings treatment_plan',
             'leave apply',
+            'order place',
+            'order place store',
+            'order track',
+            'order cancel',
+            'order deliver',
+            'order repeat',
+
         ]);
 
         $nurse->syncPermissions([

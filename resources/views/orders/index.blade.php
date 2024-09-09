@@ -130,12 +130,13 @@
                                     </div>
 
                                     <div id="tableContainer"></div> <!-- Table will be loaded here -->
-
-                                    <div class="box-footer p-3 text-end" style="border-radius: 0px;" id="order_place_section3">
-                                        <button type="button" class="btn btn-success" id="savePlaceOrderBtn">
-                                             Save
-                                        </button>
-                                    </div>
+                                    @if (Auth::user()->can('order place store')) 
+                                        <div class="box-footer p-3 text-end" style="border-radius: 0px;" id="order_place_section3">
+                                            <button type="button" class="btn btn-success" id="savePlaceOrderBtn">
+                                                Save
+                                            </button>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </form>

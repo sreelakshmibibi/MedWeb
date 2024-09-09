@@ -31,6 +31,7 @@ use App\Http\Controllers\Settings\UserController;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\Staff\StaffListController;
 use App\Http\Controllers\TechnicianController;
+use App\Http\Controllers\TechnicianCostController;
 use App\Http\Controllers\UpdateOrderController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -262,6 +263,10 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::get('/technicians/{technician}/edit', [TechnicianController::class, 'edit'])->name('technicians.edit');
     Route::post('/technicians/update', [TechnicianController::class, 'update'])->name('technicians.update');
     Route::delete('/technicians/{technician}', [TechnicianController::class, 'destroy'])->name('technicians.destroy');
+
+    Route::get('/technicianCost', [TechnicianCostController::class, 'index'])->name('technicianCost');
+    Route::post('/technicianCost/store', [TechnicianCostController::class, 'store'])->name('technicianCost.store');
+
 
     Route::get('/place_order', [PlaceOrderController::class, 'index'])->name('order.place_order');
     Route::post('/place_order/create', [PlaceOrderController::class, 'create'])->name('orders.create');

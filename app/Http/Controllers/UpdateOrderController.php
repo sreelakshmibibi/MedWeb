@@ -15,6 +15,15 @@ use Yajra\DataTables\Facades\DataTables;
 
 class UpdateOrderController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:order track', ['only' => ['index']]);
+        $this->middleware('permission:order deliver', ['only' => ['update']]);
+        $this->middleware('permission:order cancel', ['only' => ['destroy']]);
+        $this->middleware('permission:order repeat', ['only' => ['edit','repeat']]);
+
+        
+    }
     /**
      * Display a listing of the resource.
      */
@@ -120,19 +129,23 @@ class UpdateOrderController extends Controller
                     $btn = null; 
                     if ($row->order_status == OrderPlaced::PLACED || $row->order_status == OrderPlaced::PENDING) {
                         //option for delivery updated or cancelled
-                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-deliver btn-xs me-1" title="Order Delivered" data-bs-toggle="modal" data-id="' . $row->id . '" id="btn-deliver"
-                        data-bs-target="#modal-deliver" ><i class="fa fa-check"></i></button>';
-                    
-                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-cancell btn-xs me-1" title="Cancell Order" data-bs-toggle="modal" data-id="' . $row->id . '" id="btn-cancell"
-                        data-bs-target="#modal-cancell" ><i class="fa fa-close"></i></button>';
+                        if (Auth::user()->can('order deliver')) {
+                            $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-deliver btn-xs me-1" title="Order Delivered" data-bs-toggle="modal" data-id="' . $row->id . '" id="btn-deliver"
+                            data-bs-target="#modal-deliver" ><i class="fa fa-check"></i></button>';
+                        }
+                        if (Auth::user()->can('order cancel')) {
+                            $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-cancell btn-xs me-1" title="Cancell Order" data-bs-toggle="modal" data-id="' . $row->id . '" id="btn-cancell"
+                            data-bs-target="#modal-cancell" ><i class="fa fa-close"></i></button>';
+                        }
                         
                     }
                      if ($row->order_status == OrderPlaced::DELIVERED) {
                         //option for rework
-                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-reorder btn-xs" data-bs-toggle="modal" data-bs-target="#modal-reorder" data-id="' . $row->id . '" title="Repeat Order" id="btn-reorder" data-patient-name="' . str_replace("<br>", " ", $row->toothExamination->patient->first_name . " " . $row->toothExamination->patient->last_name) . '"
-                        data-shade="' . $row->toothExamination->shade_id . '">
-                        <i class="fa fa-repeat"></i></button>';
-
+                        if (Auth::user()->can('order repeat')) {
+                            $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-warning btn-reorder btn-xs" data-bs-toggle="modal" data-bs-target="#modal-reorder" data-id="' . $row->id . '" title="Repeat Order" id="btn-reorder" data-patient-name="' . str_replace("<br>", " ", $row->toothExamination->patient->first_name . " " . $row->toothExamination->patient->last_name) . '"
+                            data-shade="' . $row->toothExamination->shade_id . '">
+                            <i class="fa fa-repeat"></i></button>';
+                        }
                     }
 
                     return $btn;
