@@ -148,7 +148,9 @@ class UpdateOrderController extends Controller
                             <i class="fa fa-repeat"></i></button>';
                         }
                     }
-
+                    if ($row->order_status == OrderPlaced::CANCELLED) {
+                       $btn .= $row->order_cancel_reason;
+                    }
                     return $btn;
                 })
                 ->rawColumns(['status', 'action', 'dates'])
