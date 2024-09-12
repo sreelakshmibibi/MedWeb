@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ClinicBasicDetail;
+use App\Models\ClinicBranch;
 use App\Models\OrderPlaced;
 use App\Models\Technician;
 use App\Models\TeethRow;
 use App\Models\ToothExamination;
 use App\Models\TreatmentPlan;
 use App\Services\ReportService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PlaceOrderController extends Controller
 {
@@ -37,7 +41,7 @@ class PlaceOrderController extends Controller
      */
     public function create(Request $request)
     {
-        $query = ToothExamination::with(['treatmentPlan', 'patient', 'shade']);
+        $query = ToothExamination::with(['treatmentPlan', 'patient', 'shade','appointment']);
         
         // Apply filters based on request inputs
         if ($request->filled('serviceFromDate')) {
@@ -49,7 +53,10 @@ class PlaceOrderController extends Controller
         }
     
         if ($request->filled('serviceBranch')) {
-            $query->where('a.app_branch', $request->serviceBranch);
+            // Filter by app_branch in the related appointment table
+            $query->whereHas('appointment', function ($q) use ($request) {
+                $q->where('app_branch', $request->serviceBranch);
+            });
         }
         
         if ($request->filled('serviceTreatmentPlan')) {
@@ -57,7 +64,7 @@ class PlaceOrderController extends Controller
         }
     
         $data = $query->get();
-    
+        
         $treatmentPlan = [];
         foreach ($data as $d) {
             if ($d->treatment_plan_id != null) {
@@ -93,7 +100,7 @@ class PlaceOrderController extends Controller
                     "tooth_id" => $tooth,
                     "plan" => $d->treatmentPlan->plan,
                     "shade" => $shade,
-                    "instructions" => $d->instructions
+                    "instructions" => $d->instructions,
                 ];
             }
         }
@@ -126,18 +133,20 @@ class PlaceOrderController extends Controller
      * Store a newly created resource in storage.
      */
 
+     
      public function store(Request $request)
      {
          try {
+             DB::beginTransaction();
              $selectedToothExaminations = $request->selectedRows;
              $orderDate = $request->order_date;
              $expectedDate = $request->delivery_expected;
              $technicianId = $request->technician_id;
+             $branch = $request->branch;
+             $i = 0;
      
              foreach ($selectedToothExaminations as $examination) {
-                 // Create a new OrderPlaced instance for each tooth examination
                  $orderPlaced = new OrderPlaced();
-                 
                  $orderPlaced->tooth_examination_id = $examination;
                  $exam = ToothExamination::find($examination);
                  $orderPlaced->treatment_plan_id = $exam->treatment_plan_id;
@@ -146,15 +155,60 @@ class PlaceOrderController extends Controller
                  $orderPlaced->order_placed_on = $orderDate;
                  $orderPlaced->delivery_expected_on = $expectedDate;
                  $orderPlaced->order_status = OrderPlaced::PLACED;
-     
-                 // Save the OrderPlaced instance
-                 $orderPlaced->save();
+                 $i = $orderPlaced->save();
              }
-             //take print on placing order
-             return response()->json(['success' => 'Order placed successfully.']);  
+     
+             if ($i) {
+                 DB::commit();
+     
+                 $orders = OrderPlaced::with('toothExamination')
+                     ->where('order_placed_on', $orderDate)
+                     ->where('technician_id', $technicianId)
+                     ->where('delivery_expected_on', $expectedDate)
+                     ->get();
+                $lab = Technician::find($technicianId);
+                 $clinicDetails = ClinicBasicDetail::first();
+                 $clinicLogo = $clinicDetails->clinic_logo == '' ? 'public/images/logo-It.png' : 'storage/' . $clinicDetails->clinic_logo;
+                 $clinicBranch = ClinicBranch::with(['country', 'state', 'city'])->find($branch);
+     
+                 $pdf = Pdf::loadView('pdf.lab_order_pdf', [
+                     'orders' => $orders,
+                     'clinicDetails' => $clinicDetails,
+                     'clinicLogo' => $clinicLogo,
+                     'currency' => $clinicDetails->currency,
+                     'branch' => $clinicBranch,
+                     'orderDate' => $orderDate,
+                     'expectedDelivery' => $expectedDate,
+                     'lab' => $lab,
+                 ])->setPaper('A4', 'landscape');
+     
+                 $labOrder = 'labOrder_' . date('Y-m-d_H-i-s') . '.pdf';
+                 $filePath = 'public/pdfs/' . $labOrder;
+     
+                 if (!Storage::exists('pdfs')) {
+                     Storage::makeDirectory('pdfs', 0777, true);
+                 }
+     
+                 Storage::put($filePath, $pdf->output());
+     
+                 if (Storage::exists($filePath)) {
+                    return response()->json(['pdfUrl' => Storage::url($filePath)]);
+                         
+                 } else {
+                     return response()->json(['error' => 'File not found.']);
+                 }
+             } else {
+                 DB::rollBack();
+                 return response()->json(['error' => 'error']);
+             }
          } catch (Exception $e) {
+             DB::rollBack();
              return response()->json(['error' => $e->getMessage()]);
          }
      }
+     
+
+     
+
      
 }

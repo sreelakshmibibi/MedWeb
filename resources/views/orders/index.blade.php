@@ -51,7 +51,6 @@
                                     <div class="form-group">
                                         <label class="form-label" for="serviceBranch">Branch <span class="text-danger">*</span></label>
                                         <select class="form-control" id="serviceBranch" name="serviceBranch" required>
-                                            <option value="">All</option>
                                             @foreach ($branches as $branch)
                                                 <option value="{{ $branch['id'] }}"> {{ $branch['name'] }}</option>
                                             @endforeach
@@ -236,7 +235,7 @@
             let technicianId = $('#technician_id').val();
             let orderDate = $('#order_date').val();
             let deliveryExpected = $('#delivery_expected').val();
-
+            let branch = $('#serviceBranch').val();
             // Validate
             isValid = 1;
             if (selectedRows.length === 0) {
@@ -280,13 +279,30 @@
                         selectedRows: selectedRows,
                         technician_id: technicianId,
                         order_date: orderDate,
-                        delivery_expected: deliveryExpected
+                        delivery_expected: deliveryExpected,
+                        branch:branch
                     },
                     success: function(response) {
-                        $('#successMessage').text(response.message).show();
+                        console.log(response,'response');
+                        $('#successMessage').text("Order Placed Successfully").show();
                         $('#orderForm')[0].reset();
                         $('#tableContainer').empty();
                         $('#orderResults').hide();
+                        if (response.pdfUrl) {
+                        // Open the PDF in a new window and trigger print dialog
+                        var printWindow = window.open(response.pdfUrl, "_blank");
+                        printWindow.addEventListener("load", function() {
+                            printWindow.print();
+                        });
+
+                        // Redirect after printing
+                        printWindow.addEventListener("afterprint", function() {
+                            window.location.href = "{{ route('order.place_order') }}";
+                        });
+                    } else {
+                        alert("Failed to generate PDF.");
+                    }
+                       
                     },
                     error: function(error) {
                         console.log(error);

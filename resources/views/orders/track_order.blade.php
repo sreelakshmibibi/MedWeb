@@ -94,6 +94,7 @@
                                         <i class="fa fa-search"></i> Search
                                     </button>
                                 </div>
+                               
                             </div>
 
                             <!-- Technicians Dropdown and Table Container -->
@@ -140,6 +141,8 @@
     var table; // Define table variable in the global scope
 
     jQuery(function ($) {
+        var clinicBasicDetails = @json($clinicBasicDetails);
+
         $('#orderForm').on('submit', function (e) {
             e.preventDefault(); // Prevent the default form submission
 
@@ -208,6 +211,23 @@
                         data: "dates",
                         name: "dates",
                         className: "text-left",
+                        render: function(data, type, row) {
+                            if (type === 'display') {
+                                return "P: " + row.order_placed_on + "<br>" +
+                                    "E: " + row.delivery_expected_on + "<br>" +
+                                    "D: " + (row.delivered_on ? row.delivered_on : 'N/A');
+                            } else if (type === 'export') {
+                                // For export, return an array of strings (separate lines)
+                                return ["P: " + row.order_placed_on,
+                                        "E: " + row.delivery_expected_on,
+                                        "D: " + (row.delivered_on ? row.delivered_on : 'N/A')];
+                            } else {
+                                // Default export case
+                                return "P: " + row.order_placed_on + "\n" +
+                                    "E: " + row.delivery_expected_on + "\n" +
+                                    "D: " + (row.delivered_on ? row.delivered_on : 'N/A');
+                            }
+                        }
                     },
                     
                     {
@@ -223,6 +243,97 @@
                         searchable: true,
                     },
                 ],
+                dom: 'Bfrtlp',
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, 'All']
+                ],
+                // select: true,
+                buttons: [
+                    {
+                        extend: 'print',
+                        text: 'Print',
+                        title: clinicBasicDetails.clinic_name,
+                        messageTop: 'Legend\nP: Order Placed On\nE: Expected Delivery Date\nD: Delivered On\n\nTrack Order Report',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        footer: true,
+                        filename: 'Track Order Report',
+                        exportOptions: {
+                            columns: ':visible:not(:last-child)',
+                            format: {
+                                body: function(data, row, column, node) {
+                                    return data.replace(/<br\s*\/?>/ig, '\n'); // Replace <br> with newline for print
+                                }
+                            }
+                        },
+                        customize: function(win) {
+                            $(win.document.body).css('font-size', '10pt');
+                            $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+                        }
+                    },
+
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        title: clinicBasicDetails.clinic_name,
+                        messageTop: 'Legend\nP: Order Placed On\nE: Expected Delivery Date\nD: Delivered On\n\nTrack Order Report',
+                        footer: true,
+                        filename: 'Track Order Report',
+                        exportOptions: {
+                            columns: ':visible:not(:last-child)',
+                            format: {
+                                body: function(data, row, column, node) {
+                                    // Replace <br> or similar with actual newline
+                                    return data.replace(/<br\s*\/?>/ig, '\n');
+                                }
+                            }
+                        }
+                    },
+
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'PDF',
+                        title: clinicBasicDetails.clinic_name,
+                        messageTop: 'Track Order Report',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        footer: true,
+                        filename: 'Track Order Report',
+                        exportOptions: {
+                            columns: ':visible:not(:last-child)' // Exclude the action column if needed
+                        },
+                        customize: function(doc) {
+                            doc.defaultStyle.fontSize = 10;
+                            doc.styles.tableHeader.fontSize = 10;
+
+                            // Ensure each line in the dates column is treated as a separate line in PDF
+                            doc.content.forEach(function(contentItem) {
+                                if (contentItem.table) {
+                                    contentItem.table.body.forEach(function(row) {
+                                        row.forEach(function(cell) {
+                                            if (typeof cell === 'string' || Array.isArray(cell)) {
+                                                // Replace <br> with actual newlines and handle arrays
+                                                if (Array.isArray(cell)) {
+                                                    cell = cell.join('\n');
+                                                }
+                                                cell = cell.replace(/<br\s*\/?>/ig, '\n');
+                                            }
+                                        });
+                                    });
+                                }
+                            });
+
+                            // Add the legend to the PDF body
+                            doc.content.splice(1, 0, {
+                                text: 'Legend\nP: Order Placed On\nE: Expected Delivery Date\nD: Delivered On',
+                                margin: [0, 0, 0, 12],
+                                fontSize: 9
+                            });
+                        }
+                    }
+                ],
+               
                 drawCallback: function () {
                 // Check if there are any records
                 if (table.data().count() > 0) {
@@ -230,6 +341,7 @@
                 } else {
                     $('#info').hide(); // Hide the order results container
                 }
+                
             }
             });
 
@@ -237,9 +349,10 @@
             $('#orderResults').show();
         });
     });
+
+
     $(document).on('click', '#btn-cancell', function() {
         var orderId = $(this).data('id');
-        alert(orderId);
         $('#cancel_order_id').val(orderId); // Set staff ID in the hidden input
         $('#modal-cancell').modal('show');
     });

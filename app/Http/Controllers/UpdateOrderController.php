@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ClinicBasicDetail;
 use App\Models\OrderPlaced;
 use App\Models\Shade;
 use App\Models\Technician;
@@ -34,7 +35,7 @@ class UpdateOrderController extends Controller
         $shades = Shade::all();
         $branches = $reportService->getBranches();
         $technicians = Technician::all();
-
+        $clinicBasicDetails = ClinicBasicDetail::first();
         if ($request->ajax()) {
             $ordersPlaced = OrderPlaced::with('toothExamination')->orderBy('created_at', 'desc');
             if ($request->filled('serviceFromDate')) {
@@ -44,7 +45,7 @@ class UpdateOrderController extends Controller
             if ($request->filled('serviceToDate')) {
                 $ordersPlaced->whereDate('order_placed_on', '<=', $request->serviceToDate);
             }
-    
+            
             $ordersPlaced->whereHas('toothExamination.appointment', function($query) use ($request) {
                 $query->where('app_branch', $request->serviceBranch);
             });
@@ -153,7 +154,7 @@ class UpdateOrderController extends Controller
                 ->rawColumns(['status', 'action', 'dates'])
                 ->make(true);
         }
-        return view('orders.track_order', compact('branches', 'plans', 'technicians', 'shades'));
+        return view('orders.track_order', compact('branches', 'plans', 'technicians', 'shades', 'clinicBasicDetails'));
     }
 
     /**

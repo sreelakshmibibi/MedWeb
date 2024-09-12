@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Appointment;
 use App\Models\City;
 use App\Models\ClinicBasicDetail;
+use App\Models\OrderPlaced;
 use App\Models\PatientProfile;
 use App\Models\Prescription;
 use App\Models\State;
@@ -452,4 +453,33 @@ class HelperController extends Controller
             return abort(404);
         }
     }
+    public function trackOrderPDF(Request $request)
+    {
+        $ordersPlaced = OrderPlaced::with('toothExamination')->orderBy('created_at', 'desc');
+            if ($request->filled('serviceFromDate')) {
+                $ordersPlaced->whereDate('order_placed_on', '>=', $request->serviceFromDate);
+            }
+    
+            if ($request->filled('serviceToDate')) {
+                $ordersPlaced->whereDate('order_placed_on', '<=', $request->serviceToDate);
+            }
+    
+            $ordersPlaced->whereHas('toothExamination.appointment', function($query) use ($request) {
+                $query->where('app_branch', $request->serviceBranch);
+            });
+
+            if ($request->filled('technician_id')) {
+                $ordersPlaced->where('technician_id', $request->technician_id);
+            }
+    
+            if ($request->filled('order_status')) {
+                $ordersPlaced->where('order_status', $request->order_status);
+            }
+    
+            $ordersPlaced = $ordersPlaced->get();
+
+            
+
+    }
+
 }
