@@ -61,7 +61,7 @@
                                 <div class="col-md-3 col-lg-2">
                                     <div class="form-group">
                                         <label class="form-label" for="technician_id">Select Technician <span class="text-danger">*</span></label>
-                                        <select class="form-control" id="technician_id" name="technician_id" required>
+                                        <select class="form-control" id="technician_id" name="technician_id">
                                             <option value="">Select Technician</option>
                                             @foreach ($technicians as $technician)
                                                 <option value="{{ $technician->id }}">{{ $technician->name }}</option>
@@ -83,15 +83,28 @@
                                 <div class="box-footer p-3" style="border-radius: 0px;">
                                     <h4 class="form-label text-center">Payment</h4>
                                     <div class="row" id="bill_place_section1">
-                                    <div class="col-md-2 col-lg-2">
+                                        <div class="col-md-2 col-lg-2">
                                             <div class="form-group">
-                                                <label class="form-label" for="order_date">Amount to be paid <span class="text-danger">*</span></label>
-                                                <input type="text" class="form-control" id="amount_to_be_paid" name="amount_to_be_paid"
-                                                     required disabled> 
-                                                    
+                                                <label class="form-label" for="bill_amount">Bill Amount <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="bill_amount" name="bill_amount"
+                                                        required disabled>                                                     
                                             </div>
-
                                         </div>
+                                        <div class="col-md-2 col-lg-2">
+                                            <div class="form-group">
+                                                <label class="form-label" for="previous_due">Previous Due <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="previous_due" name="previous_due"
+                                                        required disabled>                                                     
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-lg-2">
+                                            <div class="form-group">
+                                                <label class="form-label" for="order_date">Net Amount to be paid <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="amount_to_be_paid" name="amount_to_be_paid"
+                                                        required disabled>                                                     
+                                            </div>
+                                        </div>
+                                       
                                         <div class="col-md-6 col-lg-6">
                                             <div class="form-group">
                                                 <label class="form-label" for="mode_of_payment">Mode of Payment<span class="text-danger">*</span></label>
@@ -126,12 +139,22 @@
                                                         <input type="text" name="cardcash" id="cardcash"
                                                             class="form-control  w-100 " style="display: none;"
                                                             >
-                                                        
                                                         <span class="error-message text-danger" id="modeError"></span>
                                                 </div>    
+                                        </div>
+                                            
+                                        <div class="col-md-2 col-lg-2">
+                                            <div class="form-group">
+                                                <label class="form-check-label me-2"
+                                                                for="payment_through">Payment through<span class="text-danger">*</span></label>
+                                                <select class="ms-2 form-select w-150" id="payment_through"
+                                                name="payment_through">
+                                                    <option value="Technician">Technician</option>
+                                                    <option value="Lab Account">Lab Account</option>
+                                                </select>
+                                                <span class="error-message text-danger" id="payment_throughError"></span>
                                             </div>
-                                            
-                                            
+                                        </div>
                                         <div class="col-md-2 col-lg-1">
                                             <div class="form-group">
                                                 <label class="form-label" for="amount_paid">Amount paid <span class="text-danger">*</span></label>
@@ -149,7 +172,10 @@
                                             </div>
                                         </div>
                                         
-                                        <div class="col-md-3 col-lg-2">
+                                       
+                                    </div>
+                                    <div>
+                                    <div class="col-md-3 col-lg-2">
                                             <br>
                                             <button type="submit" class="btn btn-success" id="payBillOrderBtn">
                                                 <i class="fa fa-credit-card"></i> Pay Bill
@@ -237,7 +263,15 @@
                 // Clear previous results
                 $('#tableContainer').empty();
                 $('#labBillResults').hide();
-                
+                if (technicianId.length == 0) {
+                    $('#technician_id').addClass('is-invalid');
+                    $('#technicianError').text('Technician is required.');
+                    return; // Prevent further execution
+                } else {
+                    $('#technician_id').removeClass('is-invalid');
+                    $('#technicianError').text('');
+                }
+
                 // Send the data via AJAX
                 $.ajax({
                     url: '{{ route("labPayment.create") }}',
@@ -280,7 +314,10 @@
                             tableHtml += '</tbody></table>';
 
                             // Display the table in the form
-                            $('#tableContainer').html(tableHtml);   
+                            $('#tableContainer').html(tableHtml);
+                            $('#previous_due').val(response.previous_due);
+                            $('#bill_amount').val(response.bill_amount);
+                           
                             $('#amount_to_be_paid').val(response.totalAmount);
                             $('#labBillResults').show();
                         }
@@ -302,13 +339,16 @@
                 let technicianId = $('#technician_id').val();
                 let fromDate = $('#serviceFromDate').val();
                 let toDate = $('#serviceToDate').val();
+                let bill_amount = $('#bill_amount').val();
+                let previous_due = $('#previous_due').val();
                 let amountPaid = $('#amount_paid').val();
                 let balance_due = $('#balance_due').val();
                 let gpaycash = $('#gpaycash').val();
                 let cash = $('#cash').val();
                 let cardcash = $('#cardcash').val();
                 let branch = $('#serviceBranch').val();
-
+                let amount_to_be_paid = $('#amount_to_be_paid').val();
+                let payment_through = $('#payment_through').val();
                 // Validate
                 isValid = 1;
                 if (technicianId.length == 0) {
@@ -318,6 +358,16 @@
                 } else {
                     $('#technician_id').removeClass('is-invalid');
                     $('#technicianError').text('');
+                }
+                
+
+                if (payment_through.length == 0) {
+                    $('#payment_through').addClass('is-invalid');
+                    $('#payment_throughError').text('Please select.');
+                    isValid = 0; // Prevent further execution
+                } else {
+                    $('#payment_through').removeClass('is-invalid');
+                    $('#payment_throughError').text('');
                 }
 
                 const paymentModes = [];
@@ -350,6 +400,12 @@
                         paymentModes.push('card');
                     }
                 }
+                 if (paymentModes.length == 0) {
+                    $('#modeError').text('Select payment mode and amount');
+                    isValid = false;
+                 } else{
+                      $('#modeError').text('');
+                 }
 
                 // Send the data via AJAX
                 if (isValid) {
@@ -360,9 +416,18 @@
                             _token: '{{ csrf_token() }}',
                             technician_id: technicianId,
                             paymentModes: paymentModes,
-                            serviceFromDate: fromDate,
-                            serviceToDate: toDate,
-                            serviceBranch: branch,
+                            from_date: fromDate,
+                            to_date: toDate,
+                            branch_id: branch,
+                            gpay:gpaycash,
+                            cash:cash,
+                            card:cardcash,
+                            payment_through:payment_through,
+                            amount_to_be_paid : amount_to_be_paid,
+                            bill_amount :bill_amount,
+                            previous_due:previous_due,
+                            amount_paid:amountPaid,
+                            balance_due:balance_due,
                             // include other necessary data
                         },
                         success: function(response) {
