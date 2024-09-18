@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class ExpenseCategoryController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:expense category', ['only' => ['index', 'create', 'store', 'update', 'edit', 'destroy']]);
+        
+    }
     /**
      * Display a listing of the resource.
      */
