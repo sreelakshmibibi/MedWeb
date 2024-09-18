@@ -289,6 +289,10 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('send-sms', [SmsController::class, 'sendSms'])->name('send.sms');
 
     Route::get('/expenseCategory', [ExpenseCategoryController::class, 'index'])->name('expenseCategory');
+    Route::post('/expenseCategory/store', [ExpenseCategoryController::class, 'store'])->name('expenseCategory.store');
+    Route::get('/expenseCategory/{categoryId}/edit', [ExpenseCategoryController::class, 'edit'])->name('expenseCategory.edit');
+    Route::post('/expenseCategory/update', [ExpenseCategoryController::class, 'update'])->name('expenseCategory.update');
+    Route::delete('/expenseCategory/{categoryId}', [ExpenseCategoryController::class, 'destroy'])->name('expenseCategory.destroy');
     Route::get('/clinicExpense', [ExpenseController::class, 'index'])->name('clinicExpense');
     
     Route::get('/billing/add', [BillingController::class, 'add'])->name('billing.add');

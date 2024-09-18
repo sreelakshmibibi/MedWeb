@@ -39,9 +39,9 @@
                                 <thead class="bg-primary-light text-center">
                                     <tr>
                                         <th width="10px">No</th>
-                                        <th>Name</th>
-                                        <th width="20px">Status</th>
-                                        <th width="80px">Action</th>
+                                        <th>Category Name</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -57,31 +57,55 @@
     <!-- /.content-wrapper -->
 
     @include('expense.category.create')
+    @include('expense.category.edit')
+    @include('expense.category.delete')
 
-    {{-- @endsection
-
-@section('scripts') --}}
-
-    <script>
-        var expenseCategoryUrl = "{{ route('expenseCategory') }}";
-    </script>
-
-    
 
     <script type="text/javascript">
         jQuery(function($) {
+            table = $('.data-table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('expenseCategory') }}",
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row, meta) {
+                            return meta.row + 1; // Adding 1 to start counting from 1
+                        }
+                    },
+                    {
+                        data: 'category',
+                        name: 'category'
+                    },
+                    {
+                        data: 'status',
+                        name: 'status',
+                        className: "text-center",
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        className: "text-center",
+                        orderable: false,
+                        searchable: true
+                    }
+                ]
+            });
+
             $(document).on('click', '.btn-edit', function() {
-                var departmentId = $(this).data('id');
-                $('#edit_department_id').val(departmentId); // Set department ID in the hidden input
+                var categoryId = $(this).data('id');
+                $('#edit_category_id').val(categoryId); 
                 $.ajax({
-                    url: '{{ url('department') }}' + "/" + departmentId + "/edit",
+                    url: '{{ url('expenseCategory') }}' + "/" + categoryId + "/edit",
                     method: 'GET',
                     success: function(response) {
-                        $('#edit_department_id').val(response.id);
-                        $('#edit_department').val(response.department);
+                        $('#edit_category_id').val(response.id);
+                        $('#edit_category').val(response.category);
                         $('#edit_yes').prop('checked', response.status === 'Y');
                         $('#edit_no').prop('checked', response.status === 'N');
-                        // $('#modal-edit').modal('show');
                     },
                     error: function(error) {
                         console.log(error);
@@ -90,15 +114,15 @@
             });
 
             $(document).on('click', '.btn-del', function() {
-                var departmentId = $(this).data('id');
-                $('#delete_department_id').val(departmentId); // Set department ID in the hidden input
+                var categoryId = $(this).data('id');
+                $('#delete_category_id').val(categoryId); 
                 $('#modal-delete').modal('show');
             });
 
             $('#btn-confirm-delete').click(function() {
-                var departmentId = $('#delete_department_id').val();
-                var url = "{{ route('settings.departments.destroy', ':department') }}";
-                url = url.replace(':department', departmentId);
+                var categoryId = $('#delete_category_id').val();
+                var url = "{{ route('expenseCategory.destroy', ':categoryId') }}";
+                url = url.replace(':categoryId', categoryId);
                 $.ajax({
                     type: 'DELETE',
                     url: url,
@@ -107,7 +131,7 @@
                     },
                     success: function(response) {
                         table.draw(); // Refresh DataTable
-                        $('#successMessage').text('Department deleted successfully');
+                        $('#successMessage').text('Category deleted successfully');
                         $('#successMessage').fadeIn().delay(3000)
                             .fadeOut(); // Show for 3 seconds
                     },

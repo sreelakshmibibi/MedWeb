@@ -1,10 +1,10 @@
-<form id="createDepartmentForm" method="post" action="{{ route('settings.department.store') }}">
+<form id="createExpenseCategoryForm" method="post" action="{{ route('expenseCategory.store') }}">
     @csrf
     <div class="modal fade modal-right slideInRight" id="modal-right" tabindex="-1">
         <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fa fa-briefcase"></i> Department Details</h5>
+                    <h5 class="modal-title"><i class="fa fa-briefcase"></i> Expense Category Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div id="errorMessagecreate" style="display:none;" class="alert alert-danger">
@@ -12,13 +12,13 @@
                 
                 <div class="modal-body">
                     <div class="container-fluid">
-                        <!-- Department Name -->
+                        <!-- Expense Category Name -->
                         <div class="form-group">
-                            <label class="form-label" for="department">Department Name <span class="text-danger">
+                            <label class="form-label" for="category">Expense Category Name <span class="text-danger">
                                     *</span></label>
-                            <input class="form-control" type="text" id="department" name="department"
-                                placeholder="Department Name">
-                            <div id="departmentError" class="invalid-feedback"></div>
+                            <input class="form-control" type="text" id="category" name="category"
+                                placeholder="Expense Category Name">
+                            <div id="categoryError" class="invalid-feedback"></div>
                         </div>
 
                         <!-- Status -->
@@ -37,36 +37,34 @@
 
                 <div class="modal-footer modal-footer-uniform">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success float-end" id="saveDepartmentBtn">Save</button>
+                    <button type="button" class="btn btn-success float-end" id="saveExpenseCategoryBtn">Save</button>
                 </div>
             </div>
         </div>
     </div>
 </form>
 
-<!-- Include custom JavaScript file -->
-<script src="{{ asset('js/departments.js') }}"></script>
+
 
 <script>
     $(function() {
         // Handle Save button click
-        $('#saveDepartmentBtn').click(function() {
+        $('#saveExpenseCategoryBtn').click(function() {
             // Reset previous error messages
             $('#departmentError').text('');
             $('#statusError').text('');
 
             // Validate form inputs
-            var department = $('#department').val();
+            var category = $('#category').val();
             var status = $('input[name="status"]:checked').val();
-
-            // Basic client-side validation (you can add more as needed)
-            if (department.length === 0) {
-                $('#department').addClass('is-invalid');
-                $('#departmentError').text('Department name is required.');
+            
+            if (category.length === 0) {
+                $('#category').addClass('is-invalid');
+                $('#categoryError').text('Category name is required.');
                 return; // Prevent further execution
             } else {
-                $('#department').removeClass('is-invalid');
-                $('#departmentError').text('');
+                $('#category').removeClass('is-invalid');
+                $('#categoryError').text('');
             }
 
             if (!status) {
@@ -77,7 +75,7 @@
             }
 
             // If validation passed, submit the form via AJAX
-            var form = $('#createDepartmentForm');
+            var form = $('#createExpenseCategoryForm');
             var url = form.attr('action');
             var formData = form.serialize();
 
@@ -110,9 +108,9 @@
                     // If error, update modal to show errors
                     var errors = xhr.responseJSON.errors;
 
-                    if (errors.hasOwnProperty('department')) {
-                        $('#department').addClass('is-invalid');
-                        $('#departmentError').text(errors.department[0]);
+                    if (errors.hasOwnProperty('category')) {
+                        $('#category').addClass('is-invalid');
+                        $('#categoryError').text(errors.department[0]);
                     }
 
                     if (errors.hasOwnProperty('status')) {
@@ -124,9 +122,9 @@
 
         // Reset form and errors on modal close
         $('#modal-right').on('hidden.bs.modal', function() {
-            $('#createDepartmentForm').trigger('reset');
-            $('#department').removeClass('is-invalid');
-            $('#departmentError').text('');
+            $('#createExpenseCategoryForm').trigger('reset');
+            $('#category').removeClass('is-invalid');
+            $('#categoryError').text('');
             $('#statusError').text('');
         });
     });
