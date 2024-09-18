@@ -275,10 +275,27 @@ class MenuItemsSeeder extends Seeder
             'icon' => 'fa-solid fa-shopping-cart',
             'order_no' => 8,
         ]);
+        $expenses = MenuItem::create([
+            'name' => 'Expenses',
+            'url' => '#',
+            'route_name' => '#',
+            'icon' => 'fa-solid fa-shopping-cart',
+            'order_no' => 9,
+        ]);
+
+        $purchases = MenuItem::create([
+            'name' => 'Purchases',
+            'url' => '#',
+            'route_name' => '#',
+            'icon' => 'fa-solid fa-shopping-cart',
+            'order_no' => 10,
+        ]);
 
         $billingSubmenus = $billing->children()->createMany([
             ['name' => 'Treatment Billing', 'url' => '/billing', 'route_name' => 'billing', 'icon' => 'icon-Commit', 'order_no' => 1],
-            ['name' => 'Outstanding Billing', 'url' => '/duepayment', 'route_name' => 'duePayment', 'icon' => 'icon-Commit', 'order_no' => 12],
+            ['name' => 'Outstanding Billing', 'url' => '/duepayment', 'route_name' => 'duePayment', 'icon' => 'icon-Commit', 'order_no' => 2],
+            ['name' => 'Lab Payments', 'url' => '/labPayment', 'route_name' => 'labPayment', 'icon' => 'icon-Commit', 'order_no' => 3],
+
         ]);
 
         $settingSubmenus = $settings->children()->createMany([
@@ -316,6 +333,11 @@ class MenuItemsSeeder extends Seeder
             ['name' => 'Track Order', 'url' => '/track_order', 'route_name' => 'order.track_order', 'icon' => 'icon-Commit', 'order_no' => 2],
         ]);
 
+        $expenseSubmenus = $expenses->children()->createMany([
+            ['name' => 'Category', 'url' => '/expenseCategory', 'route_name' => 'expenseCategory', 'icon' => 'icon-Commit', 'order_no' => 1],
+            ['name' => 'Add expense', 'url' => '/clinicExpense', 'route_name' => 'clinicExpense', 'icon' => 'icon-Commit', 'order_no' => 2],
+        ]);
+
         // $appointmentSubmenus = $patients->children()->createMany([
         //     ['name' => 'Appointment List', 'url' => '/appointment', 'route_name' => 'appointment', 'icon' => 'icon-Commit', 'order_no' => 1],
 
@@ -330,6 +352,8 @@ class MenuItemsSeeder extends Seeder
         $reports->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $reception->id, $nurse->id]);
         $billing->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $reception->id, $nurse->id]);
         $orders->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $reception->id, $nurse->id]);
+        $expenses->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $reception->id, $nurse->id]);
+        $purchases->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $reception->id, $nurse->id]);
 
         // Attach roles to submenu items
         foreach ($billingSubmenus as $submenu) {
@@ -349,6 +373,10 @@ class MenuItemsSeeder extends Seeder
             $submenu->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $nurse->id, $reception->id]);
         }
         foreach ($orderSubmenus as $submenu) {
+            $submenu->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $nurse->id, $reception->id]);
+        }
+
+        foreach ($expenseSubmenus as $submenu) {
             $submenu->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $nurse->id, $reception->id]);
         }
 

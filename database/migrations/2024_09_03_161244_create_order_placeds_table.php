@@ -20,8 +20,10 @@ return new class extends Migration
             $table->dateTime('order_placed_on');
             $table->dateTime('delivery_expected_on');
             $table->dateTime('delivered_on')->nullable();
-            $table->integer('order_status'); /*1=order placed 2=order received 3=Order cancelled*/
+            $table->integer('order_status'); /* PLACED = 1;  DELIVERED = 2; CANCELLED = 3; PENDING = 4; REPEAT = 5;*/
+            $table->decimal('lab_cost', 10, 3);
             $table->string('billable')->default('Y');
+            $table->string('bill_paid')->default('N');
             $table->string('order_cancel_reason')->nullable();
              $table->integer('parent_order_id')->nullable();
             $table->string('order_repeat_reason')->nullable();

@@ -24,7 +24,7 @@ class OrderPlaced extends Model
     const REPEAT_DESC = "ORDER REPEAT";
 
 
-    protected $fillable = ['tooth_examination_id', 'patient_id', 'treatment_plan_id', 'technician_id', 'order_placed_on', 'delivery_expected_on','delivered_on','order_status', 'order_cancel_reason','order_repeat_reason', 'parent_order_id','billable', 'cancelled_on','created_by', 'updated_by', 'canceled_by', 'deleted_by'];
+    protected $fillable = ['tooth_examination_id', 'patient_id', 'treatment_plan_id', 'technician_id', 'order_placed_on', 'delivery_expected_on','delivered_on','order_status','lab_cost', 'order_cancel_reason','order_repeat_reason', 'parent_order_id','billable', 'cancelled_on','created_by', 'updated_by', 'canceled_by', 'deleted_by', 'lab_paid'];
 
     protected $dates = ['deleted_at'];
 

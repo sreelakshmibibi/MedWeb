@@ -9,6 +9,7 @@ use App\Models\Technician;
 use App\Models\TeethRow;
 use App\Models\ToothExamination;
 use App\Models\TreatmentPlan;
+use App\Models\TreatmentPlanTechnicianCost;
 use App\Services\ReportService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
@@ -149,12 +150,17 @@ class PlaceOrderController extends Controller
                  $orderPlaced = new OrderPlaced();
                  $orderPlaced->tooth_examination_id = $examination;
                  $exam = ToothExamination::find($examination);
+                 $labAmount = TreatmentPlanTechnicianCost::where('treatment_plan_id', $exam->treatment_plan_id)
+                                ->where('technician_id', $technicianId)
+                                ->where('status', 'Y')
+                                ->first();
                  $orderPlaced->treatment_plan_id = $exam->treatment_plan_id;
                  $orderPlaced->patient_id = $exam->patient_id;
                  $orderPlaced->technician_id = $technicianId;
                  $orderPlaced->order_placed_on = $orderDate;
                  $orderPlaced->delivery_expected_on = $expectedDate;
                  $orderPlaced->order_status = OrderPlaced::PLACED;
+                 $orderPlaced->lab_cost = $labAmount->cost ?? Null;
                  $i = $orderPlaced->save();
              }
      

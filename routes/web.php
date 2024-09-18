@@ -9,7 +9,10 @@ use App\Http\Controllers\Auth\StaffVerificationController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\Billing\BillingController;
 use App\Http\Controllers\Billing\PaymentController;
+use App\Http\Controllers\Expenses\ExpenseCategoryController;
+use App\Http\Controllers\Expenses\ExpenseController;
 use App\Http\Controllers\HelperController;
+use App\Http\Controllers\LabBillController;
 use App\Http\Controllers\MedicineBillController;
 use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
@@ -278,8 +281,15 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::get('/track_order/{orderId}/edit', [UpdateOrderController::class, 'edit'])->name('order.edit');
     Route::post('/track_order/repeat/{orderId}', [UpdateOrderController::class, 'repeat'])->name('order.repeat');
 
+    Route::get('/labPayment', [LabBillController::class, 'index'])->name('labPayment');
+    Route::post('/labPayment/create', [LabBillController::class, 'create'])->name('labPayment.create');
+    Route::post('/labPayment/store', [LabBillController::class, 'store'])->name('labPayment.store');
+
     Route::get('/db_backup', [BackupController::class, 'index'])->name('settings.db_backup');
     Route::post('send-sms', [SmsController::class, 'sendSms'])->name('send.sms');
 
+    Route::get('/expenseCategory', [ExpenseCategoryController::class, 'index'])->name('expenseCategory');
+    Route::get('/clinicExpense', [ExpenseController::class, 'index'])->name('clinicExpense');
+    
+    Route::get('/billing/add', [BillingController::class, 'add'])->name('billing.add');
 });
-Route::get('/billing/add', [BillingController::class, 'add'])->name('billing.add');
