@@ -274,7 +274,7 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::get('/place_order', [PlaceOrderController::class, 'index'])->name('order.place_order');
     Route::post('/place_order/create', [PlaceOrderController::class, 'create'])->name('orders.create');
     Route::post('/place_order/store', [PlaceOrderController::class, 'store'])->name('orders.store');
-    
+
     Route::get('/track_order', [UpdateOrderController::class, 'index'])->name('order.track_order');
     Route::post('/track_order/{orderId}', [UpdateOrderController::class, 'destroy'])->name('order.destroy');
     Route::post('/track_order/delivered/{orderId}', [UpdateOrderController::class, 'update'])->name('order.update');
@@ -296,6 +296,12 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/expenseCategory/update', [ExpenseCategoryController::class, 'update'])->name('expenseCategory.update');
     Route::delete('/expenseCategory/{categoryId}', [ExpenseCategoryController::class, 'destroy'])->name('expenseCategory.destroy');
     Route::get('/clinicExpense', [ExpenseController::class, 'index'])->name('clinicExpense');
-    
+    Route::post('/clinicExpense/store', [ExpenseController::class, 'store'])->name('expense.expense.store');
+    Route::get('/clinicExpense/{expense}/edit', [ExpenseController::class, 'edit'])->name('expense.expense.edit');
+    Route::post('/clinicExpense/update', [ExpenseController::class, 'update'])->name('expense.expense.update');
+    Route::delete('/clinicExpense/{expense}', [ExpenseController::class, 'destroy'])->name('expense.expense.destroy');
+    Route::get('clinicExpense/{id}/download-bills', [ExpenseController::class, 'downloadBills']);
+
+
     Route::get('/billing/add', [BillingController::class, 'add'])->name('billing.add');
 });
