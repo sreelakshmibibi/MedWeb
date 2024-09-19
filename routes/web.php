@@ -285,6 +285,7 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/labPayment/create', [LabBillController::class, 'create'])->name('labPayment.create');
     Route::post('/labPayment/store', [LabBillController::class, 'store'])->name('labPayment.store');
     Route::get('/labPayment/show', [LabBillController::class, 'show'])->name(name: 'labPayment.show');
+    Route::post('/labPayment/cancel/{billId}', [LabBillController::class, 'destroy'])->name(name: 'labPayment.destroy');
 
     Route::get('/db_backup', [BackupController::class, 'index'])->name('settings.db_backup');
     Route::post('send-sms', [SmsController::class, 'sendSms'])->name('send.sms');

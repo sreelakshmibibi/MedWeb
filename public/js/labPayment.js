@@ -1,4 +1,5 @@
 var table; // Define table variable in the global scope
+
 jQuery(function ($) {
     // Check if DataTable is already initialized
     if ($.fn.DataTable.isDataTable(".data-table")) {
@@ -91,12 +92,12 @@ jQuery(function ($) {
             {
                 extend: 'print',
                 text: 'Print',
-                title: 'Your Clinic Name',
-                messageTop: 'Collection Report',
+                title: clinicBasicDetails.clinic_name,
+                messageTop: 'Lab Payment Report',
                 orientation: 'landscape',
                 pageSize: 'A4',
                 footer: true,
-                filename: 'Collection Report',
+                filename: 'Lab Payment Report',
                 exportOptions: {
                     columns: ':visible'
                 },
@@ -108,10 +109,10 @@ jQuery(function ($) {
             {
                 extend: 'excelHtml5',
                 text: 'Excel',
-                title: 'Your Clinic Name',
-                messageTop: 'Collection Report',
+                title: clinicBasicDetails.clinic_name,
+                messageTop: 'Lab Payment Report',
                 footer: true,
-                filename: 'Collection Report',
+                filename: 'Lab Payment Report',
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -119,15 +120,15 @@ jQuery(function ($) {
             {
                 extend: 'pdfHtml5',
                 text: 'PDF',
-                title: 'Your Clinic Name',
-                messageTop: 'Collection Report',
+                title: clinicBasicDetails.clinic_name,
+                messageTop: 'Lab Payment Report',
                 orientation: 'landscape',
-                pageSize: 'A3',
+                pageSize: 'A4',
                 exportOptions: {
                     columns: ':visible'
                 },
                 footer: true,
-                filename: 'Collection Report',
+                filename: 'Lab Payment Report',
                 customize: function(doc) {
                     doc.defaultStyle.fontSize = 10;
                     doc.styles.tableHeader.fontSize = 10;

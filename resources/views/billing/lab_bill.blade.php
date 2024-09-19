@@ -10,7 +10,7 @@
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Lab Bill Payments</h3>
                     <a type="button" class="waves-effect waves-light btn btn-primary"
-                            href="{{ route('labPayment.show') }}">Previous Payments</a>
+                            href="{{ route('labPayment.show') }}">Payment History</a>
                 </div>
             </div>
 
@@ -430,7 +430,9 @@
                             // Optionally, you can clear the detailed bill table if it exists
                             $('#tableContainer').empty();
                             $('#successMessage').text("Bill paid orders updated Successfully").show();
-                            
+                            setTimeout(function() {
+                                window.location.href = "{{ route('labPayment.show') }}"; // Replace with your actual route name
+                            }, 2000);
                             
                         },
                         error: function(error) {

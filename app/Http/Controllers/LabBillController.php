@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ClinicBasicDetail;
 use App\Models\Department;
 use App\Models\LabBill;
 use App\Models\OrderPlaced;
@@ -13,6 +14,7 @@ use App\Services\ReportService;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
@@ -38,9 +40,8 @@ class LabBillController extends Controller
         $query = OrderPlaced::with(['toothExamination', 'treatmentPlan'])
                 ->where('order_status', OrderPlaced::DELIVERED)
                 ->where('billable', 'Y')
-                ->where('bill_paid', 'N');
+                ->whereNull('lab_bill_id');
 
-        
         // Apply filters based on request inputs
         if ($request->filled('serviceFromDate')) {
             $query->whereDate('delivered_on', '>=', $request->serviceFromDate);
@@ -146,7 +147,7 @@ class LabBillController extends Controller
                 ->where('billable', 'Y')
                 ->whereDate('delivered_on', '>=', $request->from_date)
                 ->whereDate('delivered_on', '<=', $request->to_date)
-                ->update(['bill_paid' => 'Y']);
+                ->update(['lab_bill_id' => $labBill->id]);
                 if ($orderStatusUpdate) {
                     DB::commit();
                     return response()->json(['success'=> 'Lab bills paid successfully']);
@@ -200,54 +201,63 @@ class LabBillController extends Controller
                 ->addColumn('status', function ($row) {
                 $btn1 = null;
                     if ($row->lab_bill_status == PatientTreatmentBilling::PAYMENT_DONE) {
-                        $btn1 = '<span class="text-success" title="active"><i class="fa-solid fa-circle-check"></i></span>';
+                        $btn1 = '<span class="text-success" title="Paid"><i class="fa-solid fa-circle-check"></i>Paid</span>';
                     } else if ($row->lab_bill_status == PatientTreatmentBilling::BILL_CANCELLED) {
-                        $btn1 = '<span class="text-danger" title="inactive"><i class="fa-solid fa-circle-xmark"></i></span>';
+                        $btn1 = '<span class="text-danger" title="Cancelled"><i class="fa-solid fa-circle-xmark"></i>Cancelled</span>';
                     }
                     return $btn1;
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
-                        data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
-                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-del btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
-                        <i class="fa fa-trash"></i></button>';
+                    $btn = null;
+                    if ($row->lab_bill_status != PatientTreatmentBilling::BILL_CANCELLED) {
+                        $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-cancel-lab-bill btn-xs" id="btn-cancel-lab-bill" data-bs-toggle="modal" data-bs-target="#modal-cancel-lab-bill" data-id="'. $row->id .'" title="Cancel">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                        ';
+                    } else {
+                        $btn .= $row->lab_bill_delete_reason.'. Cancelled On :'. $row->updated_at;
+                    }
 
                     return $btn;
                 })
                 ->rawColumns(['status', 'action', 'mode'])
                 ->make(true);
         }
-
+        $clinicBasicDetails = ClinicBasicDetail::first();
         // Return the view with menu items
-        return view('billing.lab_previous_bills');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
+        return view('billing.lab_previous_bills', compact('clinicBasicDetails'));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id, Request $request)
     {
-        //
-    }
-
-    public function oldPayment()
-    {
-
+        try{
+            DB::beginTransaction();
+            $labBill = LabBill::find($id);
+            if (!$labBill)
+                abort(404);
+            $orderStatusUpdate = OrderPlaced::where('lab_bill_id', $id)
+                ->update(['lab_bill_id' => NULL]);
+            if ($orderStatusUpdate) {
+                $labBill->lab_bill_delete_reason = $request->reason;
+                $labBill->lab_bill_status = PatientTreatmentBilling::BILL_CANCELLED;
+                $labBill->deleted_by = Auth::user()->id;
+                if ($labBill->save()) {
+                    DB::commit();
+                    return response()->json(['success'=> 'Bill cancelled successfully']);
+                } else{
+                    DB::rollBack();
+                    return response()->json(['error'=> 'Lab Bill Error! Pls try again.']);
+                }
+            } else {
+                DB::rollBack();
+                return response()->json(['error'=> 'Order Error ! Pls try again.']);
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json(['error'=> $e->getMessage()]);
+        }
     }
 }

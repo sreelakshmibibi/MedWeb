@@ -57,12 +57,13 @@
     </div>
     <!-- /.content-wrapper -->
     
-
+    @include('billing.lab_bill_cancel')
     {{-- @endsection
 
 @section('scripts') --}}
 
     <script>
+        var clinicBasicDetails = @json($clinicBasicDetails);
         var labPaymentUrl = "{{ route('labPayment.show') }}";
     </script>
 
@@ -70,10 +71,48 @@
     <script src="{{ asset('js/labPayment.js') }}"></script>
 
     <script type="text/javascript">
-        jQuery(function($) {
-            
-            
-            
+        // jQuery(function($) {
+            $(document).on('click', '#btn-cancel-lab-bill', function() {
+            var billId = $(this).data('id');
+            $('#cancel_bill_id').val(billId);
+            $('#modal-cancel-lab-bill').modal('show');
         });
+
+        $('#btn-cancel-bill').click(function() {
+            var billId = $('#cancel_bill_id').val();
+            var reason = $('#bill_cancel_reason').val();
+
+            if (reason.length === 0) {
+                $('#reason').addClass('is-invalid');
+                $('#reasonError').text('Reason is required.');
+                return; // Stop further execution
+            }
+
+            var url = "{{ route('labPayment.destroy', ':billId') }}";
+            url = url.replace(':billId', billId);
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "reason": reason
+                },
+                success: function(response) {
+                    $('#modal-cancel-lab-bill').modal('hide'); // Close modal after success
+                    table.draw(); // Refresh DataTable
+                    $('#successMessage').text('Bill cancelled successfully');
+                    $('#successMessage').fadeIn().delay(3000)
+                        .fadeOut(); // Show for 3 seconds
+
+                },
+                error: function(xhr) {
+                    $('#modal-cancel-lab-bill').modal(
+                        'hide'); // Close modal in case of error
+                    console.log("Error!", xhr.responseJSON.message, "error");
+                }
+            });
+        });       
+        // });
     </script>
 @endsection
