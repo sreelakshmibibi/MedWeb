@@ -11,6 +11,11 @@ use Yajra\DataTables\DataTables as DataTables;
 
 class ExpenseController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:expense', ['only' => ['index', 'create', 'store', 'update', 'edit', 'destroy']]);
+
+    }
     /**
      * Display a listing of the resource.
      */

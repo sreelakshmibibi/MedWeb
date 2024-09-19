@@ -141,7 +141,6 @@
         // Download bills when button is clicked
         $(document).on('click', '.downloadBills', function() {
             var expenseId = $(this).data('id');
-            alert(expenseId)
             window.location.href = '{{ url('clinicExpense') }}' + "/" + expenseId + "/download-bills";
         });
 
