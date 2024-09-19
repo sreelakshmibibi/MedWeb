@@ -6,22 +6,11 @@
         <div class="container-full">
             <div class="content-header">
                 <div id="successMessage" style="display:none;" class="alert alert-success"></div>
-                
-                @if (session('success'))
-                    <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-success alerttop fadeOut"
-                        style="display: block;">
-                        <i class="ti-check"></i> {{ session('success') }} <a href="#" class="closed">×</a>
-                    </div>
-                @endif
-                @if (session('error'))
-                    <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-danger alerttop fadeOut"
-                        style="display: block;">
-                        <i class="ti-check"></i> {{ session('error') }} <a href="#" class="closed">×</a>
-                    </div>
-                @endif
 
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Lab Bill Payments</h3>
+                    <a type="button" class="waves-effect waves-light btn btn-primary"
+                            href="{{ route('labPayment.show') }}">Previous Payments</a>
                 </div>
             </div>
 
@@ -431,8 +420,17 @@
                             // include other necessary data
                         },
                         success: function(response) {
-                            console.log(response,'response');
+                            $('#labBillForm')[0].reset(); // Reset the form
+                            $('#labBillResults').hide(); // Hide results section if needed
+
+                            // If you have any specific fields that need to be reset to a particular value:
+                            $('#serviceFromDate').val(new Date().toISOString().split('T')[0]); // Reset to today
+                            $('#serviceToDate').val(new Date().toISOString().split('T')[0]); // Reset to today
+
+                            // Optionally, you can clear the detailed bill table if it exists
+                            $('#tableContainer').empty();
                             $('#successMessage').text("Bill paid orders updated Successfully").show();
+                            
                             
                         },
                         error: function(error) {
