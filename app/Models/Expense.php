@@ -9,6 +9,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Expense extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $fillable = ['billdate', 'name', 'amount', 'category', 'billfile', 'status', 'created_by', 'updated_by'];
+    protected $fillable = ['billdate', 'branch_id', 'name', 'amount', 'category', 'billfile', 'status', 'created_by', 'updated_by'];
     protected $dates = ['deleted_at'];
 }

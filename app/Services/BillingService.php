@@ -341,6 +341,7 @@ class BillingService
             'bill_type' => $inputData['bill_type'],
             'bill_no' => $inputData['bill_no'],
             'bill_date' => $inputData['bill_date'],
+            'branch_id' => $inputData['branch_id'],
             'net_paid' => $netPaid,
             'cash' => $inputData['cash'],
             'gpay' => $inputData['gpay'],

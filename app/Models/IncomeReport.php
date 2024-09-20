@@ -15,6 +15,7 @@ class IncomeReport extends Model
         'bill_type',
         'bill_no',
         'bill_date',
+        'branch_id',
         'net_paid',
         'cash',
         'gpay',
