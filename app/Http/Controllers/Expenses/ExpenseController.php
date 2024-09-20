@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Expense\ExpenseRequest;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
+use App\Models\ClinicBranch;
 use Yajra\DataTables\DataTables as DataTables;
 
 class ExpenseController extends Controller
@@ -24,14 +25,22 @@ class ExpenseController extends Controller
         $categories = ExpenseCategory::where('status', 'Y')
             ->orderBy('category', 'asc')
             ->get();
+        $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])
+            ->where('clinic_status', 'Y')
+            ->get();
 
         if ($request->ajax()) {
 
-            $expenses = Expense::select('expenses.*', 'expense_categories.category as category_name') // Select fields from both tables
+            $expenses = Expense::select('expenses.*', 'expense_categories.category as category_name', 'clinic_branches.clinic_address as branch') // Select fields from both tables
                 ->join('expense_categories', 'expenses.category', '=', 'expense_categories.id') // Join the expense_categories table
+                ->join('clinic_branches', 'expenses.branch', '=', 'clinic_branches.id') // Join the clinic_branches table
                 ->where('expense_categories.status', 'Y') // Filter by status
                 ->orderBy('billdate', 'asc')
                 ->get();
+            $expenses->transform(function ($expense) {
+                $expense->branch = str_replace('<br>', ' ', $expense->branch);
+                return $expense;
+            });
 
             return DataTables::of($expenses)
                 ->addIndexColumn()
@@ -61,7 +70,7 @@ class ExpenseController extends Controller
         }
 
         // Return the view with menu items
-        return view('expense.expense.index', compact('categories'));
+        return view('expense.expense.index', compact('categories', 'clinicBranches'));
     }
 
     /**
@@ -167,6 +176,7 @@ class ExpenseController extends Controller
             // Update the fields
             $expense->name = $data['name'];
             $expense->category = $data['category'];
+            $expense->branch_id = $data['branch_id'];
             $expense->amount = $data['amount'];
             $expense->billdate = $data['billdate'];
             $expense->status = $data['status'];

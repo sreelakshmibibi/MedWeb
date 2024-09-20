@@ -22,19 +22,42 @@
                             <div id="edit_nameError" class="invalid-feedback"></div>
                         </div>
 
-                        <!-- Category -->
-                        <div class="form-group">
-                            <label class="form-label" for="edit_category">Category <span class="text-danger">
-                                    *</span></label>
-                            <select class="form-select category_select" id="edit_category" name="category">
-                                <option value="">Select a Category</option>
-                                {{-- <option value="1">food</option>
-                                <option value="2">water</option> --}}
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->category }}</option>
-                                @endforeach
-                            </select>
-                            <div id="edit_categoryError" class="invalid-feedback"></div>
+                        <div class="row">
+                            <div class="col-md-6 ">
+                                <!-- Category -->
+                                <div class="form-group">
+                                    <label class="form-label" for="edit_category">Category <span class="text-danger">
+                                            *</span></label>
+                                    <select class="form-select category_select" id="edit_category" name="category">
+                                        <option value="">Select a Category</option>
+                                        @foreach ($categories as $category)
+                                            <option value="{{ $category->id }}">{{ $category->category }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div id="edit_categoryError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 ">
+                                <!-- Branch -->
+                                <div class="form-group">
+                                    <label class="form-label" for="edit_branch">Branch <span class="text-danger">
+                                            *</span></label>
+                                    <select class="form-select branch_select" id="edit_branch" name="branch">
+                                        <option value="">Select a Branch</option>
+                                        @foreach ($clinicBranches as $clinicBranch)
+                                            <?php
+                                            $clinicAddress = $clinicBranch->clinic_address;
+                                            $clinicAddress = explode('<br>', $clinicBranch->clinic_address);
+                                            $clinicAddress = implode(', ', $clinicAddress);
+                                            $branch = $clinicAddress . ', ' . $clinicBranch->city->city . ', ' . $clinicBranch->state->state;
+                                            ?>
+                                            <option value="{{ $clinicBranch->id }}">
+                                                {{ $branch }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div id="edit_branchError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="row">
@@ -76,8 +99,8 @@
                         <!-- Status -->
                         <div class="form-group mt-3">
                             <label class="form-label col-md-6">Active</label>
-                            <input name="status" type="radio" checked class="form-control with-gap" id="edit_yes"
-                                value="Y">
+                            <input name="status" type="radio" checked class="form-control with-gap"
+                                id="edit_yes" value="Y">
                             <label for="edit_yes">Yes</label>
                             <input name="status" type="radio" class="form-control with-gap" id="edit_no"
                                 value="N">
@@ -105,6 +128,7 @@
                 name: $('#edit_name').val(),
                 amount: $('#edit_amount').val(),
                 category: $('#edit_category').val(),
+                branch: $('#edit_branch').val(),
                 date: $('#edit_billdate').val(),
                 status: $('input[name="status"]:checked').val()
             };
@@ -162,7 +186,9 @@
         // Reset form and errors on modal close
         $('#modal-edit').on('hidden.bs.modal', function() {
             $('#editExpenseForm').trigger('reset');
-            ['edit_name', 'edit_amount', 'edit_category', 'edit_billdate', 'edit_billfile'].forEach(
+            ['edit_name', 'edit_amount', 'edit_category', 'edit_branch', 'edit_billdate',
+                'edit_billfile'
+            ].forEach(
                 resetError);
             $('#errorMessage').hide();
         });

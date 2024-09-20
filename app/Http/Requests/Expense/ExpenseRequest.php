@@ -34,6 +34,7 @@ class ExpenseRequest extends FormRequest
             'category' => 'required|string|max:255', // Assuming category is a string
             'billfile.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048', // Allow files with specific extensions and size limit
             'status' => 'required|string|size:1', // Assuming status is a single character
+            'branch' => 'required|string|max:255',
         ];
     }
 

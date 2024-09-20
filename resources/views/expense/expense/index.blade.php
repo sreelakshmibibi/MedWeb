@@ -42,6 +42,7 @@
                                         <th>Name</th>
                                         <th>Amount</th>
                                         <th>Category</th>
+                                        <th class="text-center" width="180px">Branch</th>
                                         <th width="20px">Status</th>
                                         <th width="120px">Action</th>
                                     </tr>
@@ -114,6 +115,11 @@
                         className: "text-center",
                     },
                     {
+                        data: 'branch',
+                        name: 'branch',
+                        className: 'text-left'
+                    },
+                    {
                         data: "status",
                         name: "status",
                         className: "text-center",
@@ -155,6 +161,7 @@
                     $('#edit_expense_id').val(response.id);
                     $('#edit_name').val(response.name);
                     $('#edit_category').val(response.category);
+                    $('#edit_branch').val(response.branch);
                     $('#edit_amount').val(response.amount);
                     $('#edit_billdate').val(response.billdate);
 

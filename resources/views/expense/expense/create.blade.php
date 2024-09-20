@@ -21,19 +21,45 @@
                             <div id="nameError" class="invalid-feedback"></div>
                         </div>
 
-                        <!-- Category -->
-                        <div class="form-group">
-                            <label class="form-label" for="category">Category <span class="text-danger">
-                                    *</span></label>
-                            <select class="form-select category_select" id="category" name="category">
-                                <option value="">Select a Category</option>
-                                {{-- <option value="1">food</option>
+                        <div class="row">
+                            <div class="col-md-6 ">
+                                <!-- Category -->
+                                <div class="form-group">
+                                    <label class="form-label" for="category">Category <span class="text-danger">
+                                            *</span></label>
+                                    <select class="form-select category_select" id="category" name="category">
+                                        <option value="">Select a Category</option>
+                                        {{-- <option value="1">food</option>
                                 <option value="2">water</option> --}}
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->category }}</option>
-                                @endforeach
-                            </select>
-                            <div id="categoryError" class="invalid-feedback"></div>
+                                        @foreach ($categories as $category)
+                                            <option value="{{ $category->id }}">{{ $category->category }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div id="categoryError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 ">
+                                <!-- Branch -->
+                                <div class="form-group">
+                                    <label class="form-label" for="branch">Branch <span class="text-danger">
+                                            *</span></label>
+                                    <select class="form-select branch_select" id="branch" name="branch">
+                                        <option value="">Select a Branch</option>
+                                        @foreach ($clinicBranches as $clinicBranch)
+                                            <?php
+                                            $clinicAddress = $clinicBranch->clinic_address;
+                                            $clinicAddress = explode('<br>', $clinicBranch->clinic_address);
+                                            $clinicAddress = implode(', ', $clinicAddress);
+                                            $branch = $clinicAddress . ', ' . $clinicBranch->city->city . ', ' . $clinicBranch->state->state;
+                                            ?>
+                                            <option value="{{ $clinicBranch->id }}">
+                                                {{ $branch }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div id="branchError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="row">
@@ -101,6 +127,7 @@
                 name: $('#name').val(),
                 amount: $('#amount').val(),
                 category: $('#category').val(),
+                branch: $('#branch').val(),
                 date: $('#billdate').val(),
                 status: $('input[name="status"]:checked').val()
             };
@@ -153,7 +180,7 @@
 
         $('#modal-right').on('hidden.bs.modal', function() {
             $('#createExpenseForm').trigger('reset');
-            ['name', 'amount', 'category', 'billdate', 'billfile'].forEach(resetError);
+            ['name', 'amount', 'category', 'branch', 'billdate', 'billfile'].forEach(resetError);
             $('#errorMessagecreate').hide();
         });
     });
