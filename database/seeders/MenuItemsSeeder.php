@@ -343,6 +343,10 @@ class MenuItemsSeeder extends Seeder
             ['name' => 'Category', 'url' => '/expenseCategory', 'route_name' => 'expenseCategory', 'icon' => 'icon-Commit', 'order_no' => 1],
             ['name' => 'Add expense', 'url' => '/clinicExpense', 'route_name' => 'clinicExpense', 'icon' => 'icon-Commit', 'order_no' => 2],
         ]);
+        $purchaseSubmenus = $purchases->children()->createMany([
+            ['name' => 'Suppliers', 'url' => '/suppliers', 'route_name' => 'suppliers', 'icon' => 'icon-Commit', 'order_no' => 1],
+            ['name' => 'Purchases', 'url' => '/purchases', 'route_name' => 'purchases', 'icon' => 'icon-Commit', 'order_no' => 2],
+        ]);
 
         // $appointmentSubmenus = $patients->children()->createMany([
         //     ['name' => 'Appointment List', 'url' => '/appointment', 'route_name' => 'appointment', 'icon' => 'icon-Commit', 'order_no' => 1],
@@ -383,6 +387,9 @@ class MenuItemsSeeder extends Seeder
         }
 
         foreach ($expenseSubmenus as $submenu) {
+            $submenu->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $nurse->id, $reception->id]);
+        }
+        foreach ($purchaseSubmenus as $submenu) {
             $submenu->roles()->attach([$superadmin->id, $admin->id, $doctor->id, $nurse->id, $reception->id]);
         }
 

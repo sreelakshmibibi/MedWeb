@@ -17,6 +17,8 @@ use App\Http\Controllers\MedicineBillController;
 use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
 use App\Http\Controllers\PlaceOrderController;
+use App\Http\Controllers\Purchases\PurchaseController;
+use App\Http\Controllers\Purchases\SupplierController;
 use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Settings\ClinicBranchController;
 use App\Http\Controllers\Settings\ComboOfferController;
@@ -302,6 +304,10 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/clinicExpense/update', [ExpenseController::class, 'update'])->name('expense.expense.update');
     Route::delete('/clinicExpense/{expense}', [ExpenseController::class, 'destroy'])->name('expense.expense.destroy');
     Route::get('clinicExpense/{id}/download-bills', [ExpenseController::class, 'downloadBills']);
+
+    Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers');
+
+    Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases');
 
 
     Route::get('/billing/add', [BillingController::class, 'add'])->name('billing.add');
