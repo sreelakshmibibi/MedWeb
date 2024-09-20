@@ -66,6 +66,8 @@
                                 <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab"
                                         href="#auditCancelledBillsTab" role="tab"><span class="hidden-sm-up">Cancelled
                                             BIlls</span> <span class="hidden-xs-down">Cancelled Bills</span></a> </li>
+                                <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab"
+                                        href="#consolidatedReportTab" role="tab"><span class="hidden-sm-up">Consolidated Report</span> <span class="hidden-xs-down">Consolidated Report</span></a> </li>
                             </ul>
                             <!-- Tab panes -->
                             <div class="tab-content p-0">
@@ -113,6 +115,11 @@
                                 <div class="tab-pane" id="auditCancelledBillsTab" role="tabpanel">
                                     <div class="p-15">
                                         @include('report.auditCancelledBill')
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="consolidatedReportTab" role="tabpanel">
+                                    <div class="p-15">
+                                        @include('report.consolidatedReport')
                                     </div>
                                 </div>
                             </div>
