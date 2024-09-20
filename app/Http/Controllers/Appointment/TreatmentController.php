@@ -546,6 +546,7 @@ class TreatmentController extends Controller
 
         $treatments = [];
         $individualTreatmentAmounts = [];
+        $individualTreatmentPlanAmounts = [];
         $comboOffersResult = [];
 
         $previousTreatments = [];
