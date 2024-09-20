@@ -9,9 +9,11 @@
 
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Lab Bill Payments</h3>
-                    <a type="button" class="waves-effect waves-light btn btn-primary"
-                        href="{{ route('labPayment.show') }}"><i class="fa-solid fa-clock-rotate-left"> </i> Payment
-                        History</a>
+                        @if (Auth::user()->can('lab payment history'))
+                            <a type="button" class="waves-effect waves-light btn btn-primary"
+                            href="{{ route('labPayment.show') }}"><i class="fa-solid fa-clock-rotate-left"> </i> Payment
+                            History</a>
+                        @endif
                 </div>
             </div>
 
@@ -66,11 +68,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="box-footer text-end p-3">
-                            <button type="submit" class="btn btn-warning" id="generateBillOrderBtn">
-                                <i class="fa-solid fa-file-invoice"> </i> Generate Bill
-                            </button>
-                        </div>
+                        @if (Auth::user()->can('lab payment store'))
+                            <div class="box-footer text-end p-3">
+                                <button type="submit" class="btn btn-warning" id="generateBillOrderBtn">
+                                    <i class="fa-solid fa-file-invoice"> </i> Generate Bill
+                                </button>
+                            </div>
+                        @endif
 
                         <div class="box no-border mb-0" id="labBillResults" style="display:none;">
                             <div class="box-header py-2">
@@ -169,12 +173,13 @@
 
                                 </div>
                             </div>
-
-                            <div class="box-footer text-end p-3">
-                                <button type="submit" class="btn btn-success" id="payBillOrderBtn">
-                                    <i class="fa fa-credit-card"></i> Pay Bill
-                                </button>
-                            </div>
+                            @if (Auth::user()->can('lab payment store'))
+                                <div class="box-footer text-end p-3">
+                                    <button type="submit" class="btn btn-success" id="payBillOrderBtn">
+                                        <i class="fa fa-credit-card"></i> Pay Bill
+                                    </button>
+                                </div>
+                            @endif
 
                             <div class="box-header py-2 billdetail">
                                 <h4 class="box-title">Detailed Bill</h4>

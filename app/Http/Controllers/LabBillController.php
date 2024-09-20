@@ -20,6 +20,15 @@ use Yajra\DataTables\DataTables;
 
 class LabBillController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('permission:lab payment', ['only' => ['index']]);
+        $this->middleware('permission:lab payment store', ['only' => ['create', 'store']]);
+        $this->middleware('permission:lab payment cancel', ['only' => ['destroy']]);
+        $this->middleware('permission:lab payment history', ['only' => ['show']]);
+        
+    }
     /**
      * Display a listing of the resource.
      */
@@ -209,7 +218,7 @@ class LabBillController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     $btn = null;
-                    if ($row->lab_bill_status != PatientTreatmentBilling::BILL_CANCELLED) {
+                    if ($row->lab_bill_status != PatientTreatmentBilling::BILL_CANCELLED && Auth::user()->can('lab payment cancel')) {
                         $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-cancel-lab-bill btn-xs" id="btn-cancel-lab-bill" data-bs-toggle="modal" data-bs-target="#modal-cancel-lab-bill" data-id="'. $row->id .'" title="Cancel">
                             <i class="fa fa-trash"></i>
                         </button>

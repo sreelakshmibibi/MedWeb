@@ -83,7 +83,10 @@ class MenuItemsSeeder extends Seeder
             'order cancel',
             'order deliver',
             'order repeat',
-
+            'lab payment',
+            'lab payment cancel',
+            'lab payment store',
+            'lab payment history',
         ];
 
         foreach ($permissions as $permission) {
@@ -143,7 +146,10 @@ class MenuItemsSeeder extends Seeder
             'order cancel',
             'order deliver',
             'order repeat',
-
+            'lab payment',
+            'lab payment cancel',
+            'lab payment store',
+            'lab payment history',
         ];
 
 
