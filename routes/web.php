@@ -251,6 +251,7 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/report/audit_patient', [ReportController::class, 'auditPatient'])->name('report.auditPatient');
     Route::post('/report/audit_bill', [ReportController::class, 'auditBill'])->name('report.auditBill');
     Route::post('/report/consolidated', [ReportController::class, 'consolidatedReport'])->name('report.consolidated');
+    Route::get('/report/expensesdatewise', [ExpenseController::class, 'getExpensesByDate'])->name('expenses.by.date');
 
     Route::get('/appointments-by-hour', [App\Http\Controllers\HomeController::class, 'getAppointmentsByHour'])->name('appointments-by-hour');
     Route::get('/appointments-by-month', [App\Http\Controllers\HomeController::class, 'getAppointmentsByMonth'])->name('appointments-by-month');
@@ -304,6 +305,8 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/clinicExpense/update', [ExpenseController::class, 'update'])->name('expense.expense.update');
     Route::delete('/clinicExpense/{expense}', [ExpenseController::class, 'destroy'])->name('expense.expense.destroy');
     Route::get('clinicExpense/{id}/download-bills', [ExpenseController::class, 'downloadBills']);
+    
+
 
     Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers');
 

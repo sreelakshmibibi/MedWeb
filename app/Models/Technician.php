@@ -27,4 +27,9 @@ class Technician extends Model
             $technician->updated_by = Auth::id(); // Set updated_by to current user's ID
         });
     }
+
+    public function labBills()
+    {
+        return $this->hasMany(LabBill::class);
+    }
 }
