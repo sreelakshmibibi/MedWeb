@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\Expense\ExpenseRequest;
 use App\Models\Expense;
+use App\Models\LabBill;
 use App\Models\ExpenseCategory;
 use App\Models\ClinicBranch;
+use App\Models\ClinicBasicDetail;
 use Yajra\DataTables\DataTables as DataTables;
+use Illuminate\Support\Facades\Crypt;
 
 class ExpenseController extends Controller
 {
@@ -213,4 +216,68 @@ class ExpenseController extends Controller
 
         return response()->json(['success', 'Expense deleted successfully.'], 201);
     }
+
+
+    public function getExpensesByDate(Request $request)
+    {
+        $date = $request->input('date');
+        $branchId = $request->input('branch_id');
+        $clinicBasicDetails = ClinicBasicDetail::first();
+
+        // Decrypt branch ID if present
+        if ($branchId) {
+            $branchIdDecryptd = base64_decode(Crypt::decrypt($branchId));
+        }
+
+        // Query clinic expenses
+        $clinicExpenseQuery = Expense::whereDate('created_at', $date)
+            ->where('status', 'Y');
+
+        if ($branchId) {
+            $clinicExpenseQuery->where('branch_id', $branchIdDecryptd);
+        }
+
+        $clinicExpenses = $clinicExpenseQuery->get();
+
+        // Query lab expenses
+        $labExpenseQuery = LabBill::whereDate('created_at', $date)
+            ->where('lab_bill_status', 2)
+            ->with('technician');
+
+        if ($branchId) {
+            $labExpenseQuery->where('branch_id', $branchIdDecryptd);
+        }
+
+        $labExpenses = $labExpenseQuery->get();
+
+        // Merge clinic and lab expenses
+        $mergedExpenses = $clinicExpenses->merge($labExpenses);
+
+        // Sort by created_at date
+        $sortedExpenses = $mergedExpenses->sortBy('created_at');
+        if ($request->ajax()) {
+            // Return DataTable response
+            return DataTables::of($sortedExpenses)
+                ->addIndexColumn()
+                ->addColumn('expenseName', function ($row) {
+                    if (isset($row->name)) {
+                        return $row->name;
+                    } elseif (isset($row->technician)) {
+                        return 'Lab Bill paid for ' . $row->technician->name . ', Lab: ' . $row->technician->lab_name . ', Address: ' . $row->technician->lab_address;
+                    } else {
+                        return 'N/A';
+                    }
+                })
+                ->addColumn('amount', function ($row) {
+                    return $row->amount ?? $row->amount_paid ?? 'N/A';
+                })
+                ->addColumn('billDate', function ($row) {
+                    return isset($row->created_at) ? $row->created_at->format('d-m-Y') : 'N/A';
+                })
+                ->make(true);
+        }
+        return view('report.expense', compact('sortedExpenses', 'clinicBasicDetails'));
+    }
+
+
 }

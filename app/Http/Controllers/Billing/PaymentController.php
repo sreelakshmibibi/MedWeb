@@ -207,11 +207,13 @@ class PaymentController extends Controller
             if ($patientTreatmentBilling->save()) {
 
                 $billingService = new BillingService();
+                $appBranch = Appointment::where('id', $appId)->value('app_branch');
                 
                 $incomeData = [
                     'bill_type' => 'due_bill',
                     'bill_no' => $bill_id,
                     'bill_date' => $billPaidDate,
+                    'branch_id' => $appBranch,
                     'gpay' => $request->duegpay ? $request->duegpay : 0,
                     'cash' => $request->duecash ? $request->duecash : 0,
                     'card' => $request->duecard ? $request->duecard : 0,

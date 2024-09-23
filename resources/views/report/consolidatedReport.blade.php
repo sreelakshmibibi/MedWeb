@@ -84,13 +84,14 @@
         </div>
     </div>
 </form>
+
 <script type="text/javascript">
     var table;
     jQuery(function($) {
         var clinicBasicDetails = @json($clinicBasicDetails);
 
         $('#searchConsolidatedBtn').click(function(e) {
-            e.preventDefault(); 
+            e.preventDefault();
 
             if ($.fn.DataTable.isDataTable("#consolidatedTable")) {
                 $('#consolidatedTable').DataTable().destroy();
@@ -160,7 +161,7 @@
                         data: 'total',
                         name: 'total'
                     }
-                    
+
                 ],
 
                 dom: 'Bfrtlp',
@@ -237,6 +238,6 @@
 
             $('.consolidatedDiv').show();
         });
-
+        
     });
 </script>

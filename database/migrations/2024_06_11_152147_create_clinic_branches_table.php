@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('consultation_fees_frequency')->default(0);
             $table->string('currency')->nullable();
             $table->string('treatment_tax_included')->default('Y');
-            $table->string('tax')->nullable();
+            $table->string('tax')->default(0)->nullable();
             $table->foreignId('clinic_type_id')->constrained();
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');

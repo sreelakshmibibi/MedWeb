@@ -28,4 +28,9 @@ class LabBill extends Model
             $lab->updated_by = Auth::id(); // Set updated_by to current user's ID
         });
     }
+
+    public function technician()
+    {
+        return $this->belongsTo(Technician::class);
+    }
 }

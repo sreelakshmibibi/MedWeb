@@ -1450,12 +1450,23 @@ class ReportController extends Controller
         $dataTableData = [];
         foreach ($combinedResults as $row) {
             $date = Carbon::parse($row['date']);
+            
+            $routeParams = ['date' => $date->format('Y-m-d')];
+            if ($branchId) {
+                $base64Id = base64_encode($branchId);
+                $branchIdEncrypted = Crypt::encrypt($base64Id);
+                $routeParams['branch_id'] = $branchIdEncrypted;
+                
+            }
+            $title = 'View expense details on ' . $date->format('d-m-Y');
+            $expenseLink = '<a href="' . route('expenses.by.date', $routeParams) . '" target="_blank" title="' . $title . '">' . $row['expense'] . '</a>';
 
             $rowData = [
                 'date' => $date->format('Y-m-d'),
                 'collection' => $row['collection'],
                 'machine_tax' => $row['total_machine_tax'],
-                'expense' => $row['expense'],
+                //'expense' => $row['expense'],
+                'expense' => $expenseLink,
                 'purchase' => $row['purchase'],
                 'total' => $row['total']
             ];
@@ -1464,6 +1475,7 @@ class ReportController extends Controller
 
         return DataTables::of($dataTableData)
             ->addIndexColumn()
+            ->rawColumns(['expense'])
             ->make(true);
     }
 }

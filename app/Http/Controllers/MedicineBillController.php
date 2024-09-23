@@ -117,11 +117,13 @@ class MedicineBillController extends Controller
                 }
             }
             $billingService = new BillingService();
+            $appBranch = Appointment::where('id', $appId)->value('app_branch');
 
             $incomeData = [
                 'bill_type' => 'prescription',
                 'bill_no' => $bill_id,
                 'bill_date' => $billPaidDate,
+                'branch_id' => $appBranch,
                 'gpay' => $request->medgpay ?? 0,
                 'cash' => $request->medcash ?? 0,
                 'card' => $request->medcard ?? 0,

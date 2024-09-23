@@ -717,6 +717,7 @@ class BillingController extends Controller
                 'bill_type' => 'treatment',
                 'bill_no' => $patientTreatmentBilling->bill_id,
                 'bill_date' => $billPaidDate,
+                'branch_id' => $appointment->app_branch,
                 'gpay' => $request['gpaycash'] ?? 0,
                 'cash' => $request['cash'] ?? 0,
                 'card' => $request['cardcash'] ?? 0,
