@@ -31,10 +31,10 @@ class ExpenseRequest extends FormRequest
                 // Rule::unique('expenses')->ignore($this->expense), // Ignores the current record during update
             ],
             'amount' => 'required|numeric|min:0', // Validates that amount is a non-negative number
-            'category' => 'required|string|max:255', // Assuming category is a string
+            'category_id' => 'required|string|max:255', // Assuming category is a string
             'billfile.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048', // Allow files with specific extensions and size limit
             'status' => 'required|string|size:1', // Assuming status is a single character
-            'branch' => 'required|string|max:255',
+            'branch_id' => 'required|string|max:255',
         ];
     }
 
@@ -50,15 +50,17 @@ class ExpenseRequest extends FormRequest
             'amount.required' => 'The amount is required.',
             'amount.numeric' => 'The amount must be a number.',
             'amount.min' => 'The amount must be at least 0.',
-            'category.required' => 'The category is required.',
-            'category.string' => 'The category must be a string.',
-            'category.max' => 'The category may not be greater than 255 characters.',
+            'category_id.required' => 'The category is required.',
+            'category_id.string' => 'The category must be a string.',
+            'category_id.max' => 'The category may not be greater than 255 characters.',
             'billfile.file' => 'The bill file must be a valid file.',
             'billfile.mimes' => 'The bill file must be a file of type: pdf, jpg, jpeg, png.',
             'billfile.max' => 'The bill file may not be greater than 2 MB.',
             'status.required' => 'The status is required.',
             'status.string' => 'The status must be a string.',
             'status.size' => 'The status must be exactly 1 character.',
+            'branch_id.required' => 'The branch is required.',
+            'branch_id.string' => 'The branch must be a string.',
         ];
     }
 }

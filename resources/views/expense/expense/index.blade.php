@@ -160,8 +160,8 @@
                 success: function(response) {
                     $('#edit_expense_id').val(response.id);
                     $('#edit_name').val(response.name);
-                    $('#edit_category').val(response.category);
-                    $('#edit_branch').val(response.branch);
+                    $('#edit_category').val(response.category_id);
+                    $('#edit_branch').val(response.branch_id);
                     $('#edit_amount').val(response.amount);
                     $('#edit_billdate').val(response.billdate);
 

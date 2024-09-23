@@ -32,8 +32,8 @@ class ExpenseController extends Controller
         if ($request->ajax()) {
 
             $expenses = Expense::select('expenses.*', 'expense_categories.category as category_name', 'clinic_branches.clinic_address as branch') // Select fields from both tables
-                ->join('expense_categories', 'expenses.category', '=', 'expense_categories.id') // Join the expense_categories table
-                ->join('clinic_branches', 'expenses.branch', '=', 'clinic_branches.id') // Join the clinic_branches table
+                ->join('expense_categories', 'expenses.category_id', '=', 'expense_categories.id') // Join the expense_categories table
+                ->join('clinic_branches', 'expenses.branch_id', '=', 'clinic_branches.id') // Join the clinic_branches table
                 ->where('expense_categories.status', 'Y') // Filter by status
                 ->orderBy('billdate', 'asc')
                 ->get();
@@ -175,7 +175,7 @@ class ExpenseController extends Controller
 
             // Update the fields
             $expense->name = $data['name'];
-            $expense->category = $data['category'];
+            $expense->category_id = $data['category_id'];
             $expense->branch_id = $data['branch_id'];
             $expense->amount = $data['amount'];
             $expense->billdate = $data['billdate'];

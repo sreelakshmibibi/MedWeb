@@ -28,7 +28,7 @@
                                 <div class="form-group">
                                     <label class="form-label" for="edit_category">Category <span class="text-danger">
                                             *</span></label>
-                                    <select class="form-select category_select" id="edit_category" name="category">
+                                    <select class="form-select category_select" id="edit_category" name="category_id">
                                         <option value="">Select a Category</option>
                                         @foreach ($categories as $category)
                                             <option value="{{ $category->id }}">{{ $category->category }}</option>
@@ -42,7 +42,7 @@
                                 <div class="form-group">
                                     <label class="form-label" for="edit_branch">Branch <span class="text-danger">
                                             *</span></label>
-                                    <select class="form-select branch_select" id="edit_branch" name="branch">
+                                    <select class="form-select branch_select" id="edit_branch" name="branch_id">
                                         <option value="">Select a Branch</option>
                                         @foreach ($clinicBranches as $clinicBranch)
                                             <?php

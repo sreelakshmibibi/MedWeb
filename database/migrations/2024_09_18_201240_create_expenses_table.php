@@ -14,10 +14,10 @@ return new class extends Migration {
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
             $table->date('billdate');
-            $table->foreignId('branch')->constrained('clinic_branches')->onDelete('cascade');
+            $table->foreignId('branch_id')->constrained('clinic_branches')->onDelete('cascade');
             $table->string('name');
             $table->decimal('amount');
-            $table->foreignId('category')->constrained('expense_categories')->onDelete('cascade');
+            $table->foreignId('category_id')->constrained('expense_categories')->onDelete('cascade');
             $table->string('status');
             $table->string('billfile', 255)->nullable();
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
