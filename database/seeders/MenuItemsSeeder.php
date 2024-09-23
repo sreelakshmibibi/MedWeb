@@ -87,7 +87,13 @@ class MenuItemsSeeder extends Seeder
             'lab payment cancel',
             'lab payment store',
             'lab payment history',
+            'supplier',
+            'supplier add',
+            'supplier edit',
+            'supplier remove',
+
         ];
+
 
         foreach ($permissions as $permission) {
             Permission::create(['name' => $permission]);
@@ -150,6 +156,11 @@ class MenuItemsSeeder extends Seeder
             'lab payment cancel',
             'lab payment store',
             'lab payment history',
+            'supplier',
+            'supplier add',
+            'supplier edit',
+            'supplier delete',
+
         ];
 
 
