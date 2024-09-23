@@ -11,7 +11,7 @@ class Supplier extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    protected $filable = ['name', 'phone', 'address', 'created_by', 'updated_by'];
+    protected $filable = ['name', 'phone', 'address', 'gst', 'created_by', 'updated_by'];
     protected $dates = ['deleted_at'];
     protected static function booted()
     {
