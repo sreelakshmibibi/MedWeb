@@ -305,15 +305,17 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/clinicExpense/update', [ExpenseController::class, 'update'])->name('expense.expense.update');
     Route::delete('/clinicExpense/{expense}', [ExpenseController::class, 'destroy'])->name('expense.expense.destroy');
     Route::get('clinicExpense/{id}/download-bills', [ExpenseController::class, 'downloadBills']);
-   
+
     Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers');
     Route::post('/suppliers/store', [SupplierController::class, 'store'])->name('suppliers.store');
     Route::get('/suppliers/{supplier}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
     Route::post('/suppliers/update', [SupplierController::class, 'update'])->name('suppliers.update');
     Route::delete('/suppliers/{supplier}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
 
-
     Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases');
+    Route::get('/getSupplierDetails/{id}', [PurchaseController::class, 'getSupplierDetails'])->name('purchase.getSupplierDetails');
+    Route::post('/purchases/store', [PurchaseController::class, 'store'])->name('purchases.store');
+
 
 
     Route::get('/billing/add', [BillingController::class, 'add'])->name('billing.add');
