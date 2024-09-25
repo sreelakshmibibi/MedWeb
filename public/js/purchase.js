@@ -27,6 +27,7 @@ $(document).ready(function () {
                 $("#phone").val("");
                 $("#address").val("");
                 $("#gst_no").val("");
+                $("#previousOutStanding").val("");
                 $(".sup_details").attr("readonly", false);
 
                 console.log("New Supplier Added:", selected.text);
@@ -40,6 +41,9 @@ $(document).ready(function () {
                             $("#phone").val(data.phone).trigger("change");
                             $("#address").val(data.address).trigger("change");
                             $("#gst_no").val(data.gst).trigger("change");
+                            $("#previousOutStanding")
+                                .val(data.balancedue)
+                                .trigger("change");
                             $(".sup_details").attr("readonly", true);
                         }
                     },
@@ -238,7 +242,7 @@ function calculateTotalPaid() {
 
 $(document).ready(function () {
     // Event listener for save button
-    $("#purchaseItemsForm").on("submit", function (event) {
+    $("#savePurchaseButton").on("click", function (event) {
         event.preventDefault();
         let isValid = true;
 
@@ -247,11 +251,35 @@ $(document).ready(function () {
         $("#itemModePaymentError, #itemAmountPaidError, #itemCheckError").text(
             ""
         );
+        // console.log(this)
+        const inputs = document.querySelectorAll(
+            "input[required], textarea[required]"
+        );
+
+        inputs.forEach((input) => {
+            if (input.value.trim() === "") {
+                isValid = false;
+                input.classList.add("is-invalid"); // Add a class for styling
+            } else {
+                input.classList.remove("is-invalid"); // Remove class if valid
+            }
+        });
+
+        if (!isValid) {
+            document.getElementById("errorMessagecreate").innerText =
+                "Please fill out all required fields.";
+            document.getElementById("errorMessagecreate").style.display =
+                "block";
+        } else {
+            document.getElementById("errorMessagecreate").style.display =
+                "none"; // Hide error message if valid
+        }
 
         // Check if at least one item row exists
         if ($("#itembody tr").length === 0) {
-            alert("Please add at least one item.");
             isValid = false;
+            alert("Please add at least one item.");
+            return;
         }
 
         // Validate form fields
@@ -327,24 +355,12 @@ $(document).ready(function () {
 
         // Validate payment section if category is "D"
         if ($("#category").val() === "D") {
-            // const modeOfPayment = $(
-            //     'input[name="itemmode_of_payment[]"]:checked'
-            // );
-            // if (modeOfPayment.length === 0) {
-            //     isValid = false;
-            //     $("#itemModePaymentError").text(
-            //         "Please select a mode of payment."
-            //     );
-            // }
-
             $("input[type='checkbox'][name='itemmode_of_payment[]']").each(
                 function () {
                     const inputField = document.getElementById(
                         "item" + $(this).val()
                     );
-                    // const inputField = $(this)
-                    //     .closest("td")
-                    //     .find("input[type='text']");
+
                     if ($(this).is(":checked") && inputField.value === "") {
                         isValid = false;
                         inputField.classList.add("is-invalid");
@@ -391,27 +407,10 @@ $(document).ready(function () {
                 );
                 isValid = false;
             }
-
-            // Validate amount paid
-            // if (amountPaid <= 0) {
-            //     $("#itemAmountPaidError").text(
-            //         "Please enter a valid amount paid."
-            //     );
-            //     isValid = false;
-            // }
         }
 
-        // Submit the form if all validations are successful
-        // if (isValid) {
-        //     $("#purchaseItemsForm").submit();
-
-        //     // Reset the form
-        //     $("#purchaseItemsForm")[0].reset(); // Reset form fields
-        //     $(".select2").val(null).trigger("change"); // Reset Select2 fields
-        // }
-
         if (!isValid) return;
-
+        const form = $("#purchaseItemsForm");
         // Submit the form via AJAX
         const formData = new FormData($("#purchaseItemsForm")[0]);
         console.log(formData);
@@ -428,13 +427,20 @@ $(document).ready(function () {
             dataType: "json",
             success: function (response) {
                 if (response.success) {
+                    // Show success message
                     $("#successMessage")
                         .text(response.success)
                         .fadeIn()
                         .delay(3000)
                         .fadeOut();
-                    // $('#modal-right').modal('hide');
-                    // table.ajax.reload();
+
+                    // Reset the form
+                    form[0].reset(); // Reset the form
+                    // Reset specific fields
+                    $("#name").val("").trigger("change"); // Reset Supplier Name
+                    $("#branch").val("").trigger("change"); // Reset Branch
+                    $("#category").val("D").trigger("change");
+                    $(".itempay").hide();
                 } else if (response.error) {
                     $("#errorMessagecreate")
                         .text(response.error)
@@ -445,10 +451,25 @@ $(document).ready(function () {
             },
             error: function (xhr) {
                 const errors = xhr.responseJSON.errors;
+                $("#errorMessagecreate").empty(); // Clear previous error messages
                 if (errors) {
+                    // Loop through each error and display it
                     for (const key in errors) {
-                        // showError(key, errors[key][0]);
+                        if (errors.hasOwnProperty(key)) {
+                            // Create a new error message element
+                            const errorMessage = $("<div>")
+                                .text(errors[key][0])
+                                .addClass("alert alert-danger");
+                            $("#errorMessagecreate").append(errorMessage);
+                        }
                     }
+                    $("#errorMessagecreate").fadeIn().delay(3000).fadeOut();
+                } else {
+                    $("#errorMessagecreate")
+                        .text("An unexpected error occurred. Please try again.")
+                        .fadeIn()
+                        .delay(3000)
+                        .fadeOut();
                 }
             },
         });
@@ -463,17 +484,6 @@ $(document).ready(function () {
         $(this).removeClass("is-invalid"); // Remove invalid class if applicable
     });
 
-    // $("input[type='tel'], input[type='text'], textarea").on(
-    //     "input change",
-    //     function () {
-    //         const errorId = $(this).attr("id") + "Error"; // Create corresponding error ID
-    //         $("#" + errorId)
-    //             .text("")
-    //             .hide(); // Hide the error message
-    //         $(this).removeClass("is-invalid"); // Remove invalid class
-    //     }
-    // );
-
     // Hide error messages when user interacts with Select2 fields
     $(".select2").on("change", function () {
         const errorId = $(this).attr("id") + "Error"; // Create corresponding error ID
@@ -487,9 +497,6 @@ $(document).ready(function () {
     $("input[type='checkbox'][name='itemmode_of_payment[]']").on(
         "change",
         function () {
-            // $(this).next(".invalid-feedback").text("").hide();
-            // $(this).removeClass("is-invalid");
-            // const inputField = document.getElementById("item" + $(this).val());
             $("#item" + $(this).val()).removeClass("is-invalid");
             $("#itemModePaymentError").text(""); // Clear mode of payment error
         }

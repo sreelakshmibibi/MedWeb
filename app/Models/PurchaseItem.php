@@ -17,7 +17,6 @@ class PurchaseItem extends Model
         'quantity',
         'amount',
         'created_by',
-        'updated_by'
     ];
     protected $dates = ['deleted_at'];
 }

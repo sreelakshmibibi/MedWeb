@@ -11,6 +11,8 @@
         <div class="container-full">
             <div class="content-header">
                 <div id="successMessage" style="display:none;" class="alert alert-success"></div>
+                <div id="errorMessagecreate" style="display:none;" class="alert alert-danger"></div>
+
                 @if (session('success'))
                     <div class="myadmin-alert myadmin-alert-icon myadmin-alert-click alert-success alerttop fadeOut"
                         style="display: block;">
@@ -50,4 +52,12 @@
 
 @section('scripts')
     <script src="{{ asset('js/purchase.js') }}"></script>
+    <script>
+        // Optional: Script to handle the closing of alerts
+        document.querySelectorAll('.closed').forEach(item => {
+            item.addEventListener('click', event => {
+                event.target.closest('.myadmin-alert').style.display = 'none';
+            });
+        });
+    </script>
 @endsection

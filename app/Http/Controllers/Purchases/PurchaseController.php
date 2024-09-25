@@ -30,17 +30,37 @@ class PurchaseController extends Controller
             ->get();
         $cardPay = CardPay::where('status', 'Y')->get();
         $suppliers = Supplier::where('status', 'Y')->get();
+
         return view('purchase.purchase.index', compact('clinicDetails', 'clinicBranches', 'cardPay', 'suppliers'));
     }
 
     public function getSupplierDetails($id)
     {
         $supplier = Supplier::find($id);
+        $latestBalanceDue = null;
+        // $latestBalanceDue = Purchase::where('supplier_id', $id)
+        //     ->orderBy('entrydate', 'desc')
+        //     ->orderBy('id', 'desc')
+        //     ->value('balance_due');
+
         if ($supplier) {
+            $latestPurchase = Purchase::where('supplier_id', $id)
+                ->orderBy('entrydate', 'desc')
+                ->orderBy('id', 'desc')
+                ->first(['balance_due', 'balance_to_give_back', 'balance_given']);
+            // Check if a purchase record was found
+            if ($latestPurchase) {
+                if ($latestPurchase->balance_given == 'N') {
+                    $latestBalanceDue = $latestPurchase->balance_due - $latestPurchase->balance_to_give_back;
+                } else {
+                    $latestBalanceDue = $latestPurchase->balance_due;
+                }
+            }
             return response()->json([
                 'phone' => $supplier->phone,
                 'address' => $supplier->address,
                 'gst' => $supplier->gst,
+                'balancedue' => $latestBalanceDue
             ]);
         }
         return response()->json(null, 404);
@@ -58,45 +78,60 @@ class PurchaseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(PurchaseRequest $request)
     {
         \Log::info('Request Data:', $request->all()); // Log request data
+
         try {
             $data = $request->validated();
 
             // Add the created_by field
             $data['created_by'] = auth()->id(); // Get the ID of the authenticated user
-
+            $data['purchase_category'] = 'O';
             // Handle multiple file uploads if they exist
             if ($request->hasFile('billfile')) {
                 $filePaths = [];
                 foreach ($request->file('billfile') as $file) {
-                    $filePaths[] = $file->store('purchases', 'public'); // Store in the 'expenses' directory
+                    $filePaths[] = $file->store('purchases', 'public'); // Store in the 'purchases' directory
                 }
-                $data['billfile'] = json_encode($filePaths); // Save paths as JSON or handle accordingly
+                $data['billfile'] = json_encode($filePaths); // Save paths as JSON
             }
 
-            if ($data['name']) {
-                return;
-            }
-            // Check if the supplier is a new one or an existing one
+            // Log before final insertion
+            \Log::info('Data before creating purchase:', $data);
+
+            // Extract supplier details
+            $supplierDetails = $request->input('supplier');
             $supplierId = null;
-            if (!is_numeric($data['name'])) {
+
+            // Check if the supplier is a new one or an existing one
+            if (!is_numeric($supplierDetails['name'])) {
                 // Store the supplier data
                 $supplierData = [
-                    'name' => $data['name'],
-                    'phone' => $data['phone'],
-                    'address' => $data['address'],
-                    'gst' => $data['gst_no'],
+                    'name' => $supplierDetails['name'],
+                    'phone' => $supplierDetails['phone'],
+                    'address' => $supplierDetails['address'],
+                    'gst' => $supplierDetails['gst_no'],
+                    'status' => 'Y',
+                    'created_by' => $data['created_by'],
                 ];
                 $supplier = Supplier::create($supplierData);
                 $supplierId = $supplier->id;
+
+                // Log successful supplier creation
+                \Log::info('Supplier created successfully:', $supplier->toArray());
             } else {
-                $supplierId = $data['name']; // Assuming name can also be supplier ID in this case
+                $supplierId = $supplierDetails['name']; // Use the supplier ID directly
             }
-            // Store the purchase data
+
+            $data['consider_for_next_payment'] = $request->has('consider_for_next_payment') ? 'Y' : 'N';
+            $data['itemBalance_given'] = $request->has('itemBalance_given') ? 'Y' : 'N';
+
+            // Prepare purchase data
             $purchaseData = [
                 'branch_id' => $data['branch_id'],
+                'purchase_category' => $data['purchase_category'],
                 'invoice_no' => $data['invoice_no'],
                 'invoice_date' => $data['invoice_date'],
                 'supplier_id' => $supplierId,
@@ -108,39 +143,54 @@ class PurchaseController extends Controller
                 'discount' => $data['discount'],
                 'previous_due' => $data['previousOutStanding'],
                 'amount_to_be_paid' => $data['grandTotal'],
-                'gpay' => $data['itemgpay'],
-                'cash' => $data['itemcash'],
-                'card' => $data['itemcard'],
-                'amount_paid' => $data['itemAmountPaid'],
-                'balance_due' => $data['balance'],
-                'balance_to_give_back' => $data['itemBalanceToGiveBack'],
-                'balance_given' => $data['itemBalance_given'],
-                'consider_for_next_payment' => $data['consider_for_next_payment'],
                 'billfile' => $data['billfile'] ?? null,
-                'created_by' => $data['created_by'],
+                'created_by' => auth()->id(),
             ];
 
-            $purchase = Purchase::create($purchaseData);
+            // Add conditional fields based on category
+            if ($data['category'] !== 'C') {
+                $purchaseData = array_merge($purchaseData, [
+                    'gpay' => $data['itemgpay'] ?? null,
+                    'cash' => $data['itemcash'] ?? null,
+                    'card' => $data['itemcard'] ?? null,
+                    'amount_paid' => $data['itemAmountPaid'] ?? null,
+                    'balance_due' => $data['balance'] ?? null,
+                    'balance_to_give_back' => $data['itemBalanceToGiveBack'] ?? null,
+                    'balance_given' => $data['itemBalance_given'] ?? 'N', // Assuming you store 'Y' or 'N'
+                    'consider_for_next_payment' => $data['consider_for_next_payment'] ?? 'N',
+                ]);
+            } else {
+                $purchaseData['amount_paid'] = 0;
+                $purchaseData['balance_due'] = $data['grandTotal'];
+                $purchaseData['balance_given'] = 'N';
+                $purchaseData['consider_for_next_payment'] = 'N';
+            }
 
+            $purchase = Purchase::create($purchaseData);
+            \Log::info('Purchase created successfully:', $purchase->toArray());
+
+            // Prepare purchase items
             $items = [];
-            foreach ($data as $index => $item) {
+            foreach ($request->input('item') as $index => $item) {
                 $items[] = [
-                    'item' => $item,
-                    'price' => $request->price[$index],
-                    'quantity' => $request->quantity[$index],
-                    'itemAmount' => $request->itemAmount[$index],
-                    // Add any other fields needed, e.g., 'purchase_id' if applicable
+                    'purchase_id' => $purchase->id,
+                    'name' => $item,
+                    'price' => $request->input('price')[$index],
+                    'quantity' => $request->input('quantity')[$index],
+                    'amount' => $request->input('itemAmount')[$index],
+                    'created_by' => $data['created_by'],
+                    'created_at' => $purchase->created_at,
                 ];
             }
 
             // Insert the data into the PurchaseItem table
             PurchaseItem::insert($items);
+            \Log::info('Purchase items added successfully.');
 
-            //     // Create the purchase record
-            //     $purchaseitem = PurchaseItem::create($data);
-            return response()->json(['success' => 'Purcahse added successfully!', 'expense' => $purchase], 201);
+            return response()->json(['success' => 'Purchase added successfully!', 'purchase' => $purchase], 201);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to store purcahse.'], 500);
+            \Log::error('Error storing purchase:', ['message' => $e->getMessage()]);
+            return response()->json(['error' => 'Failed to store purchase.'], 500);
         }
     }
 

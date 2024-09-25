@@ -5,7 +5,8 @@
             <div class="form-group">
                 <label class="form-label" for="name">Supplier Name <span class="text-danger">
                         *</span></label>
-                <select class="form-control name_select" id="name" name="name" style="width: 100%;" required>
+                <select class="form-control name_select" id="name" name="supplier[name]" style="width: 100%;"
+                    required>
                     <option value="">Select a Supplier </option>
                     @foreach ($suppliers as $supplier)
                         <option value="{{ $supplier->id }}">
@@ -21,7 +22,7 @@
             <div class="form-group">
                 <label class="form-label" for="phone">Phone Number <span class="text-danger">
                         *</span></label>
-                <input type="tel" id="phone" name="phone" class="form-control sup_details"
+                <input type="tel" id="phone" name="supplier[phone]" class="form-control sup_details"
                     placeholder="Supplier Phone No" pattern="[1-9]{1}[0-9]{9}" size="10" minlength="10"
                     maxlength="10" required>
                 <div id="phoneError" class="invalid-feedback"></div>
@@ -32,7 +33,7 @@
             <div class="form-group">
                 <label class="form-label" for="address">Address <span class="text-danger">
                         *</span></label>
-                <textarea class="form-control sup_details" rows="1" id="address" name="address"
+                <textarea class="form-control sup_details" rows="1" id="address" name="supplier[address]"
                     placeholder="Enter Supplier Address" required></textarea>
                 <div id="addressError" class="invalid-feedback"></div>
             </div>
@@ -42,7 +43,7 @@
             <div class="form-group">
                 <label class="form-label" for="gst_no">GST No. <span class="text-danger">
                         *</span></label>
-                <input type="text" id="gst_no" name="gst_no" class="form-control sup_details"
+                <input type="text" id="gst_no" name="supplier[gst_no]" class="form-control sup_details"
                     placeholder="Enter GST No" required>
                 <div id="gst_noError" class="invalid-feedback"></div>
             </div>
@@ -103,7 +104,7 @@
         <div class="col-md-2">
             <div class="form-group">
                 <label class="form-label" for="invoice_no">Payable as</label>
-                <select class="form-select category_select" id="category" name="category" style="width: 100%;">
+                <select class="form-select category_select" id="category" name="category">
                     <option value="D">Debit</option>
                     <option value="C">Credit</option>
                 </select>

@@ -101,7 +101,7 @@
         <th class="text-end text-info">Paid Amount</th>
 
         <td colspan="2">
-            <input type="text" name="itemAmountPaid" id="itemAmountPaid" required placeholder="0.00"
+            <input type="text" name="itemAmountPaid" id="itemAmountPaid" placeholder="0.00"
                 class="form-control text-center text-info" readonly>
             <span id="itemAmountPaidError" class="error-message text-danger">
                 @error('itemAmountPaid')
