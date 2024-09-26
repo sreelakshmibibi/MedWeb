@@ -65,6 +65,7 @@
 
 <script>
     $(function() {
+        $('#errorMessage').text(''); 
         // Handle Update button click
         $('#updateHolidayBtn').click(function() {
             // Reset previous error messages
@@ -74,6 +75,7 @@
             $('#edit_holiday_on').next('.invalid-feedback').text('');
             $('#edit_reason').next('.invalid-feedback').text('');
             $('#edit_branches').next('.invalid-feedback').text('');
+            $('#errorMessage').text(''); 
             $('#statusError').text('');
 
             // Validate form inputs
@@ -111,43 +113,31 @@
                 data: formData,
                 dataType: 'json',
                 success: function(response) {
-                    // If successful, hide modal and show success message
-                    $('#modal-holiday-edit').modal('hide');
-                     if (response.success) {
-                        $('#successMessage').text(response.success);
-                        $('#successMessage').fadeIn().delay(3000)
-                        .fadeOut(); // Show for 3 seconds
+                    if (response.success) {
+                        $('#successMessage').text(response.success).fadeIn().delay(3000).fadeOut();
+                        $('#modal-holiday-edit').modal('hide');
+                        table.ajax.reload();
                     }
-                    
-                    // location.reload(); // Refresh the page or update the table as needed
-                    table.ajax.reload();
                 },
                 error: function(xhr) {
-                    console.log(xhr.responseJSON.error);
-                    if (xhr.responseJSON.error) {
-                        $('#errorMessage').text(xhr.responseJSON.error);
-                        // $('#errorMessage').fadeIn().delay(3000)
-                        // .fadeOut(); 
-                    }
-                    // If error, update modal to show errors
-                    var errors = xhr.responseJSON.errors;
-                   
-                    if (errors.hasOwnProperty('department')) {
-                        if (errors.hasOwnProperty('holiday_on')) {
-                        $('#edit_holiday_on').addClass('is-invalid');
-                        $('#editDateError').text(errors.holiday_on[0]);
-                    }
-                    if (errors.hasOwnProperty('reason')) {
-                        $('#edit_reason').addClass('is-invalid');
-                        $('#editReasonError').text(errors.reason[0]);
-                    }
+                    $('#errorMessage').text(''); // Clear previous messages
 
-                    if (errors.hasOwnProperty('status')) {
-                        $('#editStatusError').text(errors.status[0]);
+                    if (xhr.status === 409) {
+                        $('#errorMessage').text(xhr.responseJSON.error).show(); // Show conflict error
+                    } else {
+                        var errors = xhr.responseJSON.errors;
+                        if (errors.hasOwnProperty('holiday_on')) {
+                            $('#edit_holiday_on').addClass('is-invalid');
+                            $('#editDateError').text(errors.holiday_on[0]);
+                        }
+                        if (errors.hasOwnProperty('reason')) {
+                            $('#edit_reason').addClass('is-invalid');
+                            $('#editReasonError').text(errors.reason[0]);
+                        }
                     }
                 }
-            }
             });
+    
         });
 
         // Reset form and errors on modal close

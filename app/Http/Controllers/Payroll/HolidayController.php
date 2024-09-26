@@ -81,6 +81,13 @@ class HolidayController extends Controller
     public function store(HolidayRequest $request)
     {
         try {
+            // Check if the holiday date already exists
+            $existingHoliday = Holiday::where('holiday_on', $request->holiday_on)->first();
+
+            if ($existingHoliday) {
+                return response()->json(['error' => 'Holiday on this date already exists.'], 409);
+            }
+
             $holiday = new Holiday();
             $holiday->holiday_on = $request->holiday_on;
             $holiday->reason = $request->reason;
@@ -116,7 +123,15 @@ class HolidayController extends Controller
             $holiday = Holiday::find($request->edit_holiday_id);
             if (!$holiday)
                 abort(404);
-
+            
+            $existingHoliday = Holiday::where('holiday_on', $request->edit_holiday_on)
+                ->where('id', '!=', $holiday->id) // Exclude the current holiday ID
+                ->first();
+    
+            if ($existingHoliday) {
+                return response()->json(['error' => 'A holiday on this date already exists.'], 409); // Conflict
+            }
+    
             $holiday->holiday_on = $request->edit_holiday_on;
             $holiday->reason = $request->edit_reason;
             $holiday->branches = !empty($request->edit_branches) ? json_encode($request->edit_branches) : null;

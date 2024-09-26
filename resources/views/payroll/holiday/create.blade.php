@@ -116,50 +116,52 @@
                 data: formData,
                 dataType: 'json',
                 success: function(response) {
-                    // If successful, hide modal and show success message
                     if (response.success) {
-                        $('#successMessage').text(response.success);
-                        $('#successMessage').fadeIn().delay(3000)
-                            .fadeOut(); // Show for 3 seconds
-                            $('#modal-right').modal('hide');
-                            table.ajax.reload();
-                    
+                        $('#successMessage').text(response.success).fadeIn().delay(3000).fadeOut();
+                        $('#modal-right').modal('hide');
+                        table.ajax.reload();
                     }
-                    if (response.error) {
-                        $('#errorMessagecreate').text(response.error);
-                        
-                    }
-                    
-                    // location.reload();
-                  
                 },
                 error: function(xhr) {
-                    
-                    // If error, update modal to show errors
-                    var errors = xhr.responseJSON.errors;
+                    // Clear any previous error messages
+                    $('#errorMessagecreate').text('');
 
-                    if (errors.hasOwnProperty('holiday_on')) {
-                        $('#holiday_on').addClass('is-invalid');
-                        $('#dateError').text(errors.holiday_on[0]);
-                    }
-                    if (errors.hasOwnProperty('reason')) {
-                        $('#reason').addClass('is-invalid');
-                        $('#reasonError').text(errors.reason[0]);
-                    }
-
-                    if (errors.hasOwnProperty('status')) {
-                        $('#statusError').text(errors.status[0]);
+                    if (xhr.status === 409) {
+                        // Show the conflict error message
+                        $('#errorMessagecreate').text(xhr.responseJSON.error).show();
+                    } else {
+                        // Handle validation errors
+                        var errors = xhr.responseJSON.errors;
+                        if (errors.hasOwnProperty('holiday_on')) {
+                            $('#holiday_on').addClass('is-invalid');
+                            $('#dateError').text(errors.holiday_on[0]);
+                        }
+                        if (errors.hasOwnProperty('reason')) {
+                            $('#reason').addClass('is-invalid');
+                            $('#reasonError').text(errors.reason[0]);
+                        }
+                        if (errors.hasOwnProperty('status')) {
+                            $('#statusError').text(errors.status[0]);
+                        }
                     }
                 }
             });
+    
         });
 
         // Reset form and errors on modal close
         $('#modal-right').on('hidden.bs.modal', function() {
-            $('#createDepartmentForm').trigger('reset');
-            $('#department').removeClass('is-invalid');
-            $('#departmentError').text('');
-            $('#statusError').text('');
+            $('#createHolidayForm').trigger('reset'); // Reset the form fields
+            $('#holiday_on').removeClass('is-invalid'); // Remove invalid class
+            $('#reason').removeClass('is-invalid'); // Remove invalid class
+            $('#branches').removeClass('is-invalid'); // Remove invalid class for branches
+            $('#dateError').text(''); // Clear error messages
+            $('#reasonError').text('');
+            $('#branchError').text('');
+            $('#statusError').text(''); // Clear status error message
+
+            // Reset radio buttons if necessary
+            $('input[name="status"][value="Y"]').prop('checked', true); // Default to "Yes"
         });
     });
 </script>
