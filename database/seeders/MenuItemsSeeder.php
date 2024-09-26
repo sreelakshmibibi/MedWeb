@@ -369,9 +369,10 @@ class MenuItemsSeeder extends Seeder
 
         $payrollSubmenus = $purchases->children()->createMany([
             ['name' => 'Holidays', 'url' => '/holidays', 'route_name' => 'suppliers', 'icon' => 'icon-Commit', 'order_no' => 1],
-            ['name' => 'PayHeads', 'url' => '/pay_heads', 'route_name' => 'payHeads', 'icon' => 'icon-Commit', 'order_no' => 2],
-            ['name' => 'Attendance', 'url' => '/attendance', 'route_name' => 'attendance', 'icon' => 'icon-Commit', 'order_no' => 2],
-            ['name' => 'Employee Salary', 'url' => '/employee_salary', 'route_name' => 'employeeSalary', 'icon' => 'icon-Commit', 'order_no' => 2],
+            ['name' => 'Employee Types', 'url' => '/employee_typesw', 'route_name' => 'employeeTypes', 'icon' => 'icon-Commit', 'order_no' => 2],
+            ['name' => 'PayHeads', 'url' => '/pay_heads', 'route_name' => 'payHeads', 'icon' => 'icon-Commit', 'order_no' => 3],
+            ['name' => 'Attendance', 'url' => '/attendance', 'route_name' => 'attendance', 'icon' => 'icon-Commit', 'order_no' => 4],
+            ['name' => 'Employee Salary', 'url' => '/employee_salary', 'route_name' => 'employeeSalary', 'icon' => 'icon-Commit', 'order_no' => 5],
 
         ]);
 

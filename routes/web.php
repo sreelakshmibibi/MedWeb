@@ -18,6 +18,7 @@ use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
 use App\Http\Controllers\Payroll\AttendanceController;
 use App\Http\Controllers\Payroll\EmployeeSalaryController;
+use App\Http\Controllers\Payroll\EmployeeTypeController;
 use App\Http\Controllers\Payroll\HolidayController;
 use App\Http\Controllers\Payroll\PayHeadController;
 use App\Http\Controllers\PlaceOrderController;
@@ -332,6 +333,11 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/pay_heads/store', [PayHeadController::class, 'store'])->name('payHeads.store');
     Route::get('/pay_heads/{payheadId}/edit', [PayHeadController::class, 'edit'])->name('payHeads.edit');
     Route::post('/pay_heads/update', [PayHeadController::class, 'update'])->name('payHeads.update');
+
+    Route::get('/employee_types', [EmployeeTypeController::class, 'index'])->name('employeeTypes');
+    Route::post('/employee_types/store', [EmployeeTypeController::class, 'store'])->name('employeeTypes.store');
+    Route::get('/employee_types/{employeeTypeId}/edit', [EmployeeTypeController::class, 'edit'])->name('employeeTypes.edit');
+    Route::post('/employee_types/update', [EmployeeTypeController::class, 'update'])->name('employeeTypes.update');
 
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance');
     
