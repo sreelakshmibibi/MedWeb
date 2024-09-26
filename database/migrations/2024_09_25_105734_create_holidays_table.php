@@ -16,6 +16,7 @@ return new class extends Migration
             $table->date(column: 'holiday_on');
             $table->json('branches')->nullable();/* if null applicable to all branches*/
             $table->string('reason');
+            $table->string('delete_reason')->nullable();
             $table->string('status')->default('Y');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('cascade');

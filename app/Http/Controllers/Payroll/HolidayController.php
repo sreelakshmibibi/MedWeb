@@ -59,8 +59,8 @@ class HolidayController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
-                        data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
-                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-del btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
+                        data-bs-target="#modal-holiday-edit" ><i class="fa fa-pencil"></i></button>
+                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-del btn-xs" data-bs-toggle="modal" data-bs-target="#modal-holiday-delete" data-id="' . $row->id . '" title="delete">
                         <i class="fa fa-trash"></i></button>';
 
                     return $btn;
@@ -89,12 +89,10 @@ class HolidayController extends Controller
                 return response()->json(['success'=> 'Holiday saved successfully']);
             } else {
                 return response()->json(['error'=> 'Holiday save failed']);
-
             }
 
         } catch (Exception  $e) {
             return response()->json(data: ['error'=> $e->getMessage()]);
-
         }
     }
 
@@ -106,21 +104,50 @@ class HolidayController extends Controller
         $holiday = Holiday::find($id);
         if (!$holiday)
             abort(404);
+        $holiday->branches = json_decode($holiday->branches, true);
         return $holiday;
     }
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        try {
+            $holiday = Holiday::find($request->edit_holiday_id);
+            if (!$holiday)
+                abort(404);
+
+            $holiday->holiday_on = $request->edit_holiday_on;
+            $holiday->reason = $request->edit_reason;
+            $holiday->branches = !empty($request->edit_branches) ? json_encode($request->edit_branches) : null;
+            if ($holiday->save()){
+                return response()->json(['success'=> 'Holiday updated successfully']);
+            } else {
+                return response()->json(['error'=> 'Holiday update failed']);
+            }
+
+        } catch (Exception  $e) {
+            return response()->json(data: ['error'=> $e->getMessage()]);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
-        //
+        $holiday = Holiday::find($id);
+        if (!$holiday)
+            abort(404);
+
+        $holiday->status = 'N';
+        $holiday->delete_reason = $request->deleteReason;
+        if($holiday->save()) {
+            if ($holiday->delete()) {
+                return response()->json(['success'=> 'Holiday deleted successfully']);
+            }
+        } else {
+            return response()->json(['success'=> 'Holiday deletion failed']);
+        }
     }
 }

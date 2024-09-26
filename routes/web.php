@@ -324,17 +324,17 @@ Route::middleware(['auth', 'check.session'])->group(function () {
 
     Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays');
     Route::post('/holidays/store', [HolidayController::class, 'store'])->name('holidays.store');
-
+    Route::get('/holidays/{holidayId}/edit', [HolidayController::class, 'edit'])->name('holidays.edit');
+    Route::post('/holidays/update', [HolidayController::class, 'update'])->name('holidays.update');
+    Route::delete('/holidays/delete/{holidayId}', [HolidayController::class, 'destroy'])->name('holidays.destroy');
 
     Route::get('/pay_heads', [PayHeadController::class, 'index'])->name('payHeads');
     Route::post('/pay_heads/store', [PayHeadController::class, 'store'])->name('payHeads.store');
     Route::get('/pay_heads/{payheadId}/edit', [PayHeadController::class, 'edit'])->name('payHeads.edit');
     Route::post('/pay_heads/update', [PayHeadController::class, 'update'])->name('payHeads.update');
 
-
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance');
     
     Route::get('/employee_salary', [EmployeeSalaryController::class, 'index'])->name('employeeSalary');
 
-    
 });

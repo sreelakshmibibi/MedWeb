@@ -12,7 +12,7 @@ class Holiday extends Model
     use HasFactory;
     use SoftDeletes;
     
-    protected $fillable = ['holiday_on', 'branches', 'reason', 'status', 'created_by', 'updated_by', 'deleted_by'];
+    protected $fillable = ['holiday_on', 'branches', 'reason', 'delete_reason', 'status', 'created_by', 'updated_by', 'deleted_by'];
     protected $dates = ['deleted_at'];
 
     protected static function booted()

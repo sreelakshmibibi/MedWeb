@@ -1,44 +1,62 @@
-<form id="editDepartmentForm" method="post" action="{{ route('settings.department.update') }}">
+<form id="editHolidayForm" method="post" action="{{ route('holidays.update') }}">
     @csrf
-    <input type="hidden" id="edit_department_id" name="edit_department_id" value="">
-    <div class="modal fade modal-right slideInRight" id="modal-edit" tabindex="-1">
+    <input type="hidden" id="edit_holiday_id" name="edit_holiday_id" value="">
+    <div class="modal fade modal-right slideInRight" id="modal-holiday-edit" tabindex="-1">
         <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fa fa-briefcase"></i> Edit Department Details</h5>
+                    <h5 class="modal-title"><i class="fa fa-briefcase"></i> Edit Holiday Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div id="errorMessage" style="display:none;" class="alert alert-danger">
                 </div>
-                
                 <div class="modal-body">
                     <div class="container-fluid">
+                        <!-- Department Name -->
                         <div class="form-group">
-                            <label class="form-label" for="edit_department">Department Name <span class="text-danger">
+                            <label class="form-label" for="edit_holiday_on">Date <span class="text-danger">
                                     *</span></label>
-                            <input class="form-control" type="text" id="edit_department" name="department" required
-                                minlength="3" placeholder="Department Name" autocomplete="off">
-                            <div class="invalid-feedback"></div>
+                                <input type="date" class="form-control" id="edit_holiday_on" name="edit_holiday_on"
+                                placeholder="Holiday On"  value="<?php echo date('Y-m-d'); ?>" required>
+                            <div id="editDateError" class="invalid-feedback"></div>
                         </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit_reason">Reason <span class="text-danger">
+                                    *</span></label>
+                            <input class="form-control" type="text" id="edit_reason" name="edit_reason"
+                                placeholder="Reason for holiday">
+                            <div id="editReasonError" class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit_branches">Applicable To <span class="text-danger">
+                                    *</span></label>
+                            <select multiple="true" class="form-control " type="text" id="edit_branches" name="edit_branches[]">
+                                <option value="" selected>All Branches</option>
+                                @foreach ($branches as $branch)
+                                    <option value="{{ $branch['id'] }}"> {{ $branch['name'] }}</option>
+                                @endforeach
+                            </select>
+                            <div id="editBranchError" class="invalid-feedback"></div>
+                        </div>
+                        
 
+                        <!-- Status -->
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6">Active</label>
-                            <div>
-                                <input name="status" type="radio" class="form-control with-gap" id="edit_yes"
-                                    value="Y">
-                                <label class="form-check-label" for="edit_yes">Yes</label>
-                                <input name="status" type="radio" class="form-control with-gap" id="edit_no"
-                                    value="N">
-                                <label class="form-check-label" for="edit_no">No</label>
-                            </div>
-                            <div class="text-danger" id="statusError"></div>
+                            <input name="edit_status" type="radio" checked class="form-control with-gap" id="yes"
+                                value="Y">
+                            <label for="yes">Yes</label>
+                            <input name="edit_status" type="radio" class="form-control with-gap" id="no"
+                                value="N">
+                            <label for="no">No</label>
+                            <div id="editStatusError" class="invalid-feedback"></div>
                         </div>
                     </div>
                 </div>
 
                 <div class="modal-footer modal-footer-uniform">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success float-end" id="updateDepartmentBtn">Update</button>
+                    <button type="button" class="btn btn-success float-end" id="updateHolidayBtn">Update</button>
                 </div>
             </div>
         </div>
@@ -48,25 +66,42 @@
 <script>
     $(function() {
         // Handle Update button click
-        $('#updateDepartmentBtn').click(function() {
+        $('#updateHolidayBtn').click(function() {
             // Reset previous error messages
-            $('#edit_department').removeClass('is-invalid');
-            $('#edit_department').next('.invalid-feedback').text('');
+            $('#edit_holiday_on').removeClass('is-invalid');
+            $('#edit_reason').removeClass('is-invalid');
+            $('#edit_branches').removeClass('is-invalid');
+            $('#edit_holiday_on').next('.invalid-feedback').text('');
+            $('#edit_reason').next('.invalid-feedback').text('');
+            $('#edit_branches').next('.invalid-feedback').text('');
             $('#statusError').text('');
 
             // Validate form inputs
-            var department = $('#edit_department').val();
-            var status = $('input[name="status"]:checked').val();
+            var holidayOn = $('#edit_holiday_on').val();
+            var reason = $('#edit_reason').val();
+            var status = $('input[name="edit_status"]:checked').val();
 
             // Basic client-side validation (you can add more as needed)
-            if (department.length === 0) {
-                $('#edit_department').addClass('is-invalid');
-                $('#edit_department').next('.invalid-feedback').text('Department name is required.');
+            if (holidayOn.length === 0) {
+                $('#edit_holiday_on').addClass('is-invalid');
+                $('#editDateError').text('Holiday Date is required.');
                 return; // Prevent further execution
+            } else {
+                $('#edit_holiday_on').removeClass('is-invalid');
+                $('#editDateError').text('');
+            }
+            if (reason.length === 0) {
+                $('#edit_reason').addClass('is-invalid');
+                $('#editReasonError').text('Holiday Reason is required.');
+                return; // Prevent further execution
+            } else {
+                $('#edit_reason').removeClass('is-invalid');
+                $('#editReasonError').text('');
             }
 
+
             // If validation passed, submit the form via AJAX
-            var form = $('#editDepartmentForm');
+            var form = $('#editHolidayForm');
             var url = form.attr('action');
             var formData = form.serialize();
 
@@ -77,7 +112,7 @@
                 dataType: 'json',
                 success: function(response) {
                     // If successful, hide modal and show success message
-                    $('#modal-edit').modal('hide');
+                    $('#modal-holiday-edit').modal('hide');
                      if (response.success) {
                         $('#successMessage').text(response.success);
                         $('#successMessage').fadeIn().delay(3000)
@@ -91,58 +126,42 @@
                     console.log(xhr.responseJSON.error);
                     if (xhr.responseJSON.error) {
                         $('#errorMessage').text(xhr.responseJSON.error);
-                        $('#errorMessage').fadeIn().delay(3000)
-                        .fadeOut(); 
+                        // $('#errorMessage').fadeIn().delay(3000)
+                        // .fadeOut(); 
                     }
                     // If error, update modal to show errors
                     var errors = xhr.responseJSON.errors;
                    
                     if (errors.hasOwnProperty('department')) {
-                        $('#edit_department').addClass('is-invalid');
-                        $('#edit_department').next('.invalid-feedback').text(errors
-                            .department[0]);
+                        if (errors.hasOwnProperty('holiday_on')) {
+                        $('#edit_holiday_on').addClass('is-invalid');
+                        $('#editDateError').text(errors.holiday_on[0]);
+                    }
+                    if (errors.hasOwnProperty('reason')) {
+                        $('#edit_reason').addClass('is-invalid');
+                        $('#editReasonError').text(errors.reason[0]);
                     }
 
                     if (errors.hasOwnProperty('status')) {
-                        $('#statusError').text(errors.status[0]);
+                        $('#editStatusError').text(errors.status[0]);
                     }
                 }
+            }
             });
         });
 
         // Reset form and errors on modal close
         $('#modal-edit').on('hidden.bs.modal', function() {
-            $('#editDepartmentForm').trigger('reset');
-            $('#edit_department').removeClass('is-invalid');
-            $('#edit_department').next('.invalid-feedback').text('');
+            $('#editHolidayForm').trigger('reset');
+            $('#edit_holiday_on').removeClass('is-invalid');
+            $('#edit_reason').removeClass('is-invalid');
+            $('#edit_branches').removeClass('is-invalid');
+            $('#edit_holiday_on').next('.invalid-feedback').text('');
+            $('#edit_reason').next('.invalid-feedback').text('');
+            $('#edit_branches').next('.invalid-feedback').text('');
             $('#statusError').text('');
         });
 
         // Pre-populate form fields when modal opens for editing
-        $('#modal-edit').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget); // Button that triggered the modal
-            var departmentId = button.data('id'); // Extract department ID from data-id attribute
-
-            // Fetch department details via AJAX
-            $.ajax({
-                url: '{{ url('department') }}' + "/" + departmentId + "/edit",
-                method: 'GET',
-                success: function(response) {
-                    // Populate form fields
-                    $('#edit_department_id').val(response.id);
-                    $('#edit_department').val(response.department);
-
-                    // Set radio button status
-                    if (response.status === 'Y') {
-                        $('#edit_yes').prop('checked', true);
-                    } else {
-                        $('#edit_no').prop('checked', true);
-                    }
-                },
-                error: function(error) {
-                    console.log(error);
-                }
-            });
-        });
-    });
+     });
 </script>

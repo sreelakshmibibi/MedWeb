@@ -91,7 +91,7 @@
             }
             if (reason.length === 0) {
                 $('#reason').addClass('is-invalid');
-                $('#reasonError').text('Holiday Date is required.');
+                $('#reasonError').text('Holiday reason is required.');
                 return; // Prevent further execution
             } else {
                 $('#reason').removeClass('is-invalid');

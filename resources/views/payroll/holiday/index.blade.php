@@ -75,17 +75,22 @@
     <script type="text/javascript">
         jQuery(function($) {
             $(document).on('click', '.btn-edit', function() {
-                var departmentId = $(this).data('id');
-                $('#edit_department_id').val(departmentId); // Set department ID in the hidden input
+                var holidayId = $(this).data('id');
+                $('#edit_holiday_id').val(holidayId); // Set department ID in the hidden input
                 $.ajax({
-                    url: '{{ url('department') }}' + "/" + departmentId + "/edit",
+                    url: '{{ url("holidays") }}' + "/" + holidayId + "/edit",
                     method: 'GET',
                     success: function(response) {
-                        $('#edit_department_id').val(response.id);
-                        $('#edit_department').val(response.department);
+                        $('#edit_holiday_id').val(response.id);
+                        $('#edit_holiday_on').val(response.holiday_on);
+                        $('#edit_reason').val(response.reason);
+                        
+                        var selectedBranches = response.branches || []; // Handle case where branches could be null
+                        $('#edit_branches').val(selectedBranches);
+
                         $('#edit_yes').prop('checked', response.status === 'Y');
                         $('#edit_no').prop('checked', response.status === 'N');
-                        // $('#modal-edit').modal('show');
+                        $('#modal-holiday-edit').modal('show');
                     },
                     error: function(error) {
                         console.log(error);
@@ -94,29 +99,31 @@
             });
 
             $(document).on('click', '.btn-del', function() {
-                var departmentId = $(this).data('id');
-                $('#delete_department_id').val(departmentId); // Set department ID in the hidden input
-                $('#modal-delete').modal('show');
+                var holidayId = $(this).data('id');
+                $('#delete_holiday_id').val(holidayId); // Set department ID in the hidden input
+                $('#modal-holiday-delete').modal('show');
             });
 
             $('#btn-confirm-delete').click(function() {
-                var departmentId = $('#delete_department_id').val();
-                var url = "{{ route('settings.departments.destroy', ':department') }}";
-                url = url.replace(':department', departmentId);
+                var holidayId = $('#delete_holiday_id').val();
+                var deleteReason = $('#deleteReason').val();
+                var url = "{{ route('holidays.destroy', ':holidayId') }}";
+                url = url.replace(':holidayId', holidayId);
                 $.ajax({
                     type: 'DELETE',
                     url: url,
                     data: {
-                        "_token": "{{ csrf_token() }}"
+                        "_token": "{{ csrf_token() }}",
+                        "deleteReason" : deleteReason
                     },
                     success: function(response) {
                         table.draw(); // Refresh DataTable
-                        $('#successMessage').text('Department deleted successfully');
+                        $('#successMessage').text('Holiday deleted successfully');
                         $('#successMessage').fadeIn().delay(3000)
                             .fadeOut(); // Show for 3 seconds
                     },
                     error: function(xhr) {
-                        $('#modal-delete').modal('hide');
+                        $('#modal-holiday-delete').modal('hide');
                         swal("Error!", xhr.responseJSON.message, "error");
                     }
                 });
