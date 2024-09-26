@@ -16,6 +16,10 @@ use App\Http\Controllers\LabBillController;
 use App\Http\Controllers\MedicineBillController;
 use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
+use App\Http\Controllers\Payroll\AttendanceController;
+use App\Http\Controllers\Payroll\EmployeeSalaryController;
+use App\Http\Controllers\Payroll\HolidayController;
+use App\Http\Controllers\Payroll\PayHeadController;
 use App\Http\Controllers\PlaceOrderController;
 use App\Http\Controllers\Purchases\PurchaseController;
 use App\Http\Controllers\Purchases\SupplierController;
@@ -217,6 +221,7 @@ Route::middleware(['auth', 'check.session'])->group(function () {
 
     Route::get('/billing', [BillingController::class, 'index'])->name('billing');
     Route::get('/billing/add/{appointmentId}', [BillingController::class, 'create'])->name('billing.create');
+    Route::get('/billing/add', [BillingController::class, 'add'])->name('billing.add');
     Route::post('/billing/combo/{appointmentId}', [BillingController::class, 'comboOffer'])->name('billing.combo');
     Route::post('/billing/store', [BillingController::class, 'store'])->name('billing.store');
     Route::post('/billing/payment', [BillingController::class, 'payment'])->name('billing.payment');
@@ -317,6 +322,19 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/purchases/store', [PurchaseController::class, 'store'])->name('purchases.store');
 
 
+    Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays');
+    Route::post('/holidays/store', [HolidayController::class, 'store'])->name('holidays.store');
 
-    Route::get('/billing/add', [BillingController::class, 'add'])->name('billing.add');
+
+    Route::get('/pay_heads', [PayHeadController::class, 'index'])->name('payHeads');
+    Route::post('/pay_heads/store', [PayHeadController::class, 'store'])->name('payHeads.store');
+    Route::get('/pay_heads/{payheadId}/edit', [PayHeadController::class, 'edit'])->name('payHeads.edit');
+    Route::post('/pay_heads/update', [PayHeadController::class, 'update'])->name('payHeads.update');
+
+
+    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance');
+    
+    Route::get('/employee_salary', [EmployeeSalaryController::class, 'index'])->name('employeeSalary');
+
+    
 });

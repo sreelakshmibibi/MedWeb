@@ -308,6 +308,14 @@ class MenuItemsSeeder extends Seeder
             'order_no' => 10,
         ]);
 
+        $payrolls = MenuItem::create([
+            'name' => 'Payroll',
+            'url' => '#',
+            'route_name' => '#',
+            'icon' => 'fa-solid fa-credit-card',
+            'order_no' => 11,
+        ]);
+
         $billingSubmenus = $billing->children()->createMany([
             ['name' => 'Treatment Billing', 'url' => '/billing', 'route_name' => 'billing', 'icon' => 'icon-Commit', 'order_no' => 1],
             ['name' => 'Outstanding Billing', 'url' => '/duepayment', 'route_name' => 'duePayment', 'icon' => 'icon-Commit', 'order_no' => 2],
@@ -357,6 +365,14 @@ class MenuItemsSeeder extends Seeder
         $purchaseSubmenus = $purchases->children()->createMany([
             ['name' => 'Suppliers', 'url' => '/suppliers', 'route_name' => 'suppliers', 'icon' => 'icon-Commit', 'order_no' => 1],
             ['name' => 'Purchases', 'url' => '/purchases', 'route_name' => 'purchases', 'icon' => 'icon-Commit', 'order_no' => 2],
+        ]);
+
+        $payrollSubmenus = $purchases->children()->createMany([
+            ['name' => 'Holidays', 'url' => '/holidays', 'route_name' => 'suppliers', 'icon' => 'icon-Commit', 'order_no' => 1],
+            ['name' => 'PayHeads', 'url' => '/pay_heads', 'route_name' => 'payHeads', 'icon' => 'icon-Commit', 'order_no' => 2],
+            ['name' => 'Attendance', 'url' => '/attendance', 'route_name' => 'attendance', 'icon' => 'icon-Commit', 'order_no' => 2],
+            ['name' => 'Employee Salary', 'url' => '/employee_salary', 'route_name' => 'employeeSalary', 'icon' => 'icon-Commit', 'order_no' => 2],
+
         ]);
 
         // $appointmentSubmenus = $patients->children()->createMany([
