@@ -21,6 +21,7 @@ use App\Http\Controllers\Payroll\EmployeeSalaryController;
 use App\Http\Controllers\Payroll\EmployeeTypeController;
 use App\Http\Controllers\Payroll\HolidayController;
 use App\Http\Controllers\Payroll\PayHeadController;
+use App\Http\Controllers\Payroll\WorkController;
 use App\Http\Controllers\PlaceOrderController;
 use App\Http\Controllers\Purchases\PurchaseController;
 use App\Http\Controllers\Purchases\SupplierController;
@@ -340,7 +341,17 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/employee_types/update', [EmployeeTypeController::class, 'update'])->name('employeeTypes.update');
 
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance');
+    Route::get('/attendance/create', [AttendanceController::class, 'create'])->name('attendance.create');
+    Route::post('/attendance/store', [AttendanceController::class, 'store'])->name('attendance.store');
+
     
     Route::get('/employee_salary', [EmployeeSalaryController::class, 'index'])->name('employeeSalary');
 
+    Route::post('/logout-cancel', function () {
+        Auth::logout();
+        return response()->json(['success' => true]);
+    });
+
+    Route::post('/start-work', action: [WorkController::class, 'store'])->name('attendance.start');
+    Route::post('/finish-work', [WorkController::class, 'update'])->name('attendance.finish');
 });

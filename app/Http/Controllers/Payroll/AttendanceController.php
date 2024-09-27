@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Payroll;
 
 use App\Http\Controllers\Controller;
+use App\Models\EmployeeAttendance;
+use App\Services\ReportService;
 use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
@@ -12,15 +14,16 @@ class AttendanceController extends Controller
      */
     public function index()
     {
-        //
+        $reportService = new ReportService();
+        $branches = $reportService->getBranches();
+        return view('payroll.attendance.index', compact('branches'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
     }
 
     /**

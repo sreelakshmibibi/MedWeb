@@ -105,6 +105,88 @@
 
     <!-- Include scripts section -->
     @yield('scripts')
+   @include('layouts.startWorkModal')
+   @include('layouts.stopWorkModal')
 </body>
+<script>
+        $(document).ready(function() {
+            @if(session('showModal'))
+                $('#modal-start-work').modal('show');
+                {{ session()->forget('showModal') }} // Clear the session variable
+            @endif
 
+            // Confirm start work
+            $('#btn-confirm-start').click(function() {
+                $.ajax({
+                    url: '/start-work', // Your route for handling the start work
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        user_id: '{{ auth()->user()->id }}', // Get the logged-in user's ID
+                        attendance_status: 'Present' // Set the attendance status
+                    },
+                    success: function(response) {
+                        $('#modal-start-work').modal('hide'); // Hide the modal
+                    },
+                    error: function(xhr) {
+                        // Handle error
+                        alert('Failed to start work: ' + xhr.responseText);
+                    }
+                });
+            });
+
+            $('#logout-button').click(function(event) {
+                event.preventDefault(); // Prevent default link behavior
+                $('#modal-stop-work').modal('show'); // Show the logout modal
+            });
+
+            $('#btn-confirm-logout').click(function() {
+                // Perform logout without recording the logout timing
+                $.ajax({
+                    url: '/logout-cancel', // Create this route in your application
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function() {
+                        window.location.href = '/login'; // Redirect after logout
+                    }
+                });
+            });
+        });
+
+        $('#btn-confirm-logout-record').click(function() {
+            const now = new Date();
+            const logoutDate = now.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+            const logoutTime = now.toTimeString().split(' ')[0]; // Format: HH:mm:ss
+            $.ajax({
+                url: '/finish-work', // Your route for handling finish work
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    user_id: '{{ auth()->user()->id }}', // Get the logged-in user's ID
+                    logout_date: logoutDate,
+                    logout_time: logoutTime, // Send the formatted time
+                },
+                success: function(response) {
+                    $('#modal-stop-work').modal('hide'); // Hide the modal
+                    // Optionally, redirect or update the UI
+                    $.ajax({
+                    url: '/logout-cancel', // Create this route in your application
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function() {
+                        window.location.href = '/login'; // Redirect after logout
+                    }
+                });
+                    
+                },
+                error: function(xhr) {
+                    alert('Failed to finish work: ' + xhr.responseText);
+                }
+            });
+        });
+    </script>
 </html>

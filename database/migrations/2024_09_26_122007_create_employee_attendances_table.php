@@ -18,11 +18,12 @@ return new class extends Migration
             $table->time('login_time')->nullable();
             $table->date('logout_date')->nullable();
             $table->time('logout_time')->nullable();
-            $table->decimal('worked_hours')->nullable();
-            $table->string('status')->default('Y');
+            $table->time('worked_hours')->nullable();
+            $table->string('attendance_status');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

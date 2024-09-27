@@ -42,6 +42,12 @@ class HomeController extends Controller
         $hasClinics = DB::table('clinic_basic_details')->exists();
         $clinicsData = DB::table('clinic_basic_details')->first();
         $hasBranches = DB::table('clinic_branches')->exists();
+
+        // Check if there are attendance entries for today
+        $today = now()->toDateString();
+        $attendanceExists = DB::table('employee_attendances')->whereDate('login_date', $today)
+        ->where('user_id', $user->id)->exists();
+
         $newlyRegistered = DB::table('patient_profiles')
             ->select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as count'))
             ->groupBy(DB::raw('MONTH(created_at)'))
@@ -247,8 +253,9 @@ class HomeController extends Controller
             $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])
                 ->where('clinic_status', 'Y')
                 ->get();
-
-            return view($dashboardView, compact('workingDoctors', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients', 'totalUniquePatients', 'malePatientsCount', 'femalePatientsCount', 'newPatientsCount', 'followupPatientsCount', 'currentappointments', 'pstaffidEncrypted', 'childrenCount', 'otherCount', 'clinicBranches'));
+            $showModal = !$attendanceExists;
+            session(['showModal' => $showModal]);
+            return view($dashboardView, compact('workingDoctors', 'showModal', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients', 'totalUniquePatients', 'malePatientsCount', 'femalePatientsCount', 'newPatientsCount', 'followupPatientsCount', 'currentappointments', 'pstaffidEncrypted', 'childrenCount', 'otherCount', 'clinicBranches'));
 
         } else {
             $countries = Country::all();
