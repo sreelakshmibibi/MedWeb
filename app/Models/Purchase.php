@@ -35,4 +35,9 @@ class Purchase extends Model
         'purchase_category'
     ];
     protected $dates = ['deleted_at'];
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
+    }
 }

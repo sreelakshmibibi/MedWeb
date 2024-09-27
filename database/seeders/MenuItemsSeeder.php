@@ -91,6 +91,7 @@ class MenuItemsSeeder extends Seeder
             'supplier add',
             'supplier edit',
             'supplier remove',
+            'expense category',
 
         ];
 
@@ -160,6 +161,7 @@ class MenuItemsSeeder extends Seeder
             'supplier add',
             'supplier edit',
             'supplier delete',
+            'expense category',
 
         ];
 
@@ -365,6 +367,7 @@ class MenuItemsSeeder extends Seeder
         $purchaseSubmenus = $purchases->children()->createMany([
             ['name' => 'Suppliers', 'url' => '/suppliers', 'route_name' => 'suppliers', 'icon' => 'icon-Commit', 'order_no' => 1],
             ['name' => 'Purchases', 'url' => '/purchases', 'route_name' => 'purchases', 'icon' => 'icon-Commit', 'order_no' => 2],
+            ['name' => 'Medicine Purchases', 'url' => '/medicine/purchases', 'route_name' => 'medicine.purchases', 'icon' => 'icon-Commit', 'order_no' => 3],
         ]);
 
         $payrollSubmenus = $purchases->children()->createMany([

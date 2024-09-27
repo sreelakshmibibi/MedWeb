@@ -25,6 +25,7 @@ use App\Http\Controllers\Payroll\WorkController;
 use App\Http\Controllers\PlaceOrderController;
 use App\Http\Controllers\Purchases\PurchaseController;
 use App\Http\Controllers\Purchases\SupplierController;
+use App\Http\Controllers\Purchases\MedicinePurchaseController;
 use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Settings\ClinicBranchController;
 use App\Http\Controllers\Settings\ComboOfferController;
@@ -322,6 +323,8 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases');
     Route::get('/getSupplierDetails/{id}', [PurchaseController::class, 'getSupplierDetails'])->name('purchase.getSupplierDetails');
     Route::post('/purchases/store', [PurchaseController::class, 'store'])->name('purchases.store');
+    Route::get('/medicine/purchases', [MedicinePurchaseController::class, 'index'])->name('medicine.purchases');
+    Route::post('/medicine/purchases/store', [MedicinePurchaseController::class, 'store'])->name('medicine.purchases.store');
 
 
     Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays');
