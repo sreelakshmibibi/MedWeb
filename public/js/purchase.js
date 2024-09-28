@@ -30,7 +30,7 @@ $(document).ready(function () {
                 $("#previousOutStanding").val("");
                 $(".sup_details").attr("readonly", false);
 
-                console.log("New Supplier Added:", selected.text);
+                // console.log("New Supplier Added:", selected.text);
             } else {
                 // Fetch existing supplier details via AJAX (if needed)
                 $.ajax({
@@ -120,6 +120,19 @@ function updateSlno() {
         rowIndex++;
     });
     rowIndex--;
+}
+
+function removeAllRowsExceptFirst() {
+    const tbody = document.getElementById("itembody");
+    const rows = tbody.querySelectorAll("tr");
+
+    // Loop through all rows except the first
+    for (let i = 1; i < rows.length; i++) {
+        rows[i].remove(); // Remove the row
+    }
+
+    // Reset the Slno for the first row
+    updateSlno();
 }
 
 // Calculate amount
@@ -433,14 +446,21 @@ $(document).ready(function () {
                         .fadeIn()
                         .delay(3000)
                         .fadeOut();
-
-                    // Reset the form
-                    form[0].reset(); // Reset the form
-                    // Reset specific fields
-                    $("#name").val("").trigger("change"); // Reset Supplier Name
-                    $("#branch").val("").trigger("change"); // Reset Branch
-                    $("#category").val("D").trigger("change");
-                    $(".itempay").hide();
+                    console.log(response);
+                    if (response.status == 201) {
+                        // Reset the form
+                        form[0].reset(); // Reset the form
+                        // Reset specific fields
+                        $("#name").val("").trigger("change"); // Reset Supplier Name
+                        $("#branch").val("").trigger("change"); // Reset Branch
+                        $("#category").val("D").trigger("change");
+                        $(".itempay").hide();
+                        removeAllRowsExceptFirst();
+                    } else {
+                        if (response.purchase.billfile != null) {
+                            $("#uploadedBills").attr("disabled", false);
+                        }
+                    }
                 } else if (response.error) {
                     $("#errorMessagecreate")
                         .text(response.error)
@@ -512,5 +532,59 @@ $(document).ready(function () {
             .hide(); // Hide the error message
         $(this).removeClass("is-invalid"); // Remove invalid class if applicable
         $(this).next(".invalid-feedback").text("").hide();
+    });
+
+    $("#modal-cancel-lab-bill").on("hidden.bs.modal", function () {
+        // Reset the form
+        $("#form-cancel-purchase")[0].reset();
+
+        // Clear specific fields
+        $("#cancel_bill_id").val("");
+        $("#bill_cancel_reason").val("");
+
+        // Optionally, remove any validation messages
+        $("#reasonError").text("");
+    });
+});
+
+$(document).on("click", ".btn-del", function () {
+    var billId = $(this).data("id");
+    $("#cancel_bill_id").val(billId);
+    $("#modal-cancel-lab-bill").modal("show");
+});
+
+$("#btn-cancel-bill").click(function () {
+    var purchaseId = $("#cancel_bill_id").val();
+    var reason = $("#bill_cancel_reason").val();
+
+    if (reason.length === 0) {
+        $("#bill_cancel_reason").addClass("is-invalid");
+        $("#reasonError").text("Reason is required.").show();
+        return; // Stop further execution
+    }
+
+    var url = "/purchases/cancel/{id}";
+    url = url.replace("{id}", purchaseId);
+
+    $.ajax({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        type: "POST",
+        url: url,
+        data: {
+            // _token: "{{ csrf_token() }}",
+            reason: reason,
+        },
+        success: function (response) {
+            $("#modal-cancel-lab-bill").modal("hide"); // Close modal after success
+            table.draw(); // Refresh DataTable
+            $("#successMessage").text("Bill cancelled successfully");
+            $("#successMessage").fadeIn().delay(3000).fadeOut(); // Show for 3 seconds
+        },
+        error: function (xhr) {
+            $("#modal-cancel-lab-bill").modal("hide"); // Close modal in case of error
+            console.log("Error!", xhr.responseJSON.message, "error");
+        },
     });
 });

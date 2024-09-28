@@ -320,8 +320,14 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::delete('/suppliers/{supplier}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
 
     Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases');
+    Route::get('/purchases/get', [PurchaseController::class, 'get'])->name(name: 'purchases.get');
     Route::get('/getSupplierDetails/{id}', [PurchaseController::class, 'getSupplierDetails'])->name('purchase.getSupplierDetails');
     Route::post('/purchases/store', [PurchaseController::class, 'store'])->name('purchases.store');
+    Route::get('purchases/{id}/download-bills', [PurchaseController::class, 'downloadBills']);
+    Route::get('/purchases/view/{id}', [PurchaseController::class, 'show'])->name('purchase.view');
+    Route::get('/purchases/edit/{id}', [PurchaseController::class, 'edit'])->name('purchase.edit');
+    Route::post('/purchases/update', [PurchaseController::class, 'update'])->name('purchases.update');
+    Route::post('/purchases/cancel/{id}', [PurchaseController::class, 'destroy'])->name(name: 'purchase.destroy');
 
 
     Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays');

@@ -32,7 +32,10 @@ class Purchase extends Model
         'consider_for_next_payment',
         'billfile',
         'created_by',
-        'purchase_category'
+        'purchase_category',
+        'updated_by',
+        'status',
+        'purchase_delete_reason'
     ];
     protected $dates = ['deleted_at'];
 }

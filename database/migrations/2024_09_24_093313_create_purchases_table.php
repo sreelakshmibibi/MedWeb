@@ -34,10 +34,12 @@ return new class extends Migration {
             $table->string('balance_given', 1);
             $table->string('consider_for_next_payment', 1);
             $table->string('billfile', 255)->nullable();
+            $table->string('purchase_delete_reason', 255)->nullable();
             $table->string('status', 1)->default('Y');
             $table->date('entrydate')->default(now());
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });
