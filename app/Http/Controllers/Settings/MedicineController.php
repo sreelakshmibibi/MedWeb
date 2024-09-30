@@ -5,55 +5,85 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\MedicineRequest;
 use App\Models\Medicine;
+use App\Models\Supplier;
+use App\Models\MedicinePurchaseItem;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables as DataTables;
+use Illuminate\Support\Facades\Log;
 
 class MedicineController extends Controller
 {
     public function __construct()
     {
         $this->middleware('permission:settings medicines', ['only' => ['index', 'store', 'update', 'edit', 'destroy']]);
-        
+
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         if ($request->ajax()) {
-
-            $medicines = Medicine::orderBy('med_name', 'asc')->get();
-
-            return DataTables::of($medicines)
-                ->addIndexColumn()
+            $medicinePurchaseItems = MedicinePurchaseItem::with(['purchase.supplier', 'medicine']) // Eager load purchase, supplier, and medicine
+            ->get();
+            //Log::info('$medicinePurchaseItems: '.$medicinePurchaseItems);
+            return DataTables::of($medicinePurchaseItems)
+                ->addIndexColumn() 
+                ->addColumn('med_bar_code', function ($row) {
+                    return $row->medicine->med_bar_code ?? ''; 
+                })
+                ->addColumn('med_name', function ($row) {
+                    return $row->medicine->med_name ?? ''; 
+                })
+                ->addColumn('med_company', function ($row) {
+                    return $row->medicine->med_company ?? ''; 
+                })
+                ->addColumn('stock', function ($row) {
+                    return $row->medicine->stock ?? 'N/A'; 
+                })
+                ->addColumn('batch_no', function ($row) {
+                    return $row->batch_no ?? 'N/A'; 
+                })
+                ->addColumn('med_price', function ($row) {
+                    return $row->med_price ?? 0;
+                })
+                ->addColumn('expiry_date', function ($row) {
+                    return $row->expiry_date ? $row->expiry_date : ''; 
+                })
+                ->addColumn('supplier', function ($row) {
+                    return $row->purchase ? $row->purchase->supplier->name: 'N/A'; 
+                })
+                ->addColumn('total_quantity', function ($row) {
+                    return $row->total_quantity ?? 'N/A'; 
+                })
+                ->addColumn('purchase_amount', function ($row) {
+                    return $row->purchase_amount ?? 'N/A'; 
+                })
+                ->addColumn('purchase_date', function ($row) {
+                    return $row->purchase ? $row->purchase->invoice_date : ''; 
+                })
                 ->addColumn('status', function ($row) {
-                    // if ($row->stock_status == "In Stock") {
-                    //     $btn1 = '<span class="badge badge-success-light d-inline-block w-100">in stock</span>';
-                    // } else {
-                    //     $btn1 = '<span class="badge badge-danger-light d-inline-block w-100">out of stock</span>';
-                    // }
-                    if ($row->stock_status == "In Stock") {
-                        $btn1 = '<span class="text-success" title="in stock"><i class="fa-solid fa-circle-check"></i></span>';
+                    if ($row->medicine->stock_status == "In Stock") {
+                        return '<span class="text-success" title="in stock"><i class="fa-solid fa-circle-check"></i></span>';
                     } else {
-                        $btn1 = '<span class="text-danger" title="out of stock"><i class="fa-solid fa-circle-xmark"></i></span>';
+                        return '<span class="text-danger" title="out of stock"><i class="fa-solid fa-circle-xmark"></i></span>';
                     }
-                    return $btn1;
                 })
                 ->addColumn('action', function ($row) {
-
-                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
-                        data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
-                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
-                        <i class="fa fa-trash"></i></button>';
-
-                    return $btn;
+                    return '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
+                data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>';
+                // <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
+                // <i class="fa fa-trash"></i></button>
                 })
-                ->rawColumns(['status', 'action'])
+                ->rawColumns(['status', 'action']) 
                 ->make(true);
+
         }
 
-        return view('settings.medicine.index');
+        // Fetch suppliers where status is active
+        $suppliers = Supplier::where('status', 'Y')
+            ->orderBy('name', 'asc')
+            ->get();
+
+        return view('settings.medicine.index', compact('suppliers'));
     }
 
 
@@ -75,6 +105,8 @@ class MedicineController extends Controller
             $medicineEntry->package_count = $request->input('package_count');
             $medicineEntry->total_quantity = $request->input('total_quantity');
             $medicineEntry->package_type = $request->input('package_type');
+            $medicineEntry->supplier_id = $request->input('med_supplier');
+            $medicineEntry->med_purchase_amount = $request->input('med_purchase_amount');
             $medicineEntry->stock_status = $request->input('stock_status');
             $medicineEntry->status = $request->input('status');
             $saved = $medicineEntry->save();
@@ -97,7 +129,10 @@ class MedicineController extends Controller
      */
     public function edit(string $id)
     {
-        $medicine = Medicine::find($id);
+        // $medicine = Medicine::with(['purchaseItems.supplier'])->find($id);
+        $medicine = MedicinePurchaseItem::with(['purchase.supplier', 'medicine'])
+        ->find($id); 
+        Log::info('$EditmedicinePurchaseItems: '.$medicine);
         if (!$medicine) {
             abort(404);
         }
@@ -111,24 +146,28 @@ class MedicineController extends Controller
     public function update(MedicineRequest $request, $id)
     {
         try {
-            $medicine = Medicine::findOrFail($request->edit_medicine_id);
+            $medicinePurchaseItem = MedicinePurchaseItem::findOrFail($request->edit_medicine_purchase_id);
+            $medicinePurchaseItem->med_price = $request->med_price;
+            $medicinePurchaseItem->expiry_date = $request->expiry_date;
+            $medicinePurchaseItem->package_type = $request->package_type;
+            // $medicinePurchaseItem->units_per_package = $request->units_per_package;
+            // $medicinePurchaseItem->package_count = $request->package_count;
+            // $medicinePurchaseItem->total_quantity = $request->total_quantity;
+            // $medicinePurchaseItem->purchase_amount = $request->med_purchase_amount;
+            $medicinePurchaseItem->save();
 
+            $medicine = Medicine::findOrFail($request->edit_medicine_id);
             // Update medicine fields based on form data
             $medicine->med_bar_code = $request->med_bar_code;
             $medicine->med_name = ucwords(strtolower($request->med_name));
             $medicine->med_company = ucwords($request->med_company);
             $medicine->med_remarks = $request->med_remarks;
-            $medicine->med_price = $request->med_price;
-            $medicine->expiry_date = $request->expiry_date;
-            $medicine->units_per_package = $request->units_per_package;
-            $medicine->package_count = $request->package_count;
-            $medicine->total_quantity = $request->total_quantity;
-            $medicine->package_type = $request->package_type;
             $medicine->stock_status = $request->stock_status;
             $medicine->status = $request->status;
 
             // Save the updated medicine
             $medicine->save();
+            
 
             // Return JSON response for AJAX request
             if ($request->ajax()) {

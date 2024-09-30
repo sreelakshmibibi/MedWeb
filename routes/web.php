@@ -25,6 +25,7 @@ use App\Http\Controllers\Payroll\WorkController;
 use App\Http\Controllers\PlaceOrderController;
 use App\Http\Controllers\Purchases\PurchaseController;
 use App\Http\Controllers\Purchases\SupplierController;
+use App\Http\Controllers\Purchases\MedicinePurchaseController;
 use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Settings\ClinicBranchController;
 use App\Http\Controllers\Settings\ComboOfferController;
@@ -323,6 +324,8 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::get('/purchases/get', [PurchaseController::class, 'get'])->name(name: 'purchases.get');
     Route::get('/getSupplierDetails/{id}', [PurchaseController::class, 'getSupplierDetails'])->name('purchase.getSupplierDetails');
     Route::post('/purchases/store', [PurchaseController::class, 'store'])->name('purchases.store');
+    Route::get('/medicine/purchases', [MedicinePurchaseController::class, 'index'])->name('medicine.purchases');
+    Route::post('/medicine/purchases/store', [MedicinePurchaseController::class, 'store'])->name('medicine.purchases.store');
     Route::get('purchases/{id}/download-bills', [PurchaseController::class, 'downloadBills']);
     Route::get('/purchases/view/{id}', [PurchaseController::class, 'show'])->name('purchase.view');
     Route::get('/purchases/edit/{id}', [PurchaseController::class, 'edit'])->name('purchase.edit');

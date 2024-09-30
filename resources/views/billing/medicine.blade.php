@@ -73,11 +73,12 @@ if ($hasPrescriptionBill) {
                     <thead class="bg-dark">
                         <tr>
                             <th style="width: 5%;">#</th>
-                            <th style="width:35%;">Medicine</th>
+                            <th style="width:25%;">Medicine</th>
                             <th style="width:10%;">Dose</th>
                             <th style="width:10%;">Frequency</th>
                             <th style="width:10%;">Duration</th>
                             <th style="width:10%;">Quantity</th>
+                            <th style="width:10%;">Expiry Date</th>
                             <th style="width:5%;" class="text-center">Status</th>
                             <th style="width:20%;" class="text-center">Rate
                                 ({{ $clinicBasicDetails->currency }})
@@ -175,6 +176,9 @@ if ($hasPrescriptionBill) {
                                     <span id="quantity{{ $loop->index }}-error" class="text-danger"></span>
                                 </th>
                                 <td>
+                                    {{ $prescription->medicine->expiry_date ? $prescription->medicine->expiry_date : 'N/A' }} <!-- Displaying expiry date -->
+                                </td>
+                                <td>
                                     {{-- {{ $prescription->medicine->stock_status }} --}}
                                     @if ($prescription->medicine->stock_status == 'In Stock')
                                         <span class="text-success" title="in stock"><i
@@ -196,7 +200,7 @@ if ($hasPrescriptionBill) {
                     </tbody>
                     <tbody>
                         <tr>
-                            <th colspan="7" class="text-end">Total</th>
+                            <th colspan="8" class="text-end">Total</th>
                             <th><input type="text" class="form-control text-center" id="total" name="total"
                                     aria-describedby="basic-addon2" readonly>
                                 <span class="text-danger" id="prescTotalError">
@@ -207,7 +211,7 @@ if ($hasPrescriptionBill) {
                             </th>
                         </tr>
                         <tr>
-                            <th colspan="7" class="text-end">Tax</th>
+                            <th colspan="8" class="text-end">Tax</th>
                             <td><input type="hidden" class="form-control text-center" id="medtax" name="medtax"
                                     aria-describedby="basic-addon2" value="{{ $clinicBasicDetails->tax }}" readonly>
                                 <label>{{ $clinicBasicDetails->tax }}%</label>
@@ -220,7 +224,7 @@ if ($hasPrescriptionBill) {
                         </tr>
                         {{-- <tr> --}}
                         <tr class="bt-3 border-primary">
-                            <td colspan="7" class="text-end">
+                            <td colspan="8" class="text-end">
                                 <h3><b>Grand Total</b></h3>
                             </td>
                             <td>
@@ -235,7 +239,7 @@ if ($hasPrescriptionBill) {
                         </tr>
                         <tr>
                                 
-                            <td colspan="4" class="text-start">
+                            <td colspan="5" class="text-start">
                                 <span class="text-bold me-2">Mode of Payment:</span>
 
                                 <!-- Checkbox for Gpay -->
@@ -290,7 +294,7 @@ if ($hasPrescriptionBill) {
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="4" class="text-start">
+                            <td colspan="5" class="text-start">
                                 <input type="checkbox" name="medbalance_given" id="medbalance_given"
                                     class="filled-in chk-col-success" <?php if ($balanceGiven >0) { ?> checked <?php } ?>>
                                 <label class="form-check-label" for="medbalance_given">Balance Given</label>

@@ -21,8 +21,8 @@
                 @endif
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="page-title">Medicine Details</h3>
-                    <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
-                        data-bs-target="#modal-right"> <i class="fa fa-add"></i> Add New</button>
+                    {{-- <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#modal-right"> <i class="fa fa-add"></i> Add New</button> --}}
                 </div>
             </div>
 
@@ -40,10 +40,14 @@
                                         <th>Barcode</th>
                                         <th>Name</th>
                                         <th>Company</th>
+                                        <th>Stock</th>
+                                        <th>Batch No</th>
                                         <th>Price</th>
                                         <th>Expiry Date</th>
+                                        <th>Supplier</th>
                                         <th>Total Quantity</th>
-                                        <th>Packaging Type</th>
+                                        <th>Purchase Amount</th>
+                                        <th>Purchase Date</th>
                                         <th width="20px">Stock Status</th>
                                         <th width="80px">Action</th>
                                     </tr>
@@ -117,6 +121,27 @@
                             return data;
                         }
                     },
+                    
+                    {
+                        data: 'stock',
+                        name: 'stock',
+                        render: function(data, type, row) {
+                            if (!data) {
+                                data = '-';
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        data: 'batch_no',
+                        name: 'batch_no',
+                        render: function(data, type, row) {
+                            if (!data) {
+                                data = '-';
+                            }
+                            return data;
+                        }
+                    },
                     {
                         data: 'med_price',
                         name: 'med_price',
@@ -143,7 +168,16 @@
                             return data;
                         }
                     },
-
+                    {
+                        data: 'supplier',
+                        name: 'supplier',
+                        render: function(data, type, row) {
+                            if (!data) {
+                                data = '-';
+                            }
+                            return data;
+                        }
+                    },
                     {
                         data: 'total_quantity',
                         name: 'total_quantity',
@@ -155,8 +189,8 @@
                         }
                     },
                     {
-                        data: 'package_type',
-                        name: 'package_type',
+                        data: 'purchase_amount',
+                        name: 'purchase_amount',
                         render: function(data, type, row) {
                             if (!data) {
                                 data = '-';
@@ -164,10 +198,22 @@
                             return data;
                         }
                     },
-                    // {
-                    //     data: 'stock_status',
-                    //     name: 'stock_status'
-                    // },
+                    {
+                        data: 'purchase_date',
+                        name: 'purchase_date',
+                        render: function(data, type, row) {
+                            if (data) {
+                                var date = new Date(data);
+                                var day = ("0" + date.getDate()).slice(-2);
+                                var month = ("0" + (date.getMonth() + 1)).slice(-2);
+                                var year = date.getFullYear();
+                                return day + '-' + month + '-' + year;
+                            } else {
+                                data = '-';
+                            }
+                            return data;
+                        }
+                    },
                     {
                         data: 'status',
                         name: 'status'
@@ -189,22 +235,26 @@
                     url: '{{ url('medicine', '') }}' + "/" + medicineId + "/edit",
                     method: 'GET',
                     success: function(response) {
-                        $('#edit_medicine_id').val(response.id);
-                        $('#edit_med_name').val(response.med_name);
-                        $('#edit_med_bar_code').val(response.med_bar_code);
-                        $('#edit_med_company').val(response.med_company);
+                        $('#edit_medicine_purchase_id').val(response.id);
+                        $('#edit_medicine_id').val(response.medicine_id);
+                        $('#edit_med_name').val(response.medicine.med_name);
+                        $('#edit_med_bar_code').val(response.medicine.med_bar_code);
+                        $('#edit_med_company').val(response.medicine.med_company);
                         $('#edit_med_price').val(response.med_price);
                         $('#edit_expiry_date').val(response.expiry_date);
                         $('#edit_units_per_package').val(response.units_per_package);
                         $('#edit_package_count').val(response.package_count);
                         $('#edit_total_quantity').val(response.total_quantity);
                         $('#edit_package_type').val(response.package_type);
-                        $('#edit_med_remarks').val(response.med_remarks);
-                        $('#edit_in').prop('checked', response.stock_status === 'In Stock');
-                        $('#edit_out').prop('checked', response.stock_status ===
+                        $('#edit_med_supplier').val(response.purchase.supplier_id);
+                        $('#edit_med_purchase_amount').val(response.purchase_amount);
+                        $('#edit_batch_no').val(response.batch_no);
+                        $('#edit_med_remarks').val(response.medicine.med_remarks);
+                        $('#edit_in').prop('checked', response.medicine.stock_status === 'In Stock');
+                        $('#edit_out').prop('checked', response.medicine.stock_status ===
                             'Out of Stock');
-                        $('#med_edit_yes').prop('checked', response.status === 'Y');
-                        $('#med_edit_no').prop('checked', response.status === 'N');
+                        $('#med_edit_yes').prop('checked', response.medicine.status === 'Y');
+                        $('#med_edit_no').prop('checked', response.medicine.status === 'N');
                         generateeditBarcode();
                     },
                     error: function(error) {
@@ -253,20 +303,6 @@
             var inputValue = '';
             inputValue = document.getElementById("med_bar_code").value.trim();
             barcode = 'barcodeCanvas';
-
-            // if ( ($('#med_bar_code').length > 0) && ($('#med_bar_code').val()!='') ) {
-            //     inputValue = document.getElementById("med_bar_code").value.trim();
-            //     barcode = 'barcodeCanvas';
-            //     $('#medBarcodeError').text('');
-            // } 
-            // if ( ($('#edit_med_bar_code').length > 0) && ($('#edit_med_bar_code').val()!='') ) {
-            //     inputValue = document.getElementById("edit_med_bar_code").value.trim();
-            //     barcode = 'edit_barcodeCanvas';
-            //     $('#editMedBarcodeError').text('');
-
-            // } 
-
-            // Check if input value is empty
             if (inputValue === "") {
                 alert('Please enter text to generate barcode.');
                 return;
