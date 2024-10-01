@@ -11,8 +11,14 @@ class PayHead extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    const E = 'E' ;
+    const SD = 'SD';
+    const SA = 'SA' ;
+    const SA_WORDS = 'Statutory Additions';
+    const SD_WORDS = 'Statutory Deductions';
+    const E_WORDS = 'Earnings';
 
-    protected $fillable = ['head_type', 'status', 'created_by', 'updated_by'];
+    protected $fillable = ['head_type', 'type', 'status', 'created_by', 'updated_by'];
     protected $dates = ['deleted_at'];
 
     protected static function booted()

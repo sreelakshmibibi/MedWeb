@@ -20,7 +20,7 @@
                     </div>
                 @endif
                 <div class="d-flex align-items-center justify-content-between">
-                    <h3 class="page-title">Salary Heads</h3>
+                    <h3 class="page-title">Pay Heads</h3>
                     {{-- <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
                         data-bs-target="#modal-right"> <i class="fa fa-add"></i> Add New</button> --}}
                     <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
@@ -39,7 +39,8 @@
                                 <thead class="bg-primary-light text-center">
                                     <tr>
                                         <th width="10px">No</th>
-                                        <th>Payhead type</th>
+                                        <th>Payhead</th>
+                                        <th>Type</th>
                                         <th width="20px">Status</th>
                                         <th width="80px">Action</th>
                                     </tr>
@@ -82,6 +83,7 @@
                     success: function(response) {
                         $('#edit_payhead_id').val(response.id);
                         $('#edit_head_type').val(response.head_type);
+                        $('#edit_type').val(response.type);
                         $('#edit_yes').prop('checked', response.status === 'Y');
                         $('#edit_no').prop('checked', response.status === 'N');
                         $('#modal-payhead-edit').modal('show');

@@ -20,6 +20,16 @@
                                 placeholder="Payhead Name">
                             <div id="headTypeError" class="invalid-feedback"></div>
                         </div>
+                        <div class="form-group">
+                            <label class="form-label" for="type">Type <span class="text-danger">
+                                    *</span></label>
+                           <select class="form-control" id="type" name="type">
+                              <option value="{{App\Models\PayHead::E}}">{{App\Models\PayHead::E_WORDS}}</option>
+                              <option value="{{App\Models\PayHead::SA}}">{{App\Models\PayHead::SA_WORDS}}</option>
+                              <option value="{{App\Models\PayHead::SD}}">{{App\Models\PayHead::SD_WORDS}}</option>
+                           </select>
+                            <div id="typeError" class="invalid-feedback"></div>
+                        </div>
 
                         <!-- Status -->
                         <div class="form-group mt-2">
@@ -57,16 +67,26 @@
             $('#errorMessagecreate').text('');
             // Validate form inputs
             var head_type = $('#head_type').val();
+            var type = $('#type').val();
             var status = $('input[name="status"]:checked').val();
 
             // Basic client-side validation (you can add more as needed)
             if (head_type.length === 0) {
                 $('#head_type').addClass('is-invalid');
-                $('#headTypeError').text('Pay head type is required.');
+                $('#headTypeError').text('Pay head name is required.');
                 return; // Prevent further execution
             } else {
                 $('#head_type').removeClass('is-invalid');
                 $('#headTypeError').text('');
+            }
+
+            if (type.length === 0) {
+                $('#type').addClass('is-invalid');
+                $('#typeError').text('Pay head type is required.');
+                return; // Prevent further execution
+            } else {
+                $('#type').removeClass('is-invalid');
+                $('#typeError').text('');
             }
 
             if (!status) {
