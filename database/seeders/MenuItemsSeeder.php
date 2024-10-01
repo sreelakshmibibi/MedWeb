@@ -103,6 +103,10 @@ class MenuItemsSeeder extends Seeder
             'employeetype update',
             'attendance',
             'attendance update',
+            'medicine purchase',
+            'medicine purchase store',
+            'medicine purchase cancel',
+            'medicine purchase update',
 
         ];
 
@@ -183,7 +187,11 @@ class MenuItemsSeeder extends Seeder
             'employeetype create',
             'employeetype update',
             'attendance',
-            'attendance update',
+            'attendance update',            'medicine purchase',
+            'medicine purchase store',
+            'medicine purchase cancel',
+            'medicine purchase update',
+
         ];
 
 
@@ -216,6 +224,7 @@ class MenuItemsSeeder extends Seeder
             'order cancel',
             'order deliver',
             'order repeat',
+            'medicine purchase',
 
         ]);
 
@@ -230,6 +239,7 @@ class MenuItemsSeeder extends Seeder
             'leave apply',
             'staff_list',
             'technician',
+            'medicine purchase',
             
         ]);
 
@@ -248,6 +258,7 @@ class MenuItemsSeeder extends Seeder
             'leave apply',
             'staff_list',
             'technician',
+            'medicine purchase',
             
         ]);
 
