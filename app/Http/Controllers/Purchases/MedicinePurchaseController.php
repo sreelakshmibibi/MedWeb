@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Exception;
 
 class MedicinePurchaseController extends Controller
 {
@@ -186,7 +187,7 @@ class MedicinePurchaseController extends Controller
             \Log::info('Medicine purchase items added successfully.');
 
             return response()->json(['success' => 'Medicine purchase added successfully!', 'purchase' => $purchase, 'status' => 201], 201);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             \Log::error('Error storing  medicine purchase:', ['message' => $e->getMessage()]);
             return response()->json(['error' => 'Failed to store medicine purchase.'], 500);
         }
