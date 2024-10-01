@@ -326,6 +326,11 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/purchases/store', [PurchaseController::class, 'store'])->name('purchases.store');
     Route::get('/medicine/purchases', [MedicinePurchaseController::class, 'index'])->name('medicine.purchases');
     Route::post('/medicine/purchases/store', [MedicinePurchaseController::class, 'store'])->name('medicine.purchases.store');
+    Route::get('/medicine/purchases/all', [MedicinePurchaseController::class, 'purchaseHistory'])->name(name: 'medicine.purchases.history');
+    Route::get('/medicine/purchases/view/{id}', [MedicinePurchaseController::class, 'show'])->name('medicine.purchase.view');
+    Route::post('/medicine/purchases/cancel/{id}', [MedicinePurchaseController::class, 'destroy'])->name(name: 'medicine.purchase.destroy');
+    Route::get('/medicine/purchases/edit/{id}', [MedicinePurchaseController::class, 'edit'])->name('medicine.purchase.edit');
+    Route::post('/medicine_purchases/update', [MedicinePurchaseController::class, 'update'])->name('medicine.purchases.update');
     Route::get('purchases/{id}/download-bills', [PurchaseController::class, 'downloadBills']);
     Route::get('/purchases/view/{id}', [PurchaseController::class, 'show'])->name('purchase.view');
     Route::get('/purchases/edit/{id}', [PurchaseController::class, 'edit'])->name('purchase.edit');

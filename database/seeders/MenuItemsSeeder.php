@@ -92,6 +92,10 @@ class MenuItemsSeeder extends Seeder
             'supplier edit',
             'supplier remove',
             'expense category',
+            'medicine purchase',
+            'medicine purchase store',
+            'medicine purchase cancel',
+            'medicine purchase update',
 
         ];
 
@@ -162,6 +166,10 @@ class MenuItemsSeeder extends Seeder
             'supplier edit',
             'supplier delete',
             'expense category',
+            'medicine purchase',
+            'medicine purchase store',
+            'medicine purchase cancel',
+            'medicine purchase update',
 
         ];
 
@@ -195,6 +203,7 @@ class MenuItemsSeeder extends Seeder
             'order cancel',
             'order deliver',
             'order repeat',
+            'medicine purchase',
 
         ]);
 
@@ -209,6 +218,7 @@ class MenuItemsSeeder extends Seeder
             'leave apply',
             'staff_list',
             'technician',
+            'medicine purchase',
             
         ]);
 
@@ -227,6 +237,7 @@ class MenuItemsSeeder extends Seeder
             'leave apply',
             'staff_list',
             'technician',
+            'medicine purchase',
             
         ]);
 
