@@ -212,6 +212,7 @@ class PurchaseController extends Controller
             $purchases = Purchase::select('purchases.*', 'suppliers.name as supplier', 'clinic_branches.clinic_address as branch') // Select fields from both tables
                 ->join('suppliers', 'purchases.supplier_id', '=', 'suppliers.id') // Join the expense_categories table
                 ->join('clinic_branches', 'purchases.branch_id', '=', 'clinic_branches.id') // Join the clinic_branches table
+                ->where('purchases.purchase_category', '=', 'O')
                 ->orderBy('entrydate', 'desc')
                 ->orderBy('id', 'desc')
                 ->get();
