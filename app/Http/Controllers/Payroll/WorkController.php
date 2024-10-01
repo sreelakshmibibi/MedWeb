@@ -35,7 +35,7 @@ class WorkController extends Controller
             EmployeeAttendance::create([
                 'user_id' => Auth::user()->id,
                 'login_date' => now()->toDateString(),
-                'login_time' => now()->toTimeString(),
+                'login_time' => Carbon::createFromFormat('H:i', now()->format('H:i')),
                 'attendance_status' => EmployeeAttendance::PRESENT,
                 
             ]);
@@ -88,7 +88,7 @@ class WorkController extends Controller
 
             $diff = $loginTime->diff($logoutTime);
             // Check if logout time is before login time
-            $workedHours = sprintf('%02d:%02d:%02d', $diff->h, $diff->i, $diff->s);
+            $workedHours = sprintf('%02d:%02d', $diff->h, $diff->i, $diff->s);
 
             $attendance->worked_hours = $workedHours;
             $attendance->save();
