@@ -23,11 +23,13 @@
                     <h3 class="page-title">Employee Types</h3>
                     {{-- <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
                         data-bs-target="#modal-right"> <i class="fa fa-add"></i> Add New</button> --}}
-                    <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
+                    @if (Auth::user()->can('employeetype create'))
+                       <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
                         data-bs-target="#modal-right" title="Add New">
                         <span class="hidden-sm-up">Add New</span>
                         <span class="hidden-xs-down"><i class="fa fa-add"></i> Add New</span>
-                    </button>
+                       </button>
+                    @endif
                 </div>
             </div>
 
