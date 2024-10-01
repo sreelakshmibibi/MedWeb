@@ -29,7 +29,7 @@ $(document).ready(function () {
                 $("#gst_no").val("");
                 $("#previousOutStanding").val("");
                 $(".sup_details").attr("readonly", false);
-
+                calculateTotal();
                 // console.log("New Supplier Added:", selected.text);
             } else {
                 // Fetch existing supplier details via AJAX (if needed)
@@ -45,6 +45,7 @@ $(document).ready(function () {
                                 .val(data.balancedue)
                                 .trigger("change");
                             $(".sup_details").attr("readonly", true);
+                            calculateTotal();
                         }
                     },
                     error: function (xhr) {
