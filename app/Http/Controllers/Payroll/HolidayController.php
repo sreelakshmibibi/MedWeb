@@ -9,10 +9,18 @@ use App\Models\Holiday;
 use App\Services\ReportService;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
 class HolidayController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:holidays', ['only' => ['index']]);
+        $this->middleware('permission:holidays create', ['only' => ['store']]);
+        $this->middleware('permission:holidays update', ['only' => ['edit', 'update']]);
+        
+    }
     /**
      * Display a listing of the resource.
      */
@@ -58,11 +66,13 @@ class HolidayController extends Controller
                     return $btn1;
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
+                    $btn = null;
+                    if (Auth::user()->can('holidays update')) {
+                        $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
                         data-bs-target="#modal-holiday-edit" ><i class="fa fa-pencil"></i></button>
                         <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-del btn-xs" data-bs-toggle="modal" data-bs-target="#modal-holiday-delete" data-id="' . $row->id . '" title="delete">
                         <i class="fa fa-trash"></i></button>';
-
+                    }
                     return $btn;
                 })
                 ->rawColumns(['status', 'action'])

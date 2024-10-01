@@ -23,11 +23,13 @@
                     <h3 class="page-title">Pay Heads</h3>
                     {{-- <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
                         data-bs-target="#modal-right"> <i class="fa fa-add"></i> Add New</button> --}}
+                        @if (Auth::user()->can('payheads update'))
                     <button type="button" class="waves-effect waves-light btn btn-primary" data-bs-toggle="modal"
                         data-bs-target="#modal-right" title="Add New">
                         <span class="hidden-sm-up">Add New</span>
                         <span class="hidden-xs-down"><i class="fa fa-add"></i> Add New</span>
                     </button>
+                    @endif
                 </div>
             </div>
 

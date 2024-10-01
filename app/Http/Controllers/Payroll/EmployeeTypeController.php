@@ -6,10 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\EmployeeTypeRequest;
 use App\Models\EmployeeType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 
 class EmployeeTypeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:employeetype', ['only' => ['index']]);
+        $this->middleware('permission:employeetype create', ['only' => ['store']]);
+        $this->middleware('permission:employeetype update', ['only' => ['edit', 'update']]);
+        
+    }
     /**
      * Display a listing of the resource.
      */
@@ -31,11 +39,13 @@ class EmployeeTypeController extends Controller
                     return $btn1;
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
+                    $btn = null;
+                    if (Auth::user()->can('employeetype update')) {
+                        $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
                         data-bs-target="#modal-employee-type-edit" ><i class="fa fa-pencil"></i></button>';
                         // $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-del btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
                         // <i class="fa fa-trash"></i></button>';
-
+                    }
                     return $btn;
                 })
                 ->rawColumns(['status', 'action'])
