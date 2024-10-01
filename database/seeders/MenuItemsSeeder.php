@@ -92,6 +92,17 @@ class MenuItemsSeeder extends Seeder
             'supplier edit',
             'supplier remove',
             'expense category',
+            'holidays',
+            'holidays update',
+            'holidays create',
+            'payheads',
+            'payheads update',
+            'payheads create',
+            'employeetype',
+            'employeetype create',
+            'employeetype update',
+            'attendance',
+            'attendance update',
 
         ];
 
@@ -162,7 +173,17 @@ class MenuItemsSeeder extends Seeder
             'supplier edit',
             'supplier delete',
             'expense category',
-
+            'holidays',
+            'holidays update',
+            'holidays create',
+            'payheads',
+            'payheads update',
+            'payheads create',
+            'employeetype',
+            'employeetype create',
+            'employeetype update',
+            'attendance',
+            'attendance update',
         ];
 
 
