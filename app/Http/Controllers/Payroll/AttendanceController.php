@@ -29,6 +29,7 @@ class AttendanceController extends Controller
         if (!Auth::user()->is_doctor) {
             $clinicBranchId = StaffProfile::where('user_id', Auth::id())
                 ->pluck('clinic_branch_id')
+                ->first();
         }
         $attendanceService = new AttendanceService();
         $usersWithAttendance = $attendanceService->getAttendance($selectedDate, $clinicBranchId);
