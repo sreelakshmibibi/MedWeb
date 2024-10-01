@@ -31,21 +31,24 @@ class AttendanceController extends Controller
                 ->pluck('clinic_branch_id')
                 ->first();
         }
-        $attendanceService = new AttendanceService();
-        $usersWithAttendance = $attendanceService->getAttendance($selectedDate, $clinicBranchId);
-        return view('payroll.attendance.index', compact('branches', 'usersWithAttendance', 'clinicBranchId'));
+        return view('payroll.attendance.index', compact('branches', 'clinicBranchId'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    // public function create(Request $request)
-    // {
-    //     $attendanceService = new AttendanceService();
-    //     $usersWithAttendance = $attendanceService->getAttendance($request->attendance_date, $request->serviceBranch);
-    //     dd($usersWithAttendance);
-    //     return response()->json($usersWithAttendance);
-    // }
+    public function create(Request $request)
+    {
+        $clinicBranchId = null;
+        if (!Auth::user()->is_doctor) {
+            $clinicBranchId = StaffProfile::where('user_id', Auth::id())
+                ->pluck('clinic_branch_id')
+                ->first();
+        }
+        $attendanceService = new AttendanceService();
+        $usersWithAttendance = $attendanceService->getAttendance($request->date, $request->serviceBranch);
+        return response()->json($usersWithAttendance);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -67,8 +70,8 @@ class AttendanceController extends Controller
             EmployeeAttendance::updateOrCreate(
                 [
                     'user_id' => $request->user_id[$index],
-                    'login_date' => date('Y-m-d'), // Today's date
-                    'logout_date' => date('Y-m-d'), // Today's date
+                    'login_date' => $request->selected_date, // Today's date
+                    'logout_date' => $request->selected_date, // Today's date
 
                 ],
                 [
