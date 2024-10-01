@@ -20,7 +20,16 @@
                                 minlength="3" placeholder="Pay head Name" autocomplete="off">
                             <div class="invalid-feedback"></div>
                         </div>
-
+                        <div class="form-group">
+                            <label class="form-label" for="edit_type">Type <span class="text-danger">
+                                    *</span></label>
+                           <select class="form-control" id="edit_type" name="edit_type">
+                              <option value="{{App\Models\PayHead::E}}">{{App\Models\PayHead::E_WORDS}}</option>
+                              <option value="{{App\Models\PayHead::SA}}">{{App\Models\PayHead::SA_WORDS}}</option>
+                              <option value="{{App\Models\PayHead::SD}}">{{App\Models\PayHead::SD_WORDS}}</option>
+                           </select>
+                            <div id="editTypeError" class="invalid-feedback"></div>
+                        </div>
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6">Active</label>
                             <div>
@@ -53,15 +62,23 @@
             $('#edit_head_type').removeClass('is-invalid');
             $('#edit_head_type').next('.invalid-feedback').text('');
             $('#statusError').text('');
+            $('#edit_type').removeClass('is-invalid');
+            $('#edit_type').next('.invalid-feedback').text('');
 
             // Validate form inputs
             var headType = $('#edit_head_type').val();
+            var type = $('#edit_type').val();
             var status = $('input[name="status"]:checked').val();
 
             // Basic client-side validation (you can add more as needed)
             if (headType.length === 0) {
                 $('#edit_head_type').addClass('is-invalid');
                 $('#edit_head_type').next('.invalid-feedback').text('Pay head is required.');
+                return; // Prevent further execution
+            }
+            if (type.length === 0) {
+                $('#edit_type').addClass('is-invalid');
+                $('#edit_type').next('.invalid-feedback').text('Pay head type is required.');
                 return; // Prevent further execution
             }
 
@@ -102,6 +119,11 @@
                         $('#edit_head_type').next('.invalid-feedback').text(errors
                             .head_type[0]);
                     }
+                    if (errors.hasOwnProperty('type')) {
+                        $('#edit_type').addClass('is-invalid');
+                        $('#edit_type').next('.invalid-feedback').text(errors
+                            .type[0]);
+                    }
 
                     if (errors.hasOwnProperty('status')) {
                         $('#statusError').text(errors.status[0]);
@@ -115,6 +137,8 @@
             $('#editPayHeadForm').trigger('reset');
             $('#edit_head_type').removeClass('is-invalid');
             $('#edit_head_type').next('.invalid-feedback').text('');
+            $('#edit_type').removeClass('is-invalid');
+            $('#edit_type').next('.invalid-feedback').text('');
             $('#statusError').text('');
         });
     });

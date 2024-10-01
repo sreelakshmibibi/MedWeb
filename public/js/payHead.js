@@ -32,6 +32,11 @@ jQuery(function ($) {
                 className: "text-left",
             },
             {
+                data: "type",
+                name: "type",
+                className: "text-left",
+            },
+            {
                 data: "status",
                 name: "status",
                 className: "text-center",

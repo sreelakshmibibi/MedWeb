@@ -22,6 +22,16 @@ class PayHeadController extends Controller
 
             return DataTables::of($payHeads)
                 ->addIndexColumn()
+                ->addColumn('type', function ($row) {
+                    switch ($row->type) {
+                        case 'E':
+                            return PayHead::E_WORDS;
+                        case 'SD':
+                            return PayHead::SD_WORDS;
+                        default:
+                            return PayHead::SA_WORDS; // Default case if none match
+                    }
+                })
                 ->addColumn('status', function ($row) {
                     if ($row->status == 'Y') {
                         $btn1 = '<span class="text-success" title="active"><i class="fa-solid fa-circle-check"></i></span>';
@@ -57,6 +67,7 @@ class PayHeadController extends Controller
             // $department->department = $request->input('department');
             // Capitalize each word in the department name before assigning it
             $payHead->head_type = ucwords(strtolower($request->input('head_type')));
+            $payHead->type = $request->input('type');
             $payHead->status = $request->input('status');
             
             // Save the department
@@ -99,6 +110,7 @@ class PayHeadController extends Controller
 
             // Update department fields based on form data
             $payHead->head_type = $request->edit_head_type;
+            $payHead->type = $request->edit_type;
             $payHead->status = $request->edit_status;
 
             // Save the updated department

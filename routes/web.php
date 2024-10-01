@@ -350,7 +350,7 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/employee_types/update', [EmployeeTypeController::class, 'update'])->name('employeeTypes.update');
 
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance');
-    Route::get('/attendance/create', [AttendanceController::class, 'create'])->name('attendance.create');
+    Route::post('/attendance/create', [AttendanceController::class, 'create'])->name('attendance.create');
     Route::post('/attendance/store', [AttendanceController::class, 'store'])->name('attendance.store');
 
     
