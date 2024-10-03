@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('type');
             $table->text('description')->nullable();
+            $table->integer('duration')->nullable();
+            $table->string('duration_type')->nullable();
             $table->enum('payment_status', ['Paid', 'Partially Paid', 'Not Paid'])
                   ->default('Not Paid') ;
             $table->char('status')->default('Y');

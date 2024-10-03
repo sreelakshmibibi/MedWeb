@@ -368,6 +368,8 @@ class MenuItemsSeeder extends Seeder
             ['name' => 'Treatment Plan', 'url' => '/treatment_plan', 'route_name' => 'settings.treatment_plan', 'icon' => 'icon-Commit', 'order_no' => 8],
             ['name' => 'Roles and Permissions', 'url' => 'roles', 'route_name' => 'roles.index', 'icon' => 'icon-Commit', 'order_no' => 9],
             ['name' => 'DB Backup', 'url' => '/db_backup', 'route_name' => 'settings.db_backup', 'icon' => 'icon-Commit', 'order_no' => 10],
+            ['name' => 'Leave Types', 'url' => '/leaveType', 'route_name' => 'settings.leaveType', 'icon' => 'icon-Commit', 'order_no' => 11],
+
         ]);
 
         $settingSuperAdminSubmenus = $settings->children()->createMany([
