@@ -9,5 +9,5 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class LeaveType extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $fillable = ['type', 'description', 'payment_status', 'status'];
+    protected $fillable = ['type', 'description', 'payment_status', 'duration', 'duration_type','status'];
 }

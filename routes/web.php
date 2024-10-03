@@ -34,6 +34,7 @@ use App\Http\Controllers\Settings\DiseaseController;
 use App\Http\Controllers\Settings\InsuranceController;
 use App\Http\Controllers\Settings\MedicineController;
 use App\Http\Controllers\Settings\LeaveController;
+use App\Http\Controllers\Settings\LeaveTypeController;
 use App\Http\Controllers\Settings\MenuItemController;
 use App\Http\Controllers\Settings\PermissionController;
 use App\Http\Controllers\Settings\RoleController;
@@ -137,6 +138,12 @@ Route::middleware(['auth', 'check.session'])->group(function () {
         Route::post('/department/update', [DepartmentController::class, 'update'])->name('settings.department.update');
         Route::delete('/department/{department}', [DepartmentController::class, 'destroy'])->name('settings.departments.destroy');
     });
+
+    Route::get('/leaveType', [LeaveTypeController::class, 'index'])->name('settings.leaveType');
+    Route::post('/leaveType/store', [LeaveTypeController::class, 'store'])->name('settings.leaveType.store');
+    Route::get('/leaveType/{leaveType}/edit', [LeaveTypeController::class, 'edit'])->name('settings.leaveType.edit');
+    Route::post('/leaveType/update', [LeaveTypeController::class, 'update'])->name('settings.leaveType.update');
+    Route::delete('/leaveType/{leaveType}', [LeaveTypeController::class, 'destroy'])->name('settings.leaveType.destroy');
 
     Route::get('/insurance', [InsuranceController::class, 'index'])->name('settings.insurance');
     Route::post('/insurance/store', [InsuranceController::class, 'store'])->name('settings.insurance.store');
