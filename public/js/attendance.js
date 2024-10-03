@@ -33,8 +33,8 @@ $(document).ready(function() {
                                 <td class="text-center">${attendance.name}</td>
                                 <td class="text-center">
                                     <select class="form-control" name="attendance_status[]" onchange="handleAttendanceStatusChange(this)">
-                                        <option value="{{ App\Models\EmployeeAttendance::PRESENT }}" ${attendance.attendance_status === "{{ App\Models\EmployeeAttendance::PRESENT }}" ? 'selected' : ''}>Present</option>
-                                        <option value="{{ App\Models\EmployeeAttendance::ON_LEAVE }}" ${attendance.attendance_status === "{{ App\Models\EmployeeAttendance::ON_LEAVE }}" ? 'selected' : ''}>Leave</option>
+                                        <option value="${present}" ${attendance.attendance_status === "1" ? 'selected' : ''}>Present</option>
+                                        <option value="${on_leave}" ${attendance.attendance_status === "2" ? 'selected' : ''}>Leave</option>
                                     </select>
                                 </td>
                                 <td>
@@ -113,7 +113,7 @@ $(document).ready(function() {
         const logoutTimeField = row.querySelector('.logout-time');
         const workedHoursField = row.querySelector('.worked-hours');
 
-        if (element.value === '{{ App\Models\EmployeeAttendance::ON_LEAVE }}') {
+        if (element.value == on_leave) {
             // Set values to zero and make fields non-editable
             loginTimeField.value = '00:00';
             logoutTimeField.value = ''; // Make logout time empty

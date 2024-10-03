@@ -22,6 +22,8 @@ class ClinicBasicDetail extends Model
     'treatment_tax_included',
     'tax',
     'clinic_type_id',
+    'financial_year_start',
+    'financial_year_end',
     'created_by',
     'updated_by'
     ];    

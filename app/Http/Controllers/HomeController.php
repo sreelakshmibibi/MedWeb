@@ -264,11 +264,26 @@ class HomeController extends Controller
             $clinicDetails = ClinicBasicDetail::first();
             $data = ClinicBranch::all();
             $total = count($data);
-
+            $months = [
+                1 => 'January',
+                2 => 'February',
+                3 => 'March',
+                4 => 'April',
+                5 => 'May',
+                6 => 'June',
+                7 => 'July',
+                8 => 'August',
+                9 => 'September',
+                10 => 'October',
+                11 => 'November',
+                12 => 'December'
+            ];
+            
+            
             // Set the flash message
             session()->flash('error', 'Please enter clinics and branch details before proceeding.');
 
-            return view('settings.clinics.index', compact('countries', 'states', 'cities', 'clinicDetails', 'data', 'total', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients'));
+            return view('settings.clinics.index', compact('countries', 'states', 'cities', 'clinicDetails', 'data', 'total', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients', 'months'));
 
         }
     }
