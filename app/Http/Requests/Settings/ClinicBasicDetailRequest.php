@@ -29,6 +29,8 @@ class ClinicBasicDetailRequest extends FormRequest
             'consultation_fees_frequency' => 'required|integer|max:30',
             'clinic_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'clinic_website' => 'nullable|url|max:255',
+            // 'financial_year_start' => 'required',
+            // 'financial_year_end' => 'required',
          
         ];
     }

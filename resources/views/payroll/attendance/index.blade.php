@@ -52,6 +52,8 @@
 <script>
     window.csrfToken = '{{ csrf_token() }}';
     var attendanceCreateRoute = "{{ route('attendance.create') }}";
+    var present = '{{App\Models\EmployeeAttendance::PRESENT}}';
+    var on_leave = '{{App\Models\EmployeeAttendance::ON_LEAVE}}';
 
 </script>
   <script src="{{ asset('js/attendance.js') }}"></script>

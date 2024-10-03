@@ -64,7 +64,7 @@ class AttendanceController extends Controller
             $diff = $logoutTime->diff($loginTime);
     
             // Format worked hours
-            $workedHours = sprintf('%02d:%02d:%02d', $diff->h, $diff->i, $diff->s);
+            $workedHours =$request->worked_hours[$index];
     
             // Create or update the attendance record
             EmployeeAttendance::updateOrCreate(

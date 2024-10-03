@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('currency')->nullable();
             $table->string('treatment_tax_included')->default('Y');
             $table->string('tax')->default(0)->nullable();
+            $table->integer('financial_year_start')->nullable();
+            $table->integer('financial_year_end')->nullable();
             $table->foreignId('clinic_type_id')->constrained();
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
