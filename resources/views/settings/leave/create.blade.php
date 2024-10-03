@@ -17,10 +17,9 @@
                                     *</span></label>
                             <select class="form-control" id="leave_type" name="leave_type" required>
                                 <option value="">Select type</option>
-                                <option value="Casual Leave">Casual Leave</option>
-                                <option value="Medical Leave">Medical Leave</option>
-                                <option value="Loss of Pay">Loss of Pay</option>
-                                <option value="Other">Other</option>
+                                @foreach ($leaveTypes as $leaveType)
+                                    <option value="{{ $leaveType->id }}"> {{ $leaveType->type }}</option>
+                                @endforeach
                             </select>
                             <div id="leaveTypeError" class="invalid-feedback"></div>
                         </div>

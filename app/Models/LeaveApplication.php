@@ -14,7 +14,7 @@ class LeaveApplication extends Model
     const Applied = 1;
     const Approved = 2;
     const Rejected = 3;
-    
+
     protected $fillable = [
         'user_id',
         'leave_type_id',
@@ -29,7 +29,7 @@ class LeaveApplication extends Model
         'created_by',
         'updated_by',
     ];
-    
+
     protected $dates = ['deleted_at'];
 
     protected static function booted()
@@ -49,6 +49,11 @@ class LeaveApplication extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function leaveType()
+    {
+        return $this->belongsTo(LeaveType::class, 'leave_type_id');
     }
 
 }
