@@ -260,6 +260,7 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/report/audit_bill', [ReportController::class, 'auditBill'])->name('report.auditBill');
     Route::post('/report/consolidated', [ReportController::class, 'consolidatedReport'])->name('report.consolidated');
     Route::get('/report/expensesdatewise', [ExpenseController::class, 'getExpensesByDate'])->name('expenses.by.date');
+    Route::get('/report/attendance/month', [AttendanceController::class, 'getMonthwiseAttendance'])->name('report.attendance.month');
 
     Route::get('/appointments-by-hour', [App\Http\Controllers\HomeController::class, 'getAppointmentsByHour'])->name('appointments-by-hour');
     Route::get('/appointments-by-month', [App\Http\Controllers\HomeController::class, 'getAppointmentsByMonth'])->name('appointments-by-month');
