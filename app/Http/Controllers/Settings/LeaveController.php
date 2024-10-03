@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Settings\MedicineRequest;
 use App\Http\Requests\Settings\LeaveRequest;
 use App\Models\LeaveApplication;
+use App\Models\LeaveType;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables as DataTables;
@@ -27,13 +28,18 @@ class LeaveController extends Controller
      */
     public function index(Request $request)
     {
+        $leaveTypes = LeaveType::where('status', 'Y')
+        ->orderBy('type', 'asc')
+        ->get();
+
         if ($request->ajax()) {
             $leaves = null;
             if (Auth::user()->can('leave approve')) {
-                $leaves = LeaveApplication::with('user')->orderBy('leave_from', 'desc')->get();
+                $leaves = LeaveApplication::with('user', 'leaveType')->orderBy('leave_from', 'desc')->get();
             } else {
                 $leaves = LeaveApplication::where('user_id', Auth::user()->id)
-                    ->orderBy('leave_from', 'desc')->get();
+                ->with('leaveType')
+                ->orderBy('leave_from', 'desc')->get();
             }
 
 
@@ -45,7 +51,9 @@ class LeaveController extends Controller
                     $differenceInDays = $leaveFrom->diffInDays($leaveTo) + 1; // Adding 1 because both start and end dates are inclusive
                     return $leaveFrom->format('d-m-Y') . ' to ' . $leaveTo->format('d-m-Y') . ' (' . $differenceInDays . ' days)';
                 })
-
+                ->addColumn('leave_type', function ($row) {
+                    return $row->leaveType->type;
+                })
                 ->addColumn('status', function ($row) {
                     if ($row->leave_status == LeaveApplication::Applied) {
                         // return "Applied";
@@ -87,7 +95,7 @@ class LeaveController extends Controller
                 ->make(true);
         }
 
-        return view('settings.leave.index');
+        return view('settings.leave.index', compact('leaveTypes'));
     }
 
 
@@ -122,7 +130,7 @@ class LeaveController extends Controller
 
         $leaveApplication = new LeaveApplication();
         $leaveApplication->user_id = $userId;
-        $leaveApplication->leave_type = $request->input('leave_type');
+        $leaveApplication->leave_type_id = $request->input('leave_type');
         $leaveApplication->leave_from = $leaveFrom;
         $leaveApplication->leave_to = $leaveTo;
         $leaveApplication->leave_reason = $request->input('reason');
@@ -162,7 +170,7 @@ class LeaveController extends Controller
         $leaveApplication = LeaveApplication::findorFail($request->edit_leave_id);
         if (!$leaveApplication)
             abort(404);
-        $leaveApplication->leave_type = $request->editleave_type;
+        $leaveApplication->leave_type_id = $request->editleave_type;
         $leaveApplication->leave_from = $request->editleave_from;
         $leaveApplication->leave_to = $request->editleave_to;
         $leaveApplication->leave_reason = $request->editreason;

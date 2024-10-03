@@ -132,7 +132,7 @@
                     method: 'GET',
                     success: function(response) {
                         $('#editleave_id').val(response.id);
-                        $('#editleave_type').val(response.leave_type);
+                        $('#editleave_type').val(response.leave_type_id);
                         $('#editleave_from').val(response.leave_from);
                         $('#editleave_to').val(response.leave_to);
                         $('#editreason').val(response.leave_reason);
