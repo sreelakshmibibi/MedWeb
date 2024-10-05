@@ -10,16 +10,20 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('employee_leaves', function (Blueprint $table) {
+        Schema::create('salaries', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId(column: 'employee_type_id')->constrained('employee_types');
-            $table->integer('casual_leave_monthly')->nullable();
-            $table->integer('sick_leave_monthly')->nullable();
-            $table->date('with_effect_from');
+            $table->decimal('salary', 10, 2);
+            $table->decimal('netsalary', 10, 2);
+            $table->decimal('ctc', 10, 2);
+            $table->decimal('etotal', 10, 2);
+            $table->decimal('satotal', 10, 2);
+            $table->decimal('sdtotal', 10, 2);
             $table->string('status')->default('Y');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('cascade');
+            $table->string('delete_reason', 255)->nullable();
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -30,6 +34,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('employee_leaves');
+        Schema::dropIfExists('salaries');
     }
 };

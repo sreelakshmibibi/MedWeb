@@ -368,8 +368,16 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/attendance/create', [AttendanceController::class, 'create'])->name('attendance.create');
     Route::post('/attendance/store', [AttendanceController::class, 'store'])->name('attendance.store');
 
-    
+
     Route::get('/employee_salary', [EmployeeSalaryController::class, 'index'])->name('employeeSalary');
+    Route::get('/employee_salary/create/{id}', [EmployeeSalaryController::class, 'create'])->name('salary.create');
+    Route::get('/employee_salary/view/{id}', [EmployeeSalaryController::class, 'show'])->name('salary.view');
+    Route::get('/employee_salary/edit/{id}', [EmployeeSalaryController::class, 'edit'])->name('salary.edit');
+    Route::post('/employee_salary/update', [EmployeeSalaryController::class, 'update'])->name('salary.update');
+    Route::post('/employee_salary/cancel/{id}', [EmployeeSalaryController::class, 'destroy'])->name(name: 'salary.destroy');
+    Route::post('/employee_salary/store', [EmployeeSalaryController::class, 'store'])->name('salary.store');
+    Route::post('/download-salaryslip', [EmployeeSalaryController::class, 'generatesalaryslipPdf'])->name('download.salaryslip');
+
 
     Route::post('/logout-cancel', function () {
         Auth::logout();
