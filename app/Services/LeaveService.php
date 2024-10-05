@@ -47,8 +47,8 @@ class LeaveService
 
     public function getJoiningDate($userId)
     {
-        // return StaffProfile::where('user_id', $userId)->value('date_of_joining');
-        return Carbon::parse("2024-04-10");
+         return StaffProfile::where('user_id', $userId)->value('date_of_joining');
+        // return Carbon::parse("2024-04-10");
     }
 
     public function getLeaveAppliedCount($leaveType, $financialYearDetails)
