@@ -43,6 +43,7 @@
                                         <th>Leave Type</th>
                                         <th>Dates (Days)</th>
                                         <th>Reason</th>
+                                        <th>Documents</th>
                                         <th>Status</th>
                                         <th width="150px">Action</th>
                                     </tr>
@@ -107,6 +108,11 @@
                         data: "leave_reason",
                         name: "leave_reason",
                         className: "text-left",
+                    },
+                    {
+                        data: "leave_file",
+                        name: "leave_file",
+                        className: "text-center",
                     },
                     {
                         data: "status",
