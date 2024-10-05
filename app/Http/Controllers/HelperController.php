@@ -11,6 +11,7 @@ use App\Models\Prescription;
 use App\Models\State;
 use App\Models\TeethRow;
 use App\Models\ToothExamination;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -53,6 +54,21 @@ class HelperController extends Controller
 
         return response()->json($response);
     }
+
+    public function getStaffByBranch($branchId)
+    {
+        $employees = User::with('staffProfile') 
+            ->when($branchId, function ($query) use ($branchId) {
+                $query->whereHas('staffProfile', function ($query) use ($branchId) {
+                    $query->where('clinic_branch_id', $branchId);
+                });
+            })
+            ->select('id', 'name')
+            ->get();
+
+        return $employees;
+    }
+
 
     public function generateTreatmentPdf(Request $request)
     {
@@ -274,8 +290,8 @@ class HelperController extends Controller
                             $teethName = TeethRow::Row_4_Desc;
                             break;
                         case TeethRow::RowAll:
-                                $teethName = TeethRow::Row_All_Desc;
-                                break;
+                            $teethName = TeethRow::Row_All_Desc;
+                            break;
                         default:
                             $teethName = 'Unknown Row';
                             break;
@@ -456,29 +472,29 @@ class HelperController extends Controller
     public function trackOrderPDF(Request $request)
     {
         $ordersPlaced = OrderPlaced::with('toothExamination')->orderBy('created_at', 'desc');
-            if ($request->filled('serviceFromDate')) {
-                $ordersPlaced->whereDate('order_placed_on', '>=', $request->serviceFromDate);
-            }
-    
-            if ($request->filled('serviceToDate')) {
-                $ordersPlaced->whereDate('order_placed_on', '<=', $request->serviceToDate);
-            }
-    
-            $ordersPlaced->whereHas('toothExamination.appointment', function($query) use ($request) {
-                $query->where('app_branch', $request->serviceBranch);
-            });
+        if ($request->filled('serviceFromDate')) {
+            $ordersPlaced->whereDate('order_placed_on', '>=', $request->serviceFromDate);
+        }
 
-            if ($request->filled('technician_id')) {
-                $ordersPlaced->where('technician_id', $request->technician_id);
-            }
-    
-            if ($request->filled('order_status')) {
-                $ordersPlaced->where('order_status', $request->order_status);
-            }
-    
-            $ordersPlaced = $ordersPlaced->get();
+        if ($request->filled('serviceToDate')) {
+            $ordersPlaced->whereDate('order_placed_on', '<=', $request->serviceToDate);
+        }
 
-            
+        $ordersPlaced->whereHas('toothExamination.appointment', function ($query) use ($request) {
+            $query->where('app_branch', $request->serviceBranch);
+        });
+
+        if ($request->filled('technician_id')) {
+            $ordersPlaced->where('technician_id', $request->technician_id);
+        }
+
+        if ($request->filled('order_status')) {
+            $ordersPlaced->where('order_status', $request->order_status);
+        }
+
+        $ordersPlaced = $ordersPlaced->get();
+
+
 
     }
 

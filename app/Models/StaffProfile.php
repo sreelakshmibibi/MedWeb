@@ -36,4 +36,9 @@ class StaffProfile extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function clinicBranch()
+    {
+        return $this->belongsTo(ClinicBranch::class, 'clinic_branch_id');
+    }
 }

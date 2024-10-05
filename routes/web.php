@@ -116,6 +116,7 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/download-prescription', [HelperController::class, 'generatePrescriptionPdf'])->name('download.prescription');
     Route::get('/print-prescription', [HelperController::class, 'printPrescription'])->name('print.prescription');
     Route::post('/download-patientidcard', [HelperController::class, 'generatePatientIDCardPdf'])->name('download.patientidcard');
+    Route::get('/get-staff/{branchId}', [HelperController::class, 'getStaffByBranch'])->name('get.branch.staff');
 
     Route::get('/clinic', [ClinicBranchController::class, 'index'])->name('settings.clinic');
     Route::post('/clinic/create', [ClinicBranchController::class, 'create'])->name('settings.clinic.create');

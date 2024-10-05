@@ -4,7 +4,14 @@
 <div class="content-wrapper">
     <div class="container-full">
         <div class="content-header">
-            <h3 class="page-title">Attendance</h3>
+            <div class="d-flex align-items-center justify-content-between">
+                <h3 class="page-title">Attendance</h3>
+                <a type="button" class="waves-effect waves-light btn btn-primary" title="Back"
+                    href="{{ route('report.attendance.month') }}">
+                    <span class="hidden-sm-up"><i class="fa fa-download">‌ </i></span>
+                    <span class="hidden-xs-down"><i class="fa fa-download">‌ </i>  Attendance Report</span>
+                </a>
+            </div>
         </div>
 
         <section class="content">
