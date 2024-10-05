@@ -56,6 +56,14 @@ class LeaveController extends Controller
                     // $differenceInDays = $leaveFrom->diffInDays($leaveTo) + 1; // Adding 1 because both start and end dates are inclusive
                     return $leaveFrom->format('d-m-Y') . ' to ' . $leaveTo->format('d-m-Y') . ' (' . $row->days . ' days)';
                 })
+                ->addColumn('leave_file', function ($row) {
+                    if ($row->leave_file) {
+                        // Generate a download link
+                        return '<a href="' . asset('storage/' . $row->leave_file) . '" class="btn btn-primary btn-sm" download>
+                        <i class="fa fa-download"></i>
+                    </a>';                    }
+                    return 'No Documents uploaded';
+                })
                 ->addColumn('leave_type', function ($row) {
                     return $row->leaveType->type;
                 })
@@ -96,7 +104,7 @@ class LeaveController extends Controller
                     return str_replace("<br>", " ", $row->user->name);
                 });
             }
-            return $dataTable->rawColumns(['status', 'action'])
+            return $dataTable->rawColumns(['leave_file', 'status', 'action'])
                 ->make(true);
         }
 
@@ -191,8 +199,7 @@ class LeaveController extends Controller
             
             // If you want to handle the case where there are no leaves taken
             $totalDaysTaken = $totalDaysTaken ?: 0; // Set to 0 if no leaves taken
-            
-
+          
             // Calculate available casual leaves
             $availableCasualLeaves = min($monthsElapsed, round($monthsAvailable)) - $totalDaysTaken;
             $availableCasualLeaves = max($availableCasualLeaves, 0); // Ensure non-negative
@@ -215,16 +222,17 @@ class LeaveController extends Controller
                     ->whereIn('leave_status', [LeaveApplication::Applied,LeaveApplication::Approved])
                     ->whereBetween('leave_from', [$financialYearDetails['start'], $financialYearDetails['end']])
                     ->count();
+                   
                 if ($leavesTaken > 0) {
                     return $request->ajax()
                 ? response()->json(['error' => 'Already taken sick leave for the selected month.'])
                 : redirect()->back()->with('error', 'Already taken sick leave for the selected month.');
                 
-                } else {
-                    return $request->ajax()
-                    ? response()->json(['error' => 'Days requested is more than the sick leave.'])
-                    : redirect()->back()->with('error', 'Days requested is more than the sick leav.');
-                }
+                } 
+            } else {
+                return $request->ajax()
+                ? response()->json(['error' => 'Days requested is more than the sick leave.'])
+                : redirect()->back()->with('error', 'Days requested is more than the sick leav.');
             }
         }
             
