@@ -42,7 +42,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Partially Paid',
-            'status' => 'Y'
+            'status' => 'N'
         ]);
         LeaveType::create([
             'type' => 'Bereavement Leave',
@@ -50,7 +50,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Paid',
-            'status' => 'Y'
+            'status' => 'N'
         ]);
         LeaveType::create([
             'type' => 'Study Leave',
@@ -58,7 +58,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Not Paid',
-            'status' => 'Y'
+            'status' => 'N'
         ]);
         LeaveType::create([
             'type' => 'Annual Leave',
@@ -66,7 +66,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Paid',
-            'status' => 'Y'
+            'status' => 'N'
         ]);
         LeaveType::create([
             'type' => 'Emergency Leave',
@@ -90,7 +90,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Not Paid',
-            'status' => 'Y'
+            'status' => 'N'
         ]);
         LeaveType::create([
             'type' => 'Adoption Leave',
@@ -98,7 +98,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Not Paid',
-            'status' => 'Y'
+            'status' => 'N'
         ]);
         LeaveType::create([
             'type' => 'Jury Duty Leave',
@@ -106,7 +106,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Paid',
-            'status' => 'Y'
+            'status' => 'N'
         ]);
         LeaveType::create([
             'type' => 'Public Service Leave',
@@ -114,7 +114,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Not Paid',
-            'status' => 'Y'
+            'status' => 'N'
         ]);
         LeaveType::create([
             'type' => 'Sabbatical Leave',
@@ -122,7 +122,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Not Paid',
-            'status' => 'Y'
+            'status' => 'N'
         ]);
         LeaveType::create([
             'type' => 'Military Leave',
@@ -130,7 +130,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Not Paid',
-            'status' => 'Y'
+            'status' => 'N'
         ]);
         LeaveType::create([
             'type' => 'Marriage Leave',
@@ -138,7 +138,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Not Paid',
-            'status' => 'Y'
+            'status' => 'N'
         ]);
         LeaveType::create([
             'type' => 'Relocation Leave',
@@ -146,7 +146,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Not Paid',
-            'status' => 'Y'
+            'status' => 'N'
         ]);
         LeaveType::create([
             'type' => 'Voting Leave',
@@ -154,7 +154,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Not Paid',
-            'status' => 'Y'
+            'status' => 'N'
         ]);
         LeaveType::create([
             'type' => 'Compensatory Leave',

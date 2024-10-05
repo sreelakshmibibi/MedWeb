@@ -5,12 +5,16 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Staff\LeaveApplicationRequest;
 use App\Models\Medicine;
+use App\Services\LeaveService;
 use Illuminate\Http\Request;
 use App\Http\Requests\Settings\MedicineRequest;
 use App\Http\Requests\Settings\LeaveRequest;
+use App\Models\EmployeeAttendance;
+use App\Models\Holiday;
 use App\Models\LeaveApplication;
 use App\Models\LeaveType;
 use Carbon\Carbon;
+use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables as DataTables;
 
@@ -36,6 +40,7 @@ class LeaveController extends Controller
             $leaves = null;
             if (Auth::user()->can('leave approve')) {
                 $leaves = LeaveApplication::with('user', 'leaveType')->orderBy('leave_from', 'desc')->get();
+
             } else {
                 $leaves = LeaveApplication::where('user_id', Auth::user()->id)
                 ->with('leaveType')
@@ -48,8 +53,16 @@ class LeaveController extends Controller
                 ->addColumn('leave_applied_dates', function ($row) {
                     $leaveFrom = Carbon::parse($row->leave_from);
                     $leaveTo = Carbon::parse($row->leave_to);
-                    $differenceInDays = $leaveFrom->diffInDays($leaveTo) + 1; // Adding 1 because both start and end dates are inclusive
-                    return $leaveFrom->format('d-m-Y') . ' to ' . $leaveTo->format('d-m-Y') . ' (' . $differenceInDays . ' days)';
+                    // $differenceInDays = $leaveFrom->diffInDays($leaveTo) + 1; // Adding 1 because both start and end dates are inclusive
+                    return $leaveFrom->format('d-m-Y') . ' to ' . $leaveTo->format('d-m-Y') . ' (' . $row->days . ' days)';
+                })
+                ->addColumn('leave_file', function ($row) {
+                    if ($row->leave_file) {
+                        // Generate a download link
+                        return '<a href="' . asset('storage/' . $row->leave_file) . '" class="btn btn-primary btn-sm" download>
+                        <i class="fa fa-download"></i>
+                    </a>';                    }
+                    return 'No Documents uploaded';
                 })
                 ->addColumn('leave_type', function ($row) {
                     return $row->leaveType->type;
@@ -79,9 +92,9 @@ class LeaveController extends Controller
 
 
                     if (Auth::user()->id = $row->user_id && $row->leave_status == LeaveApplication::Applied) {
-                        $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
-                        data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
-                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
+                        // $btn .= '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
+                        // data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
+                        $btn .=  '<button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
                         <i class="fa fa-trash"></i></button>';
                     }
                     return $btn;
@@ -91,7 +104,7 @@ class LeaveController extends Controller
                     return str_replace("<br>", " ", $row->user->name);
                 });
             }
-            return $dataTable->rawColumns(['status', 'action'])
+            return $dataTable->rawColumns(['leave_file', 'status', 'action'])
                 ->make(true);
         }
 
@@ -105,10 +118,10 @@ class LeaveController extends Controller
     public function store(LeaveApplicationRequest $request)
     {
         $userId = Auth::user()->id;
-        $leaveFrom = $request->input('leave_from');
-        $leaveTo = $request->input('leave_to');
-
-        // Check if there is an existing leave application for the same user
+        $leaveFrom = Carbon::parse($request->input('leave_from'));
+        $leaveTo = Carbon::parse($request->input('leave_to'));
+       
+        // Check for existing leave application
         $checkExists = LeaveApplication::where('user_id', $userId)
             ->where(function ($query) use ($leaveFrom, $leaveTo) {
                 $query->whereBetween('leave_from', [$leaveFrom, $leaveTo])
@@ -128,11 +141,117 @@ class LeaveController extends Controller
                 : redirect()->back()->with('error', $message);
         }
 
+        $leaveService = new LeaveService();
+        $leaveType = $request->input('leave_type');
+        $financialYearDetails = $leaveService->getFinancialYear();
+        
+        if (!$financialYearDetails) {
+            $message = 'Financial year details not found.';
+            return $request->ajax()
+                ? response()->json(['error' => $message])
+                : redirect()->back()->with('error', $message);
+        }
+
+        $joiningDate = $leaveService->getJoiningDate($userId);
+        $leaveCountPerMonth = $leaveService->getLeaveCount($leaveType);
+        $leaveAppliedCount = $leaveService->getLeaveAppliedCount($leaveType, $financialYearDetails);
+        // $leaveFrom = Carbon::parse($leaveFrom);
+        // $leaveTo = Carbon::parse($leaveTo);
+        
+        // $differenceInDays = $leaveFrom->diffInDays($leaveTo) + 1; // Adding 1 because both start and end dates are inclusive
+        $differenceInDays = $leaveService->getDaysDifference(Carbon::parse($request->input('leave_from')), Carbon::parse($request->input('leave_to')));
+        // Determine available months for leave
+        $monthsAvailable = 12;
+        if ($joiningDate >= $financialYearDetails['start'] && $joiningDate <= $financialYearDetails['end']) {
+            if ($leaveFrom->greaterThan($joiningDate)) {
+                // Calculate the whole month difference
+                $monthsAvailable = $joiningDate->diffInMonths(Carbon::parse($request->input('leave_from')));
+                
+                // Add 1 for the current month if it's after the first of the month
+                if ($leaveFrom->day > 1) {
+                    $monthsAvailable += 1; // +1 for the current month
+                }
+            } else {
+                // If leaveFrom is before or equal to joiningDate, set monthsAvailable to 0
+                $monthsAvailable = 0;
+            }
+        } 
+        
+
+        if ($leaveType == 2) { // Assuming 2 is for casual leave
+            $monthsElapsed = Carbon::now()->month - $financialYearDetails['startMonth'] + 1; // +1 for current month
+            $leavesTaken = LeaveApplication::where('leave_type_id', $leaveType)
+                ->where('user_id', $userId)
+                ->whereIn('leave_status', [LeaveApplication::Applied,LeaveApplication::Approved])
+                ->whereBetween('leave_from', [$financialYearDetails['start'], $financialYearDetails['end']])
+                ->get();
+            // Calculate total days taken
+            $totalDaysTaken = $leavesTaken->sum(function ($leave) use($leaveService) {
+                // Convert leave_from and leave_to to Carbon instances
+                $leave_From = \Carbon\Carbon::parse($leave->leave_from);
+                $leave_To = \Carbon\Carbon::parse($leave->leave_to);
+            
+                // Ensure leave_to is not before leave_from
+                return $leave_To >= $leave_From 
+                    ? $leaveService->getDaysDifference($leave_From,$leave_To) // +1 to include both days
+                    : 0;
+            });
+            
+            // If you want to handle the case where there are no leaves taken
+            $totalDaysTaken = $totalDaysTaken ?: 0; // Set to 0 if no leaves taken
+          
+            // Calculate available casual leaves
+            $availableCasualLeaves = min($monthsElapsed, round($monthsAvailable)) - $totalDaysTaken;
+            $availableCasualLeaves = max($availableCasualLeaves, 0); // Ensure non-negative
+                        
+            if ($availableCasualLeaves <= 0) {
+                    return $request->ajax()
+                        ? response()->json(['error' => 'No casual leaves available.'])
+                        : redirect()->back()->with('error', 'No casual leaves available.');
+                
+            } else if ($differenceInDays > $availableCasualLeaves) {
+                return $request->ajax()
+                ? response()->json(['error' => 'Days requested('. $differenceInDays.') is more than the casual leaves available('. $availableCasualLeaves.' Days).'])
+                : redirect()->back()->with('error', 'Days requested('. $differenceInDays.') is more than the casual leaves available('. $availableCasualLeaves.' Days).');
+            }
+            
+        } else if ($leaveType == 1) {
+            if ($differenceInDays == 1) {
+                $leavesTaken = LeaveApplication::where('leave_type_id', $leaveType)
+                    ->where('user_id', $userId)
+                    ->whereIn('leave_status', [LeaveApplication::Applied,LeaveApplication::Approved])
+                    ->whereBetween('leave_from', [$financialYearDetails['start'], $financialYearDetails['end']])
+                    ->count();
+                   
+                if ($leavesTaken > 0) {
+                    return $request->ajax()
+                ? response()->json(['error' => 'Already taken sick leave for the selected month.'])
+                : redirect()->back()->with('error', 'Already taken sick leave for the selected month.');
+                
+                } 
+            } else {
+                return $request->ajax()
+                ? response()->json(['error' => 'Days requested is more than the sick leave.'])
+                : redirect()->back()->with('error', 'Days requested is more than the sick leav.');
+            }
+        }
+            
+
+        // Create a new leave application
         $leaveApplication = new LeaveApplication();
         $leaveApplication->user_id = $userId;
-        $leaveApplication->leave_type_id = $request->input('leave_type');
+        $leaveApplication->leave_type_id = $leaveType;
         $leaveApplication->leave_from = $leaveFrom;
-        $leaveApplication->leave_to = $leaveTo;
+        $leaveApplication->leave_to = Carbon::parse($request->input('leave_to'));
+        $leaveApplication->days = $differenceInDays;
+        if ($request->hasFile('leave_file')) {
+            $filePath = $request->file('leave_file')->store('leave-file', 'public');
+            $leaveApplication->leave_file = $filePath;
+        } 
+        if ($leaveType == 19) { // Check for compensation leave type
+            $leaveApplication->compensation_date = $request->compensation_date;
+        }
+        
         $leaveApplication->leave_reason = $request->input('reason');
         $leaveApplication->leave_status = LeaveApplication::Applied;
 
@@ -148,6 +267,7 @@ class LeaveController extends Controller
                 : redirect()->back()->with('error', $message);
         }
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -170,10 +290,21 @@ class LeaveController extends Controller
         $leaveApplication = LeaveApplication::findorFail($request->edit_leave_id);
         if (!$leaveApplication)
             abort(404);
+        $leaveService = new LeaveService();
         $leaveApplication->leave_type_id = $request->editleave_type;
         $leaveApplication->leave_from = $request->editleave_from;
         $leaveApplication->leave_to = $request->editleave_to;
+        $leaveFrom = Carbon::parse($$request->editleave_from);
+        $leaveTo = Carbon::parse($$request->editleave_to);
+        // $differenceInDays = $leaveFrom->diffInDays($leaveTo) + 1; // Adding 1 because both start and end dates are inclusive
+        $differenceInDays = $leaveService->getDaysDifference($leaveFrom, $leaveTo);
+
+        $leaveApplication->days = $differenceInDays;
         $leaveApplication->leave_reason = $request->editreason;
+        if ($request->input('editleave_type') == 19) {
+            $leaveApplication->compensation_date = $request->editcompensation_date;   
+        }
+        
         $leaveApplication->leave_status = LeaveApplication::Applied;
         if ($leaveApplication->save()) {
             if ($request->ajax()) {
@@ -223,4 +354,71 @@ class LeaveController extends Controller
         $leave->save();
         return response()->json(['success', 'Leave Application rejected successfully.'], 200);
     }
+
+    public function checkCompensationDate(Request $request)
+{
+    $request->validate([
+        'compensation_date' => 'required|date',
+    ]);
+
+    $compensationDate = $request->input('compensation_date');
+    $userId = Auth::user()->id;
+
+    // Check if the compensation date is a holiday
+    $holiday = Holiday::where('holiday_on', $compensationDate)->first();
+
+    if ($holiday) {
+        // If it's a holiday, check for attendance
+        $attendance = EmployeeAttendance::where('user_id', $userId)
+            ->where('login_date', $compensationDate)
+            ->first();
+
+        if (!$attendance) {
+            return response()->json(['errors' => ['attendance' => 'Attendance entry must exist for the Compensation Date.']], 400);
+        }
+
+        // Check if there are any leave applications for the user on that date
+        $previousLeave = LeaveApplication::where('user_id', $userId)
+            ->where('compensation_date', $compensationDate)
+            ->whereIn('leave_status', [LeaveApplication::Applied, LeaveApplication::Approved]) 
+            ->exists();
+
+        if ($previousLeave) {
+            return response()->json(['errors' => ['leave' => 'Leave cannot be applied for a date where previous compensation leave exists.']], 400);
+        }
+
+        // If all checks pass, return a success response
+        return response()->json(['success' => 'Compensation date is valid.']);
+    } else {
+        // If not a holiday, check if it's a Sunday
+        $selectedDate = new DateTime($compensationDate);
+        if ($selectedDate->format('N') !== '7') { // 7 is Sunday
+            return response()->json(['errors' => ['holiday' => 'Compensation Date must be a holiday or a Sunday.']], 400);
+        }
+
+        // If it's a Sunday, check for attendance
+        $attendance = EmployeeAttendance::where('user_id', $userId)
+            ->where('login_date', $compensationDate)
+            ->first();
+
+        if (!$attendance) {
+            return response()->json(['errors' => ['attendance' => 'Attendance entry must exist for the Compensation Date.']], 400);
+        }
+
+        // Check if there are any leave applications for the user on that date
+        $previousLeave = LeaveApplication::where('user_id', $userId)
+            ->where('leave_from', '<=', $compensationDate)
+            ->where('leave_to', '>=', $compensationDate)
+            ->exists();
+
+        if ($previousLeave) {
+            return response()->json(['errors' => ['leave' => 'Leave cannot be applied on a date where previous leave exists.']], 400);
+        }
+
+        // If all checks pass, return a success response
+        return response()->json(['success' => 'Compensation date is valid.']);
+    }
+}
+
+
 }
