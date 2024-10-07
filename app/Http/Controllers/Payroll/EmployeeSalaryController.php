@@ -38,16 +38,26 @@ class EmployeeSalaryController extends Controller
             ->get();
 
         if ($request->ajax()) {
-            $staff = StaffProfile::select('staff_profiles.*', 'clinic_branches.clinic_address as branch')
-                ->with('user')
+            $staff = StaffProfile::with(['clinicBranch']) // Make sure this relationship exists
                 ->where('status', 'Y')
-                ->leftJoin('clinic_branches', 'staff_profiles.clinic_branch_id', '=', 'clinic_branches.id')
                 ->get();
             $staff->transform(function ($staff) {
-                $staff->branch = $staff->branch ? str_replace('<br>', ' ', $staff->branch) : '-';
+                // Split the clinic_branch_id into an array
+                $branchIds = explode(',', $staff->clinic_branch_id);
+                
+                // Retrieve the branches based on the IDs
+                $branches = ClinicBranch::whereIn('id', $branchIds)->get();
+
+                // Map the branch addresses and join them into a single string
+                $branchAddresses = $branches->map(function ($branch) {
+                    return $branch->clinic_address ? str_replace('<br>', ' ', $branch->clinic_address) : '-';
+                })->join(', '); // Join with a comma and space
+
+                // Assign the branch addresses back to the staff object as a string
+                $staff->branch = $branchAddresses;
+
                 return $staff;
             });
-
             return DataTables::of($staff)
                 ->addIndexColumn()
                 ->addColumn('name', function ($row) {
