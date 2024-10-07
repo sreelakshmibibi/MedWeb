@@ -86,7 +86,7 @@
         <div class="form-group">
             <label class="form-label" for="clinic_branch_id">Branch <span class="text-danger">
                     *</span></label>
-            <select class="select2" id="clinic_branch_id" name="clinic_branch_id" data-placeholder="Select a Branch"
+            <select class="select2" multiple id="clinic_branch_id" name="clinic_branch_id[]" data-placeholder="Select a Branch"
                 style="width: 100%;">
                 @foreach ($clinicBranches as $clinicBranch)
                     <?php

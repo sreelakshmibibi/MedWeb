@@ -84,8 +84,15 @@ class PatientListController extends Controller
                     $clinicBranchId = StaffProfile::where('user_id', Auth::user()->id)
                         ->pluck('clinic_branch_id')
                         ->first();
+                    // Check if the clinicBranchId is not null or empty
+                    if (!empty($clinicBranchId)) {
+                        // Convert the string to an array
+                        $clinicBranchIdsArray = explode(',', $clinicBranchId);
 
-                    $query = $query->where('app_branch', $clinicBranchId);
+                        // Filter appointments based on the clinic branch IDs
+                        $query = $query->whereIn('app_branch', $clinicBranchIdsArray);
+                    }
+                    // $query = $query->where('app_branch', $clinicBranchId);
                 }
             }
 
