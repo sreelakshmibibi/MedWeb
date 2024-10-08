@@ -125,4 +125,15 @@
                 placeholder="Fees" value="{{ $staffProfile->consultation_fees }}">
         </div>
     </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label" for="visiting_doctor">Is visiting doctor?<span class="text-danger">
+                    *</span></label>
+            <select class="form-control" id="visiting_doctor" name="visiting_doctor">
+                <option value="0" <?php if (!$staffProfile->visiting_doctor) { echo "selected"; } ?>>No</option>
+                <option value="1" <?php if ($staffProfile->visiting_doctor) { echo "selected"; } ?>>Yes</option>  
+            </select>
+            
+        </div>
+    </div>
 </div>

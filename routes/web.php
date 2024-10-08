@@ -17,6 +17,7 @@ use App\Http\Controllers\MedicineBillController;
 use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
 use App\Http\Controllers\Payroll\AttendanceController;
+use App\Http\Controllers\Payroll\DoctorPaymentController;
 use App\Http\Controllers\Payroll\EmployeeSalaryController;
 use App\Http\Controllers\Payroll\EmployeeTypeController;
 use App\Http\Controllers\Payroll\HolidayController;
@@ -378,6 +379,11 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/employee_salary/store', [EmployeeSalaryController::class, 'store'])->name('salary.store');
     Route::post('/download-salaryslip', [EmployeeSalaryController::class, 'generatesalaryslipPdf'])->name('download.salaryslip');
 
+    Route::get('/doctor_payment', [DoctorPaymentController::class, 'index'])->name('doctorPayment');
+    Route::get('/doctor_payment/create/{userId}', [DoctorPaymentController::class, 'create'])->name('doctorPayment.create');
+    Route::post('/doctor_payment/store', [DoctorPaymentController::class, 'store'])->name('doctorPayment.store');
+    Route::get('/doctor_payment/{userId}', [DoctorPaymentController::class, 'show'])->name('doctorPayment.show');
+    Route::post('/doctor_payment/delete/{historyId}', [DoctorPaymentController::class, 'destroy'])->name('doctorPayment.destroy');
 
     Route::post('/logout-cancel', function () {
         Auth::logout();

@@ -48,6 +48,7 @@ return new class extends Migration
             $table->string('license_number', 50)->unique()->nullable(); 
             $table->string('subspecialty')->nullable(); 
             $table->integer('consultation_fees')->nullable(); 
+            $table->integer('visiting_doctor')->nullable()->default(0); 
             $table->string('status');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
