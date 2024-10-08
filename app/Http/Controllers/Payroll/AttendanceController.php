@@ -36,6 +36,7 @@ class AttendanceController extends Controller
             $clinicBranchId = StaffProfile::where('user_id', Auth::id())
                 ->pluck('clinic_branch_id')
                 ->first();
+            
         }
         return view('payroll.attendance.index', compact('branches', 'clinicBranchId'));
     }

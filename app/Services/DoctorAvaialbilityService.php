@@ -88,7 +88,16 @@ class DoctorAvaialbilityService
     
         // Apply branch filter if provided
         if ($branchId) {
-            $query->where('clinic_branch_id', $branchId);
+             // Split the branchId string into an array
+            $branchIds = explode(',', $branchId);
+
+            // Use FIND_IN_SET to check if any of the branch IDs match
+            $query->where(function($query) use ($branchIds) {
+                foreach ($branchIds as $id) {
+                    $query->orWhereRaw('FIND_IN_SET(?, clinic_branch_id)', [$id]);
+                }
+            });
+            // $query->where('clinic_branch_id', $branchId);
         }
     
         // Get the list of working doctors

@@ -60,7 +60,7 @@ class HelperController extends Controller
         $employees = User::with('staffProfile') 
             ->when($branchId, function ($query) use ($branchId) {
                 $query->whereHas('staffProfile', function ($query) use ($branchId) {
-                    $query->where('clinic_branch_id', $branchId);
+                    $query->whereRaw('FIND_IN_SET(?, clinic_branch_id)', [$branchId]);
                 });
             })
             ->select('id', 'name')

@@ -77,9 +77,9 @@
     </div>
     <div class="col-md-3 otherFields" style="display:none">
         <div class="form-group">
-            <label class="form-label" for="specialization">Branch <span class="text-danger">
+            <label class="form-label" for="clinic_branch_id">Branch <span class="text-danger">
                     *</span></label>
-            <select class="select2" id="clinic_branch_id" name="clinic_branch_id" required
+            <select class="select2" multiple  id="clinic_branch_id" name="clinic_branch_id[]" required
                 data-placeholder="Select a Branch" style="width: 100%;">
                 @foreach ($clinicBranches as $clinicBranch)
                     <?php
@@ -87,8 +87,9 @@
                     $clinicAddress = explode('<br>', $clinicBranch->clinic_address);
                     $clinicAddress = implode(', ', $clinicAddress);
                     $branch = $clinicAddress . ', ' . $clinicBranch->city->city . ', ' . $clinicBranch->state->state;
+                    $selectedBranches = explode(',', $staffProfile->clinic_branch_id);
                     ?>
-                    <option value="{{ $clinicBranch->id }}" <?php if ($staffProfile->clinic_branch_id == $clinicBranch->id) {
+                    <option value="{{ $clinicBranch->id }}"  <?php if (in_array($clinicBranch->id, $selectedBranches)) {
                         echo 'selected';
                     } ?>>
                         {{ $branch }}</option>

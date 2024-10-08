@@ -236,9 +236,17 @@ class StaffListController extends Controller
                     $staffProfile->consultation_fees = $request->consultation_fees;
                 } else if ($user->is_nurse) {
                     $staffProfile->license_number = $request->license_number_nurse;
-                    $staffProfile->clinic_branch_id = $request->clinic_branch_id;
+                    if ($request->has('clinic_branch_id')) {
+                        $clinicBranchIds = $request->input('clinic_branch_id'); // This will be an array
+                        $staffProfile->clinic_branch_id = implode(',', $clinicBranchIds); // Convert array to string
+                    }
+                    // $staffProfile->clinic_branch_id = $request->clinic_branch_id;
                 } else {
-                    $staffProfile->clinic_branch_id = $request->clinic_branch_id;
+                    // $staffProfile->clinic_branch_id = $request->clinic_branch_id;
+                    if ($request->has('clinic_branch_id')) {
+                        $clinicBranchIds = $request->input('clinic_branch_id'); // This will be an array
+                        $staffProfile->clinic_branch_id = implode(',', $clinicBranchIds); // Convert array to string
+                    }
                 }
                 $staffProfile->status = "Y";
                 if ($staffProfile->save()) {

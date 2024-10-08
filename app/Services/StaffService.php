@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\DoctorWorkingHour;
 use App\Models\MenuItem;
+use App\Models\StaffProfile;
 use App\Models\WeekDay;
 use DateTime;
 use Illuminate\Http\Request;
@@ -30,6 +31,7 @@ class StaffService
         // Get the actual number of rows (count of clinic_branch_id inputs)
         $count = $request->input('row_count') != null ? $request->input('row_count') : 1;
         $l = 0;
+        $clinic_branches = null;
         for ($i = 1; $i <= $count; $i++) {
             foreach ($weekDays as $day) {
                 // Construct the keys dynamically
@@ -44,6 +46,7 @@ class StaffService
 
                 // Extract values from request
                 $clinic_branch_id = $request->input($clinicBranchKey);
+                $clinic_branches[] = $clinic_branch_id;
                 $from_time = $request->input($fromKey);
                 $to_time = $request->input($toKey);
                 $fromDateTime = DateTime::createFromFormat('H:i', $from_time);
@@ -63,6 +66,16 @@ class StaffService
                         return 0;
                     }
                 } 
+            }
+        }
+        // Save clinic branches to staff profile
+        if (!empty($clinic_branches)) {
+            // Assuming you have access to the staff profile
+            $staffProfile = StaffProfile::where('user_id', $userId)->first();
+            if ($staffProfile) {
+                // Save as a comma-separated string
+                $staffProfile->clinic_branch_id = implode(',', array_unique($clinic_branches));
+                $staffProfile->save();
             }
         }
         return $l;
