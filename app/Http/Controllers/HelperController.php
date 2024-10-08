@@ -54,21 +54,27 @@ class HelperController extends Controller
 
         return response()->json($response);
     }
-
     public function getStaffByBranch($branchId)
     {
-        $employees = User::with('staffProfile') 
-            ->when($branchId, function ($query) use ($branchId) {
-                $query->whereHas('staffProfile', function ($query) use ($branchId) {
-                    $query->whereRaw('FIND_IN_SET(?, clinic_branch_id)', [$branchId]);
-                });
-            })
-            ->select('id', 'name')
-            ->get();
-
+        $employees = '';
+    
+        if ($branchId == 'ALL') {
+            $employees = User::whereHas('staffProfile', function ($query) {
+                    $query->where('visiting_doctor', 0);
+                })
+                ->select('id', 'name')
+                ->get();
+        } else {
+            $employees = User::whereHas('staffProfile', function ($query) use ($branchId) {
+                    $query->where('visiting_doctor', 0)
+                          ->whereRaw('FIND_IN_SET(?, clinic_branch_id)', [$branchId]);
+                })
+                ->select('id', 'name')
+                ->get();
+        }
+    
         return $employees;
     }
-
 
     public function generateTreatmentPdf(Request $request)
     {

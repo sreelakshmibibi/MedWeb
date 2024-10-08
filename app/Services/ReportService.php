@@ -68,6 +68,15 @@ class ReportService
         return User::all();
     }
 
+    public function getAttendanceStaff()
+    {
+        return User::whereHas('staffProfile', function ($query) {
+            $query->where('visiting_doctor', 0);
+        })
+        ->select('id', 'name')
+        ->get();
+    }
+
     public function getComboOffers()
     {
         return TreatmentComboOffer::with('treatments')->get();

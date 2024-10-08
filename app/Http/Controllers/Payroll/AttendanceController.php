@@ -7,6 +7,7 @@ use App\Models\EmployeeAttendance;
 use App\Models\StaffProfile;
 use App\Models\User;
 use App\Models\LeaveApplication;
+use App\Models\ClinicBranch;
 use App\Models\Holiday;
 use App\Services\AttendanceService;
 use App\Services\ReportService;
@@ -36,7 +37,7 @@ class AttendanceController extends Controller
             $clinicBranchId = StaffProfile::where('user_id', Auth::id())
                 ->pluck('clinic_branch_id')
                 ->first();
-            
+
         }
         return view('payroll.attendance.index', compact('branches', 'clinicBranchId'));
     }
@@ -114,12 +115,11 @@ class AttendanceController extends Controller
             }
         }
 
-        // Non-AJAX request: Load the view and pass necessary data
         $clinicBasicDetails = ClinicBasicDetail::first();
         $reportService = new ReportService();
         $branches = $reportService->getBranches();
         $years = $reportService->getYears();
-        $employees = $reportService->getStaff();
+        $employees = $reportService->getAttendanceStaff();
 
         return view('payroll.attendance.monthlyReport', compact('clinicBasicDetails', 'branches', 'years', 'employees'));
     }
@@ -127,14 +127,22 @@ class AttendanceController extends Controller
     /**
      * Get attendance data for a specific employee.
      */
-
     private function getEmployeeAttendanceData($employeeId, $startDate, $endDate, $branch)
     {
         // Get employee profile, designation, and branch
-        $employeeProfile = StaffProfile::where('user_id', $employeeId)->first();
+        $employeeProfile = StaffProfile::with('user', 'clinicBranch')
+            ->where('user_id', $employeeId)
+            ->first();
         $designation = $employeeProfile->designation ?? 'N/A';
-        $branch = $employeeProfile->clinicBranch ? str_replace('<br>', ', ', $employeeProfile->clinicBranch->clinic_address) : 'N/A';
 
+
+        $branchIds = explode(',', $employeeProfile->clinic_branch_id);
+        $branches = implode(', ', array_map(function ($branchId) {
+            $branch = ClinicBranch::find($branchId);
+            return $branch ? str_replace('<br>', ' ', $branch->clinic_address) : 'Unknown';
+        }, $branchIds));
+
+        $isDoctor = $employeeProfile->user->is_doctor;
         $daysInMonth = $this->initializeDaysInMonth($startDate, $endDate);
 
         $today = Carbon::now()->format('Y-m-d');
@@ -145,13 +153,13 @@ class AttendanceController extends Controller
             ->whereMonth('login_date', $startDate->month)
             ->get();
 
-        // Process the attendance data
+
         foreach ($attendanceData as $attendance) {
             $date = $attendance->login_date;
             if ($attendance->attendance_status == EmployeeAttendance::PRESENT) {
                 $daysInMonth[$date]['attendance_status'] = 'Present';
             } elseif ($attendance->attendance_status == EmployeeAttendance::ON_LEAVE) {
-                $daysInMonth[$date]['attendance_status'] = 'On Leave';
+                $daysInMonth[$date]['attendance_status'] = 'Absent';
             }
         }
 
@@ -172,57 +180,85 @@ class AttendanceController extends Controller
                 $formattedDate = $date->format('Y-m-d');
                 if (isset($daysInMonth[$formattedDate])) {
                     $daysInMonth[$formattedDate]['attendance_status'] = 'On Leave';
-                    $daysInMonth[$formattedDate]['leave_status'] = $this->getLeaveStatus($leave->leave_status);
-                    $daysInMonth[$formattedDate]['leave_type'] = $leave->leaveType->type ?? 'Unknown';
+                    $daysInMonth[$formattedDate]['leave_status'] = $leave->leaveType->type . ' (' . $this->getLeaveStatus($leave->leave_status) . ')';
                 }
             }
         }
 
         // Fetch holidays
         $holidays = Holiday::whereBetween('holiday_on', [$startDate, $endDate])->get();
-        $branchId = $employeeProfile->clinicBranch->id ?? null;
 
-        // Filter holidays based on employee branch
-        $applicableHolidays = $holidays->filter(function ($holiday) use ($branchId) {
-            $holidayBranches = json_decode($holiday->branches);
-            // If branches are not set, or null is allowed, or the employee branch is included
-            return is_null($holidayBranches) || (is_array($holidayBranches) && in_array(null, $holidayBranches)) || in_array($branchId, $holidayBranches);
-        });
+        $employeeBranchIds = explode(',', $employeeProfile->clinic_branch_id);
 
-        // Process applicable holidays
-        foreach ($applicableHolidays as $holiday) {
-            $holidayDate = $holiday->holiday_on;
-            if (isset($daysInMonth[$holidayDate])) {
-                $daysInMonth[$holidayDate]['is_working_day'] = false;
-                $daysInMonth[$holidayDate]['attendance_status'] = 'Holiday';
+        foreach ($daysInMonth as $date => $data) {
+            // Flag to track if all branches the employee works in have a holiday
+            $allBranchesOnHoliday = true;
+
+            foreach ($employeeBranchIds as $branchId) {
+
+                $applicableHoliday = $holidays->filter(function ($holiday) use ($branchId, $date) {
+                    $holidayBranches = json_decode($holiday->branches, true);
+
+                    return (is_null($holidayBranches) || in_array(null, $holidayBranches) || in_array($branchId, $holidayBranches))
+                        && $holiday->holiday_on == $date;
+                })->first();
+                // If no holiday is found for this branch, it's not a holiday for this employee for this date
+                if (!$applicableHoliday) {
+                    $allBranchesOnHoliday = false;
+                    break;
+                }
+            }
+
+            // If all branches the employee works in have a holiday on this date, mark it as a holiday
+            if ($allBranchesOnHoliday && isset($daysInMonth[$date])) {
+                $daysInMonth[$date]['is_working_day'] = false;
+                $daysInMonth[$date]['attendance_status'] = 'Holiday';
             }
         }
 
-        // Prepare data for DataTables
         $attendanceRecords = [];
         foreach ($daysInMonth as $date => $data) {
-            // Skip future dates or set a relevant status
+
             if ($date > $today) {
-                //$data['attendance_status'] = 'Future';
                 continue;
             }
+
+            $leaveStatus = $data['attendance_status'] == 'Present' ? '-' : ($data['leave_status'] ?? '');
+
+            $attendanceStatus = $this->formatAttendanceStatusAsLabel($data['attendance_status']);
 
             $attendanceRecords[] = [
                 'name' => str_replace('<br>', ' ', $employeeProfile->user->name),
                 'designation' => $designation,
-                'branch' => $branch,
+                'branch' => $branches,
                 'date' => $date,
-                'attendanceStatus' => $data['attendance_status'],
-                'leaveStatus' => $data['leave_status'] ?? 'N/A',
-                'leaveType' => $data['leave_type'] ?? 'N/A',
+                'attendanceStatus' => $attendanceStatus,
+                'leaveStatus' => $leaveStatus,
             ];
         }
 
         return DataTables::of($attendanceRecords)
             ->addIndexColumn()
+            ->rawColumns(['attendanceStatus'])
             ->make(true);
     }
 
+    /**
+     * Format attendance status.
+     */
+    private function formatAttendanceStatusAsLabel($status)
+    {
+        switch ($status) {
+            case 'Present':
+                return '<span class="btn d-block btn-xs badge badge-success">Present</span>';
+            case 'On Leave':
+                return '<span class="btn d-block btn-xs badge badge-warning">On Leave</span>';
+            case 'Holiday':
+                return '<span class="btn d-block btn-xs badge badge-info">Holiday</span>';
+            default:
+                return '<span class="btn d-block btn-xs badge badge-danger">' . $status . '</span>';
+        }
+    }
 
     /**
      * Get consolidated attendance data for all employees in the selected month.
@@ -230,28 +266,24 @@ class AttendanceController extends Controller
     private function getConsolidatedAttendanceData($startDate, $endDate, $branch)
     {
         $today = Carbon::today();
-
-        // Check if the selected month is entirely in the future (both startDate and endDate are in the future)
         if ($startDate->gt($today)) {
-            // Return an empty DataTables response if the selected month is in the future
             return DataTables::of([])->make(true);
         }
 
-        // Adjust endDate if it's in the future (so it doesn't consider future dates)
         if ($endDate->gt($today)) {
             $endDate = $today;
         }
 
-        // Fetch employees as before
+        // Fetch employees
         $employees = User::with(['staffProfile', 'staffProfile.clinicBranch'])
             ->when($branch, function ($query, $branchId) {
-                $query->whereHas('staffProfile.clinicBranch', function ($query) use ($branchId) {
-                    $query->where('id', $branchId);
+                $query->whereHas('staffProfile', function ($query) use ($branchId) {
+                    $query->whereRaw("FIND_IN_SET(?, clinic_branch_id)", [$branchId]);
                 });
             })
             ->get();
 
-        // Fetch holidays in the adjusted date range
+        // Fetch holidays
         $holidays = Holiday::whereBetween('holiday_on', [$startDate, $endDate])->get();
 
         $attendanceSummary = [];
@@ -264,21 +296,29 @@ class AttendanceController extends Controller
             }
 
             $employeeId = $user->id;
-            $branchId = $staffProfile->clinicBranch->id ?? null;
 
-            // Calculate total working days, ensure it doesn't go negative
+            // Get the employee's branch IDs as an array
+            $branchIds = explode(',', $staffProfile->clinic_branch_id);
+
+            // Calculate total working days
             $totalWorkingDays = max(0, floor($startDate->diffInDays($endDate) + 1));
 
-            // Filter applicable holidays
-            $applicableHolidays = $holidays->filter(function ($holiday) use ($branchId) {
-                $holidayBranches = json_decode($holiday->branches);
-                return is_null($holidayBranches) || (is_array($holidayBranches) && in_array(null, $holidayBranches)) || in_array($branchId, $holidayBranches);
+            // Calculate holidays that apply to all branches the employee works in
+            $applicableHolidays = $holidays->filter(function ($holiday) use ($branchIds) {
+                $holidayBranches = json_decode($holiday->branches, true); 
+
+                if (is_null($holidayBranches) || in_array(null, $holidayBranches)) {
+                    return true; 
+                }
+
+                return count(array_intersect($branchIds, $holidayBranches)) === count($branchIds);
             });
 
-            // Adjust working days by removing holidays, ensure it doesn't go negative
-            $totalWorkingDays = max(0, $totalWorkingDays - $applicableHolidays->count());
+            // Subtract the number of holidays from total working days
+            $holidayCount = $applicableHolidays->count();
+            $totalWorkingDays = max(0, $totalWorkingDays - $holidayCount);
 
-            // Fetch attendance data, capped by today
+            // Fetch attendance data
             $attendanceData = EmployeeAttendance::where('user_id', $employeeId)
                 ->whereBetween('login_date', [$startDate, $endDate])
                 ->get();
@@ -287,7 +327,7 @@ class AttendanceController extends Controller
             $presentDays = $attendanceData->where('attendance_status', EmployeeAttendance::PRESENT)->count();
             $absentDays = max(0, $totalWorkingDays - $presentDays);
 
-            // Fetch leave data only for approved leaves
+            // Fetch leave data for approved leaves
             $leaveData = LeaveApplication::with('leaveType')
                 ->where('user_id', $employeeId)
                 ->where('leave_status', LeaveApplication::Approved) // Only get approved leaves
@@ -297,18 +337,19 @@ class AttendanceController extends Controller
                 })
                 ->get();
 
-            // Count the total approved leave days (including all leave types)
+            // Calculate total leave days
             $totalLeaveDays = $leaveData->sum(function ($leave) {
                 $leaveFrom = Carbon::parse($leave->leave_from);
                 $leaveTo = Carbon::parse($leave->leave_to);
-                return $leaveFrom->diffInDays($leaveTo) + 1; // Ensure to sum the total days for all leave types
+                return $leaveFrom->diffInDays($leaveTo) + 1;
             });
 
             // Count specific types of leave
             $casualLeave = $leaveData->where('leaveType.type', 'Casual Leave')->count();
             $sickLeave = $leaveData->where('leaveType.type', 'Sick Leave')->count();
+            $compensatoryLeave = $leaveData->where('leaveType.type', 'Compensatory Leave')->count();
 
-            // Update total absent days
+            // Update total absent days after accounting for approved leaves
             $totalAbsentDays = max(0, $absentDays - $totalLeaveDays);
 
             $attendanceSummary[] = [
@@ -319,9 +360,13 @@ class AttendanceController extends Controller
                 'absentDays' => $absentDays,
                 'casualLeave' => $casualLeave,
                 'sickLeave' => $sickLeave,
+                'compensatoryLeave' => $compensatoryLeave,
                 'totalLeave' => $totalLeaveDays,
                 'totalAbsent' => $totalAbsentDays,
-                'branch' => $staffProfile ? str_replace('<br>', ', ', $staffProfile->clinicBranch->clinic_address) : 'N/A',
+                'branch' => $staffProfile ? implode(', ', array_map(function ($branchId) {
+                    $branchAddress = ClinicBranch::find($branchId)->clinic_address ?? 'Unknown';
+                    return str_replace('<br>', ' ', $branchAddress);
+                }, $branchIds)) : 'N/A',
             ];
         }
 
@@ -330,7 +375,6 @@ class AttendanceController extends Controller
             ->make(true);
     }
 
-
     private function initializeDaysInMonth($startDate, $endDate)
     {
         $daysInMonth = [];
@@ -338,10 +382,10 @@ class AttendanceController extends Controller
             $daysInMonth[$date->format('Y-m-d')] = [
                 'date' => $date->format('Y-m-d'),
                 'day_name' => $date->format('l'),
-                'is_working_day' => true,  // Default to true
-                'attendance_status' => 'Absent',  // Default to absent
-                'leave_status' => 'No Leave', // Default to no leave
-                'leave_type' => null, // No leave type by default
+                'is_working_day' => true,
+                'attendance_status' => 'Absent',
+                'leave_status' => '-',
+                'leave_type' => null,
             ];
         }
 
@@ -349,7 +393,7 @@ class AttendanceController extends Controller
     }
 
 
-    // Helper function to get leave status as a readable string
+    // function to get leave status as a readable string
     private function getLeaveStatus($status)
     {
         switch ($status) {

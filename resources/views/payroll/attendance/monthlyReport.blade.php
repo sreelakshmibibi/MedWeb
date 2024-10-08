@@ -36,7 +36,8 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="form-label" for="attendnceMonth">Month</label>
+                                    <label class="form-label" for="attendnceMonth">Month<span
+                                            class="text-danger">*</span></label>
                                     <select class="form-control " type="text" id="attendnceMonth" name="attendnceMonth">
 
                                         <option value="01">January</option>
@@ -57,7 +58,8 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="form-label" for="attendnceYear">Year</label>
+                                    <label class="form-label" for="attendnceYear">Year<span
+                                            class="text-danger">*</span></label>
                                     <select class="form-control " type="text" id="attendnceYear" name="attendnceYear">
 
                                         @for ($i = 0; $i < sizeof($years); $i++)
@@ -69,8 +71,7 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="form-label" for="attendnceBranch">Branch <span
-                                            class="text-danger">*</span></label>
+                                    <label class="form-label" for="attendnceBranch">Branch </label>
                                     <select class="form-control" id="attendnceBranch" name="attendnceBranch" required>
                                         <option value="">All</option>
                                         @foreach ($branches as $branch)
@@ -119,6 +120,7 @@
                                         <th>Absent Days</th>
                                         <th>Casual Leave</th>
                                         <th>Sick Leave</th>
+                                        <th>Compensatory Leave</th>
                                         <th>Total Leave Days</th>
                                         <th>Total Absent Days</th>
                                     </tr>
@@ -141,7 +143,6 @@
                                         <th width="80px">Date</th>
                                         <th>Attendance Status</th>
                                         <th>Leave Status</th>
-                                        <th>Leave Type</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -163,7 +164,7 @@
 
         var table;
         let currentDate = new Date();
-        let currentMonth = String(currentDate.getMonth() + 1).padStart(2, '0'); // Add leading zero
+        let currentMonth = String(currentDate.getMonth() + 1).padStart(2, '0'); 
         let currentYear = currentDate.getFullYear();
 
         $('#attendnceMonth').val(currentMonth);
@@ -171,9 +172,8 @@
 
 
         jQuery(function($) {
-            // Check if DataTable is already initialized
+
             if ($.fn.DataTable.isDataTable("#monthlyAttendanceTable")) {
-                // Destroy existing DataTable instance
                 $("#monthlyAttendanceTable").DataTable().destroy();
             }
 
@@ -195,7 +195,7 @@
                         orderable: false,
                         searchable: false,
                         render: function(data, type, row, meta) {
-                            return meta.row + 1; // Adding 1 to start counting from 1
+                            return meta.row + 1; 
                         },
                     },
                     {
@@ -238,6 +238,13 @@
                     {
                         data: "sickLeave",
                         name: "sickLeave",
+                        render: function(data) {
+                            return data != null ? data : 0;
+                        }
+                    },
+                    {
+                        data: "compensatoryLeave",
+                        name: "compensatoryLeave",
                         render: function(data) {
                             return data != null ? data : 0;
                         }
@@ -316,19 +323,19 @@
             $('#monthlyReportDiv').show();
 
             $('#attendnceBranch').change(function() {
-                var branchId = $(this).val(); // Get the selected branch ID
+                var branchId = $(this).val(); 
                 var employeeSelect = $('#attendnceEmployee');
-
-                // Clear the employee dropdown
+                if (!branchId) {
+                    branchId = 'ALL';
+                }
                 employeeSelect.empty().append('<option value="">All</option>');
 
-                // If a branch is selected, fetch employees
                 if (branchId) {
                     $.ajax({
-                        url: '/get-staff/' + branchId, // Your route to fetch staff
+                        url: '/get-staff/' + branchId, 
                         type: 'GET',
                         success: function(data) {
-                            // Populate the employee dropdown with the fetched data
+                           
                             $.each(data, function(index, employee) {
                                 employeeSelect.append('<option value="' + employee.id +
                                     '">' + employee.name + '</option>');
@@ -344,20 +351,15 @@
             $('#searchAttdBtn').on('click', function(e) {
                 e.preventDefault();
 
-                // Get the selected employee value
                 var employeeId = $('#attendnceEmployee').val();
 
                 // If an employee is selected, show the employee attendance table
                 if (employeeId) {
-                    // Hide the monthly attendance table
+
                     $('#monthlyReportDiv').hide();
-
-                    // Show the employee attendance table
                     $('#employeeReportDiv').show();
-
-                    // Check if DataTable is already initialized
+                    
                     if ($.fn.DataTable.isDataTable("#employeeAttendanceTable")) {
-                        // Destroy the existing employee attendance DataTable instance
                         $("#employeeAttendanceTable").DataTable().destroy();
                     }
 
@@ -366,7 +368,7 @@
                         processing: true,
                         serverSide: true,
                         ajax: {
-                            url: getReportUrl, // Make sure this URL is the correct one for employee attendance data
+                            url: getReportUrl,
                             type: "GET",
                             data: function(d) {
                                 d.employee = employeeId;
@@ -407,10 +409,6 @@
                             {
                                 data: "leaveStatus",
                                 name: "leaveStatus"
-                            },
-                            {
-                                data: "leaveType",
-                                name: "leaveType"
                             }
                         ],
                         dom: "Bfrtlp",
@@ -474,9 +472,7 @@
                     $('#employeeReportDiv').hide();
                     $('#monthlyReportDiv').show();
 
-                    // Check if DataTable is already initialized
                     if ($.fn.DataTable.isDataTable("#monthlyAttendanceTable")) {
-                        // Destroy the existing monthly attendance DataTable instance
                         $("#monthlyAttendanceTable").DataTable().destroy();
                     }
 
@@ -485,7 +481,7 @@
                         processing: true,
                         serverSide: true,
                         ajax: {
-                            url: getReportUrl, // Use the appropriate URL for the monthly report data
+                            url: getReportUrl,
                             type: "GET",
                             data: function(d) {
                                 d.month = $('#attendnceMonth').val();
@@ -500,7 +496,7 @@
                                 searchable: false,
                                 render: function(data, type, row, meta) {
                                     return meta.row +
-                                        1; // Adding 1 to start counting from 1
+                                        1; 
                                 },
                             },
                             {
@@ -543,6 +539,13 @@
                             {
                                 data: "sickLeave",
                                 name: "sickLeave",
+                                render: function(data) {
+                                    return data != null ? data : 0;
+                                }
+                            },
+                            {
+                                data: "compensatoryLeave",
+                                name: "compensatoryLeave",
                                 render: function(data) {
                                     return data != null ? data : 0;
                                 }
