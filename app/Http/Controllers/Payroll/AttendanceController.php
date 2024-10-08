@@ -59,41 +59,42 @@ class AttendanceController extends Controller
     }
 
     public function store(Request $request)
-{
-    foreach ($request->attendance_status as $index => $status) {
-        // Check if login_time and logout_time are set
-        $loginTime = !empty($request->login_time[$index]) ? new \DateTime($request->login_time[$index]) : null;
-        $logoutTime = !empty($request->logout_time[$index]) ? new \DateTime($request->logout_time[$index]) : null;
+    {
+        foreach ($request->attendance_status as $index => $status) {
+            // Check if login_time and logout_time are set
+            $loginTime = !empty($request->login_time[$index]) ? new \DateTime($request->login_time[$index]) : null;
+            $logoutTime = !empty($request->logout_time[$index]) ? new \DateTime($request->logout_time[$index]) : null;
 
-        // Initialize worked hours
-        $workedHours = '00:00:00';
+            // Initialize worked hours
+            $workedHours = '00:00:00';
 
-        if ($loginTime && $logoutTime) {
-            // Calculate the difference only if both times are valid
-            $diff = $logoutTime->diff($loginTime);
-            // Format worked hours in HH:MM:SS
-            $workedHours = sprintf('%02d:%02d:%02d', $diff->h, $diff->i, $diff->s);
+            if ($loginTime && $logoutTime) {
+                // Calculate the difference only if both times are valid
+                $diff = $logoutTime->diff($loginTime);
+                // Format worked hours in HH:MM:SS
+                $workedHours = sprintf('%02d:%02d:%02d', $diff->h, $diff->i, $diff->s);
+            }
+
+            // Create or update the attendance record
+            EmployeeAttendance::updateOrCreate(
+                [
+                    'user_id' => $request->user_id[$index],
+                    'login_date' => $request->selected_date, // Today's date
+                ],
+                [
+                    'attendance_status' => $status,
+                    'logout_date' => $request->selected_date, // Today's date
+                    'login_time' => $loginTime ? $loginTime->format('H:i:s') : null,
+                    'logout_time' => $logoutTime ? $logoutTime->format('H:i:s') : null,
+                    'worked_hours' => $workedHours, // Store in HH:MM:SS format
+                ]
+            );
         }
 
-        // Create or update the attendance record
-        EmployeeAttendance::updateOrCreate(
-            [
-                'user_id' => $request->user_id[$index],
-                'login_date' => $request->selected_date, // Today's date
-                'logout_date' => $request->selected_date, // Today's date
-            ],
-            [
-                'attendance_status' => $status,
-                'login_time' => $request->login_time[$index],
-                'logout_time' => $request->logout_time[$index],
-                'worked_hours' => $workedHours, // Store in HH:MM:SS format
-            ]
-        );
+        // Redirect back with a success message
+        return redirect()->route('attendance')->with('success', 'Attendance saved successfully.');
     }
 
-    // Redirect back with a success message
-    return redirect()->route('attendance')->with('success', 'Attendance saved successfully.');
-}
 
     /**
      * Store a newly created resource in storage.

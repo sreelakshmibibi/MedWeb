@@ -18,8 +18,10 @@ class AttendanceService
 
         // Filter by branch if applicable
         if ($clinicBranchId) {
-            $usersWithAttendanceQuery->whereHas('staffProfile', function($query) use ($clinicBranchId) {
-                $query->where('clinic_branch_id', $clinicBranchId); // Filter by branch
+            $clinicBranchIdsArray = explode(',', $clinicBranchId);
+
+            $usersWithAttendanceQuery->whereHas('staffProfile', function($query) use ($clinicBranchIdsArray) {
+                $query->whereIn('clinic_branch_id', $clinicBranchIdsArray); // Filter by branch
             });
         }
 
