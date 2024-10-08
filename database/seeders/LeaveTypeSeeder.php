@@ -18,6 +18,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,  // Specify duration if needed
             'duration_type' => null,  // Specify duration type if needed
             'payment_status' => 'Paid',
+            'employee_type_id' => '2',
             'status' => 'Y'
         ]);
         LeaveType::create([
@@ -26,6 +27,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Paid',
+            'employee_type_id' => '2',
             'status' => 'Y'
         ]);
         LeaveType::create([
@@ -34,6 +36,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Paid',
+            'employee_type_id' => '2',
             'status' => 'Y'
         ]);
         LeaveType::create([
@@ -42,6 +45,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Partially Paid',
+            'employee_type_id' => '2',
             'status' => 'N'
         ]);
         LeaveType::create([
@@ -50,6 +54,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Paid',
+            'employee_type_id' => '2',
             'status' => 'N'
         ]);
         LeaveType::create([
@@ -58,6 +63,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Not Paid',
+            'employee_type_id' => '2',
             'status' => 'N'
         ]);
         LeaveType::create([
@@ -66,6 +72,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Paid',
+            'employee_type_id' => '2',
             'status' => 'N'
         ]);
         LeaveType::create([
@@ -74,6 +81,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Partially Paid',
+            'employee_type_id' => '2',
             'status' => 'Y'
         ]);
         LeaveType::create([
@@ -82,6 +90,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Not Paid',
+            'employee_type_id' => '2',
             'status' => 'Y'
         ]);
         LeaveType::create([
@@ -90,6 +99,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Not Paid',
+            'employee_type_id' => '2',
             'status' => 'N'
         ]);
         LeaveType::create([
@@ -98,6 +108,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Not Paid',
+            'employee_type_id' => '2',
             'status' => 'N'
         ]);
         LeaveType::create([
@@ -106,6 +117,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Paid',
+            'employee_type_id' => '2',
             'status' => 'N'
         ]);
         LeaveType::create([
@@ -114,6 +126,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Not Paid',
+            'employee_type_id' => '2',
             'status' => 'N'
         ]);
         LeaveType::create([
@@ -122,6 +135,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Not Paid',
+            'employee_type_id' => '2',
             'status' => 'N'
         ]);
         LeaveType::create([
@@ -130,6 +144,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Not Paid',
+            'employee_type_id' => '2',
             'status' => 'N'
         ]);
         LeaveType::create([
@@ -138,6 +153,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Not Paid',
+            'employee_type_id' => '2',
             'status' => 'N'
         ]);
         LeaveType::create([
@@ -146,6 +162,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Not Paid',
+            'employee_type_id' => '2',
             'status' => 'N'
         ]);
         LeaveType::create([
@@ -154,6 +171,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Not Paid',
+            'employee_type_id' => '2',
             'status' => 'N'
         ]);
         LeaveType::create([
@@ -162,6 +180,7 @@ class LeaveTypeSeeder extends Seeder
             'duration' => null,
             'duration_type' => null,
             'payment_status' => 'Paid',
+            'employee_type_id' => '2',
             'status' => 'Y'
         ]);
     }

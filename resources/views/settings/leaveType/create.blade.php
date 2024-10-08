@@ -8,12 +8,14 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div id="errorMessagecreate" style="display:none;" class="alert alert-danger"></div>
-                
+
                 <div class="modal-body">
                     <div class="container-fluid">
                         <div class="form-group">
-                            <label class="form-label" for="type">Leave Type <span class="text-danger">*</span></label>
-                            <input class="form-control" type="text" id="type" name="type" placeholder="Leave Type" required>
+                            <label class="form-label" for="type">Leave Type <span
+                                    class="text-danger">*</span></label>
+                            <input class="form-control" type="text" id="type" name="type"
+                                placeholder="Leave Type" required>
                             <div id="typeError" class="invalid-feedback"></div>
                         </div>
                         <div class="form-group">
@@ -25,14 +27,17 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="duration">Duration <span class="text-danger">*</span></label>
-                                    <input class="form-control" type="text" id="duration" name="duration" placeholder="Duration" required>
+                                    <label class="form-label" for="duration">Duration <span
+                                            class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" id="duration" name="duration"
+                                        placeholder="Duration" required>
                                     <div id="durationError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="duration_type">Duration Type <span class="text-danger">*</span></label>
+                                    <label class="form-label" for="duration_type">Duration Type <span
+                                            class="text-danger">*</span></label>
                                     <select class="form-control" id="duration_type" name="duration_type" required>
                                         <option value="day">Day</option>
                                         <option value="month">Month</option>
@@ -42,21 +47,43 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="form-label" for="payment_status">Payment Required? <span class="text-danger">*</span></label>
-                            <select class="form-control" id="payment_status" name="payment_status" required>
-                                <option value="Paid">Paid</option>
-                                <option value="Partially Paid">Partially Paid</option>
-                                <option value="Not Paid">Not Paid</option>
-                            </select>
-                            <div id="paymentStatusError" class="invalid-feedback"></div>
+                        <div class="row">
+                            <div class="col md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="payment_status">Payment Required? <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-control" id="payment_status" name="payment_status" required>
+                                        <option value="Paid">Paid</option>
+                                        <option value="Partially Paid">Partially Paid</option>
+                                        <option value="Not Paid">Not Paid</option>
+                                    </select>
+                                    <div id="paymentStatusError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="emp_type">Employee Type <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-control" id="emp_type" name="emp_type" required>
+                                        <option value="">Select Type </option>
+                                        @foreach ($employeeType as $type)
+                                            <option value="{{ $type->id }}">
+                                                {{ $type->employee_type }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div id="emp_typeError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-group mt-2">
                             <label class="form-label">Active</label>
-                            <input name="status" type="radio" checked class="form-check-input" id="yes" value="Y">
+                            <input name="status" type="radio" checked class="form-check-input" id="yes"
+                                value="Y">
                             <label class="form-check-label" for="yes">Yes</label>
-                            <input name="status" type="radio" class="form-check-input" id="no" value="N">
+                            <input name="status" type="radio" class="form-check-input" id="no"
+                                value="N">
                             <label class="form-check-label" for="no">No</label>
                             <div id="statusError" class="invalid-feedback"></div>
                         </div>
@@ -80,7 +107,8 @@
         // Handle Save button click
         $('#saveLeaveTypeBtn').click(function() {
             // Reset previous error messages
-            $('#typeError, #descriptionError, #durationError, #durationTypeError, #paymentStatusError, #statusError').text('');
+            $('#typeError, #descriptionError, #durationError, #durationTypeError, #paymentStatusError,#emp_typeError, #statusError')
+                .text('');
             $('#errorMessagecreate').hide();
 
             // Validate form inputs
@@ -89,22 +117,23 @@
             var duration = $('#duration').val();
             var durationType = $('#duration_type').val();
             var paymentStatus = $('#payment_status').val();
+            var emp_type = $('#emp_type').val();
             var status = $('input[name="status"]:checked').val();
             let valid = true;
             // Basic client-side validation
             if (type.length === 0) {
                 $('#type').addClass('is-invalid');
                 $('#typeError').text('Leave Type is required.');
-                valid = false; 
+                valid = false;
             } else {
                 $('#type').removeClass('is-invalid');
             }
 
-            
+
             if (duration.length === 0) {
                 $('#duration').addClass('is-invalid');
                 $('#durationError').text('Duration is required.');
-                valid = false;  
+                valid = false;
             } else {
                 $('#duration').removeClass('is-invalid');
             }
@@ -112,9 +141,16 @@
             if (!durationType) {
                 $('#duration_type').addClass('is-invalid');
                 $('#durationTypeError').text('Duration Type is required.');
-                valid = false; 
+                valid = false;
             } else {
                 $('#duration_type').removeClass('is-invalid');
+            }
+            if (emp_type === "") {
+                $('#emp_type').addClass('is-invalid');
+                $('#emp_typeError').text('Employee Type is required.');
+                valid = false;
+            } else {
+                $('#emp_type').removeClass('is-invalid');
             }
 
             // If validation passed, submit the form via AJAX
@@ -123,66 +159,71 @@
             var formData = form.serialize();
             if (valid) {
                 $.ajax({
-                type: 'POST',
-                url: url,
-                data: formData,
-                dataType: 'json',
-                success: function(response) {
-                    // If successful, hide modal and show success message
-                    if (response.success) {
-                        $('#successMessage').text(response.success);
-                        $('#successMessage').fadeIn().delay(3000).fadeOut(); // Show for 3 seconds
-                        $('#modal-right').modal('hide');
-                        table.ajax.reload();
-                    }
-                    if (response.error) {
-                        $('#errorMessagecreate').text(response.error);
-                        $('#errorMessagecreate').fadeIn().delay(3000).fadeOut(); 
-                    }
-                },
-                error: function(xhr) {
-                    // If error, update modal to show errors
-                    var errors = xhr.responseJSON.errors;
+                    type: 'POST',
+                    url: url,
+                    data: formData,
+                    dataType: 'json',
+                    success: function(response) {
+                        // If successful, hide modal and show success message
+                        if (response.success) {
+                            $('#successMessage').text(response.success);
+                            $('#successMessage').fadeIn().delay(3000)
+                                .fadeOut(); // Show for 3 seconds
+                            $('#modal-right').modal('hide');
+                            table.ajax.reload();
+                        }
+                        if (response.error) {
+                            $('#errorMessagecreate').text(response.error);
+                            $('#errorMessagecreate').fadeIn().delay(3000).fadeOut();
+                        }
+                    },
+                    error: function(xhr) {
+                        // If error, update modal to show errors
+                        var errors = xhr.responseJSON.errors;
 
-                    if (errors.hasOwnProperty('type')) {
-                        $('#type').addClass('is-invalid');
-                        $('#typeError').text(errors.type[0]);
-                    }
+                        if (errors.hasOwnProperty('type')) {
+                            $('#type').addClass('is-invalid');
+                            $('#typeError').text(errors.type[0]);
+                        }
 
-                    if (errors.hasOwnProperty('description')) {
-                        $('#description').addClass('is-invalid');
-                        $('#descriptionError').text(errors.description[0]);
-                    }
+                        if (errors.hasOwnProperty('description')) {
+                            $('#description').addClass('is-invalid');
+                            $('#descriptionError').text(errors.description[0]);
+                        }
 
-                    if (errors.hasOwnProperty('duration')) {
-                        $('#duration').addClass('is-invalid');
-                        $('#durationError').text(errors.duration[0]);
-                    }
+                        if (errors.hasOwnProperty('duration')) {
+                            $('#duration').addClass('is-invalid');
+                            $('#durationError').text(errors.duration[0]);
+                        }
 
-                    if (errors.hasOwnProperty('duration_type')) {
-                        $('#duration_type').addClass('is-invalid');
-                        $('#durationTypeError').text(errors.duration_type[0]);
-                    }
+                        if (errors.hasOwnProperty('duration_type')) {
+                            $('#duration_type').addClass('is-invalid');
+                            $('#durationTypeError').text(errors.duration_type[0]);
+                        }
 
-                    if (errors.hasOwnProperty('payment_status')) {
-                        $('#paymentStatusError').text(errors.payment_status[0]);
-                    }
+                        if (errors.hasOwnProperty('payment_status')) {
+                            $('#paymentStatusError').text(errors.payment_status[0]);
+                        }
+                        if (errors.hasOwnProperty('emp_type')) {
+                            $('#emp_typeError').text(errors.payment_status[0]);
+                        }
 
-                    if (errors.hasOwnProperty('status')) {
-                        $('#statusError').text(errors.status[0]);
+                        if (errors.hasOwnProperty('status')) {
+                            $('#statusError').text(errors.status[0]);
+                        }
                     }
-                }
-            });
-        
+                });
+
             }
-           
+
         });
 
         // Reset form and errors on modal close
         $('#modal-right').on('hidden.bs.modal', function() {
             $('#createLeaveTypeForm').trigger('reset');
             $('#type, #description, #duration, #duration_type').removeClass('is-invalid');
-            $('#typeError, #descriptionError, #durationError, #durationTypeError, #paymentStatusError, #statusError').text('');
+            $('#typeError, #descriptionError, #durationError, #durationTypeError, #paymentStatusError,#emp_typeError, #statusError')
+                .text('');
             $('#errorMessagecreate').hide();
         });
     });

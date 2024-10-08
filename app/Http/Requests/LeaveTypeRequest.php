@@ -18,7 +18,9 @@ class LeaveTypeRequest extends FormRequest
             'description' => 'nullable|string',
             'duration' => 'required|integer|min:1',
             'duration_type' => 'required|in:day,month',
-            'payment_status' => 'required|in:paid,unpaid',
+            'emp_type' => 'required|string|max:255',
+            // 'payment_status' => 'required|in:paid,unpaid',
+            'payment_status' => 'required|in:Paid,Partially Paid,Not Paid',
             'status' => 'required|in:Y,N',
         ];
 
@@ -37,6 +39,7 @@ class LeaveTypeRequest extends FormRequest
             'duration.required' => 'Duration is required.',
             'duration_type.required' => 'Duration Type is required.',
             'payment_status.required' => 'Payment status is required.',
+            'emp_type.required' => 'Employee Type is required',
             'status.required' => 'Status is required.',
         ];
     }

@@ -43,6 +43,7 @@
                                         <th>Description</th>
                                         <th>Duration</th>
                                         <th>Payment</th>
+                                        <th>Employee Type</th>
                                         <th width="20px">Status</th>
                                         <th width="80px">Action</th>
                                     </tr>
@@ -80,7 +81,7 @@
                 var leaveTypeId = $(this).data('id');
                 $('#edit_leaveType_id').val(leaveTypeId); // Set department ID in the hidden input
                 $.ajax({
-                    url: '{{ url("leaveType") }}' + "/" + leaveTypeId + "/edit",
+                    url: '{{ url('leaveType') }}' + "/" + leaveTypeId + "/edit",
                     method: 'GET',
                     success: function(response) {
                         $('#edit_leaveType_id').val(response.id);
@@ -89,6 +90,7 @@
                         $('#edit_payment_status').val(response.payment_status);
                         $('#edit_duration').val(response.duration);
                         $('#edit_duration_type').val(response.duration_type);
+                        $('#edit_emp_type').val(response.employee_type_id);
                         $('#edit_yes').prop('checked', response.status === 'Y');
                         $('#edit_no').prop('checked', response.status === 'N');
                         // $('#modal-edit').modal('show');

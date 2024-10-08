@@ -9,12 +9,14 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div id="errorMessage" style="display:none;" class="alert alert-danger"></div>
-                
+
                 <div class="modal-body">
                     <div class="container-fluid">
                         <div class="form-group">
-                            <label class="form-label" for="edit_type">Leave Type <span class="text-danger">*</span></label>
-                            <input class="form-control" type="text" id="edit_type" name="edit_type" placeholder="Leave Type" required>
+                            <label class="form-label" for="edit_type">Leave Type <span
+                                    class="text-danger">*</span></label>
+                            <input class="form-control" type="text" id="edit_type" name="edit_type"
+                                placeholder="Leave Type" required>
                             <div id="editTypeError" class="invalid-feedback"></div>
                         </div>
                         <div class="form-group">
@@ -26,15 +28,19 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="edit_duration">Duration <span class="text-danger">*</span></label>
-                                    <input class="form-control" type="text" id="edit_duration" name="edit_duration" placeholder="Duration" required>
+                                    <label class="form-label" for="edit_duration">Duration <span
+                                            class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" id="edit_duration" name="edit_duration"
+                                        placeholder="Duration" required>
                                     <div id="editDurationError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="edit_duration_type">Duration Type <span class="text-danger">*</span></label>
-                                    <select class="form-control" id="edit_duration_type" name="edit_duration_type" required>
+                                    <label class="form-label" for="edit_duration_type">Duration Type <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-control" id="edit_duration_type" name="edit_duration_type"
+                                        required>
                                         <option value="day">Day</option>
                                         <option value="month">Month</option>
                                     </select>
@@ -43,21 +49,44 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="form-label" for="edit_payment_status">Payment Required? <span class="text-danger">*</span></label>
-                            <select class="form-control" id="edit_payment_status" name="edit_payment_status" required>
-                                <option value="Paid">Paid</option>
-                                <option value="Partially Paid">Partially Paid</option>
-                                <option value="Not Paid">Not Paid</option>
-                            </select>
-                            <div id="editPaymentStatusError" class="invalid-feedback"></div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="edit_payment_status">Payment Required? <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-control" id="edit_payment_status" name="edit_payment_status"
+                                        required>
+                                        <option value="Paid">Paid</option>
+                                        <option value="Partially Paid">Partially Paid</option>
+                                        <option value="Not Paid">Not Paid</option>
+                                    </select>
+                                    <div id="editPaymentStatusError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="edit_emp_type">Employee Type <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-control" id="edit_emp_type" name="edit_emp_type" required>
+                                        <option value="">Select Type </option>
+                                        @foreach ($employeeType as $type)
+                                            <option value="{{ $type->id }}">
+                                                {{ $type->employee_type }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div id="editemp_typeError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-group mt-2">
                             <label class="form-label">Active</label>
-                            <input name="edit_status" type="radio" checked class="form-check-input" id="edit_yes" value="Y">
+                            <input name="edit_status" type="radio" checked class="form-check-input" id="edit_yes"
+                                value="Y">
                             <label class="form-check-label" for="edit_yes">Yes</label>
-                            <input name="edit_status" type="radio" class="form-check-input" id="edit_no" value="N">
+                            <input name="edit_status" type="radio" class="form-check-input" id="edit_no"
+                                value="N">
                             <label class="form-check-label" for="edit_no">No</label>
                             <div id="editStatusError" class="invalid-feedback"></div>
                         </div>
@@ -99,6 +128,12 @@
                 return;
             }
 
+            if ($('#edit_emp_type').val().length === 0) {
+                $('#edit_emp_type').addClass('is-invalid');
+                $('#editemp_typeError').text('Employement Type is required.');
+                return;
+            }
+
             if (!status) {
                 $('#editStatusError').text('Status is required.');
                 return;
@@ -117,7 +152,8 @@
                 success: function(response) {
                     if (response.success) {
                         $('#modal-edit').modal('hide');
-                        $('#successMessage').text(response.success).fadeIn().delay(3000).fadeOut();
+                        $('#successMessage').text(response.success).fadeIn().delay(3000)
+                            .fadeOut();
                         table.ajax.reload(); // Reload the table
                     }
                 },
@@ -132,11 +168,17 @@
                             $('#edit_duration').addClass('is-invalid');
                             $('#editDurationError').text(errors.duration[0]);
                         }
+                        if (errors.hasOwnProperty('employee_type_id')) {
+                            $('#edit_emp_type').addClass('is-invalid');
+                            $('#editemp_typeError').text(errors.duration[0]);
+                        }
+
                         if (errors.hasOwnProperty('status')) {
                             $('#editStatusError').text(errors.status[0]);
                         }
                     } else {
-                        $('#errorMessage').text('Failed to update leave type.').fadeIn().delay(3000).fadeOut();
+                        $('#errorMessage').text('Failed to update leave type.').fadeIn()
+                            .delay(3000).fadeOut();
                     }
                 }
             });
