@@ -58,42 +58,79 @@ class AttendanceController extends Controller
         return response()->json($usersWithAttendance);
     }
 
+    public function store(Request $request)
+{
+    foreach ($request->attendance_status as $index => $status) {
+        // Check if login_time and logout_time are set
+        $loginTime = !empty($request->login_time[$index]) ? new \DateTime($request->login_time[$index]) : null;
+        $logoutTime = !empty($request->logout_time[$index]) ? new \DateTime($request->logout_time[$index]) : null;
+
+        // Initialize worked hours
+        $workedHours = '00:00:00';
+
+        if ($loginTime && $logoutTime) {
+            // Calculate the difference only if both times are valid
+            $diff = $logoutTime->diff($loginTime);
+            // Format worked hours in HH:MM:SS
+            $workedHours = sprintf('%02d:%02d:%02d', $diff->h, $diff->i, $diff->s);
+        }
+
+        // Create or update the attendance record
+        EmployeeAttendance::updateOrCreate(
+            [
+                'user_id' => $request->user_id[$index],
+                'login_date' => $request->selected_date, // Today's date
+                'logout_date' => $request->selected_date, // Today's date
+            ],
+            [
+                'attendance_status' => $status,
+                'login_time' => $request->login_time[$index],
+                'logout_time' => $request->logout_time[$index],
+                'worked_hours' => $workedHours, // Store in HH:MM:SS format
+            ]
+        );
+    }
+
+    // Redirect back with a success message
+    return redirect()->route('attendance')->with('success', 'Attendance saved successfully.');
+}
+
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        foreach ($request->attendance_status as $index => $status) {
-            // Calculate worked hours in HH:MM:SS format
-            $loginTime = new \DateTime($request->login_time[$index]);
-            $logoutTime = new \DateTime($request->logout_time[$index]);
+    // public function store(Request $request)
+    // {
+    //     foreach ($request->attendance_status as $index => $status) {
+    //         // Calculate worked hours in HH:MM:SS format
+    //         $loginTime = new \DateTime($request->login_time[$index]);
+    //         $logoutTime = new \DateTime($request->logout_time[$index]);
 
-            // Calculate the difference
-            $diff = $logoutTime->diff($loginTime);
+    //         // Calculate the difference
+    //         $diff = $logoutTime->diff($loginTime);
 
-            // Format worked hours
-            $workedHours = $request->worked_hours[$index];
+    //         // Format worked hours
+    //         $workedHours = $request->worked_hours[$index];
 
-            // Create or update the attendance record
-            EmployeeAttendance::updateOrCreate(
-                [
-                    'user_id' => $request->user_id[$index],
-                    'login_date' => $request->selected_date, // Today's date
-                    'logout_date' => $request->selected_date, // Today's date
+    //         // Create or update the attendance record
+    //         EmployeeAttendance::updateOrCreate(
+    //             [
+    //                 'user_id' => $request->user_id[$index],
+    //                 'login_date' => $request->selected_date, // Today's date
+    //                 'logout_date' => $request->selected_date, // Today's date
 
-                ],
-                [
-                    'attendance_status' => $status,
-                    'login_time' => $request->login_time[$index],
-                    'logout_time' => $request->logout_time[$index],
-                    'worked_hours' => $workedHours, // Store in HH:MM:SS format
-                ]
-            );
-        }
+    //             ],
+    //             [
+    //                 'attendance_status' => $status,
+    //                 'login_time' => $request->login_time[$index],
+    //                 'logout_time' => $request->logout_time[$index],
+    //                 'worked_hours' => $workedHours ? $workedHours : '00:00:00', // Store in HH:MM:SS format
+    //             ]
+    //         );
+    //     }
 
-        // Redirect back with a success message
-        return redirect()->route('attendance')->with('success', 'Attendance saved successfully.');
-    }
+    //     // Redirect back with a success message
+    //     return redirect()->route('attendance')->with('success', 'Attendance saved successfully.');
+    // }
 
     public function getMonthwiseAttendance(Request $request)
     {
@@ -191,6 +228,13 @@ class AttendanceController extends Controller
         $employeeBranchIds = explode(',', $employeeProfile->clinic_branch_id);
 
         foreach ($daysInMonth as $date => $data) {
+            // Check if the date is a Sunday
+            if (Carbon::parse($date)->isSunday()) {
+                $daysInMonth[$date]['is_working_day'] = false; // Mark it as not a working day
+                $daysInMonth[$date]['attendance_status'] = 'Holiday'; // Set attendance status to 'Holiday'
+                continue; // Skip to the next date
+            }
+            
             // Flag to track if all branches the employee works in have a holiday
             $allBranchesOnHoliday = true;
 
@@ -254,7 +298,7 @@ class AttendanceController extends Controller
             case 'On Leave':
                 return '<span class="btn d-block btn-xs badge badge-warning">On Leave</span>';
             case 'Holiday':
-                return '<span class="btn d-block btn-xs badge badge-info">Holiday</span>';
+                return '<span class="btn d-block btn-xs badge badge-gray">Holiday</span>';
             default:
                 return '<span class="btn d-block btn-xs badge badge-danger">' . $status . '</span>';
         }
@@ -303,6 +347,14 @@ class AttendanceController extends Controller
             // Calculate total working days
             $totalWorkingDays = max(0, floor($startDate->diffInDays($endDate) + 1));
 
+            // Count Sundays as holidays
+            $sundayCount = 0;
+            for ($date = clone $startDate; $date <= $endDate; $date->addDay()) {
+                if ($date->isSunday()) {
+                    $sundayCount++;
+                }
+            }
+
             // Calculate holidays that apply to all branches the employee works in
             $applicableHolidays = $holidays->filter(function ($holiday) use ($branchIds) {
                 $holidayBranches = json_decode($holiday->branches, true); 
@@ -315,7 +367,7 @@ class AttendanceController extends Controller
             });
 
             // Subtract the number of holidays from total working days
-            $holidayCount = $applicableHolidays->count();
+            $holidayCount = $applicableHolidays->count() + $sundayCount; // Include Sundays;
             $totalWorkingDays = max(0, $totalWorkingDays - $holidayCount);
 
             // Fetch attendance data
