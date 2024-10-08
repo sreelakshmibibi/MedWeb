@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('employee_advance_payments', function (Blueprint $table) {
+        Schema::create('salary_advances', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
             $table->decimal('amount', 10,3);
@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('delete_reason', 255)->nullable();
             $table->foreignId('deleted_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -33,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('employee_advance_payments');
+        Schema::dropIfExists('salary_advances');
     }
 };

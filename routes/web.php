@@ -18,10 +18,12 @@ use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
 use App\Http\Controllers\Payroll\AttendanceController;
 use App\Http\Controllers\Payroll\DoctorPaymentController;
+use App\Http\Controllers\Payroll\EmployeeAdvancePaymentController;
 use App\Http\Controllers\Payroll\EmployeeSalaryController;
 use App\Http\Controllers\Payroll\EmployeeTypeController;
 use App\Http\Controllers\Payroll\HolidayController;
 use App\Http\Controllers\Payroll\PayHeadController;
+use App\Http\Controllers\Payroll\SalaryAdvanceController;
 use App\Http\Controllers\Payroll\WorkController;
 use App\Http\Controllers\PlaceOrderController;
 use App\Http\Controllers\Purchases\PurchaseController;
@@ -384,6 +386,12 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/doctor_payment/store', [DoctorPaymentController::class, 'store'])->name('doctorPayment.store');
     Route::get('/doctor_payment/{userId}', [DoctorPaymentController::class, 'show'])->name('doctorPayment.show');
     Route::post('/doctor_payment/delete/{historyId}', [DoctorPaymentController::class, 'destroy'])->name('doctorPayment.destroy');
+
+    Route::get('/salaryAdvance', [SalaryAdvanceController::class, 'index'])->name('salaryAdvance');
+    Route::get('/salaryAdvance/create/{userId}', [SalaryAdvanceController::class, 'create'])->name('salaryAdvance.create');
+    Route::post('/salaryAdvance/store', [SalaryAdvanceController::class, 'store'])->name('salaryAdvance.store');
+    Route::get('/salaryAdvance/{userId}', [SalaryAdvanceController::class, 'show'])->name('salaryAdvance.show');
+    Route::post('/salaryAdvance/delete/{historyId}', [SalaryAdvanceController::class, 'destroy'])->name('salaryAdvance.destroy');
 
     Route::post('/logout-cancel', function () {
         Auth::logout();

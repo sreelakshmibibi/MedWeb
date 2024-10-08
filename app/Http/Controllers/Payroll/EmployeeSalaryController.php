@@ -40,6 +40,7 @@ class EmployeeSalaryController extends Controller
         if ($request->ajax()) {
             $staff = StaffProfile::with(['clinicBranch']) // Make sure this relationship exists
                 ->where('status', 'Y')
+                ->where('visiting_doctor', 0)
                 ->get();
             $staff->transform(function ($staff) {
                 // Split the clinic_branch_id into an array
