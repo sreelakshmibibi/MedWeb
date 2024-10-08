@@ -145,6 +145,17 @@
                 value="{{ $consultationFees }}" placeholder="Consultation fees">
         </div>
     </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label" for="visiting_doctor">Is visiting doctor?<span class="text-danger">
+                    *</span></label>
+            <select class="form-control" id="visiting_doctor" name="visiting_doctor">
+                <option value="0">No</option>
+                <option value="1">Yes</option>  
+            </select>
+            
+        </div>
+    </div>
 </div>
 
 <!--for others-->

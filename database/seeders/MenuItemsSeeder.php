@@ -410,6 +410,7 @@ class MenuItemsSeeder extends Seeder
             ['name' => 'PayHeads', 'url' => '/pay_heads', 'route_name' => 'payHeads', 'icon' => 'icon-Commit', 'order_no' => 3],
             ['name' => 'Attendance', 'url' => '/attendance', 'route_name' => 'attendance', 'icon' => 'icon-Commit', 'order_no' => 4],
             ['name' => 'Employee Salary', 'url' => '/employee_salary', 'route_name' => 'employeeSalary', 'icon' => 'icon-Commit', 'order_no' => 5],
+            ['name' => 'Doctors Payment', 'url' => '/doctor_payment', 'route_name' => 'doctorPayment', 'icon' => 'icon-Commit', 'order_no' => 6],
 
         ]);
 

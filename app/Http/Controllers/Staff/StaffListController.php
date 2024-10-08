@@ -234,6 +234,7 @@ class StaffListController extends Controller
                     $staffProfile->subspecialty = $request->subspecialty;
                     $staffProfile->license_number = $request->license_number;
                     $staffProfile->consultation_fees = $request->consultation_fees;
+                    $staffProfile->visiting_doctor = $request->visiting_doctor;
                 } else if ($user->is_nurse) {
                     $staffProfile->license_number = $request->license_number_nurse;
                     if ($request->has('clinic_branch_id')) {
