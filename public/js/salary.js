@@ -120,24 +120,24 @@ $(document).ready(function () {
         $(this).removeClass("is-invalid"); // Remove invalid class if applicable
     });
 
-    document
-        .getElementById("casual_leaves")
-        .addEventListener("input", function () {
-            const casualLeavesError =
-                document.getElementById("casual_leavesError");
-            casualLeavesError.innerHTML = "";
-            casualLeavesError.style.display = "none"; // Hide error message
-            this.classList.remove("is-invalid");
-        });
+    // document
+    //     .getElementById("casual_leaves")
+    //     .addEventListener("input", function () {
+    //         const casualLeavesError =
+    //             document.getElementById("casual_leavesError");
+    //         casualLeavesError.innerHTML = "";
+    //         casualLeavesError.style.display = "none"; // Hide error message
+    //         this.classList.remove("is-invalid");
+    //     });
 
-    document
-        .getElementById("sick_leaves")
-        .addEventListener("input", function () {
-            const sickLeavesError = document.getElementById("sick_leavesError");
-            sickLeavesError.innerHTML = "";
-            sickLeavesError.style.display = "none"; // Hide error message
-            this.classList.remove("is-invalid");
-        });
+    // document
+    //     .getElementById("sick_leaves")
+    //     .addEventListener("input", function () {
+    //         const sickLeavesError = document.getElementById("sick_leavesError");
+    //         sickLeavesError.innerHTML = "";
+    //         sickLeavesError.style.display = "none"; // Hide error message
+    //         this.classList.remove("is-invalid");
+    //     });
 
     // Add input event listener for all amount fields to clear errors
     document.querySelectorAll(".amount").forEach(function (input) {
@@ -188,28 +188,28 @@ $(document).ready(function () {
             }
 
             // Validate Casual Leaves
-            const casualLeaves = document.getElementById("casual_leaves");
-            if (casualLeaves.value === "") {
-                isValid = false;
-                casualLeaves.classList.add("is-invalid");
-                document.getElementById("casual_leavesError").innerHTML =
-                    "Total Casual Leaves are required.";
-                $("#casual_leavesError").show();
-            } else {
-                casualLeaves.classList.remove("is-invalid");
-            }
+            // const casualLeaves = document.getElementById("casual_leaves");
+            // if (casualLeaves.value === "") {
+            //     isValid = false;
+            //     casualLeaves.classList.add("is-invalid");
+            //     document.getElementById("casual_leavesError").innerHTML =
+            //         "Total Casual Leaves are required.";
+            //     $("#casual_leavesError").show();
+            // } else {
+            //     casualLeaves.classList.remove("is-invalid");
+            // }
 
             // Validate Sick Leaves
-            const sickLeaves = document.getElementById("sick_leaves");
-            if (sickLeaves.value === "") {
-                isValid = false;
-                sickLeaves.classList.add("is-invalid");
-                document.getElementById("sick_leavesError").innerHTML =
-                    "Total Sick Leaves are required.";
-                $("#sick_leavesError").show();
-            } else {
-                sickLeaves.classList.remove("is-invalid");
-            }
+            // const sickLeaves = document.getElementById("sick_leaves");
+            // if (sickLeaves.value === "") {
+            //     isValid = false;
+            //     sickLeaves.classList.add("is-invalid");
+            //     document.getElementById("sick_leavesError").innerHTML =
+            //         "Total Sick Leaves are required.";
+            //     $("#sick_leavesError").show();
+            // } else {
+            //     sickLeaves.classList.remove("is-invalid");
+            // }
 
             // Validate each section
             const earningsValid = validateSection("earningsSection");

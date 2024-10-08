@@ -11,7 +11,7 @@
         </div>
 
         <!-- Name -->
-        <div class="col-lg-4 col-md-2">
+        <div class="col-lg-4 col-md-3">
             <div class="form-group">
                 <label class="form-label" for="name">Name</label>
                 <input type="text" id="name" name="name" class="form-control" readonly
@@ -28,7 +28,7 @@
                     {{ $mode === 'view' ? 'disabled' : '' }}>
                     <option value="">Select Type </option>
                     @foreach ($employeeType as $type)
-                        <option value="{{ $type->id }}" @if (isset($employeeLeave) && $employeeLeave->employee_type_id == $type->id) selected @endif>
+                        <option value="{{ $type->id }}" @if (isset($salary) && $salary->employee_type_id == $type->id) selected @endif>
                             {{ $type->employee_type }}
                         </option>
                     @endforeach
@@ -38,7 +38,7 @@
         </div>
 
         <!-- Casual Leave -->
-        <div class="col-md-3 col-lg-2">
+        {{-- <div class="col-md-3 col-lg-2">
             <div class="form-group">
                 <label class="form-label" for="casual_leaves">Total Casual Leaves <span class="text-danger">
                         *</span></label>
@@ -47,10 +47,10 @@
                     value="{{ isset($employeeLeave) ? $employeeLeave->casual_leave_monthly : '' }}">
                 <div id="casual_leavesError" class="invalid-feedback"></div>
             </div>
-        </div>
+        </div> --}}
 
         <!-- Sick Leave -->
-        <div class="col-md-3 col-lg-2">
+        {{-- <div class="col-md-3 col-lg-2">
             <div class="form-group">
                 <label class="form-label" for="sick_leaves">Total Sick Leaves <span class="text-danger">
                         *</span></label>
@@ -59,7 +59,7 @@
                     value="{{ isset($employeeLeave) ? $employeeLeave->sick_leave_monthly : '' }}">
                 <div id="sick_leavesError" class="invalid-feedback"></div>
             </div>
-        </div>
+        </div> --}}
 
     </div>
 </div>

@@ -11,6 +11,7 @@ class Salary extends Model
     use HasFactory, SoftDeletes;
     protected $fillable = [
         'user_id',
+        'employee_type_id',
         'with_effect_from',
         'salary',
         'netsalary',

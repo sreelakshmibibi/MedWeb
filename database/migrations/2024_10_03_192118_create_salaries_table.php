@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('salaries', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
+            $table->foreignId(column: 'employee_type_id')->constrained('employee_types');
             $table->decimal('salary', 10, 2);
             $table->decimal('netsalary', 10, 2);
             $table->decimal('ctc', 10, 2);

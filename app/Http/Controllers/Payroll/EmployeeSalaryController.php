@@ -131,16 +131,16 @@ class EmployeeSalaryController extends Controller
             $userId = $request->input('user_id');
 
             // Create new Employee Leave
-            $leaveData = [
-                'user_id' => $userId,
-                'employee_type_id' => $data['emp_type'],
-                'casual_leave_monthly' => $data['casual_leaves'],
-                'sick_leave_monthly' => $data['sick_leaves'],
-                'with_effect_from' => $request->input('with_effect_from'),
-                'status' => 'Y',
-                'created_by' => $data['created_by'],
-            ];
-            EmployeeLeave::create($leaveData);
+            // $leaveData = [
+            //     'user_id' => $userId,
+            //     'employee_type_id' => $data['emp_type'],
+            //     'casual_leave_monthly' => $data['casual_leaves'],
+            //     'sick_leave_monthly' => $data['sick_leaves'],
+            //     'with_effect_from' => $request->input('with_effect_from'),
+            //     'status' => 'Y',
+            //     'created_by' => $data['created_by'],
+            // ];
+            // EmployeeLeave::create($leaveData);
 
             // Handle Earnings, Additions, and Deductions
             $this->handleSalaryEntries($request, $userId, 'create');
@@ -148,6 +148,7 @@ class EmployeeSalaryController extends Controller
             // Create Salary
             Salary::create([
                 'user_id' => $userId,
+                'employee_type_id' => $data['emp_type'],
                 'salary' => $data['salary'],
                 'netsalary' => $data['netsalary'],
                 'ctc' => $data['ctc'],
@@ -193,11 +194,11 @@ class EmployeeSalaryController extends Controller
             abort(404);
         }
 
-        $employeeLeave = EmployeeLeave::where('user_id', $userId)->where('status', 'Y')->first();
-        if (!$employeeLeave) {
-            // Handle the case where no salary record exists for this user
-            abort(404);
-        }
+        // $employeeLeave = EmployeeLeave::where('user_id', $userId)->where('status', 'Y')->first();
+        // if (!$employeeLeave) {
+        //     // Handle the case where no salary record exists for this user
+        //     abort(404);
+        // }
 
         $salary = Salary::where('user_id', $userId)->where('status', 'Y')->first();
         if (!$salary) {
@@ -205,7 +206,8 @@ class EmployeeSalaryController extends Controller
             abort(404);
         }
 
-        return view('payroll.salary.create', compact('staff', 'employeeType', 'payHeads', 'mode', 'EPayHeads', 'SAPayHeads', 'SDPayHeads', 'employeesalary', 'employeeLeave', 'salary'));
+        // return view('payroll.salary.create', compact('staff', 'employeeType', 'payHeads', 'mode', 'EPayHeads', 'SAPayHeads', 'SDPayHeads', 'employeesalary', 'employeeLeave', 'salary'));
+        return view('payroll.salary.create', compact('staff', 'employeeType', 'payHeads', 'mode', 'EPayHeads', 'SAPayHeads', 'SDPayHeads', 'employeesalary', 'salary'));
 
     }
 
@@ -233,11 +235,11 @@ class EmployeeSalaryController extends Controller
             abort(404);
         }
 
-        $employeeLeave = EmployeeLeave::where('user_id', $userId)->where('status', 'Y')->first();
-        if (!$employeeLeave) {
-            // Handle the case where no salary record exists for this user
-            abort(404);
-        }
+        // $employeeLeave = EmployeeLeave::where('user_id', $userId)->where('status', 'Y')->first();
+        // if (!$employeeLeave) {
+        //     // Handle the case where no salary record exists for this user
+        //     abort(404);
+        // }
 
         $salary = Salary::where('user_id', $userId)->where('status', 'Y')->first();
         if (!$salary) {
@@ -245,8 +247,9 @@ class EmployeeSalaryController extends Controller
             abort(404);
         }
 
-        \Log::info($employeeLeave);
-        return view('payroll.salary.create', compact('staff', 'employeeType', 'payHeads', 'mode', 'EPayHeads', 'SAPayHeads', 'SDPayHeads', 'employeesalary', 'employeeLeave', 'salary'));
+        // \Log::info($employeeLeave);
+        // return view('payroll.salary.create', compact('staff', 'employeeType', 'payHeads', 'mode', 'EPayHeads', 'SAPayHeads', 'SDPayHeads', 'employeesalary', 'employeeLeave', 'salary'));
+        return view('payroll.salary.create', compact('staff', 'employeeType', 'payHeads', 'mode', 'EPayHeads', 'SAPayHeads', 'SDPayHeads', 'employeesalary', 'salary'));
 
     }
 
@@ -266,22 +269,23 @@ class EmployeeSalaryController extends Controller
             $userId = $request->input('user_id');
 
             // Update Employee Leave
-            $leaveData = [
-                'user_id' => $userId,
-                'employee_type_id' => $data['emp_type'],
-                'casual_leave_monthly' => $data['casual_leaves'],
-                'sick_leave_monthly' => $data['sick_leaves'],
-                'with_effect_from' => $request->input('with_effect_from'),
-                'status' => 'Y',
-                'updated_by' => $data['updated_by'],
-            ];
-            EmployeeLeave::where('user_id', $userId)->update($leaveData);
+            // $leaveData = [
+            //     'user_id' => $userId,
+            //     'employee_type_id' => $data['emp_type'],
+            //     'casual_leave_monthly' => $data['casual_leaves'],
+            //     'sick_leave_monthly' => $data['sick_leaves'],
+            //     'with_effect_from' => $request->input('with_effect_from'),
+            //     'status' => 'Y',
+            //     'updated_by' => $data['updated_by'],
+            // ];
+            // EmployeeLeave::where('user_id', $userId)->update($leaveData);
 
             // Handle Earnings, Additions, and Deductions
             $this->handleSalaryEntries($request, $userId, 'update');
 
             // Update Salary
             Salary::where('user_id', $userId)->update([
+                'employee_type_id' => $data['emp_type'],
                 'salary' => $data['salary'],
                 'netsalary' => $data['netsalary'],
                 'ctc' => $data['ctc'],
@@ -420,26 +424,26 @@ class EmployeeSalaryController extends Controller
 
             if ($employeesalaryUpdate) {
                 // Update EmployeeLeave status
-                $employeeleaveUpdate = EmployeeLeave::where('user_id', $id)
-                    ->update(['status' => 'N', 'updated_by' => auth()->id()]);
+                // $employeeleaveUpdate = EmployeeLeave::where('user_id', $id)
+                //     ->update(['status' => 'N', 'updated_by' => auth()->id()]);
 
-                if ($employeeleaveUpdate) {
-                    // Update salary record
-                    $salary->delete_reason = $request->reason;
-                    $salary->status = 'N';
-                    $salary->deleted_by = auth()->id();
+                // if ($employeeleaveUpdate) {
+                // Update salary record
+                $salary->delete_reason = $request->reason;
+                $salary->status = 'N';
+                $salary->deleted_by = auth()->id();
 
-                    if ($salary->save()) {
-                        DB::commit();
-                        return response()->json(['success' => 'Salary cancelled successfully']);
-                    } else {
-                        DB::rollBack();
-                        return response()->json(['error' => 'Salary Error! Please try again.']);
-                    }
+                if ($salary->save()) {
+                    DB::commit();
+                    return response()->json(['success' => 'Salary cancelled successfully']);
                 } else {
                     DB::rollBack();
-                    return response()->json(['error' => 'Item Error ! Please try again.']);
+                    return response()->json(['error' => 'Salary Error! Please try again.']);
                 }
+                // } else {
+                //     DB::rollBack();
+                //     return response()->json(['error' => 'Item Error ! Please try again.']);
+                // }
             } else {
                 DB::rollBack();
                 return response()->json(['error' => 'Item Error ! Please try again.']);
@@ -470,8 +474,8 @@ class EmployeeSalaryController extends Controller
         $EPayHeads = PayHead::where('type', 'E')->orderBy('head_type', 'asc')->get();
         $SAPayHeads = PayHead::where('type', 'SA')->orderBy('head_type', 'asc')->get();
         $SDPayHeads = PayHead::where('type', 'SD')->orderBy('head_type', 'asc')->get();
-        $employeeLeave = EmployeeLeave::where('user_id', $userId)
-            ->where('status', 'Y')->first();
+        // $employeeLeave = EmployeeLeave::where('user_id', $userId)
+        //     ->where('status', 'Y')->first();
         $salary = Salary::where('user_id', $userId)->where('status', 'Y')->first();
         $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])
             ->where('clinic_status', 'Y')

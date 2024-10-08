@@ -23,8 +23,8 @@ class SalaryRequest extends FormRequest
     {
         $rules = [
             'emp_type' => 'required|string|max:255',
-            'casual_leaves' => 'required|numeric|min:0',
-            'sick_leaves' => 'required|numeric|min:0',
+            // 'casual_leaves' => 'required|numeric|min:0',
+            // 'sick_leaves' => 'required|numeric|min:0',
             'earningstotal' => 'required|numeric|min:0',
             'earningseffect_date.*' => 'required|date',
             'earningsamount.*' => 'required|numeric|min:0',
@@ -45,12 +45,12 @@ class SalaryRequest extends FormRequest
     {
         return [
             'emp_type.required' => 'The employment type is required.',
-            'casual_leaves.required' => 'The total casual leaves is required.',
-            'casual_leaves.numeric' => 'Total casual leaves must be a number.',
-            'casual_leaves.min' => 'Total casual leaves must be at least 0.',
-            'sick_leaves.required' => 'The total sick leaves is required.',
-            'sick_leaves.numeric' => 'Total sick leaves must be a number.',
-            'sick_leaves.min' => 'Total sick leaves must be at least 0.',
+            // 'casual_leaves.required' => 'The total casual leaves is required.',
+            // 'casual_leaves.numeric' => 'Total casual leaves must be a number.',
+            // 'casual_leaves.min' => 'Total casual leaves must be at least 0.',
+            // 'sick_leaves.required' => 'The total sick leaves is required.',
+            // 'sick_leaves.numeric' => 'Total sick leaves must be a number.',
+            // 'sick_leaves.min' => 'Total sick leaves must be at least 0.',
             'earningsamount.*.required' => 'Each earnings amount field is required.',
             'earningsamount.*.numeric' => 'Each earnings amount must be a number.',
             'earningsamount.*.min' => 'Each earnings amount must be at least 0.',
