@@ -269,12 +269,28 @@ date_default_timezone_set('Asia/Kolkata');
         <table>
             <tr>
                 <td><strong>Tooth:</strong> {{ $order->toothExamination->tooth_id }}</td>
-                <td><strong>Plan:</strong> {{ $order->toothExamination->treatmentPlan->plan }}</td>
+                <td colspan="2"><strong>Plan:</strong> {{ $order->toothExamination->treatmentPlan->plan }}</td>
+                <td><strong>Status:</strong> {{ App\Models\OrderPlaced::statusToWords($order->order_status) }}</td>
             </tr>
             <tr>
                 <td><strong>Shade:</strong> {{ $order->toothExamination->shade_id != null ? $order->toothExamination->shade->shade_name : 'N/A' }}</td>
-                <td><strong>Status:</strong> {{ App\Models\OrderPlaced::statusToWords($order->order_status) }}</td>
+                <td><strong>Metal Trail:</strong> {{ $order->toothExamination->metal_trial != null ? $order->toothExamination->metal_trial : 'N/A' }}</td>
+                <td><strong>Bisq Trial:</strong> {{ $order->toothExamination->bisq_trail != null ? $order->toothExamination->bisq_trail : 'N/A' }}</td>
+                <td><strong>Finish:</strong> {{ $order->toothExamination->finish != null ? $order->toothExamination->finish : 'N/A' }}</td>
+                
             </tr>
+            <?php 
+                if (in_array($order->toothExamination->tooth_id, ['11', '12', '13', '21', '22', '23', '31', '32', '33', '41', '42', '43', '51', '52', '53', '61', '62', '63', '71', '72', '73', '81', '82', '83'])) { ?>
+                    <tr>
+                        <td><strong>Upper Shade:</strong> {{ $order->toothExamination->upper_shade != null ? $order->toothExamination-> upper_shade: 'N/A' }}</td>
+                        <td><strong>Middle Shade:</strong> {{ $order->toothExamination->middle_shade != null ? $order->toothExamination-> middle_shade: 'N/A' }}</td>
+                        <td><strong>Lower Shade:</strong> {{ $order->toothExamination->lower_shade != null ? $order->toothExamination-> lower_shade: 'N/A' }}</td>
+                        
+                    </tr>
+            <?php } ?>
+            
+            
+           
             <tr>
                 <td><strong>Instructions:</strong> {{ $order->toothExamination->instructions }}</td>
             </tr>
