@@ -721,7 +721,7 @@ use App\Models\Appointment;
         const tplandivs = document.querySelectorAll('.tplandiv');
         const incisorsCaninesDiv = document.getElementById('incisors_canines');
         const incCanDiv = document.querySelector('.in_can_div');
-        const examtoothDiv = document.getElementByClassName('exam_toothdiv');
+        const examtoothDiv = document.getElementsByClassName('exam_toothdiv');
 
         treatmentPlanSelect.addEventListener('change', function() {
             if (this.value) {
