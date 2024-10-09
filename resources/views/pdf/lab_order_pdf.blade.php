@@ -164,6 +164,7 @@ date_default_timezone_set('Asia/Kolkata');
             width: 50%;
             float: right;
         }
+        
 
         @media print {
             @page {
@@ -236,68 +237,51 @@ date_default_timezone_set('Asia/Kolkata');
                 
             </tr>
         </table>
-            <table class="treatmentbill-table" style="border:1;">
-            <thead>
-                <tr>
-                    <th class="text-center">No</th>
-                    <th class="text-center">Patient</th>
-                    <th class="text-center">Age - Gender</th>
-                    <th class="text-center">Tooth</th>
-                    <th class="text-center">Plan</th>
-                    <th class="text-center">Shade</th>
-                    <th class="text-center">Instructions</th>
-                    <th class="text-center">Status</th>
+        @foreach($orders as $order)
+    <?php 
+        $patient = $order->toothExamination->patient;
+        $name = str_replace('<br>', ' ', $patient->first_name) . ' ' . $patient->last_name;
 
-                </tr></thead>
-                <tbody>
-                    <?php $i = 0;?>
-                    @foreach($orders as $order)
-                    <?php $i++; ?>
-                        <tr>
-                            <td class="text-center">
-                                {{ $i }}
-                            </td>
-                            <td class="text-center">
-                                <?php  
-                                    $patient = $order->toothExamination->patient;
-                                    $name = str_replace('<br>', ' ', $patient->first_name) . ' ' . $patient->last_name;
-                                    echo $order->patient_id . " - " .$name;
-                                ?>
-                            </td>
-                            
-                            <td class="text-center">
-                               <?php $commonService = new CommonService();
-                               
-                                $age = $commonService->calculateAge($order->toothExamination->patient->date_of_birth);
-                               
-                                $gender = match ($order->toothExamination->patient->gender) {
-                                            'M' => 'Male',
-                                            'F' => 'Female',
-                                            'O' => 'Other',
-                                            default => 'Unknown',
-                                        };
-                                echo $age ."<br>" . $gender;
-                                ?>
-                            </td>
-                            <td class="text-center">
-                                {{ $order->toothExamination->tooth_id }}
-                            </td>
-                            <td class="text-center">
-                                {{ $order->toothExamination->treatmentPlan->plan }}
-                            </td>
-                            <td class="text-center">
-                                {{ $order->toothExamination->shade_id != null ? $order->toothExamination->shade->shade_name : null }}
-                            </td>
-                            <td class="text-center">
-                                {{ $order->toothExamination->instructions }}
-                            </td>
-                            <td class="text-center">
-                                {{ App\Models\OrderPlaced::statusToWords( $order->order_status) }}
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        $commonService = new CommonService();
+        $age = $commonService->calculateAge($patient->date_of_birth);
+        $gender = match ($patient->gender) {
+            'M' => 'Male',
+            'F' => 'Female',
+            'O' => 'Other',
+            default => 'Unknown',
+        };
+    ?>
+    <div class="patient-section" style="border: 1px solid #ccc; margin-bottom: 20px; padding: 10px;">
+        <h2>Patient Information</h2>
+        <table>
+            <tr>
+                <td><strong>No:</strong> {{ $loop->iteration }}</td>
+                <td><strong>Name:</strong> {{ $name }}</td>
+                <td><strong>Patient ID:</strong> {{ $order->patient_id }}</td>
+            </tr>
+            <tr>
+                <td><strong>Age:</strong> {{ $age }}</td>
+                <td><strong>Gender:</strong> {{ $gender }}</td>
+            </tr>
+        </table>
+        
+        <h3>Details</h3>
+        <table>
+            <tr>
+                <td><strong>Tooth:</strong> {{ $order->toothExamination->tooth_id }}</td>
+                <td><strong>Plan:</strong> {{ $order->toothExamination->treatmentPlan->plan }}</td>
+            </tr>
+            <tr>
+                <td><strong>Shade:</strong> {{ $order->toothExamination->shade_id != null ? $order->toothExamination->shade->shade_name : 'N/A' }}</td>
+                <td><strong>Status:</strong> {{ App\Models\OrderPlaced::statusToWords($order->order_status) }}</td>
+            </tr>
+            <tr>
+                <td><strong>Instructions:</strong> {{ $order->toothExamination->instructions }}</td>
+            </tr>
+        </table>
+    </div>
+@endforeach
+
         </h3>
         
     </div>
