@@ -73,9 +73,24 @@ class UpdateOrderController extends Controller
                    
                 })
                 ->addColumn('shade', function($row) {
-                    return $row->toothExamination->shade_id != null ? $row->toothExamination->shade->shade_name : null;
-                    
-                 })
+                    $details  = null;
+                    if ( $row->toothExamination->shade_id) {
+                        $details .= "Shade : ".$row->toothExamination->shade->shade_name ." ,";
+                    } if ( $row->toothExamination->upper_shade) {
+                        $details .= "Upper Shade : ".$row->toothExamination->upper_shade ." ,";
+                    }  if ( $row->toothExamination->middle_shade) {
+                        $details .= "Middle Shade : ".$row->toothExamination->middle_shade ." ,";
+                    }  if ( $row->toothExamination->lower_shade) {
+                        $details .= "Lower Shade : ".$row->toothExamination->lower_shade ." ,";
+                    }  if ( $row->toothExamination->metal_trial) {
+                        $details .= "Metal Trial : ".$row->toothExamination->metal_trial ." ,";
+                    }  if ( $row->toothExamination->bisq_trial) {
+                        $details .= "Bisq Trial : ".$row->toothExamination->bisq_trial ." ,";
+                    }  if ( $row->toothExamination->finish) {
+                        $details .= "Finish : ".$row->toothExamination->finish ." ,";
+                    }  
+                    return $details;
+                })
                  ->addColumn('instructions', function($row) {
                     return $row->toothExamination->instructions;
                     
@@ -151,6 +166,9 @@ class UpdateOrderController extends Controller
                     if ($row->order_status == OrderPlaced::CANCELLED) {
                        $btn .= $row->order_cancel_reason;
                     }
+                    if ($row->order_status == OrderPlaced::REPEAT) {
+                        $btn .= $row->order_repeat_reason;
+                     }
                     return $btn;
                 })
                 ->rawColumns(['status', 'action', 'dates'])
@@ -207,7 +225,7 @@ class UpdateOrderController extends Controller
                 $order->order_placed_on = $request->order_placed_on;
                 $order->delivery_expected_on = $request->delivery_expected_on;
                 $order->parent_order_id = $orderPlaced->id;
-                $order->billable = $request->billable;
+                $order->lab_cost = $orderPlaced->lab_cost;
                 $order->order_status = OrderPlaced::PLACED;
                 $order->billable = $request->billable;
      

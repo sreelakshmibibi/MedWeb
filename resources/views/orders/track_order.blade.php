@@ -121,12 +121,12 @@
                                             <tr>
                                                 <th width="20px">No</th>
                                                 <!-- <th>Technician</th> -->
-                                                <th>Patient Id - Name</th>
-                                                <th>Tooth Id</th>
-                                                <th>Treatment Plan</th>
-                                                <th>Shade</th>
-                                                <th>Instructions</th>
-                                                <th width="100px">Dates</th>
+                                                <th width="150px">Patient Id - Name</th>
+                                                <th width="50px">Tooth Id</th>
+                                                <th width="150px">Treatment Plan</th>
+                                                <th width="200px">Shade</th>
+                                                <th >Instructions</th>
+                                                <th width="150px">Dates</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
@@ -464,6 +464,12 @@
                     $('#patient_name').val(patientName);
                     $('#treatment_plan_id').val(response.treatment_plan_id); // Corrected ID
                     $('#shade_id').val(response.tooth_examination.shade_id); // Corrected shade ID
+                    $('#upper_shade').val(response.tooth_examination.upper_shade); // Corrected shade ID
+                    $('#lower_shade').val(response.tooth_examination.lower_shade); // Corrected shade ID
+                    $('#middle_shade').val(response.tooth_examination.middle_shade); // Corrected shade ID
+                    $('#metal_trial').val(response.tooth_examination.metal_trial); // Corrected shade ID
+                    $('#bisq_trial').val(response.tooth_examination.bisq_trial); // Corrected shade ID
+                    $('#finish').val(response.tooth_examination.finish); // Corrected shade ID
                     $('#instructions').val(response.tooth_examination
                         .instructions); // Corrected shade ID
                     $('#modal-reorder').modal('show');
@@ -477,9 +483,14 @@
         $('#btn-confirm-reorder').click(function() {
             var orderId = $('#repeat_order_id').val();
             var reason = $('#repeat_reason').val();
-            var billable = $('#billable').val();
+            var billable = getBillableValue();
             var orderDate = $('#order_date').val();
             var deliveryExpected = $('#delivery_expected').val();
+            function getBillableValue() {
+                var billable = $('input[name="billable"]:checked').val();
+                console.log(billable); // This will log 'Y' or 'N' depending on the selection
+                return billable;
+            }
             isValid = 1;
             if (reason.length === 0) {
                 $('#repeat_reason').addClass('is-invalid');
