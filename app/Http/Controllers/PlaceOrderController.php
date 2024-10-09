@@ -65,12 +65,19 @@ class PlaceOrderController extends Controller
         }
     
         $data = $query->get();
-        
+
         $treatmentPlan = [];
         foreach ($data as $d) {
             if ($d->treatment_plan_id != null) {
                 $patientName = str_replace('<br>', ' ', $d->patient->first_name) . ' ' . $d->patient->last_name;
                 $shade = $d->shade != null ? $d->shade->shade_name : "null";
+                $metal_trail = $d->metal_trial;
+                $bisq_trail = $d->bisq_trail;
+                $finish = $d->finish;
+                $upper_shade = $d->upper_shade;
+                $middle_shade = $d->middle_shade;
+                $lower_shade = $d->lower_shade;
+
                 $tooth = null;
                 if ($d->tooth_id != null) {
                     $tooth = $d->tooth_id;
@@ -101,6 +108,12 @@ class PlaceOrderController extends Controller
                     "tooth_id" => $tooth,
                     "plan" => $d->treatmentPlan->plan,
                     "shade" => $shade,
+                    "metal_trail" => $metal_trail,
+                    "bisq_trail" => $bisq_trail,
+                    "finish" => $finish,
+                    "upper_shade" => $upper_shade,
+                    "middle_shade" => $middle_shade,
+                    "lower_shade" => $lower_shade,
                     "instructions" => $d->instructions,
                 ];
             }

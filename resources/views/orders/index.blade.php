@@ -202,7 +202,7 @@
                             let tableHtml =
                                 '<table class="table table-striped table-bordered">';
                             tableHtml +=
-                                '<thead><tr><th class="text-center">Select</th><th class="text-center">Patient ID</th><th class="text-center">Patient Name</th><th class="text-center">Tooth</th><th class="text-center">Plan</th><th class="text-center">Shade</th><th class="text-center">Instructions</th></tr></thead><tbody>';
+                                '<thead><tr><th class="text-center">Select</th><th class="text-center">Patient ID</th><th class="text-center">Patient Name</th><th class="text-center">Tooth</th><th class="text-center">Plan</th><th class="text-center">Details</th><th class="text-center">Instructions</th></tr></thead><tbody>';
 
                             $.each(data, function(index, item) {
                                 tableHtml += '<tr>';
@@ -219,9 +219,17 @@
                                     `<td class="text-center">${item.tooth_id}</td>`;
                                 tableHtml +=
                                     `<td class="text-center">${item.plan}</td>`;
-                                tableHtml +=
-                                    `<td class="text-center">${item.shade}</td>`;
-                                tableHtml += `<td>${item.instructions}</td>`;
+                                tableHtml += `<td class="text-center">Shade: ${item.shade ? item.shade : 'N/A'} , `;
+                                tableHtml += `Metal Trial: ${item.metal_trial ? item.metal_trial : 'N/A'} , `;
+                                tableHtml += `Bisq Trial: ${item.bisq_trial ? item.bisq_trial : 'N/A'} , `;
+                                tableHtml += `Finish: ${item.finish ? item.finish : 'N/A'} , `;
+
+                                if (['11', '12', '13', '21', '22', '23', '31', '32', '33', '41', '42', '43', '51', '52', '53', '61', '62', '63', '71', '72', '73', '81', '82', '83'].includes(item.tooth_id)) {
+                                    tableHtml += `Upper Shade: ${item.upper_shade ? item.upper_shade : 'N/A'} , `;
+                                    tableHtml += `Middle Shade: ${item.middle_shade ? item.middle_shade : 'N/A'} , `;
+                                    tableHtml += `Lower Shade: ${item.lower_shade ? item.lower_shade : 'N/A'} ,`;
+                                }
+                                tableHtml += `</td><td>${item.instructions}</td>`;
                                 tableHtml += '</tr>';
                             });
 
