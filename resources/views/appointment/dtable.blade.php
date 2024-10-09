@@ -393,11 +393,12 @@ use Illuminate\Support\Facades\Session;
                     $('#treatment_plan_id option').each(function() {
                         if ($(this).val() == treatment_plan_id) {
                             $(this).prop('selected', true);
+                            $('#treatment_plan_id').change();
                             return false; // Exit the loop once found
                         }
                     });
                     var shade_id = examination
-                                .shade_id;
+                        .shade_id;
                     $('#shade_id').val(shade_id);
 
                     // Loop through options to find the corresponding text and select it
@@ -424,15 +425,15 @@ use Illuminate\Support\Facades\Session;
                     var upper_shade = examination
                         .upper_shade;
                     $('#upper_shade').val(upper_shade);
-                    
+
                     var middle_shade = examination
                         .middle_shade;
                     $('#middle_shade').val(middle_shade);
-                    
+
                     var lower_shade = examination
                         .lower_shade;
                     $('#lower_shade').val(lower_shade);
-                    
+
                     var instructions = examination
                         .instructions;
                     $('#instructions').val(instructions);
@@ -815,11 +816,12 @@ use Illuminate\Support\Facades\Session;
                     $('#treatment_plan_id option').each(function() {
                         if ($(this).val() == treatment_plan_id) {
                             $(this).prop('selected', true);
+                            $('#treatment_plan_id').change();
                             return false; // Exit the loop once found
                         }
                     });
                     var shade_id = examination
-                                .shade_id;
+                        .shade_id;
                     $('#shade_id').val(shade_id);
 
                     // Loop through options to find the corresponding text and select it
@@ -830,7 +832,7 @@ use Illuminate\Support\Facades\Session;
                             return false; // Exit the loop once found
                         }
                     });
-                            
+
                     var metal_trial = examination
                         .metal_trial;
                     $('#metal_trial').val(metal_trial);
@@ -846,15 +848,15 @@ use Illuminate\Support\Facades\Session;
                     var upper_shade = examination
                         .upper_shade;
                     $('#upper_shade').val(upper_shade);
-                    
+
                     var middle_shade = examination
                         .middle_shade;
                     $('#middle_shade').val(middle_shade);
-                    
+
                     var lower_shade = examination
                         .lower_shade;
                     $('#lower_shade').val(lower_shade);
-                    
+
                     var instructions = examination
                         .instructions;
                     $('#instructions').val(instructions);
@@ -1251,5 +1253,26 @@ use Illuminate\Support\Facades\Session;
         $('#xpatient_id').val(patientId);
         $('#xteeth_id').val(teethName);
         $('#xtooth_exam_id').val(toothExamId);
+    });
+
+    $(document).ready(function() {
+        $('#treatment_plan_id').change(function() {
+            const treatmentPlanSelect = document.getElementById('treatment_plan_id');
+            const tplandivs = document.querySelectorAll('.tplandiv');
+            const incisorsCaninesDiv = document.getElementById('incisors_canines');
+            const incCanDiv = document.querySelector('.in_can_div');
+
+            if (this.value) {
+                $('.tplandiv').show();
+                if (incisorsCaninesDiv.style.display !== 'none') {
+                    $('.in_can_div').show();
+                } else {
+                    $('.in_can_div').hide();
+                }
+            } else {
+                $('.tplandiv').hide();
+                $('.in_can_div').hide();
+            }
+        });
     });
 </script>

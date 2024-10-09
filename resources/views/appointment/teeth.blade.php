@@ -195,12 +195,11 @@ use App\Models\Appointment;
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row tplandiv" style="display: none;">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label class="form-label" for="shade_id">Shade</label>
-                                    <select class="form-select shade_id_select" id="shade_id"
-                                        name="shade_id">
+                                    <select class="form-select shade_id_select" id="shade_id" name="shade_id">
                                         <option value="">Select a Shade</option>
                                         @foreach ($shades as $shade)
                                             <option value="<?= $shade->id ?>"><?= $shade->shade_name ?>
@@ -213,41 +212,37 @@ use App\Models\Appointment;
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label class="form-label" for="metal_trial">Metal Trial</label>
-                                    <input type="text" class="form-control" id="metal_trial"
-                                        name="metal_trial">
+                                    <input type="text" class="form-control" id="metal_trial" name="metal_trial">
                                     <div id="metalTrialError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label class="form-label" for="bisq_trial">Bisq trial</label>
-                                    <input type="text" class="form-control" id="bisq_trial"
-                                        name="bisq_trial">
+                                    <input type="text" class="form-control" id="bisq_trial" name="bisq_trial">
                                     <div id="bisqTrialError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label class="form-label" for="finish">Finish</label>
-                                    <input type="text" class="form-control" id="finish"
-                                        name="finish">
+                                    <input type="text" class="form-control" id="finish" name="finish">
                                     <div id="finishError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row tplandiv in_can_div" style="display: none;">
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="form-label" for="upper_shade">Upper Shade</label>
-                                    <input type="text" class="form-control"  id="upper_shade"
-                                        name="upper_shade">
+                                    <input type="text" class="form-control" id="upper_shade" name="upper_shade">
                                     <div id="upperShadeError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="form-label" for="middle_shade">Middle Shade</label>
-                                    <input type="text" class="form-control"  id="middle_shade"
+                                    <input type="text" class="form-control" id="middle_shade"
                                         name="middle_shade">
                                     <div id="middleShadeError" class="invalid-feedback"></div>
                                 </div>
@@ -255,23 +250,22 @@ use App\Models\Appointment;
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="form-label" for="lower_shade">Lower Shade</label>
-                                    <input type="text" class="form-control" id="lower_shade"
-                                        name="lower_shade">
+                                    <input type="text" class="form-control" id="lower_shade" name="lower_shade">
                                     <div id="lowerShadeError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            
                         </div>
-                        <div class="row">
+                        <div class="row tplandiv" style="display: none;">
                             <div class="col-md-12">
-                            <div class="form-group">
+                                <div class="form-group">
                                     <label class="form-label" for="instructions">Instructions for technicians</label>
-                                    <textarea class="form-control" rows="2" id="instructions" name="instructions" rows="1" placeholder="Instructions for technician"></textarea>
+                                    <textarea class="form-control" rows="2" id="instructions" name="instructions" rows="1"
+                                        placeholder="Instructions for technician"></textarea>
                                     <div id="instructionsError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-12 ">
                                 <div class="form-group">
@@ -712,12 +706,34 @@ use App\Models\Appointment;
             $('#teethXrayDiv').show();
 
             $('#xray').val('');
-
+            $('.tplandiv').hide();
+            $('.in_can_div').hide();
         });
         $('.form-control, .form-select').on('input', function() {
             $(this).removeClass('is-invalid');
             $(this).next('.invalid-feedback').text('');
         });
 
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const treatmentPlanSelect = document.getElementById('treatment_plan_id');
+        const tplandivs = document.querySelectorAll('.tplandiv');
+        const incisorsCaninesDiv = document.getElementById('incisors_canines');
+        const incCanDiv = document.querySelector('.in_can_div');
+
+        treatmentPlanSelect.addEventListener('change', function() {
+            if (this.value) {
+                $('.tplandiv').show();
+                if (incisorsCaninesDiv.style.display !== 'none') {
+                    $('.in_can_div').show();
+                } else {
+                    $('.in_can_div').hide();
+                }
+            } else {
+                $('.tplandiv').hide();
+                $('.in_can_div').hide();
+            }
+        });
     });
 </script>
