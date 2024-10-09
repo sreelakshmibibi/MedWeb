@@ -417,6 +417,31 @@ $lower_teethImages = [
                                     return false; // Exit the loop once found
                                 }
                             });
+
+                            var metal_trial = examination
+                                .metal_trial;
+                            $('#metal_trial').val(metal_trial);
+
+                            var bisq_trial = examination
+                                .bisq_trial;
+                            $('#bisq_trial').val(bisq_trial);
+
+                            var finish = examination
+                                .finish;
+                            $('#finish').val(finish);
+
+                            var upper_shade = examination
+                                .upper_shade;
+                            $('#upper_shade').val(upper_shade);
+                            
+                            var middle_shade = examination
+                                .middle_shade;
+                            $('#middle_shade').val(middle_shade);
+                            
+                            var lower_shade = examination
+                                .lower_shade;
+                            $('#lower_shade').val(lower_shade);
+
                              var instructions = examination
                                 .instructions;
                             $('#instructions').val(instructions);

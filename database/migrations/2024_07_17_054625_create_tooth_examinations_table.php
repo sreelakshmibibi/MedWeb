@@ -27,6 +27,12 @@ return new class extends Migration
             $table->foreignId('treatment_id')->constrained('treatment_types');
             $table->foreignId('treatment_plan_id')->nullable()->constrained('treatment_plans');
             $table->foreignId('shade_id')->nullable()->constrained('shades');
+            $table->string('upper_shade')->nullable();
+            $table->string('middle_shade')->nullable();
+            $table->string('lower_shade')->nullable();
+            $table->string('metal_trial')->nullable();
+            $table->string('bisq_trial')->nullable();
+            $table->string('finish')->nullable();
             $table->string('instructions')->nullable();
             $table->string('xray')->nullable();
             $table->foreignId('lingual_condn')->nullable()->constrained('surface_conditions');
