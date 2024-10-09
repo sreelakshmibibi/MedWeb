@@ -61,6 +61,59 @@
                         
                     </div>
                     <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label" for="upper_shade">Upper Shade</label>
+                                <input type="text" class="form-control"  id="upper_shade"
+                                    name="upper_shade">
+                                <div id="upperShadeError" class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label" for="middle_shade">Middle Shade</label>
+                                <input type="text" class="form-control"  id="middle_shade"
+                                    name="middle_shade">
+                                <div id="middleShadeError" class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label" for="lower_shade">Lower Shade</label>
+                                <input type="text" class="form-control" id="lower_shade"
+                                    name="lower_shade">
+                                <div id="lowerShadeError" class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                            
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label" for="metal_trial">Metal Trial</label>
+                                <input type="text" class="form-control" id="metal_trial"
+                                    name="metal_trial">
+                                <div id="metalTrialError" class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label" for="bisq_trial">Bisq trial</label>
+                                <input type="text" class="form-control" id="bisq_trial"
+                                    name="bisq_trial">
+                                <div id="bisqTrialError" class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label" for="finish">Finish</label>
+                                <input type="text" class="form-control" id="finish"
+                                    name="finish">
+                                <div id="finishError" class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="form-label" for="order_date">Repeat Order Placed On</label><span
@@ -99,10 +152,10 @@
                     
                     <div class="form-group mt-2">
                         <label class="form-label col-md-6">Is Billable?</label>
-                        <input name="billable" type="radio"  class="form-control with-gap" id="yes"
+                        <input name="billable" type="radio" id="billable" class="form-control with-gap" id="yes"
                             value="Y">
                         <label for="yes">Yes</label>
-                        <input name="billable" type="radio"checked class="form-control with-gap" id="no"
+                        <input name="billable" id="billable" type="radio"checked class="form-control with-gap" id="no"
                             value="N">
                         <label for="no">No</label>
                         <div id="billableError" class="invalid-feedback"></div>

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->dateTime('delivery_expected_on');
             $table->dateTime('delivered_on')->nullable();
             $table->integer('order_status'); /* PLACED = 1;  DELIVERED = 2; CANCELLED = 3; PENDING = 4; REPEAT = 5;*/
-            $table->decimal('lab_cost', 10, 3);
+            $table->decimal('lab_cost', 10, 3)->nullable();
             $table->string('billable')->default('Y');
             $table->foreignId('lab_bill_id')->nullable()->constrained('lab_bills');
             $table->string('order_cancel_reason')->nullable();
