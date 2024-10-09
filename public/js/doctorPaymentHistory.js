@@ -24,107 +24,110 @@ jQuery(function ($) {
                 },
             },
             {
-                data: 'amount',
-                name: 'amount',
-                className: 'text-center'
-
+                data: "amount",
+                name: "amount",
+                className: "text-center",
             },
             {
-                data: 'paid_on',
-                name: 'paid_on',
-                className: 'text-center'
+                data: "paid_on",
+                name: "paid_on",
+                className: "text-center",
+                render: function (data, type, row) {
+                    return moment(data).format("DD-MM-YYYY");
+                },
             },
             {
-                data: 'remarks',
-                name: 'remarks'
+                data: "remarks",
+                name: "remarks",
+                render: function (data, type, row) {
+                    return data ? data : "-";
+                },
             },
             {
-                data: 'status',
-                name: 'status',
-                className: 'text-center'
+                data: "status",
+                name: "status",
+                className: "text-center",
             },
             {
-                data: 'action',
-                name: 'action',
+                data: "action",
+                name: "action",
                 orderable: false,
                 searchable: true,
-                className: 'text-center'
-
+                className: "text-center",
             },
         ],
     });
 });
-   
-$(document).ready(function() {
-    $('#doctorPaymentForm').on('submit', function(event) {
+
+$(document).ready(function () {
+    $("#doctorPaymentForm").on("submit", function (event) {
         event.preventDefault(); // Prevent the default form submission
 
         // Clear previous error messages
-        $('.invalid-feedback').empty();
-        $('.form-control').removeClass('is-invalid');
-
+        $(".invalid-feedback").empty();
+        $(".form-control").removeClass("is-invalid");
 
         // Get form data
         var formData = $(this).serialize();
 
         $.ajax({
-            url: $(this).attr('action'), // Use the action attribute from the form
-            type: 'POST',
+            url: $(this).attr("action"), // Use the action attribute from the form
+            type: "POST",
             data: formData,
-            success: function(response) {
+            success: function (response) {
                 // Handle success response
                 if (response.success) {
                     alert(response.message); // Show success message
                     table.ajax.reload(); // Reload the DataTable to fetch the latest data
-                    $('#doctorPaymentForm')[0].reset(); 
+                    $("#doctorPaymentForm")[0].reset();
                     // Optionally, reset the form or refresh data here
                 }
             },
-            error: function(xhr) {
+            error: function (xhr) {
                 // Handle validation errors
                 if (xhr.status === 422) {
                     var errors = xhr.responseJSON.errors;
                     for (var field in errors) {
-                        $('#' + field).addClass('is-invalid'); // Highlight invalid fields
-                        $('#' + field + 'Error').text(errors[field][0]); // Show error message
+                        $("#" + field).addClass("is-invalid"); // Highlight invalid fields
+                        $("#" + field + "Error").text(errors[field][0]); // Show error message
                     }
                 } else {
-                    alert('An error occurred. Please try again.'); // Handle other errors
+                    alert("An error occurred. Please try again."); // Handle other errors
                 }
-            }
+            },
         });
     });
 });
 
-$(document).on('click', '.btn-del', function() {
-    alert('hi');
-    var doctorPaymentId = $(this).data('id');
-    $('#delete_doctorPayment_id').val(doctorPaymentId); // Set department ID in the hidden input
-    $('#modal-doctorPayment-delete').modal('show');
+$(document).on("click", ".btn-del", function () {
+    // alert("hi");
+    var doctorPaymentId = $(this).data("id");
+    $("#delete_doctorPayment_id").val(doctorPaymentId); // Set department ID in the hidden input
+    $("#modal-doctorPayment-delete").modal("show");
 });
 
-$('#btn-confirm-delete').click(function() {
-    var doctorPaymentId = $('#delete_doctorPayment_id').val();
-    var deleteReason = $('#deleteReason').val();
+$("#btn-confirm-delete").click(function () {
+    var doctorPaymentId = $("#delete_doctorPayment_id").val();
+    var deleteReason = $("#deleteReason").val();
     var url = deleteurl;
-    url = url.replace(':historyId', doctorPaymentId);
+    url = url.replace(":historyId", doctorPaymentId);
     $.ajax({
-        type: 'POST',
+        type: "POST",
         url: url,
         data: {
-            "_token": window.csrf,
-            "deleteReason" : deleteReason
+            _token: window.csrf,
+            deleteReason: deleteReason,
         },
-        success: function(response) {
+        success: function (response) {
             table.draw(); // Refresh DataTable
-            $('#successMessage').text('Doctor payment record cancelled successfully');
-            $('#successMessage').fadeIn().delay(3000)
-                .fadeOut(); // Show for 3 seconds
+            $("#successMessage").text(
+                "Doctor payment record cancelled successfully"
+            );
+            $("#successMessage").fadeIn().delay(3000).fadeOut(); // Show for 3 seconds
         },
-        error: function(xhr) {
-            $('#modal-doctorPayment-delete').modal('hide');
+        error: function (xhr) {
+            $("#modal-doctorPayment-delete").modal("hide");
             swal("Error!", xhr.responseJSON.message, "error");
-        }
+        },
     });
 });
-

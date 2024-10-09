@@ -30,7 +30,8 @@
                 <div class="box">
                     <div class="box-body">
                         <div class="table-responsive">
-                            <table width="100%" class="table table-bordered table-hover table-striped mb-0 data-table">
+                            <table width="100%"
+                                class="table table-bordered table-hover table-striped mb-0 data-table text-center">
                                 <thead class="bg-primary-light text-center">
                                     <tr>
                                         <th width="10px">No</th>
