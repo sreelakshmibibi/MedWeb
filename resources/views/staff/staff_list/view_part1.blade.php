@@ -9,10 +9,7 @@
         <div class="box">
             <div class="box-body ribbon-box">
                 <div class="ribbon fs-18 @php echo ($staffProfile->status == 'Y') ? 'ribbon-success' : 'ribbon-danger'; @endphp"
-                    style="float: right;
-    margin-left: 0;
-    margin-right: -30px; margin-right:-22px; border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;">
+                    style="float: right;margin-left: 0;margin-right: -30px; margin-right:-22px; border-top-left-radius: 10px; border-bottom-left-radius: 10px;">
 
                     <?php if ($userDetails->is_doctor) { ?>
                     {{-- <i class="fa fa-stethoscope"></i> --}}
@@ -63,6 +60,7 @@
             <div class="box-header staff-section pt-3" style="display: none;">
                 <h4 class="mb-0">Other Information</h4>
             </div>
+
             <div class="box-body staff-section" style="display: none;">
                 <ul class="nav d-block nav-stacked py-0 ">
                     <div class="row">
@@ -219,6 +217,7 @@
                     <div class="box-header">
                         <h4 class="mb-0">Other Information</h4>
                     </div>
+
                     <div class="box-body">
                         <div class="inner-user-div5">
                             <ul class="nav d-block nav-stacked py-0 ">

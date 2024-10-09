@@ -16,6 +16,7 @@ use App\Models\State;
 use App\Models\User;
 use App\Models\UserType;
 use App\Models\UserVerify;
+use App\Models\LeaveApplication;
 use App\Notifications\WelcomeVerifyNotification;
 use App\Services\StaffService;
 use Illuminate\Http\Request;
@@ -27,6 +28,9 @@ use App\Services\CommonService;
 use App\Services\DoctorAvaialbilityService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+
 
 class StaffListController extends Controller
 {
@@ -419,6 +423,26 @@ class StaffListController extends Controller
         $femalePatientsCount = $patients->where('gender', 'F')->count();
         $totalLeaves = $doctorAvailability->calculateLeavesTaken($staffProfile->user_id);
 
+        $leaveApplication = LeaveApplication::where('user_id', 4)
+            ->where('leave_from', '<=', Carbon::now()->toDateString())
+            ->where('leave_to', '>=', Carbon::now()->toDateString())
+            ->first();
+
+        if ($leaveApplication) {
+            // Proceed to check the leave status and other properties
+            // $leavedate = $leaveApplication->leave_from . ' to ' . $leaveApplication->leave_to;
+            $leavedate =
+                Carbon::parse($leaveApplication->leave_from)->format('d-m-Y') .
+                ' to ' .
+                Carbon::parse($leaveApplication->leave_to)->format('d-m-Y');
+
+            $leaveFileExists = isset($leaveApplication->leave_file) && !is_null($leaveApplication->leave_file);
+        } else {
+            // Handle case where no leave application is found
+            $leavedate = '';
+            $leaveFileExists = false;
+        }
+
         return view(
             'staff.staff_list.view',
             compact(
@@ -439,7 +463,10 @@ class StaffListController extends Controller
                 'malePatientsCount',
                 'femalePatientsCount',
                 'totalLeaves',
-                'from'
+                'from',
+                'leaveApplication',
+                'leaveFileExists',
+                'leavedate'
             )
         );
     }
