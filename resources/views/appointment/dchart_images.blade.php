@@ -1000,10 +1000,13 @@ $lower_teethImages = [
             const tplandivs = document.querySelectorAll('.tplandiv');
             const incisorsCaninesDiv = document.getElementById('incisors_canines');
             const incCanDiv = document.querySelector('.in_can_div');
+            const examtoothDiv = document.getElementByClassName('exam_toothdiv');
 
             if (this.value) {
                 $('.tplandiv').show();
-                if (incisorsCaninesDiv.style.display !== 'none') {
+                // if (incisorsCaninesDiv.style.display !== 'none') {
+                if (incisorsCaninesDiv.style.display !== 'none' && examtoothDiv.style.display !==
+                    'none') {
                     $('.in_can_div').show();
                 } else {
                     $('.in_can_div').hide();
