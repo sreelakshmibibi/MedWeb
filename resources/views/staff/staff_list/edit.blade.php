@@ -97,9 +97,8 @@
                 }
             });
 
-
             let count = parseInt('{{ $availabilityCount }}') || 0;
-    
+            updateRowCount();
             // Function to update row count input field value
             function updateRowCount() {
                 $('#row_count').val(count);

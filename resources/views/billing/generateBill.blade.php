@@ -129,9 +129,15 @@ date_default_timezone_set('Asia/Kolkata');
                                                     <tr>
                                                         <td>{{ $i }}</td>
                                                         <td class="text-start">
-                                                            {{ $detailBill->treatment_id ? $detailBill->treatment->treat_name : $detailBill->consultation_registration }}
-                                                            <input type="hidden" name="treatmentId{{ $i }}"
-                                                                value="{{ $detailBill->treatment_id }}">
+                                                            @if($detailBill->treatment_id)
+                                                                {{ $detailBill->treatment->treat_name }}
+                                                                <input type="hidden" name="treatmentId{{ $i }}" value="{{ $detailBill->treatment_id  }}">
+                                                            @elseif($detailBill->plan_id)
+                                                                {{ $detailBill->treatmentPlan->plan }}
+                                                                <input type="hidden" name="planId{{ $i }}" value="{{ $detailBill->plan_id }}">
+                                                            @else
+                                                                {{ $detailBill->consultation_registration }}
+                                                            @endif
                                                         </td>
                                                         <td><input type="text" readonly
                                                                 name="quantity{{ $i }}"

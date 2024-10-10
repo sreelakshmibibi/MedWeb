@@ -9,10 +9,26 @@ use App\Http\Controllers\Auth\StaffVerificationController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\Billing\BillingController;
 use App\Http\Controllers\Billing\PaymentController;
+use App\Http\Controllers\Expenses\ExpenseCategoryController;
+use App\Http\Controllers\Expenses\ExpenseController;
 use App\Http\Controllers\HelperController;
+use App\Http\Controllers\LabBillController;
 use App\Http\Controllers\MedicineBillController;
 use App\Http\Controllers\Patient\PatientListController;
 use App\Http\Controllers\Patient\TodayController;
+use App\Http\Controllers\Payroll\AttendanceController;
+use App\Http\Controllers\Payroll\DoctorPaymentController;
+use App\Http\Controllers\Payroll\EmployeeAdvancePaymentController;
+use App\Http\Controllers\Payroll\EmployeeSalaryController;
+use App\Http\Controllers\Payroll\EmployeeTypeController;
+use App\Http\Controllers\Payroll\HolidayController;
+use App\Http\Controllers\Payroll\PayHeadController;
+use App\Http\Controllers\Payroll\SalaryAdvanceController;
+use App\Http\Controllers\Payroll\WorkController;
+use App\Http\Controllers\PlaceOrderController;
+use App\Http\Controllers\Purchases\PurchaseController;
+use App\Http\Controllers\Purchases\SupplierController;
+use App\Http\Controllers\Purchases\MedicinePurchaseController;
 use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Settings\ClinicBranchController;
 use App\Http\Controllers\Settings\ComboOfferController;
@@ -21,6 +37,7 @@ use App\Http\Controllers\Settings\DiseaseController;
 use App\Http\Controllers\Settings\InsuranceController;
 use App\Http\Controllers\Settings\MedicineController;
 use App\Http\Controllers\Settings\LeaveController;
+use App\Http\Controllers\Settings\LeaveTypeController;
 use App\Http\Controllers\Settings\MenuItemController;
 use App\Http\Controllers\Settings\PermissionController;
 use App\Http\Controllers\Settings\RoleController;
@@ -29,6 +46,9 @@ use App\Http\Controllers\Settings\TreatmentPlanController;
 use App\Http\Controllers\Settings\UserController;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\Staff\StaffListController;
+use App\Http\Controllers\TechnicianController;
+use App\Http\Controllers\TechnicianCostController;
+use App\Http\Controllers\UpdateOrderController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -99,6 +119,7 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/download-prescription', [HelperController::class, 'generatePrescriptionPdf'])->name('download.prescription');
     Route::get('/print-prescription', [HelperController::class, 'printPrescription'])->name('print.prescription');
     Route::post('/download-patientidcard', [HelperController::class, 'generatePatientIDCardPdf'])->name('download.patientidcard');
+    Route::get('/get-staff/{branchId}', [HelperController::class, 'getStaffByBranch'])->name('get.branch.staff');
 
     Route::get('/clinic', [ClinicBranchController::class, 'index'])->name('settings.clinic');
     Route::post('/clinic/create', [ClinicBranchController::class, 'create'])->name('settings.clinic.create');
@@ -121,6 +142,12 @@ Route::middleware(['auth', 'check.session'])->group(function () {
         Route::post('/department/update', [DepartmentController::class, 'update'])->name('settings.department.update');
         Route::delete('/department/{department}', [DepartmentController::class, 'destroy'])->name('settings.departments.destroy');
     });
+
+    Route::get('/leaveType', [LeaveTypeController::class, 'index'])->name('settings.leaveType');
+    Route::post('/leaveType/store', [LeaveTypeController::class, 'store'])->name('settings.leaveType.store');
+    Route::get('/leaveType/{leaveType}/edit', [LeaveTypeController::class, 'edit'])->name('settings.leaveType.edit');
+    Route::post('/leaveType/update', [LeaveTypeController::class, 'update'])->name('settings.leaveType.update');
+    Route::delete('/leaveType/{leaveType}', [LeaveTypeController::class, 'destroy'])->name('settings.leaveType.destroy');
 
     Route::get('/insurance', [InsuranceController::class, 'index'])->name('settings.insurance');
     Route::post('/insurance/store', [InsuranceController::class, 'store'])->name('settings.insurance.store');
@@ -208,6 +235,7 @@ Route::middleware(['auth', 'check.session'])->group(function () {
 
     Route::get('/billing', [BillingController::class, 'index'])->name('billing');
     Route::get('/billing/add/{appointmentId}', [BillingController::class, 'create'])->name('billing.create');
+    Route::get('/billing/add', [BillingController::class, 'add'])->name('billing.add');
     Route::post('/billing/combo/{appointmentId}', [BillingController::class, 'comboOffer'])->name('billing.combo');
     Route::post('/billing/store', [BillingController::class, 'store'])->name('billing.store');
     Route::post('/billing/payment', [BillingController::class, 'payment'])->name('billing.payment');
@@ -241,6 +269,9 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/report/audit_cancell', [AuditController::class, 'auditCancell'])->name('report.audit_cancell');
     Route::post('/report/audit_patient', [ReportController::class, 'auditPatient'])->name('report.auditPatient');
     Route::post('/report/audit_bill', [ReportController::class, 'auditBill'])->name('report.auditBill');
+    Route::post('/report/consolidated', [ReportController::class, 'consolidatedReport'])->name('report.consolidated');
+    Route::get('/report/expensesdatewise', [ExpenseController::class, 'getExpensesByDate'])->name('expenses.by.date');
+    Route::get('/report/attendance/month', [AttendanceController::class, 'getMonthwiseAttendance'])->name('report.attendance.month');
 
     Route::get('/appointments-by-hour', [App\Http\Controllers\HomeController::class, 'getAppointmentsByHour'])->name('appointments-by-hour');
     Route::get('/appointments-by-month', [App\Http\Controllers\HomeController::class, 'getAppointmentsByMonth'])->name('appointments-by-month');
@@ -253,9 +284,120 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::delete('/leave/{leave}', [LeaveController::class, 'destroy'])->name('leave.destroy');
     Route::get('/leave/approve/{leave}', [LeaveController::class, 'approveLeave'])->name('leave.approve');
     Route::post('/leave/reject/{leave}', [LeaveController::class, 'rejectLeave'])->name('leave.reject');
+    Route::post('/check-compensation-date', [LeaveController::class, 'checkCompensationDate']);
+
+    Route::get('/technicians', [TechnicianController::class, 'index'])->name('technicians');
+    Route::post('/technicians/store', [TechnicianController::class, 'store'])->name('technicians.store');
+    Route::get('/technicians/{technician}/edit', [TechnicianController::class, 'edit'])->name('technicians.edit');
+    Route::post('/technicians/update', [TechnicianController::class, 'update'])->name('technicians.update');
+    Route::delete('/technicians/{technician}', [TechnicianController::class, 'destroy'])->name('technicians.destroy');
+
+    Route::get('/technicianCost', [TechnicianCostController::class, 'index'])->name('technicianCost');
+    Route::post('/technicianCost/store', [TechnicianCostController::class, 'store'])->name('technicianCost.store');
+
+
+    Route::get('/place_order', [PlaceOrderController::class, 'index'])->name('order.place_order');
+    Route::post('/place_order/create', [PlaceOrderController::class, 'create'])->name('orders.create');
+    Route::post('/place_order/store', [PlaceOrderController::class, 'store'])->name('orders.store');
+
+    Route::get('/track_order', [UpdateOrderController::class, 'index'])->name('order.track_order');
+    Route::post('/track_order/{orderId}', [UpdateOrderController::class, 'destroy'])->name('order.destroy');
+    Route::post('/track_order/delivered/{orderId}', [UpdateOrderController::class, 'update'])->name('order.update');
+    Route::get('/track_order/{orderId}/edit', [UpdateOrderController::class, 'edit'])->name('order.edit');
+    Route::post('/track_order/repeat/{orderId}', [UpdateOrderController::class, 'repeat'])->name('order.repeat');
+
+    Route::get('/labPayment', [LabBillController::class, 'index'])->name('labPayment');
+    Route::post('/labPayment/create', [LabBillController::class, 'create'])->name('labPayment.create');
+    Route::post('/labPayment/store', [LabBillController::class, 'store'])->name('labPayment.store');
+    Route::get('/labPayment/show', [LabBillController::class, 'show'])->name(name: 'labPayment.show');
+    Route::post('/labPayment/cancel/{billId}', [LabBillController::class, 'destroy'])->name(name: 'labPayment.destroy');
 
     Route::get('/db_backup', [BackupController::class, 'index'])->name('settings.db_backup');
     Route::post('send-sms', [SmsController::class, 'sendSms'])->name('send.sms');
 
+    Route::get('/expenseCategory', [ExpenseCategoryController::class, 'index'])->name('expenseCategory');
+    Route::post('/expenseCategory/store', [ExpenseCategoryController::class, 'store'])->name('expenseCategory.store');
+    Route::get('/expenseCategory/{categoryId}/edit', [ExpenseCategoryController::class, 'edit'])->name('expenseCategory.edit');
+    Route::post('/expenseCategory/update', [ExpenseCategoryController::class, 'update'])->name('expenseCategory.update');
+    Route::delete('/expenseCategory/{categoryId}', [ExpenseCategoryController::class, 'destroy'])->name('expenseCategory.destroy');
+    Route::get('/clinicExpense', [ExpenseController::class, 'index'])->name('clinicExpense');
+    Route::post('/clinicExpense/store', [ExpenseController::class, 'store'])->name('expense.expense.store');
+    Route::get('/clinicExpense/{expense}/edit', [ExpenseController::class, 'edit'])->name('expense.expense.edit');
+    Route::post('/clinicExpense/update', [ExpenseController::class, 'update'])->name('expense.expense.update');
+    Route::delete('/clinicExpense/{expense}', [ExpenseController::class, 'destroy'])->name('expense.expense.destroy');
+    Route::get('clinicExpense/{id}/download-bills', [ExpenseController::class, 'downloadBills']);
+
+    Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers');
+    Route::post('/suppliers/store', [SupplierController::class, 'store'])->name('suppliers.store');
+    Route::get('/suppliers/{supplier}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
+    Route::post('/suppliers/update', [SupplierController::class, 'update'])->name('suppliers.update');
+    Route::delete('/suppliers/{supplier}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
+
+    Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases');
+    Route::get('/purchases/get', [PurchaseController::class, 'get'])->name(name: 'purchases.get');
+    Route::get('/getSupplierDetails/{id}', [PurchaseController::class, 'getSupplierDetails'])->name('purchase.getSupplierDetails');
+    Route::post('/purchases/store', [PurchaseController::class, 'store'])->name('purchases.store');
+    Route::get('/medicine/purchases', [MedicinePurchaseController::class, 'index'])->name('medicine.purchases');
+    Route::post('/medicine/purchases/store', [MedicinePurchaseController::class, 'store'])->name('medicine.purchases.store');
+    Route::get('/medicine/purchases/all', [MedicinePurchaseController::class, 'purchaseHistory'])->name(name: 'medicine.purchases.history');
+    Route::get('/medicine/purchases/view/{id}', [MedicinePurchaseController::class, 'show'])->name('medicine.purchase.view');
+    Route::post('/medicine/purchases/cancel/{id}', [MedicinePurchaseController::class, 'destroy'])->name(name: 'medicine.purchase.destroy');
+    Route::get('/medicine/purchases/edit/{id}', [MedicinePurchaseController::class, 'edit'])->name('medicine.purchase.edit');
+    Route::post('/medicine_purchases/update', [MedicinePurchaseController::class, 'update'])->name('medicine.purchases.update');
+    Route::get('purchases/{id}/download-bills', [PurchaseController::class, 'downloadBills']);
+    Route::get('/purchases/view/{id}', [PurchaseController::class, 'show'])->name('purchase.view');
+    Route::get('/purchases/edit/{id}', [PurchaseController::class, 'edit'])->name('purchase.edit');
+    Route::post('/purchases/update', [PurchaseController::class, 'update'])->name('purchases.update');
+    Route::post('/purchases/cancel/{id}', [PurchaseController::class, 'destroy'])->name(name: 'purchase.destroy');
+
+
+    Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays');
+    Route::post('/holidays/store', [HolidayController::class, 'store'])->name('holidays.store');
+    Route::get('/holidays/{holidayId}/edit', [HolidayController::class, 'edit'])->name('holidays.edit');
+    Route::post('/holidays/update', [HolidayController::class, 'update'])->name('holidays.update');
+    Route::delete('/holidays/delete/{holidayId}', [HolidayController::class, 'destroy'])->name('holidays.destroy');
+
+    Route::get('/pay_heads', [PayHeadController::class, 'index'])->name('payHeads');
+    Route::post('/pay_heads/store', [PayHeadController::class, 'store'])->name('payHeads.store');
+    Route::get('/pay_heads/{payheadId}/edit', [PayHeadController::class, 'edit'])->name('payHeads.edit');
+    Route::post('/pay_heads/update', [PayHeadController::class, 'update'])->name('payHeads.update');
+
+    Route::get('/employee_types', [EmployeeTypeController::class, 'index'])->name('employeeTypes');
+    Route::post('/employee_types/store', [EmployeeTypeController::class, 'store'])->name('employeeTypes.store');
+    Route::get('/employee_types/{employeeTypeId}/edit', [EmployeeTypeController::class, 'edit'])->name('employeeTypes.edit');
+    Route::post('/employee_types/update', [EmployeeTypeController::class, 'update'])->name('employeeTypes.update');
+
+    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance');
+    Route::post('/attendance/create', [AttendanceController::class, 'create'])->name('attendance.create');
+    Route::post('/attendance/store', [AttendanceController::class, 'store'])->name('attendance.store');
+
+
+    Route::get('/employee_salary', [EmployeeSalaryController::class, 'index'])->name('employeeSalary');
+    Route::get('/employee_salary/create/{id}', [EmployeeSalaryController::class, 'create'])->name('salary.create');
+    Route::get('/employee_salary/view/{id}', [EmployeeSalaryController::class, 'show'])->name('salary.view');
+    Route::get('/employee_salary/edit/{id}', [EmployeeSalaryController::class, 'edit'])->name('salary.edit');
+    Route::post('/employee_salary/update', [EmployeeSalaryController::class, 'update'])->name('salary.update');
+    Route::post('/employee_salary/cancel/{id}', [EmployeeSalaryController::class, 'destroy'])->name(name: 'salary.destroy');
+    Route::post('/employee_salary/store', [EmployeeSalaryController::class, 'store'])->name('salary.store');
+    Route::post('/download-salaryslip', [EmployeeSalaryController::class, 'generatesalaryslipPdf'])->name('download.salaryslip');
+
+    Route::get('/doctor_payment', [DoctorPaymentController::class, 'index'])->name('doctorPayment');
+    Route::get('/doctor_payment/create/{userId}', [DoctorPaymentController::class, 'create'])->name('doctorPayment.create');
+    Route::post('/doctor_payment/store', [DoctorPaymentController::class, 'store'])->name('doctorPayment.store');
+    Route::get('/doctor_payment/{userId}', [DoctorPaymentController::class, 'show'])->name('doctorPayment.show');
+    Route::post('/doctor_payment/delete/{historyId}', [DoctorPaymentController::class, 'destroy'])->name('doctorPayment.destroy');
+
+    Route::get('/salaryAdvance', [SalaryAdvanceController::class, 'index'])->name('salaryAdvance');
+    Route::get('/salaryAdvance/create/{userId}', [SalaryAdvanceController::class, 'create'])->name('salaryAdvance.create');
+    Route::post('/salaryAdvance/store', [SalaryAdvanceController::class, 'store'])->name('salaryAdvance.store');
+    Route::get('/salaryAdvance/{userId}', [SalaryAdvanceController::class, 'show'])->name('salaryAdvance.show');
+    Route::post('/salaryAdvance/delete/{historyId}', [SalaryAdvanceController::class, 'destroy'])->name('salaryAdvance.destroy');
+
+    Route::post('/logout-cancel', function () {
+        Auth::logout();
+        return response()->json(['success' => true]);
+    });
+
+    Route::post('/start-work', action: [WorkController::class, 'store'])->name('attendance.start');
+    Route::post('/finish-work', [WorkController::class, 'update'])->name('attendance.finish');
 });
-Route::get('/billing/add', [BillingController::class, 'add'])->name('billing.add');

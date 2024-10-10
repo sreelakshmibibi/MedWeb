@@ -16,6 +16,7 @@ use App\Models\MedicineRoute;
 use App\Models\PatientProfile;
 use App\Models\PatientTreatmentBilling;
 use App\Models\Prescription;
+use App\Models\Shade;
 use App\Models\SurfaceCondition;
 use App\Models\Teeth;
 use App\Models\TeethRow;
@@ -123,6 +124,7 @@ class TreatmentController extends Controller
         Session::put('doctorId', $appointment->doctor->id);
 
         $plans = TreatmentPlan::orderBy('plan', 'asc')->get();
+        $shades = Shade::all();
         $toothIds = ToothExamination::where('patient_id', $appointment->patient->patient_id)
             ->where('app_id', '<=', $id)
             ->where('status', 'Y')
@@ -261,7 +263,7 @@ class TreatmentController extends Controller
                 ->make(true);
         }
 
-        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases', 'previousAppointments', 'clinicBranches', 'appointmentTypes', 'workingDoctors', 'medicines', 'dosages', 'patientPrescriptions', 'appAction', 'doctorDiscount', 'latestFollowup', 'plans', 'toothIds', 'medicineRoutes'));
+        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases', 'previousAppointments', 'clinicBranches', 'appointmentTypes', 'workingDoctors', 'medicines', 'dosages', 'patientPrescriptions', 'appAction', 'doctorDiscount', 'latestFollowup', 'plans', 'toothIds', 'medicineRoutes', 'shades'));
 
     }
 
@@ -414,6 +416,14 @@ class TreatmentController extends Controller
                 'diagnosis',
                 'treatment_id',
                 'treatment_plan_id',
+                'shade_id',
+                'upper_shade',
+                'middle_shade',
+                'lower_shade',
+                'metal_trial',
+                'bisq_trial',
+                'finish',
+                'instructions',
                 'remarks',
                 'palatal_condn',
                 'mesial_condn',
@@ -458,12 +468,12 @@ class TreatmentController extends Controller
             $toothExaminationEdit->anatomy_image = $anatomyImage;
             if ($toothExaminationEdit->save()) {
                 DB::commit();
-
-                return response()->json(['success' => 'Tooth examination for teeth no ' . $toothId . ' added']);
+                $successMessage = $request->tooth_id != null ? 'Tooth examination for teeth no ' . $toothId . ' added' : 'Tooth examination added';               
+                return response()->json(['success' => $successMessage]);
             } else {
                 DB::rollback();
 
-                return response()->json(['error' => 'Failed adding Tooth examination for teeth no ' . $toothId]);
+                return response()->json(['error' => 'Failed adding Tooth examination for teeth']);
             }
 
         } catch (Exception $ex) {
@@ -542,6 +552,7 @@ class TreatmentController extends Controller
 
         $treatments = [];
         $individualTreatmentAmounts = [];
+        $individualTreatmentPlanAmounts = [];
         $comboOffersResult = [];
 
         $previousTreatments = [];
@@ -563,7 +574,7 @@ class TreatmentController extends Controller
 
             // Collect treatment IDs
             $treatments[] = $toothExamination->treatment->id;
-
+            $treatmentPlans[] = $toothExamination->treatment_plan_id;
             // Fetch treatment cost and discount details
             $treatmentCost = $toothExamination->treatment->treat_cost;
             $discount_from = $toothExamination->treatment->discount_from;
@@ -614,6 +625,18 @@ class TreatmentController extends Controller
                     
                 
             ];
+
+            if ($toothExamination->treatment_plan_id) {
+                $individualTreatmentPlanAmounts[$toothExamination->treatment_plan_id] = [
+                    'treat_name' => $toothExamination->treatmentPlan->plan,
+                    'treat_cost' => $toothExamination->treatmentPlan->cost, // Use discounted cost
+                    'treat_id' => $toothExamination->treatment_plan_id,
+                    'cost' => $toothExamination->treatmentPlan->cost,
+                    'discount_percentage' => 0,
+                        
+                ];
+    
+            }
         }
 
 // Filter toothExaminations to only include those with treatments in individualTreatmentAmounts
@@ -627,6 +650,7 @@ class TreatmentController extends Controller
         return response()->json([
             'toothExaminations' => $toothExaminations,
             'individualTreatmentAmounts' => $individualTreatmentAmounts,
+            'individualTreatmentPlanAmounts' => $individualTreatmentPlanAmounts,
             'comboOffers' => $comboOffersResult,
             'doctorDiscount' => $doctorDiscount,
         ]);

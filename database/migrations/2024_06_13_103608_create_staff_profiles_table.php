@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id(); 
             $table->foreignId('user_id')->constrained('users');
             $table->string('staff_id');
-            $table->foreignId('clinic_branch_id')->nullable()->constrained('clinic_branches'); 
+            // $table->foreignId('clinic_branch_id')->nullable()->constrained('clinic_branches'); 
+            $table->string('clinic_branch_id')->nullable();
             $table->string('aadhaar_no')->unique();
+
             $table->date('date_of_birth')->nullable(); 
             $table->string('gender', 10)->nullable(); 
             $table->string('phone', 20); 
@@ -46,6 +48,7 @@ return new class extends Migration
             $table->string('license_number', 50)->unique()->nullable(); 
             $table->string('subspecialty')->nullable(); 
             $table->integer('consultation_fees')->nullable(); 
+            $table->integer('visiting_doctor')->nullable()->default(0); 
             $table->string('status');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');

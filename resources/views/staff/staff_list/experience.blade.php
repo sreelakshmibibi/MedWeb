@@ -86,7 +86,7 @@
         <div class="form-group">
             <label class="form-label" for="clinic_branch_id">Branch <span class="text-danger">
                     *</span></label>
-            <select class="select2" id="clinic_branch_id" name="clinic_branch_id" data-placeholder="Select a Branch"
+            <select class="select2" multiple id="clinic_branch_id" name="clinic_branch_id[]" data-placeholder="Select a Branch"
                 style="width: 100%;">
                 @foreach ($clinicBranches as $clinicBranch)
                     <?php
@@ -143,6 +143,17 @@
                     *</span></label>
             <input type="text" class="form-control" id="consultation_fees" name="consultation_fees"
                 value="{{ $consultationFees }}" placeholder="Consultation fees">
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label" for="visiting_doctor">Is visiting doctor?<span class="text-danger">
+                    *</span></label>
+            <select class="form-control" id="visiting_doctor" name="visiting_doctor">
+                <option value="0">No</option>
+                <option value="1">Yes</option>  
+            </select>
+            
         </div>
     </div>
 </div>

@@ -23,6 +23,9 @@ use App\Models\PatientDueBill;
 use App\Models\CardPay;
 use App\Models\ClinicBasicDetail;
 use App\Models\ToothExamination;
+use App\Models\OrderPlaced;
+use App\Models\LabBill;
+use App\Models\Expense;
 use Illuminate\Support\Facades\Log;
 
 class ReportController extends Controller
@@ -56,7 +59,7 @@ class ReportController extends Controller
             'updatedBy:id,name',
             'createdBy:id,name',
         ])
-        ->where('status', 'Y');
+            ->where('status', 'Y');
 
 
         if ($request->filled('fromdate')) {
@@ -1349,6 +1352,130 @@ class ReportController extends Controller
             ->addColumn('changedBy', function ($row) {
                 return $row->changed_by_name;
             })
+            ->make(true);
+    }
+
+    public function consolidatedReport(Request $request)
+    {
+        $fromDate = $request->consFromdate;
+        $toDate = Carbon::parse($request->consTodate)->endOfDay();
+        $branchId = $request->consBranch;
+
+        // Query 1: Income Reports
+        $incomeReportQuery = DB::table('income_reports')
+            ->select(
+                DB::raw('DATE(created_at) as date'),
+                DB::raw('SUM(net_paid) as total_net_paid'),
+                DB::raw('SUM(machine_tax) as total_machine_tax'),
+                DB::raw('SUM(balance_given) as total_balance_given'),
+                DB::raw('SUM(net_income) as total_net_income')
+            )
+            ->whereBetween('created_at', [$fromDate, $toDate]);
+
+        // Apply branchId filter if provided
+        if ($branchId) {
+            $incomeReportQuery->where('income_reports.branch_id', $branchId);
+        }
+
+        $incomeReportQuery = $incomeReportQuery
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->get();
+        //Log::info('$incomeReportQuery: ' . $incomeReportQuery);
+
+        // Query 2: Expense Reports
+        $expenseReportQuery = DB::table('expenses')
+            ->select(
+                DB::raw('DATE(created_at) as date'),
+                DB::raw('SUM(amount) as total_expense')
+            )
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->where('status', 'Y');
+
+        // Apply branchId filter if provided
+        if ($branchId) {
+            $expenseReportQuery->where('expenses.branch_id', $branchId);
+        }
+
+        $expenseReportQuery = $expenseReportQuery
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->orderBy('date', 'asc')
+            ->get();
+        //Log::info('$expenseReportQuery: ' . $expenseReportQuery);
+
+        // Query 3: Lab Expense Reports
+        $labExpenseReportQuery = DB::table('lab_bills')
+            ->select(
+                DB::raw('DATE(created_at) as date'),
+                DB::raw('SUM(amount_paid) as total_lab_expense')
+            )
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->where('lab_bill_status', '2');
+
+        // Apply branchId filter if provided
+        if ($branchId) {
+            $labExpenseReportQuery->where('lab_bills.branch_id', $branchId);
+        }
+
+        $labExpenseReportQuery = $labExpenseReportQuery
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->orderBy('date', 'asc')
+            ->get();
+        //Log::info('$labExpenseReportQuery: ' . $labExpenseReportQuery);
+
+        // Merge dates from all queries
+        $allDates = collect($incomeReportQuery->pluck('date'))
+            ->merge($expenseReportQuery->pluck('date'))
+            ->merge($labExpenseReportQuery->pluck('date'))
+            ->unique()
+            ->sort();
+
+        $combinedResults = [];
+
+        foreach ($allDates as $date) {
+            // Find income and expense data for the current date
+            $income = $incomeReportQuery->firstWhere('date', $date);
+            $expense = $expenseReportQuery->firstWhere('date', $date);
+            $labexpense = $labExpenseReportQuery->firstWhere('date', $date);
+
+            $combinedResults[] = [
+                'date' => $date,
+                'collection' => ($income->total_net_paid ?? 0) - ($income->total_balance_given ?? 0),
+                'total_machine_tax' => $income->total_machine_tax ?? 0,
+                'expense' => ($expense->total_expense ?? 0) + ($labexpense->total_lab_expense ?? 0),
+                'purchase' => 0,
+                'total' => ($income->total_net_income ?? 0) - ($expense->total_expense ?? 0) - ($labexpense->total_lab_expense ?? 0)
+            ];
+        }
+
+        $dataTableData = [];
+        foreach ($combinedResults as $row) {
+            $date = Carbon::parse($row['date']);
+            
+            $routeParams = ['date' => $date->format('Y-m-d')];
+            if ($branchId) {
+                $base64Id = base64_encode($branchId);
+                $branchIdEncrypted = Crypt::encrypt($base64Id);
+                $routeParams['branch_id'] = $branchIdEncrypted;
+                
+            }
+            $title = 'View expense details on ' . $date->format('d-m-Y');
+            $expenseLink = '<a href="' . route('expenses.by.date', $routeParams) . '" target="_blank" title="' . $title . '">' . $row['expense'] . '</a>';
+
+            $rowData = [
+                'date' => $date->format('Y-m-d'),
+                'collection' => $row['collection'],
+                'machine_tax' => $row['total_machine_tax'],
+                //'expense' => $row['expense'],
+                'expense' => $expenseLink,
+                'purchase' => $row['purchase'],
+                'total' => $row['total']
+            ];
+            $dataTableData[] = $rowData;
+        }
+
+        return DataTables::of($dataTableData)
+            ->addIndexColumn()
+            ->rawColumns(['expense'])
             ->make(true);
     }
 }

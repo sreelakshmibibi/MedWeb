@@ -43,6 +43,7 @@
                                         <th>Leave Type</th>
                                         <th>Dates (Days)</th>
                                         <th>Reason</th>
+                                        <th>Documents</th>
                                         <th>Status</th>
                                         <th width="150px">Action</th>
                                     </tr>
@@ -109,6 +110,11 @@
                         className: "text-left",
                     },
                     {
+                        data: "leave_file",
+                        name: "leave_file",
+                        className: "text-center",
+                    },
+                    {
                         data: "status",
                         name: "status",
                         className: "text-center",
@@ -132,7 +138,7 @@
                     method: 'GET',
                     success: function(response) {
                         $('#editleave_id').val(response.id);
-                        $('#editleave_type').val(response.leave_type);
+                        $('#editleave_type').val(response.leave_type_id);
                         $('#editleave_from').val(response.leave_from);
                         $('#editleave_to').val(response.leave_to);
                         $('#editreason').val(response.leave_reason);

@@ -104,13 +104,19 @@
                                     <a class="dropdown-item" href="#"><i class="ti-user text-muted me-2"></i>
                                         Profile</a>
                                 @endif
-                                <form method="POST" action="{{ route('logout') }}">
+                                <!-- <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                         onclick="event.preventDefault();
                                 this.closest('form').submit();"><i
                                             class="ti-lock text-muted me-2"></i>
                                         Logout</a>
+                                </form> -->
+                                <form method="POST" action="{{ route('logout') }}" id="logout-form">
+                                    @csrf
+                                    <a class="dropdown-item" href="#" id="logout-button">
+                                        <i class="ti-lock text-muted me-2"></i> Logout
+                                    </a>
                                 </form>
 
                             </li>

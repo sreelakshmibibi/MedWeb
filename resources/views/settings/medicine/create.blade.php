@@ -111,6 +111,31 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="med_supplier">Supplier <span class="text-danger">
+                                            *</span></label>
+                                    <select class="form-control" id="med_supplier" name="med_supplier">
+                                        <option value="" disabled selected>Select Supplier</option>
+                                        @foreach ($suppliers as $supplier)
+                                            <option value="{{ $supplier->id }}"> {{ $supplier->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div id="medSupplierError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="med_purchase_amount">Purchase Amount <span
+                                            class="text-danger">
+                                            *</span></label>
+                                    <input class="form-control" type="text" id="med_purchase_amount"
+                                        name="med_purchase_amount" placeholder="Purchase Amount">
+                                    <div id="medPurchaseAmountError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label class="form-label" for="med_remarks">Remarks</label>
@@ -180,6 +205,8 @@
             $('#medRemarkError').text('');
             $('#medStockStatusError').text('');
             $('#medStatusError').text('');
+            $('#medSupplierError').text('');
+            $('#medPurchaseAmountError').text('');
 
             // Validate form inputs
             var medName = $('#med_name').val();
@@ -191,6 +218,8 @@
             var packageCount = $('#package_count').val();
             var packageType = $('#package_type').val();
             var medQuantity = $('#total_quantity').val();
+            var supplier = $('#med_supplier').val();
+            var purchaseAmount = $('#med_purchase_amount').val();
             var stockStatus = $('input[name="stock_status"]:checked').val();
             var status = $('input[name="status"]:checked').val();
 
@@ -275,7 +304,7 @@
                 $('#total_quantity').removeClass('is-invalid');
                 $('#medQuantityError').text('');
             }
-            if (packageType === "") {
+            if (!packageType) {
                 // if (packageType.length === 0) {
                 $('#package_type').addClass('is-invalid');
                 $('#medPackageTypeError').text('The package type is required.');
@@ -283,6 +312,28 @@
             } else {
                 $('#package_type').removeClass('is-invalid');
                 $('#medPackageTypeError').text('');
+            }
+            if (supplier === null || supplier === "") {
+                $('#med_supplier').addClass('is-invalid');
+                $('#medSupplierError').text('The supplier is required.');
+                return; // Prevent further execution
+            } else {
+                $('#med_supplier').removeClass('is-invalid');
+                $('#medSupplierError').text('');
+            }
+
+            // Purchase Amount validation
+            if (purchaseAmount.length === 0) {
+                $('#med_purchase_amount').addClass('is-invalid');
+                $('#medPurchaseAmountError').text('The purchase amount is required.');
+                return; // Prevent further execution
+            } else if (!$.isNumeric(purchaseAmount)) {
+                $('#med_purchase_amount').addClass('is-invalid');
+                $('#medPurchaseAmountError').text('The purchase amount must be a number.');
+                return; // Prevent further execution
+            } else {
+                $('#med_purchase_amount').removeClass('is-invalid');
+                $('#medPurchaseAmountError').text('');
             }
             if (!stockStatus) {
                 $('#medStockStatusError').text('Medicine stock status is required.');
@@ -362,6 +413,14 @@
                         $('#package_type').addClass('is-invalid');
                         $('#medPackageTypeError').text(errors.package_type[0]);
                     }
+                    if (errors.hasOwnProperty('med_supplier')) {
+                        $('#med_supplier').addClass('is-invalid');
+                        $('#medSupplierError').text(errors.package_type[0]);
+                    }
+                    if (errors.hasOwnProperty('med_purchase_amount')) {
+                        $('#med_purchase_amount').addClass('is-invalid');
+                        $('#medPurchaseAmountError').text(errors.package_type[0]);
+                    }
                     if (errors.hasOwnProperty('stock_status')) {
                         $('#medStockStatusError').text(errors.stock_status[0]);
                     }
@@ -385,6 +444,8 @@
             $('#package_count').removeClass('is-invalid');
             $('#package_type').removeClass('is-invalid');
             $('#total_quantity').removeClass('is-invalid');
+            $('#med_purchase_amount').removeClass('is-invalid');
+            $('#med_supplier').removeClass('is-invalid');
             $('#stock_status').removeClass('is-invalid');
             $('#status').removeClass('is-invalid');
             $('#barcodeCanvas').empty();
@@ -398,6 +459,8 @@
             $('#medUnitPerPackError').text('');
             $('#medPackageCountError').text('');
             $('#medQuantityError').text('');
+            $('#medPurchaseAmountError').text('');
+            $('#medSupplierError').text('');
             $('#medPackageTypeError').text('');
             $('#medRemarkError').text('');
             $('#medStockStatusError').text('');

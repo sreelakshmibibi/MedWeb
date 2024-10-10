@@ -20,12 +20,26 @@ class SmsController extends Controller
                 ->where('app_status', AppointmentStatus::SCHEDULED)
                 ->where('app_date', $date);
             
+            // if (!Auth::user()->is_doctor && !Auth::user()->is_admin) {
+            //     $clinicBranchId = StaffProfile::where('user_id', Auth::user()->id)
+            //         ->pluck('clinic_branch_id')
+            //         ->first();
+            //     $appointments = $appointments->where('app_branch', $clinicBranchId);
+            // }
+
             if (!Auth::user()->is_doctor && !Auth::user()->is_admin) {
-                $clinicBranchId = StaffProfile::where('user_id', Auth::user()->id)
+                // Fetch the clinic_branch_id, which might be a comma-separated string
+                $clinicBranchIds = StaffProfile::where('user_id', Auth::user()->id)
                     ->pluck('clinic_branch_id')
                     ->first();
-                $appointments = $appointments->where('app_branch', $clinicBranchId);
+            
+                // Convert the string to an array if it exists
+                $clinicBranchIdsArray = $clinicBranchIds ? explode(',', $clinicBranchIds) : [];
+            
+                // Filter appointments based on the clinic branches
+                $appointments = $appointments->whereIn('app_branch', $clinicBranchIdsArray);
             }
+            
             
             $appointments = $appointments->get();
             $patientContacts = [];

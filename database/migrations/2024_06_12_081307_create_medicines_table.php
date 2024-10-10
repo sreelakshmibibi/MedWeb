@@ -16,28 +16,20 @@ return new class extends Migration
             $table->string('med_bar_code', 100)->nullable(); // Barcode
             $table->string('med_name', 200); // Medicine name
             $table->string('med_company', 200)->nullable(); // Company name
-            $table->longText('med_remarks')->nullable(); // Additional remarks about the medicine
-            $table->decimal('med_price', 10, 2)->nullable(); // Price of the medicine
-            $table->date('expiry_date')->nullable(); // Expiry date of the medicine
-            $table->integer('units_per_package')->nullable(); // number of units (tablets, pills, etc.) per package
-            $table->integer('package_count')->nullable(); // Number of packages
-            $table->integer('total_quantity')->nullable(); // Total number of units available across all packages
-            $table->string('package_type', 50)->nullable(); // field helps distinguish between strips, bottles, and other packaging types
+            $table->integer('stock')->nullable();
             $table->string('stock_status', 20)->nullable(); // Stock status (e.g., 'In Stock', 'Out of Stock')
-            $table->string('status', 5)->default('Y'); // Record status (e.g., 'Y' for active, 'N' for inactive)
-            $table->timestamps(); // Timestamps for created_at and updated_at
-            $table->softDeletes(); // Soft delete column (deleted_at)
-
-            // Indexes
-            $table->index('med_name');
-            $table->index('units_per_package');
-            $table->index('status');
-            $table->index('expiry_date');
-            $table->index('total_quantity');
-            $table->index('stock_status');
+            $table->string('status', 1)->default('Y'); // Record status (e.g., 'Y' for active, 'N' for inactive)
+            $table->longText('med_remarks')->nullable();
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
-
+            $table->timestamps(); 
+            $table->softDeletes(); 
+            // Indexes
+            $table->index('med_name');
+            $table->index('stock');
+            $table->index('stock_status');
+            $table->index('status');
+            
         });
     }
 

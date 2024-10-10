@@ -22,7 +22,7 @@ class BillingService
     {
         // Find the appointment by ID
         $appointment = Appointment::find($id);
-
+    
         // Fetch previous tooth examinations if a parent appointment exists
         $toothExaminationsPrevious = null;
         if ($appointment->app_parent_id != null) {
@@ -39,7 +39,7 @@ class BillingService
             ->where('status', 'Y')
             ->get();
         }
-
+    
         // Fetch current tooth examinations with related data
         $toothExaminations = ToothExamination::with([
             'teeth:id,teeth_name,teeth_image',
@@ -53,45 +53,48 @@ class BillingService
         ->where('patient_id', $patient_id)
         ->where('status', 'Y')
         ->get();
-
+    
         // Initialize arrays and variables
         $individualTreatmentAmounts = [];
         $selectedTreatmentIds = [];
+        $selectedTreatmentPlanIds = [];
+        $individualTreatmentPlanAmounts = [];
         $totalCost = 0;
-
+    
         // Create a map of previous treatments by tooth_id and treatment_id
         $previousTreatments = [];
         if ($toothExaminationsPrevious) {
             foreach ($toothExaminationsPrevious as $prevExam) {
-                    $treatmentId = $prevExam->treatment_id;
-                    $teethId = $prevExam->teeth_id;
-
-                    // Mark treatment as follow-up
-                    if ($prevExam->treatment_status === TreatmentStatus::FOLLOWUP) {
-                        $previousTreatments[$teethId][$treatmentId] = true;
-                    }
-                
+                $treatmentId = $prevExam->treatment_id;
+                $teethId = $prevExam->teeth_id;
+    
+                // Mark treatment as follow-up
+                if ($prevExam->treatment_status === TreatmentStatus::FOLLOWUP) {
+                    $previousTreatments[$teethId][$treatmentId] = true;
+                }
             }
         }
-        
+    
         // Process current tooth examinations and filter out follow-up treatments
         foreach ($toothExaminations as $toothExamination) {
             $treatment = $toothExamination->treatment;
+            $treatmentPlan = $toothExamination->treatmentPlan;
+    
             if (!$treatment) {
                 continue; // Skip if no treatment data is found
             }
-
+    
             $treatmentId = $treatment->id;
             $treatmentName = $treatment->treat_name;
             $treatmentCost = floatval($treatment->treat_cost);
             $discount_from = $treatment->discount_from;
             $discount_to = $treatment->discount_to;
             $discount_percentage = floatval($treatment->discount_percentage);
-
+    
             // Calculate discounted cost if applicable
             $currentDate = date('Y-m-d');
             $discountCost = $treatmentCost;
-
+    
             if (
                 $discount_from !== null && $discount_to !== null &&
                 $currentDate >= $discount_from && $currentDate <= $discount_to &&
@@ -99,13 +102,13 @@ class BillingService
             ) {
                 $discountCost = $treatmentCost * (1 - $discount_percentage / 100);
             }
-
+    
             // Skip if treatment is marked as follow-up in previous examinations
             if (isset($previousTreatments[$toothExamination->teeth_id]) &&
                 isset($previousTreatments[$toothExamination->teeth_id][$treatmentId])) {
                     continue;
             }
-
+    
             // Initialize treatment entry if not already set
             if (!isset($individualTreatmentAmounts[$treatmentId])) {
                 $individualTreatmentAmounts[$treatmentId] = [
@@ -116,25 +119,58 @@ class BillingService
                     'treat_cost' => $discountCost,
                     'quantity' => 0,
                     'subtotal' => 0,
+                    'type' => 'treatment'
                 ];
             }
-
+    
+            // Handle treatment plan if it exists
+            $planCost = 0;
+            if ($treatmentPlan) {
+                $planId = $treatmentPlan->id;
+                $planCost = floatval($treatmentPlan->cost); // Ensure cost is float
+    
+                // Initialize treatment plan entry if not already set
+                if (!isset($individualTreatmentPlanAmounts[$planId])) {
+                    $individualTreatmentPlanAmounts[$planId] = [
+                        'treat_id' => $planId,
+                        'treat_name' => $treatmentPlan->plan,
+                        'cost' => $planCost,
+                        'discount_percentage' => 0, // Assuming no discount for plans
+                        'treat_cost' => $planCost,
+                        'quantity' => 0,
+                        'subtotal' => 0,
+                        'type' => 'treatmentPlan'
+                    ];
+                }
+    
+                // Increment quantity and update subtotal for this treatment plan
+                $individualTreatmentPlanAmounts[$planId]['quantity']++;
+                $individualTreatmentPlanAmounts[$planId]['subtotal'] += $planCost;
+                $selectedTreatmentPlanIds[] = $planId;
+    
+                // Accumulate total cost for the treatment plan
+                $totalCost += $planCost;
+            }
+    
             // Increment quantity and update subtotal for this treatment
             $individualTreatmentAmounts[$treatmentId]['quantity']++;
             $individualTreatmentAmounts[$treatmentId]['subtotal'] += $discountCost;
             $selectedTreatmentIds[] = $treatmentId;
-
-            // Accumulate total cost
+    
+            // Accumulate total cost for the treatment
             $totalCost += $discountCost;
         }
-
+    
         // Return the processed data
         return [
             'individualTreatmentAmounts' => $individualTreatmentAmounts,
+            'individualTreatmentPlanAmounts' => $individualTreatmentPlanAmounts,
             'totalCost' => $totalCost,
             'selectedTreatmentIds' => array_unique($selectedTreatmentIds), // Ensure unique treatment IDs
+            'selectedTreatmentPlanIds' => array_unique($selectedTreatmentPlanIds), // Ensure unique treatment plan IDs
         ];
     }
+    
 
 
     public function getAppointmentCount($patient_id, $appointmentId)
@@ -219,13 +255,20 @@ class BillingService
     {
         $patientDetailBilling = new PatientDetailBilling();
         $patientDetailBilling->billing_id = $billingId;
-        $patientDetailBilling->treatment_id = $request->input('treatmentId' . $index);
+        $treatmentType = trim(strtolower($request->input('treatmentType' . $index)));
+        if ($treatmentType == 'treatment') {
+            $patientDetailBilling->treatment_id = $request->input('treatmentId' . $index);
+        } else if ($treatmentType == 'treatmentplan') {
+        
+            $patientDetailBilling->plan_id = $request->input('treatmentId' . $index);
+        }
+    
         $patientDetailBilling->quantity = $request->input('tquantity' . $index);
         $patientDetailBilling->cost = (float) str_replace(',', '', $request->input('cost' . $index));
         $patientDetailBilling->discount = (float) $request->input('discount_percentage' . $index);
         $patientDetailBilling->amount = (float) str_replace(',', '', $request->input('subtotal' . $index));
         $patientDetailBilling->save();
-    }
+    }    
 
     public function saveAdditionalCharges($billingId, $inputs)
     {
@@ -298,6 +341,7 @@ class BillingService
             'bill_type' => $inputData['bill_type'],
             'bill_no' => $inputData['bill_no'],
             'bill_date' => $inputData['bill_date'],
+            'branch_id' => $inputData['branch_id'],
             'net_paid' => $netPaid,
             'cash' => $inputData['cash'],
             'gpay' => $inputData['gpay'],

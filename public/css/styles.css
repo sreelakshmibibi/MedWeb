@@ -176,3 +176,14 @@
         white-space: nowrap !important;
     }
 }
+
+/* .collapse {
+    display: none;
+}
+
+.collapse.show {
+    display: table-row-group; /* Adjusts display for table rows */
+/* } */
+.collapsible-header tr {
+    cursor: pointer; /* Change cursor to pointer */
+}

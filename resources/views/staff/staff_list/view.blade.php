@@ -44,6 +44,23 @@
                     @endphp
                     <div class="d-flex align-items-center justify-content-between">
                         <h3 class="page-title">Staff Details</h3>
+                        @if ($leaveApplication && $leaveApplication->leave_status == 2)
+                            @if ($leaveFileExists)
+                                <a href="{{ asset('storage/' . $leaveApplication->leave_file) }}" download
+                                    class="text-warning mx-2">
+                                    <button type="button" id="uploadedDoc"
+                                        class="waves-effect waves-light btn btn-sm btn-outline-warning" title="download">
+                                        On Leave- <b>{{ $leavedate }}</b> ({{ $leaveApplication->leave_reason }})
+                                    </button>
+                                </a>
+                            @else
+                                <button type="button" id="uploadedDoc" disabled
+                                    class="waves-effect waves-light btn btn-sm btn-outline-warning mx-2"
+                                    title="{{ $leavedate }}">
+                                    On Leave- <b>{{ $leavedate }}</b> ({{ $leaveApplication->leave_reason }})
+                                </button>
+                            @endif
+                        @endif
                         <div>
                             @if ($role == 'Admin')
                                 @if (Auth::user()->can('staff update') || (Auth::user()->id = $staffProfile->user_id))

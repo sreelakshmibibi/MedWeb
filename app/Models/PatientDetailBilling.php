@@ -11,7 +11,7 @@ class PatientDetailBilling extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    protected $fillable = [ 'billing_id', 'treatment_id', 'consultation_registration', 'quantity','cost', 'discount', 'amount', 'created_by', 'updated_by' ];
+    protected $fillable = [ 'billing_id', 'treatment_id', 'plan_id', 'consultation_registration', 'quantity','cost', 'discount', 'amount', 'created_by', 'updated_by' ];
 
     protected $dates = ['deleted_at'];
 
@@ -32,6 +32,11 @@ class PatientDetailBilling extends Model
     public function treatment()
     {
         return $this->belongsTo(TreatmentType::class, 'treatment_id', 'id');
+    }
+
+    public function treatmentPlan()
+    {
+        return $this->belongsTo(TreatmentPlan::class, 'plan_id', 'id');
     }
 
 }

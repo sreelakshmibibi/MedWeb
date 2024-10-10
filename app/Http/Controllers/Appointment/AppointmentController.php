@@ -85,7 +85,17 @@ class AppointmentController extends Controller
                     ->pluck('clinic_branch_id')
                     ->first();
 
-                $appointments = $appointments->where('app_branch', $clinicBranchId);
+                // $appointments = $appointments->where('app_branch', $clinicBranchId);
+                
+
+                // Check if the clinicBranchId is not null or empty
+                if (!empty($clinicBranchId)) {
+                    // Convert the string to an array
+                    $clinicBranchIdsArray = explode(',', $clinicBranchId);
+      
+                    // Filter appointments based on the clinic branch IDs
+                    $appointments = $appointments->whereIn('app_branch', $clinicBranchIdsArray);
+                }
             }
 
             $appointments = $appointments->with(['patient', 'doctor', 'branch'])

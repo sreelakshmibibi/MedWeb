@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('bill_type');
             $table->string('bill_no');
             $table->dateTime('bill_date');
+            $table->foreignId('branch_id')->constrained('clinic_branches')->onDelete('cascade');
             $table->decimal('net_paid', 10, 3);
             $table->decimal('cash', 10, 3)->nullable();
             $table->decimal('gpay', 10, 3)->nullable(); 

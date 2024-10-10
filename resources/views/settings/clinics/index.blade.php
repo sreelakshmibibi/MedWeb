@@ -234,7 +234,58 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label class="form-label"
+                                                                for="financial_year_start">Financial Year starting Month
+                                                                <span class="text-danger">
+                                                                    *</span></label>
+                                                            <select
+                                                                class="form-control @error('financial_year_start') is-invalid @enderror"
+                                                                type="text" id="financial_year_start"
+                                                                name="financial_year_start">
+                                                                <option value="">--Select--</option>
+                                                                @foreach($months as $key => $month)
+                                                                <option value="{{$key}}" <?php if ($clinicDetails) {
+                                                                    if ($clinicDetails->financial_year_start == $key) {
+                                                                        echo 'selected';
+                                                                    }
+                                                                } ?>>{{$month}}</option>
+                                                                @endforeach
+                                                            </select>
 
+                                                            @error('financial_year_start')
+                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                            @enderror
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label class="form-label"
+                                                                for="financial_year_end">Financial Year ending Month
+                                                                <span class="text-danger">
+                                                                    *</span></label>
+                                                            <select
+                                                                class="form-control @error('financial_year_end') is-invalid @enderror"
+                                                                type="text" id="financial_year_end"
+                                                                name="financial_year_end">
+                                                                <option value="">--Select--</option>
+                                                                @foreach($months as $key => $month)
+                                                                <option value="{{$key}}" <?php if ($clinicDetails) {
+                                                                    if ($clinicDetails->financial_year_end == $key) {
+                                                                        echo 'selected';
+                                                                    }
+                                                                } ?>>{{$month}}</option>
+                                                                @endforeach
+                                                            </select>
+
+                                                            @error('financial_year_end')
+                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                            @enderror
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div class="row">
                                                     <div class="col-lg-10">
                                                         <div class="form-group ">
@@ -291,7 +342,7 @@
             var ctx = canvas.getContext('2d');
             if ('{{ $clinicDetails }}') {
 
-                var clinicLogoUrl = '{{ $clinicDetails->clinic_logo ?? '' }}';
+                var clinicLogoUrl = '{{ $clinicDetails->clinic_logo ?? "" }}';
                 var logoUrl = "{{ asset('storage/') }}/" + clinicLogoUrl;
                 if (clinicLogoUrl) {
                     var img = new Image();

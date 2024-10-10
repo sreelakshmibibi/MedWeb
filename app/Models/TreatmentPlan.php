@@ -31,4 +31,9 @@ class TreatmentPlan extends Model
     {
         return $this->hasMany(ToothExamination::class, 'treatment_plan_id', 'id');
     }
+
+    public function labAmount()
+    {
+        return $this->hasMany(TreatmentPlanTechnicianCost::class, 'treatment_plan_id', 'id');
+    }
 }

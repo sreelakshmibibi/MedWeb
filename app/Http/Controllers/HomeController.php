@@ -42,6 +42,12 @@ class HomeController extends Controller
         $hasClinics = DB::table('clinic_basic_details')->exists();
         $clinicsData = DB::table('clinic_basic_details')->first();
         $hasBranches = DB::table('clinic_branches')->exists();
+
+        // Check if there are attendance entries for today
+        $today = now()->toDateString();
+        $attendanceExists = DB::table('employee_attendances')->whereDate('login_date', $today)
+        ->where('user_id', $user->id)->exists();
+
         $newlyRegistered = DB::table('patient_profiles')
             ->select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as count'))
             ->groupBy(DB::raw('MONTH(created_at)'))
@@ -161,16 +167,35 @@ class HomeController extends Controller
             $patients = $appointments->pluck('patient')->unique('id');
             // Extract the patients from the appointments
             $appointmentstype = $appointments->unique('patient_id');
+            // if ($user->is_nurse || $user->is_reception) {
+            //     $clinicBranchId = StaffProfile::where('user_id', Auth::user()->id)
+            //         ->pluck('clinic_branch_id')
+            //         ->first();
+
+            //     $patients = $appointments->where('app_branch', $clinicBranchId)
+            //         ->pluck('patient')->unique('id');
+
+            //     $appointmentstype = $appointments->where('app_branch', $clinicBranchId)->unique('patient_id');
+            // }
             if ($user->is_nurse || $user->is_reception) {
-                $clinicBranchId = StaffProfile::where('user_id', Auth::user()->id)
+                // Get the clinic_branch_id which could be a comma-separated string
+                $clinicBranchIds = StaffProfile::where('user_id', Auth::user()->id)
                     ->pluck('clinic_branch_id')
                     ->first();
-
-                $patients = $appointments->where('app_branch', $clinicBranchId)
-                    ->pluck('patient')->unique('id');
-
-                $appointmentstype = $appointments->where('app_branch', $clinicBranchId)->unique('patient_id');
+            
+                // Convert the string to an array
+                $clinicBranchIdsArray = explode(',', $clinicBranchIds);
+            
+                // Get unique patients based on the appointments for the relevant clinic branches
+                $patients = $appointments->whereIn('app_branch', $clinicBranchIdsArray)
+                    ->pluck('patient')
+                    ->unique('id');
+            
+                // Get unique appointment types based on the appointments for the relevant clinic branches
+                $appointmentstype = $appointments->whereIn('app_branch', $clinicBranchIdsArray)
+                    ->unique('patient_id');
             }
+            
 
 
             // Count the total number of unique patients
@@ -247,8 +272,9 @@ class HomeController extends Controller
             $clinicBranches = ClinicBranch::with(['country', 'state', 'city'])
                 ->where('clinic_status', 'Y')
                 ->get();
-
-            return view($dashboardView, compact('workingDoctors', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients', 'totalUniquePatients', 'malePatientsCount', 'femalePatientsCount', 'newPatientsCount', 'followupPatientsCount', 'currentappointments', 'pstaffidEncrypted', 'childrenCount', 'otherCount', 'clinicBranches'));
+            $showModal = !$attendanceExists;
+            session(['showModal' => $showModal]);
+            return view($dashboardView, compact('workingDoctors', 'showModal', 'totalPatients', 'totalStaffs', 'totalDoctors', 'totalOthers', 'totalTreatments', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients', 'totalUniquePatients', 'malePatientsCount', 'femalePatientsCount', 'newPatientsCount', 'followupPatientsCount', 'currentappointments', 'pstaffidEncrypted', 'childrenCount', 'otherCount', 'clinicBranches'));
 
         } else {
             $countries = Country::all();
@@ -257,11 +283,26 @@ class HomeController extends Controller
             $clinicDetails = ClinicBasicDetail::first();
             $data = ClinicBranch::all();
             $total = count($data);
-
+            $months = [
+                1 => 'January',
+                2 => 'February',
+                3 => 'March',
+                4 => 'April',
+                5 => 'May',
+                6 => 'June',
+                7 => 'July',
+                8 => 'August',
+                9 => 'September',
+                10 => 'October',
+                11 => 'November',
+                12 => 'December'
+            ];
+            
+            
             // Set the flash message
             session()->flash('error', 'Please enter clinics and branch details before proceeding.');
 
-            return view('settings.clinics.index', compact('countries', 'states', 'cities', 'clinicDetails', 'data', 'total', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients'));
+            return view('settings.clinics.index', compact('countries', 'states', 'cities', 'clinicDetails', 'data', 'total', 'newlyRegisteredData', 'revisitedPatientsData', 'months', 'dates', 'chartTotalPatients', 'chartfollowupPatients', 'months'));
 
         }
     }

@@ -75,6 +75,16 @@ class MedicineRequest extends FormRequest
                 'string',
                 'max:50',
             ],
+            // 'med_supplier' => [
+            //     'required',
+            //     'integer',
+            //     'exists:suppliers,id',
+            // ],
+            'med_purchase_amount' => [
+                'required',
+                'numeric',
+                'min:0',
+            ],
             'stock_status' => [
                 'required',
                 'string',
@@ -127,6 +137,15 @@ class MedicineRequest extends FormRequest
             'package_type.required' => 'The package type is required.',
             'package_type.string' => 'The package type must be a string.',
             'package_type.max' => 'The package type may not be greater than 50 characters.',
+
+            'med_supplier.required' => 'The supplier is required.',
+            'med_supplier.integer' => 'The supplier must be a valid ID.',
+            'med_supplier.exists' => 'The selected supplier does not exist.',
+
+            'med_purchase_amount.required' => 'The purchase amount is required.',
+            'med_purchase_amount.integer' => 'The purchase amount must be an integer.',
+            'med_purchase_amount.min' => 'The purchase amount must be at least 0.',
+
 
             'stock_status.required' => 'The stock status is required.',
             'stock_status.string' => 'The stock status must be a string.',

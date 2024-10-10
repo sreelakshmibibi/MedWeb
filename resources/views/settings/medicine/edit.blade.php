@@ -1,6 +1,7 @@
 <form id="editMedicineForm" method="post" action="{{ route('settings.medicine.update', ['medicine' => ':id']) }}">
     @csrf
     <input type="hidden" id="edit_medicine_id" name="edit_medicine_id" value="">
+    <input type="hidden" id="edit_medicine_purchase_id" name="edit_medicine_purchase_id" value="">
     <div class="modal fade modal-right slideInRight" id="modal-edit" tabindex="-1">
         <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
@@ -27,7 +28,10 @@
                                         *</span></label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="edit_med_bar_code"
-                                        name="med_bar_code" placeholder="Enter text..." readonly>
+                                        name="med_bar_code" placeholder="Enter text...">
+                                    <button class="btn btn-primary btn-sm input-group-text" type="button"
+                                        id="inputGroupFileAddon04" onclick="generateeditBarcode()">Generate
+                                        Barcode</button>
                                     <div id="medBarcodeError" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -80,23 +84,19 @@
                         <div class="row"> --}}
                             <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="edit_units_per_package">Units per Package <span
-                                            class="text-danger">
-                                            *</span></label>
+                                    <label class="form-label" for="edit_units_per_package">Units per Package </label>
                                     <input class="form-control" type="text" id="edit_units_per_package"
                                         name="units_per_package" placeholder="Number of units per package."
-                                        onblur="generateEditTotalQuantity()">
+                                        onblur="generateEditTotalQuantity()" readonly>
                                     <div id="editMedUnitPerPackError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="edit_package_count">Package Count <span
-                                            class="text-danger">
-                                            *</span></label>
+                                    <label class="form-label" for="edit_package_count">Package Count </label>
                                     <input class="form-control" type="text" id="edit_package_count"
                                         name="package_count" placeholder="Total number of packages"
-                                        onblur="generateEditTotalQuantity()">
+                                        onblur="generateEditTotalQuantity()" readonly>
                                     <div id="editmedPackageCountErrorError" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -107,6 +107,37 @@
                                         name="total_quantity"
                                         placeholder=" Total number of units available across all packages" readonly>
                                     <div id="editMedQuantityError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="edit_med_supplier">Supplier </label>
+                                    <select class="form-control" id="edit_med_supplier" name="med_supplier" disabled>
+                                        <option value="" disabled selected>Select Supplier</option>
+                                        @foreach ($suppliers as $supplier)
+                                            <option value="{{ $supplier->id }}"> {{ $supplier->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div id="editMedSupplierError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="edit_med_purchase_amount">Purchase Amount </label>
+                                    <input class="form-control" type="text" id="edit_med_purchase_amount"
+                                        name="med_purchase_amount" placeholder="Purchase Amount" readonly>
+                                    <div id="editMedPurchaseAmountError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="edit_batch_no">Batch Number </label>
+                                    <input class="form-control" type="text" id="edit_batch_no"
+                                        name="edit_batch_no" placeholder="Medicine batch Number" readonly>
+                                    <div id="editMedBatchNoError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
@@ -175,6 +206,8 @@
             $('#editMedQuantityError').text('');
             $('#editMedPackageTypeError').text('');
             $('#editMedRemarkError').text('');
+            $('#editMedSupplierError').text('');
+            $('#editMedPurchaseAmountError').text('');
             $('#editMedStockStatusError').text('');
             $('#editMedStatusError').text('');
 
@@ -188,6 +221,8 @@
             var packageCount = $('#edit_package_count').val();
             var packageType = $('#edit_package_type').val();
             var medQuantity = $('#edit_total_quantity').val();
+            var supplier = $('#edit_med_supplier').val();
+            var purchaseAmount = $('#edit_med_purchase_amount').val();
             var medRemarks = $('#edit_med_remarks').val();
             var stockStatus = $('input[name="stock_status"]:checked').val();
             var status = $('input[name="status"]:checked').val();
@@ -281,6 +316,28 @@
                 $('#edit_package_type').removeClass('is-invalid');
                 $('#editMedPackageTypeError').text('');
             }
+            if (supplier === null || supplier === "") {
+                $('#edit_med_supplier').addClass('is-invalid');
+                $('#editMedSupplierError').text('The supplier is required.');
+                return; // Prevent further execution
+            } else {
+                $('#edit_med_supplier').removeClass('is-invalid');
+                $('#editMedSupplierError').text('');
+            }
+
+            // Purchase Amount validation
+            if (purchaseAmount.length === 0) {
+                $('#edit_med_purchase_amount').addClass('is-invalid');
+                $('#editMedPurchaseAmountError').text('The purchase amount is required.');
+                return; // Prevent further execution
+            } else if (!$.isNumeric(purchaseAmount)) {
+                $('#edit_med_purchase_amount').addClass('is-invalid');
+                $('#editMedPurchaseAmountError').text('The purchase amount must be a number.');
+                return; // Prevent further execution
+            } else {
+                $('#edit_med_purchase_amount').removeClass('is-invalid');
+                $('#editMedPurchaseAmountError').text('');
+            }
             if (!stockStatus) {
                 $('#editMedStockStatusError').text('Medicine stock status is required.');
                 return; // Prevent further execution
@@ -360,6 +417,14 @@
                         $('#edit_package_type').addClass('is-invalid');
                         $('#editMedPackageTypeError').text(errors.package_type[0]);
                     }
+                    if (errors.hasOwnProperty('med_supplier')) {
+                        $('#edit_med_supplier').addClass('is-invalid');
+                        $('#editMedSupplierError').text(errors.med_supplier[0]);
+                    }
+                    if (errors.hasOwnProperty('med_purchase_amount')) {
+                        $('#edit_med_purchase_amount').addClass('is-invalid');
+                        $('#editMedPurchaseAmountError').text(errors.med_purchase_amount[0]);
+                    }
                     if (errors.hasOwnProperty('stock_status')) {
                         $('#editMedStockStatusError').text(errors.stock_status[0]);
                     }
@@ -383,6 +448,8 @@
             $('#edit_total_quantity').removeClass('is-invalid');
             $('#edit_package_type').removeClass('is-invalid');
             $('#edit_med_remarks').removeClass('is-invalid');
+            $('#edit_med_supplier').removeClass('is-invalid');
+            $('#edit_med_purchase_amount').removeClass('is-invalid');
 
             $('#edit_med_name').next('.invalid-feedback').text('');
             $('#edit_med_bar_code').next('.invalid-feedback').text('');
@@ -394,6 +461,8 @@
             $('#edit_package_count').next('.invalid-feedback').text('');
             $('#edit_package_type').next('.invalid-feedback').text('');
             $('#edit_med_remarks').next('.invalid-feedback').text('');
+            $('#edit_med_supplier').next('.invalid-feedback').text('');
+            $('#edit_med_purchase_amount').next('.invalid-feedback').text('');
 
             $('#editMedNameError').text('');
             $('#editMedBarcodeError').text('');
@@ -407,6 +476,8 @@
             $('#editMedRemarkError').text('');
             $('#editMedStockStatusError').text('');
             $('#editMedStatusError').text('');
+            $('#editMedSupplierError').text('');
+            $('#editMedPackageTypeError').text('');
             clearBarcodeCanvas();
 
         });
@@ -422,26 +493,31 @@
                 method: 'GET',
                 success: function(response) {
                     // Populate form fields
-                    $('#edit_medicine_id').val(response.id);
+                    $('#edit_medicine_purchase_id').val(response.id);
+                    $('#edit_medicine_id').val(response.medicine_id);
                     // Clear input value and ensure no autofill suggestions
-                    $('#edit_med_name').val('').focus().val(response.med_name);
-                    $('#edit_med_bar_code').val('').focus().val(response.med_bar_code);
-                    $('#edit_med_company').val('').focus().val(response.med_company);
+                    $('#edit_med_name').val('').focus().val(response.medicine.med_name);
+                    $('#edit_med_bar_code').val('').focus().val(response.medicine.med_bar_code);
+                    $('#edit_med_company').val('').focus().val(response.medicine.med_company);
                     $('#edit_med_price').val('').focus().val(response.med_price);
                     $('#edit_expiry_date').val('').focus().val(response.expiry_date);
                     $('#edit_units_per_package').val(response.units_per_package);
                     $('#edit_package_count').val(response.package_count);
                     $('#edit_total_quantity').val(response.total_quantity);
                     $('#edit_package_type').val(response.package_type);
-                    $('#edit_med_remarks').val('').focus().val(response.med_remarks);
+                    $('#edit_med_supplier').val(response.purchase.supplier_id);
+                    $('#edit_med_purchase_amount').val(response.purchase_amount);
+                    $('#edit_batch_no').val(response.batch_no);
+                    $('#edit_med_remarks').val('').focus().val(response.medicine.med_remarks);
+                    $('#edit_batch_no').val(response.batch_no);
                     // Set radio button status
-                    if (response.status === 'Y') {
+                    if (response.medicine.status === 'Y') {
                         $('#med_edit_yes').prop('checked', true);
                     } else {
                         $('#med_edit_no').prop('checked', true);
                     }
 
-                    if (response.stock_status === 'In Stock') {
+                    if (response.medicine.stock_status === 'In Stock') {
                         $('#edit_in').prop('checked', true);
                     } else {
                         $('#edit_out').prop('checked', true);

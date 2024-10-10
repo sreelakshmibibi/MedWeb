@@ -18,10 +18,9 @@
                                     *</span></label>
                             <select class="form-control" id="editleave_type" name="editleave_type">
                                 <option value="" disabled selected>Select type</option>
-                                <option value="Casual Leave" >Casual Leave</option>
-                                <option value="Medical Leave">Medical Leave</option>
-                                <option value="Loss of Pay">Loss of Pay</option>
-                                <option value="Other">Other</option>
+                                @foreach ($leaveTypes as $leaveType)
+                                    <option value="{{ $leaveType->id }}"> {{ $leaveType->type }}</option>
+                                @endforeach
                             </select>
                             <div id="editleaveTypeError" class="invalid-feedback"></div>
                         </div>

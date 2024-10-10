@@ -12,22 +12,31 @@ class Medicine extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['med_bar_code', 'med_name', 'med_company', 'med_remarks', 'med_price', 'expiry_date', 'units_per_package', 'package_count', 'total_quantity', 'package_type', 'stock_status', 'status', 'created_by',
-        'updated_by'];
+    protected $fillable = [
+        'med_bar_code',
+        'med_name',
+        'med_company',
+        'med_remarks',
+        'stock',
+        'stock_status',
+        'status',
+        'created_by',
+        'updated_by',
+    ];
 
     protected $dates = ['deleted_at'];
 
     protected static function booted()
     {
-        // Before creating a new record
-        static::creating(function ($clinic) {
-            $clinic->created_by = Auth::id(); // Set created_by to current user's ID
-            $clinic->updated_by = Auth::id();
+        // Automatically set created_by and updated_by for new records
+        static::creating(function ($medicine) {
+            $medicine->created_by = Auth::id(); // Set created_by to current user's ID
+            $medicine->updated_by = Auth::id(); // Set updated_by to current user's ID
         });
 
-        // Before updating an existing record
-        static::updating(function ($clinic) {
-            $clinic->updated_by = Auth::id(); // Set updated_by to current user's ID
+        // Automatically update updated_by on record updates
+        static::updating(function ($medicine) {
+            $medicine->updated_by = Auth::id(); // Set updated_by to current user's ID
         });
     }
 
@@ -35,4 +44,16 @@ class Medicine extends Model
     {
         return $this->hasMany(Prescription::class, 'medicine_id', 'id');
     }
+
+    public function purchaseItems()
+    {
+        return $this->hasMany(MedicinePurchaseItem::class, 'medicine_id', 'id');
+    }
+
+    public function latestMedicinePurchaseItem()
+    {
+        return $this->hasOne(MedicinePurchaseItem::class, 'medicine_id')->latest('id');
+    }
+
+
 }

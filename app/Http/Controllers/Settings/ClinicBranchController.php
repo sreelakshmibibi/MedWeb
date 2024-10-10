@@ -79,8 +79,22 @@ class ClinicBranchController extends Controller
         $clinicDetails = ClinicBasicDetail::first();
         $data = ClinicBranch::all();
         $total = count($data);
-
-        return view('settings.clinics.index', compact('countries', 'states', 'cities', 'clinicDetails', 'data', 'total'));
+        $months = [
+            1 => 'January',
+            2 => 'February',
+            3 => 'March',
+            4 => 'April',
+            5 => 'May',
+            6 => 'June',
+            7 => 'July',
+            8 => 'August',
+            9 => 'September',
+            10 => 'October',
+            11 => 'November',
+            12 => 'December'
+        ];
+        
+        return view('settings.clinics.index', compact('countries', 'states', 'cities', 'clinicDetails', 'data', 'total', 'months'));
     }
 
     /**
@@ -97,6 +111,8 @@ class ClinicBranchController extends Controller
             $consultationFeesFrequency = $request->input('consultation_fees_frequency');
             $patientRegistrationFees = $request->input('patient_registration_fees');
             $tax = $request->input('treatment_tax')? $request->input('treatment_tax') : 0;
+            $financialYearStart = $request->input('financial_year_start')? $request->input('financial_year_start') : 4;
+            $financialYearEnd = $request->input('financial_year_end')? $request->input('financial_year_end') : 3;
             $currency = $request->input('currency');
             $treatment_tax_included = $request->input('treatment_tax_included');
             // Check if a file for clinic_logo was uploaded
@@ -123,6 +139,8 @@ class ClinicBranchController extends Controller
                 $clinic->consultation_fees_frequency = $consultationFeesFrequency;
                 $clinic->tax = $tax;
                 $clinic->treatment_tax_included = $treatment_tax_included;
+                $clinic->financial_year_start = $financialYearStart;
+                $clinic->financial_year_end = $financialYearEnd;
                 $clinic->currency = $currency;
                 $clinic->save();
                 $message = "Clinic details updated successfully";
@@ -139,6 +157,8 @@ class ClinicBranchController extends Controller
                     'tax' => $request->input('treatment_tax'),
                     'currency' => $request->input('currency'),
                     'treatment_tax_included' => $request->input('treatment_tax_included'),
+                    'financial_year_start' => $request->input('financial_year_start') ?? 4,
+                    'financial_year_end' => $request->input('financial_year_end') ?? 3,
                     'clinic_type_id' => 1, // Adjust as per your requirements
                     
                 ]);
