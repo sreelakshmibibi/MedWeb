@@ -10,6 +10,7 @@ use App\Models\ClinicBranch;
 use App\Models\PatientPrescriptionBilling;
 use App\Models\Prescription;
 use App\Models\PrescriptionDetailBilling;
+use App\Models\Medicine;
 use App\Services\BillingService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 
 class MedicineBillController extends Controller
@@ -42,11 +44,12 @@ class MedicineBillController extends Controller
         $billingService = new BillingService();
         $clinicBasicDetails = ClinicBasicDetail::first();
         $isMedicineProvided = (ClinicBranch::find($appointment->app_branch))->is_medicine_provided;
-        $prescriptions = Prescription::with(['medicine', 'dosage'])
+        $prescriptions = Prescription::with(['medicine', 'dosage', 'medicine.latestMedicinePurchaseItem'])
             ->where('app_id', $appointment->id)
             ->where('patient_id', $appointment->patient_id)
             ->where('status', 'Y')
             ->get();
+        //Log::info('$prescription: '.$prescriptions);
         $medicineTotal = 0;
         $hasPrescriptionBill = PatientPrescriptionBilling::where('appointment_id', $id)->first();
 
@@ -114,6 +117,13 @@ class MedicineBillController extends Controller
                         'updated_by' => auth()->user()->id,
                         'status' => 'Y',
                     ]);
+                    $medicine = Medicine::findOrFail($request->medicine_checkbox[$index]);
+                    $medStock = $medicine->stock - $quantity;
+                    $medicine->stock = $medStock;
+                    if ($medStock<=0) {
+                        $medicine->stock_status = 'Out of Stock';
+                    }
+                    $medicine->save();
                 }
             }
             $billingService = new BillingService();

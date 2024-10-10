@@ -350,14 +350,15 @@ class BillingController extends Controller
                 $comboOfferDeduction = $comboOfferActualAmount - $comboOfferApplied;
             }
         }
-        $prescriptions = Prescription::with(['medicine', 'dosage'])
+        $prescriptions = Prescription::with(['medicine', 'dosage', 'medicine.latestMedicinePurchaseItem'])
             ->where('app_id', $appointment->id)
             ->where('patient_id', $appointment->patient_id)
             ->where('status', 'Y')
             ->get();
+           
         $medicineTotal = 0;
         $hasPrescriptionBill = PatientPrescriptionBilling::where('appointment_id', $appointment->id)->first();
-
+       
         // Initialize prescription bill details
         if ($hasPrescriptionBill) {
 
@@ -365,7 +366,7 @@ class BillingController extends Controller
         } else {
             $prescriptionBillDetails = collect(); // Use an empty collection
         }
-
+        
         $insurance = 0;
         // Pass variables to the view
         // if (!empty($billExists)) {
@@ -523,11 +524,12 @@ class BillingController extends Controller
                 $comboOfferDeduction = $comboOfferActualAmount - $comboOfferApplied;
             }
         }
-        $prescriptions = Prescription::with(['medicine', 'dosage'])
+        $prescriptions = Prescription::with(['medicine', 'dosage', 'medicine.latestMedicinePurchaseItem'])
             ->where('app_id', $appointment->id)
             ->where('patient_id', $appointment->patient_id)
             ->where('status', 'Y')
             ->get();
+
         $medicineTotal = 0;
         $hasPrescriptionBill = PatientPrescriptionBilling::where('appointment_id', $appointment->id)->first();
 
@@ -538,7 +540,7 @@ class BillingController extends Controller
         } else {
             $prescriptionBillDetails = collect(); // Use an empty collection
         }
-
+        
         $insurance = 0;
         // Pass variables to the view
         // if (!empty($billExists)) {

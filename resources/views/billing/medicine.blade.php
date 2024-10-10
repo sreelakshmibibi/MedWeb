@@ -78,7 +78,6 @@ if ($hasPrescriptionBill) {
                             <th style="width:10%;">Frequency</th>
                             <th style="width:10%;">Duration</th>
                             <th style="width:10%;">Quantity</th>
-                            <th style="width:10%;">Expiry Date</th>
                             <th style="width:5%;" class="text-center">Status</th>
                             <th style="width:20%;" class="text-center">Rate
                                 ({{ $clinicBasicDetails->currency }})
@@ -98,7 +97,10 @@ if ($hasPrescriptionBill) {
                             @php
                                 $i++;
                                 $isOutOfStock = $prescription->medicine->stock_status === 'Out of Stock';
-                                $totalQuantity = $prescription->medicine->total_quantity;
+                                $totalQuantity = $prescription->medicine->stock;
+                                $medicine = $prescription->medicine;
+                                $latestPurchaseItem = $medicine->latestMedicinePurchaseItem;
+                                $price = $latestPurchaseItem ? $latestPurchaseItem->med_price : 0;
                                 $isChecked = false;
                                 $quantityValue = '';
                                 $rateValue = '';
@@ -119,7 +121,7 @@ if ($hasPrescriptionBill) {
                                 if ($billDetail) {
                                     $isChecked = true;
                                     $quantityValue = $billDetail->quantity;
-                                    $rateValue = $billDetail->rate;
+                                    $rateValue = $billDetail->amount;
                                 }
                                 if ($hasPrescriptionBill) {
                                     $paidAmount = $hasPrescriptionBill->amount_paid;
@@ -136,8 +138,8 @@ if ($hasPrescriptionBill) {
                                     <input type="checkbox" id="medicine_checkbox{{ $loop->index }}"
                                         name="medicine_checkbox[]" class="filled-in chk-col-success"
                                         value="{{ $prescription->medicine->id }}" {{ $isChecked ? 'checked' : '' }}
-                                        data-price="{{ $prescription->medicine->med_price }}"
-                                        {{ $isOutOfStock ? 'disabled' : '' }} />
+                                        data-price="{{ $price }}"
+                                        {{ $isOutOfStock ? 'disabled' : '' }} {{ $isChecked ? 'disabled' : '' }}/>
                                     <label for="medicine_checkbox{{ $loop->index }}">
                                         {{ $prescription->medicine->med_name }}
                                     </label>
@@ -175,9 +177,7 @@ if ($hasPrescriptionBill) {
                                     <span id="stock_message{{ $loop->index }}" class="text-danger"></span>
                                     <span id="quantity{{ $loop->index }}-error" class="text-danger"></span>
                                 </th>
-                                <td>
-                                    {{ $prescription->medicine->expiry_date ? $prescription->medicine->expiry_date : 'N/A' }} <!-- Displaying expiry date -->
-                                </td>
+                                
                                 <td>
                                     {{-- {{ $prescription->medicine->stock_status }} --}}
                                     @if ($prescription->medicine->stock_status == 'In Stock')
@@ -190,7 +190,7 @@ if ($hasPrescriptionBill) {
                                 </td>
                                 <td>
                                     <input type="hidden" id="unitcost{{ $loop->index }}" name="unitcost[]"
-                                        value="{{ $prescription->medicine->med_price }}">
+                                        value="{{ $price }}">
                                     <input type="text" class="form-control text-center" id="rate{{ $loop->index }}"
                                         name="rate[]" value="{{ $rateValue }}" aria-describedby="basic-addon2"
                                         {{ $isOutOfStock ? 'disabled' : '' }} readonly>
@@ -200,7 +200,7 @@ if ($hasPrescriptionBill) {
                     </tbody>
                     <tbody>
                         <tr>
-                            <th colspan="8" class="text-end">Total</th>
+                            <th colspan="7" class="text-end">Total</th>
                             <th><input type="text" class="form-control text-center" id="total" name="total"
                                     aria-describedby="basic-addon2" readonly>
                                 <span class="text-danger" id="prescTotalError">
@@ -211,7 +211,7 @@ if ($hasPrescriptionBill) {
                             </th>
                         </tr>
                         <tr>
-                            <th colspan="8" class="text-end">Tax</th>
+                            <th colspan="7" class="text-end">Tax</th>
                             <td><input type="hidden" class="form-control text-center" id="medtax" name="medtax"
                                     aria-describedby="basic-addon2" value="{{ $clinicBasicDetails->tax }}" readonly>
                                 <label>{{ $clinicBasicDetails->tax }}%</label>
@@ -224,7 +224,7 @@ if ($hasPrescriptionBill) {
                         </tr>
                         {{-- <tr> --}}
                         <tr class="bt-3 border-primary">
-                            <td colspan="8" class="text-end">
+                            <td colspan="7" class="text-end">
                                 <h3><b>Grand Total</b></h3>
                             </td>
                             <td>
@@ -281,7 +281,7 @@ if ($hasPrescriptionBill) {
                                 </span>
                             </td>
 
-                            <td colspan="3" class="text-end ">Paid Amount</td>
+                            <td colspan="2" class="text-end ">Paid Amount</td>
                             <td>
                                 <input type="text" name="medamountPaid" id="medamountPaid"
                                     {{ $paidAmount ? 'readonly' : '' }} class="form-control text-center"
@@ -300,7 +300,7 @@ if ($hasPrescriptionBill) {
                                 <label class="form-check-label" for="medbalance_given">Balance Given</label>
                                 <span class="error-message text-danger" id="prescCheckError"></span>
                             </td>
-                            <td colspan="3" class="text-end">Balance to Give Back</td>
+                            <td colspan="2" class="text-end">Balance to Give Back</td>
                             <td><input type="text" name="medbalanceToGiveBack" id="medbalanceToGiveBack"
                                     class="form-control text-center" readonly>
                                 <span class="text-danger" id="prescBalanceToGiveBackError">

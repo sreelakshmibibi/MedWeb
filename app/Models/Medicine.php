@@ -50,4 +50,10 @@ class Medicine extends Model
         return $this->hasMany(MedicinePurchaseItem::class, 'medicine_id', 'id');
     }
 
+    public function latestMedicinePurchaseItem()
+    {
+        return $this->hasOne(MedicinePurchaseItem::class, 'medicine_id')->latest('id');
+    }
+
+
 }

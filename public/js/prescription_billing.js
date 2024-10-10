@@ -361,6 +361,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         let total = 0;
 
         document.querySelectorAll('#tablebody input[type="checkbox"]').forEach(function (checkbox) {
+            
             const row = checkbox.closest("tr");
             const price = parseFloat(checkbox.getAttribute("data-price")) || 0;
             const quantityInput = row.querySelector('input[name="quantity[]"]');
@@ -371,13 +372,14 @@ document.addEventListener("DOMContentLoaded", (event) => {
             if (!quantityInput || !rateInput) return; // Skip if elements are not found
 
             let quantity = parseFloat(quantityInput.value) || 0;
-
+            
             if (quantity < 0) {
                 updateStockMessage(row, "Invalid Quantity");
                 quantity = 0;
                 quantityInput.value = quantity;
                 rateInput.value = "0.00";
-            } else if (quantity > totalQuantity) {
+            } else if (quantity > totalQuantity && !checkbox.disabled) {
+                
                 updateStockMessage(row, "Quantity exceeds stock");
                 quantityInput.value = "";
                 rateInput.value = "0.00";
