@@ -5,25 +5,29 @@
         <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fa fa-briefcase"></i> Edit PayHead Details</h5>
+                    <h5 class="modal-title"><i class="fa fa-briefcase"></i> Edit Employee Type</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div id="errorMessage" style="display:none;" class="alert alert-danger"></div>
-                
+
                 <div class="modal-body">
                     <div class="container-fluid">
                         <div class="form-group">
-                            <label class="form-label" for="edit_employee_type">PayHead Type <span class="text-danger">*</span></label>
-                            <input class="form-control" type="text" id="edit_employee_type" name="edit_employee_type" required minlength="3" placeholder="Employee Type" autocomplete="off">
+                            <label class="form-label" for="edit_employee_type">Type <span
+                                    class="text-danger">*</span></label>
+                            <input class="form-control" type="text" id="edit_employee_type" name="edit_employee_type"
+                                required minlength="3" placeholder="Employee Type" autocomplete="off">
                             <div class="invalid-feedback"></div>
                         </div>
 
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6">Active</label>
                             <div>
-                                <input name="edit_status" type="radio" class="form-control with-gap" id="edit_yes" value="Y">
+                                <input name="edit_status" type="radio" class="form-control with-gap" id="edit_yes"
+                                    value="Y">
                                 <label class="form-check-label" for="edit_yes">Yes</label>
-                                <input name="edit_status" type="radio" class="form-control with-gap" id="edit_no" value="N">
+                                <input name="edit_status" type="radio" class="form-control with-gap" id="edit_no"
+                                    value="N">
                                 <label class="form-check-label" for="edit_no">No</label>
                             </div>
                             <div class="text-danger" id="statusError"></div>
@@ -75,7 +79,8 @@
                     $('#modal-employee-type-edit').modal('hide');
                     if (response.success) {
                         $('#successMessage').text(response.success);
-                        $('#successMessage').fadeIn().delay(3000).fadeOut(); // Show for 3 seconds
+                        $('#successMessage').fadeIn().delay(3000)
+                    .fadeOut(); // Show for 3 seconds
                     }
                     table.ajax.reload(); // Reload table data
                 },
@@ -84,12 +89,13 @@
                     if (xhr.responseJSON.error) {
                         $('#errorMessage').text(xhr.responseJSON.error).show();
                     }
-                    
+
                     // If error, update modal to show specific field errors
                     var errors = xhr.responseJSON.errors;
                     if (errors.hasOwnProperty('edit_employee_type')) {
                         $('#edit_employee_type').addClass('is-invalid');
-                        $('#edit_employee_type').next('.invalid-feedback').text(errors.edit_employee_type[0]);
+                        $('#edit_employee_type').next('.invalid-feedback').text(errors
+                            .edit_employee_type[0]);
                     }
                     if (errors.hasOwnProperty('edit_status')) {
                         $('#statusError').text(errors.edit_status[0]);
