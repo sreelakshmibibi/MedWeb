@@ -4,7 +4,7 @@
         <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fa fa-briefcase"></i> Technician Details</h5>
+                    <h5 class="modal-title"><i class="fa fa-briefcase"></i> Supplier Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div id="errorMessagecreate" style="display:none;" class="alert alert-danger">
@@ -16,45 +16,44 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="name" class="form-label">Supplier Name<span
-                                                        class="text-danger">*</span></label>                    
+                                            class="text-danger">*</span></label>
                                     <input class="form-control" type="text" id="name" name="name"
-                                    placeholder="Supplier Name">
+                                        placeholder="Supplier Name">
                                     <div id="supplierNameError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="phone" class="form-label">Supplier Phone<span
-                                                        class="text-danger">*</span></label>                    
+                                            class="text-danger">*</span></label>
                                     <input class="form-control" type="text" id="phone" name="phone"
-                                    placeholder="Supplier Phone">
+                                        placeholder="Supplier Phone">
                                     <div id="supplierPhoneError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="gst" class="form-label">GST No.<span
                                             class="text-danger">*</span></label>
                                     <input class="form-control" type="text" id="gst" name="gst"
-                                            placeholder="GST">
+                                        placeholder="GST">
                                     <div id="supplierGstError" class="invalid-feedback"></div>
-                                    </div>
                                 </div>
                             </div>
-                        <div>
-                            
-                        <div class="row">
-                            <div class="form-group">
-                                <label for="address" class="form-label">Supplier Address<span
-                                        class="text-danger">*</span></label>
-                                <textarea class="form-control" type="text" id="address" name="address"
-                                        placeholder="Supplier Address"></textarea>
-                                <div id="supplierAddressError" class="invalid-feedback"></div>
-                            </div>
                         </div>
+                        <div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    <label for="address" class="form-label">Supplier Address<span
+                                            class="text-danger">*</span></label>
+                                    <textarea class="form-control" type="text" id="address" name="address" placeholder="Supplier Address"></textarea>
+                                    <div id="supplierAddressError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group mt-2">
                             <label class="form-label col-md-6">Active</label>
@@ -113,7 +112,7 @@
                 $('#phone').removeClass('is-invalid');
                 $('#supplierPhoneError').text('');
             }
-            
+
             // if (supplierGst.length == 0) {
             //     $('#gst').addClass('is-invalid');
             //     $('#supplierGstError').text('GST is required.');
@@ -148,21 +147,21 @@
                         $('#successMessage').text(response.success);
                         $('#successMessage').fadeIn().delay(3000)
                             .fadeOut(); // Show for 3 seconds
-                            $('#modal-right').modal('hide');
-                            table.ajax.reload();
-                    
+                        $('#modal-right').modal('hide');
+                        table.ajax.reload();
+
                     }
                     if (response.error) {
                         $('#errorMessagecreate').text(response.error);
                         $('#errorMessagecreate').fadeIn().delay(3000)
-                        .fadeOut(); 
+                            .fadeOut();
                     }
-                    
+
                     // location.reload();
-                  
+
                 },
                 error: function(xhr) {
-                    
+
                     // If error, update modal to show errors
                     var errors = xhr.responseJSON.errors;
 
@@ -175,17 +174,17 @@
                         $('#phone').addClass('is-invalid');
                         $('#supplierPhoneError').text(errors.phone[0]);
                     }
-                    
+
                     if (errors.hasOwnProperty('gst')) {
                         $('#gst').addClass('is-invalid');
                         $('#supplierGstError').text(errors.gst[0]);
                     }
-                    
+
                     if (errors.hasOwnProperty('address')) {
                         $('#address').addClass('is-invalid');
                         $('#supplierAddressError').text(errors.address[0]);
                     }
-                    
+
                 }
             });
         });

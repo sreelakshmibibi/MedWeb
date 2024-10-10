@@ -164,7 +164,7 @@ date_default_timezone_set('Asia/Kolkata');
             width: 50%;
             float: right;
         }
-        
+
 
         @media print {
             @page {
@@ -191,7 +191,7 @@ date_default_timezone_set('Asia/Kolkata');
 <body>
     <!-- Header -->
     <div class="header">
-    <img src="{{ $clinicLogo }}" alt="Clinic Logo" height="40px">
+        <img src="{{ $clinicLogo }}" alt="Clinic Logo" height="40px">
         {{-- <img src="{{ $clinicDetails->clinic_logo ?? '' }}" alt="Clinic Logo"> <!-- Clinic Logo --> --}}
         <div class="clinic-name">{{ $clinicDetails->clinic_name ?? 'Clinic Name' }}</div> <!-- Clinic Name -->
         <div class="clinic-address">
@@ -208,101 +208,122 @@ date_default_timezone_set('Asia/Kolkata');
     <div class="pdfbody">
         <h3 class="heading">
             <center>Lab Order Details</center>
-            <table class="info-table">
+        </h3>
+        <table class="info-table">
             <tr>
-                <td style="width: 15%;"><strong>Lab name: </strong></td>
-                <td style="width: 35%;">{{ $lab->lab_name ?? 'N/A' }}</td>
+                <td style="width: 10%;"><strong>Lab name: </strong></td>
+                <td style="width: 40%;">{{ $lab->lab_name ?? 'N/A' }}</td>
 
                 <td style="width: 50%; text-align:right;"><strong>Technician
-                        </strong>{{ $lab->name }}
+                    </strong>{{ $lab->name }}
                 </td>
             </tr>
 
             <tr>
-                <td style="width: 15%;"><strong>Order Date: </strong></td>
-                <td style="width: 35%;">
-                    {{-- {{ isset($patient->date_of_birth) ? $commonService->calculateAge($patient->date_of_birth) : 'N/A' }} --}}
-                    {{ $orderDate }}
+                <td style="width: 10%;"><strong>Order Date: </strong></td>
+                <td style="width: 40%;">
+                    {{ \Carbon\Carbon::parse($orderDate)->format('d-m-Y h:i A') }}
                 </td>
                 <td style="width: 50%; text-align:right;"><strong>Expected Delivery: </strong>
-                    {{ $expectedDelivery }}
+                    {{ \Carbon\Carbon::parse($expectedDelivery)->format('d-m-Y h:i A') }}
                 </td>
             </tr>
             <tr>
-                <td style="width: 15%;"><strong>Lab Address: </strong></td>
-                <td colspan="2" >
-                    {{-- {{ isset($patient->date_of_birth) ? $commonService->calculateAge($patient->date_of_birth) : 'N/A' }} --}}
+                <td style="width: 10%;"><strong>Lab Address: </strong></td>
+                <td colspan="2">
                     {{ $lab->lab_address }}
                 </td>
-                
-            </tr>
-        </table>
-        @foreach($orders as $order)
-    <?php 
-        $patient = $order->toothExamination->patient;
-        $name = str_replace('<br>', ' ', $patient->first_name) . ' ' . $patient->last_name;
 
-        $commonService = new CommonService();
-        $age = $commonService->calculateAge($patient->date_of_birth);
-        $gender = match ($patient->gender) {
-            'M' => 'Male',
-            'F' => 'Female',
-            'O' => 'Other',
-            default => 'Unknown',
-        };
-    ?>
-    <div class="patient-section" style="border: 1px solid #ccc; margin-bottom: 20px; padding: 10px;">
-        <h2>Patient Information</h2>
-        <table>
-            <tr>
-                <td><strong>No:</strong> {{ $loop->iteration }}</td>
-                <td><strong>Name:</strong> {{ $name }}</td>
-                <td><strong>Patient ID:</strong> {{ $order->patient_id }}</td>
-            </tr>
-            <tr>
-                <td><strong>Age:</strong> {{ $age }}</td>
-                <td><strong>Gender:</strong> {{ $gender }}</td>
             </tr>
         </table>
-        
-        <h3>Details</h3>
-        <table>
-            <tr>
-                <td><strong>Tooth:</strong> {{ $order->toothExamination->tooth_id }}</td>
-                <td colspan="2"><strong>Plan:</strong> {{ $order->toothExamination->treatmentPlan->plan }}</td>
-                <td><strong>Status:</strong> {{ App\Models\OrderPlaced::statusToWords($order->order_status) }}</td>
-            </tr>
-            <tr>
-                <td><strong>Shade:</strong> {{ $order->toothExamination->shade_id != null ? $order->toothExamination->shade->shade_name : 'N/A' }}</td>
-                <td><strong>Metal Trail:</strong> {{ $order->toothExamination->metal_trial != null ? $order->toothExamination->metal_trial : 'N/A' }}</td>
-                <td><strong>Bisq Trial:</strong> {{ $order->toothExamination->bisq_trail != null ? $order->toothExamination->bisq_trail : 'N/A' }}</td>
-                <td><strong>Finish:</strong> {{ $order->toothExamination->finish != null ? $order->toothExamination->finish : 'N/A' }}</td>
-                
-            </tr>
-            <?php 
+
+        {{-- <hr class="linestyle" /> --}}
+
+        <h4 class="subheading">Patient Information</h4>
+
+        @foreach ($orders as $order)
+            <?php
+            $patient = $order->toothExamination->patient;
+            $name = str_replace('<br>', ' ', $patient->first_name) . ' ' . $patient->last_name;
+            
+            $commonService = new CommonService();
+            $age = $commonService->calculateAge($patient->date_of_birth);
+            $gender = match ($patient->gender) {
+                'M' => 'Male',
+                'F' => 'Female',
+                'O' => 'Other',
+                default => 'Unknown',
+            };
+            ?>
+            <div class="patient-section" style="border: 1px solid #ccc; margin-bottom: 20px; padding: 10px;">
+                {{-- <h2>Patient Information</h2> --}}
+                <table style="width:100%;">
+                    <tr>
+                        <td><strong>No:</strong> {{ $loop->iteration }}</td>
+                        <td><strong>Name:</strong> {{ $name }}</td>
+                        <td><strong>Patient ID:</strong> {{ $order->patient_id }}</td>
+                        <td><strong>Age:</strong> {{ $age }}</td>
+                        <td><strong>Gender:</strong> {{ $gender }}</td>
+                    </tr>
+                    {{-- <tr>
+                            <td><strong>Age:</strong> {{ $age }}</td>
+                            <td><strong>Gender:</strong> {{ $gender }}</td>
+                        </tr> --}}
+                </table>
+                <hr class="linestyle" />
+                <h4 class="subheading">Details</h4>
+
+                <table style="width:100%;">
+                    <tr>
+                        <td><strong>Tooth:</strong> {{ $order->toothExamination->tooth_id }}</td>
+                        <td colspan="2"><strong>Plan:</strong>
+                            {{ $order->toothExamination->treatmentPlan->plan }}</td>
+                        <td><strong>Status:</strong>
+                            {{ App\Models\OrderPlaced::statusToWords($order->order_status) }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Shade:</strong>
+                            {{ $order->toothExamination->shade_id != null ? $order->toothExamination->shade->shade_name : 'N/A' }}
+                        </td>
+                        <td><strong>Metal Trail:</strong>
+                            {{ $order->toothExamination->metal_trial != null ? $order->toothExamination->metal_trial : 'N/A' }}
+                        </td>
+                        <td><strong>Bisq Trial:</strong>
+                            {{ $order->toothExamination->bisq_trail != null ? $order->toothExamination->bisq_trail : 'N/A' }}
+                        </td>
+                        <td><strong>Finish:</strong>
+                            {{ $order->toothExamination->finish != null ? $order->toothExamination->finish : 'N/A' }}
+                        </td>
+                        {{-- <td><strong>Status:</strong>
+                            {{ App\Models\OrderPlaced::statusToWords($order->order_status) }}</td> --}}
+                    </tr>
+                    <?php 
                 if (in_array($order->toothExamination->tooth_id, ['11', '12', '13', '21', '22', '23', '31', '32', '33', '41', '42', '43', '51', '52', '53', '61', '62', '63', '71', '72', '73', '81', '82', '83'])) { ?>
                     <tr>
-                        <td><strong>Upper Shade:</strong> {{ $order->toothExamination->upper_shade != null ? $order->toothExamination-> upper_shade: 'N/A' }}</td>
-                        <td><strong>Middle Shade:</strong> {{ $order->toothExamination->middle_shade != null ? $order->toothExamination-> middle_shade: 'N/A' }}</td>
-                        <td><strong>Lower Shade:</strong> {{ $order->toothExamination->lower_shade != null ? $order->toothExamination-> lower_shade: 'N/A' }}</td>
-                        
-                    </tr>
-            <?php } ?>
-            
-            
-           
-            <tr>
-                <td><strong>Instructions:</strong> {{ $order->toothExamination->instructions }}</td>
-            </tr>
-        </table>
-    </div>
-@endforeach
+                        <td><strong>Upper Shade:</strong>
+                            {{ $order->toothExamination->upper_shade != null ? $order->toothExamination->upper_shade : 'N/A' }}
+                        </td>
+                        <td><strong>Middle Shade:</strong>
+                            {{ $order->toothExamination->middle_shade != null ? $order->toothExamination->middle_shade : 'N/A' }}
+                        </td>
+                        <td><strong>Lower Shade:</strong>
+                            {{ $order->toothExamination->lower_shade != null ? $order->toothExamination->lower_shade : 'N/A' }}
+                        </td>
 
-        </h3>
-        
+                    </tr>
+                    <?php } ?>
+
+                    <tr>
+                        <td colspan="4"><strong>Instructions:</strong>
+                            {{ $order->toothExamination->instructions }}</td>
+                    </tr>
+                </table>
+            </div>
+        @endforeach
     </div>
     <div class="details">
-        <span class="details-label">Order Placed by<br>{{ str_replace('<br>', ' ',Auth::user()->name ?? 'Unknown') ?? 'N/A' }}</span>
+        <span class="details-label">Order Placed
+            by<br>{{ str_replace('<br>', ' ', Auth::user()->name ?? 'Unknown') ?? 'N/A' }}</span>
     </div>
 
     <div class="footer">
