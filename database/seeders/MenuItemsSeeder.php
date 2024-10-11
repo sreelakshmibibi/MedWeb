@@ -90,6 +90,7 @@ class MenuItemsSeeder extends Seeder
             'supplier',
             'supplier add',
             'supplier edit',
+            'supplier delete',
             'supplier remove',
             'expense category',
             'holidays',

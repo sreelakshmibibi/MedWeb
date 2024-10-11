@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
             MedicineRouteSeeder::class,
             CardPaySeeder::class,
             ShadeSeeder::class,
+            EmployeeTypeSeeder::class,
             LeaveTypeSeeder::class,
             // Other seeders...
         ]);
@@ -55,14 +56,14 @@ class DatabaseSeeder extends Seeder
         ]);
         $superAdminUser->assignRole($superAdminRole);
 
-        $doctorUser = User::factory()->create([
-            'name' => 'Doctor',
-            'email' => 'doctor@gmail.com',
-            'is_doctor' => 1,
-        ]);
+        // $doctorUser = User::factory()->create([
+        //     'name' => 'Doctor',
+        //     'email' => 'doctor@gmail.com',
+        //     'is_doctor' => 1,
+        // ]);
 
-        $drole = Role::findByName('Doctor');
-        $doctorUser->assignRole($drole);
+        // $drole = Role::findByName('Doctor');
+        // $doctorUser->assignRole($drole);
 
     }
 }
