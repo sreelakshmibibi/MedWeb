@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('employee_type');
             $table->string(column: 'status')->default('Y');
-            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
