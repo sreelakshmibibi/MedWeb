@@ -94,6 +94,8 @@ if ($hasPrescriptionBill) {
                         $cardAmount = '';
                         $machineId = '';
                         $balanceGiven = '';
+                        $totalamount = '';
+                        $grandtotal = '';
                         $rowspan = 1; ?>
                         @foreach ($prescriptions as $prescription)
                             @php
