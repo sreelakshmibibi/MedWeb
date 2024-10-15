@@ -166,19 +166,23 @@ class BillingService
             // Accumulate total cost for the treatment
             $totalCost += $discountCost;
         }
-        $xrayAmount = (ClinicBasicDetail::first())->xray_amount;
-
-        $xraysCharge= [
-            'treat_id' => 'Xrays',
-            'treat_name' => "Xrays",
-            'cost' => $xrayAmount,
-            'discount_percentage' => 0, // Assuming no discount for plans
-            'treat_cost' => $xrayAmount,
-            'quantity' => $xrays,
-            'subtotal' => $xrays * $xrayAmount,
-            'type' => 'xrays'
-        ];
-        $xraysAmount[] = $xraysCharge;
+        $xraysAmount = [];
+        if ($xrays > 0) {
+            $xrayAmount = (ClinicBasicDetail::first())->xray_amount;
+            
+            $xraysCharge = [
+                'treat_id' => 'Xrays',
+                'treat_name' => "Xrays",
+                'cost' => $xrayAmount,
+                'discount_percentage' => 0, // Assuming no discount for plans
+                'treat_cost' => $xrayAmount,
+                'quantity' => $xrays,
+                'subtotal' => $xrays * $xrayAmount,
+                'type' => 'xrays'
+            ];
+            
+            $xraysAmount[] = $xraysCharge;
+        }
         // Return the processed data
         return [
             'individualTreatmentAmounts' => $individualTreatmentAmounts,

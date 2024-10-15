@@ -324,7 +324,7 @@ function getTreatmentTable(stepIndex) {
                         });
                     }
             
-                    if (treatments.length === 0 && plans.length === 0 ) {
+                    if (treatments.length === 0 && plans.length === 0 && xrays.length === 0) {
                         tableBody.append(`
                             <tr>
                                 <td colspan="4">No data available</td>

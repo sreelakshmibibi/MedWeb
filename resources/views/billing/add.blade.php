@@ -158,6 +158,7 @@ date_default_timezone_set('Asia/Kolkata');
                                                         ?>
                                                     </tr>
                                                 @endforeach
+                                                
                                                 @foreach ($individualTreatmentPlanAmounts as $individualTreatmentPlanAmount)
                                                     <?php
                                                     $i++;
@@ -201,7 +202,7 @@ date_default_timezone_set('Asia/Kolkata');
                                                         ?>
                                                     </tr>
                                                 @endforeach
-                                                @if(!empty($xrays))
+                                                @if(!empty($xrays) && sizeof($xrays) > 0)
                                                     @foreach ($xrays as $xray)
                                                         <?php
                                                         $i++;

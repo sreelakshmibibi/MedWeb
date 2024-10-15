@@ -667,17 +667,21 @@ class TreatmentController extends Controller
     });
         $doctorDiscountApp = Appointment::findOrFail($appointment);
         $doctorDiscount = $doctorDiscountApp->doctor_discount;
-    $xrayAmount = (ClinicBasicDetail::first())->xray_amount;
-    $xraysCharge = [
-        'treat_name' => "X-ray ( " . $xrays . " * " . $xrayAmount . " ).",
-        'treat_cost' => $xrayAmount * $xrays,
-        'treat_id' => "X-ray",
-        'cost' => $xrayAmount * $xrays,
-        'discount_percentage' => 0,
-    ];
+        $xraysArray = [];
+        if ($xrays> 0) {
+            $xrayAmount = (ClinicBasicDetail::first())->xray_amount;
+            $xraysCharge = [
+                'treat_name' => "X-ray ( " . $xrays . " * " . $xrayAmount . " ).",
+                'treat_cost' => $xrayAmount * $xrays,
+                'treat_id' => "X-ray",
+                'cost' => $xrayAmount * $xrays,
+                'discount_percentage' => 0,
+            ];
+            $xraysArray[] = $xraysCharge; // Add this to your existing xrays array
+        }
     
     // Assuming you have an array for xrays in your response
-    $xraysArray[] = $xraysCharge; // Add this to your existing xrays array
+    
         // Return the data as a JSON response
         return response()->json([
             'toothExaminations' => $toothExaminations,
