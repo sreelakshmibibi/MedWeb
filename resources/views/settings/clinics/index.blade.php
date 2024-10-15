@@ -377,7 +377,7 @@
                                                             @enderror
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label class="form-label" for="financial_year_end">Financial
                                                                 Year ending Month

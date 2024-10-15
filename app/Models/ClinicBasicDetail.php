@@ -16,6 +16,7 @@ class ClinicBasicDetail extends Model
     'clinic_website',
     'clinic_insurance_available',
     'patient_registration_fees',
+    'xray_amount',
     'consultation_fees',
     'consultation_fees_frequency',
     'currency',

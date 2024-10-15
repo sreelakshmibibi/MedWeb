@@ -69,6 +69,17 @@
                         </div>
 
                         <div class="form-group mt-2">
+                            <label class="form-label col-md-6" for="branch_yes">Is Cosmetic clinic included?</label>
+                            <input name="is_cosmetic_clinic" type="radio" class="form-control with-gap" id="cosmetic_yes"
+                                value="Y" checked>
+                            <label for="cosmetic_yes">Yes</label>
+                            <input name="is_cosmetic_clinic" type="radio" class="form-control with-gap" id="cosmetic_no"
+                                value="N">
+                            <label for="cosmetic_no">No</label>
+                            <div id="cosmeticBranchError" class="invalid-feedback"></div>
+                        </div>
+
+                        <div class="form-group mt-2">
                             <label class="form-label col-md-6" for="medicine_yes">Is medicine provided?</label>
                             <input name="is_medicine_provided" type="radio" class="form-control with-gap"
                                 id="medicine_yes" value="Y" checked>

@@ -18,6 +18,7 @@ class ToothExamination extends Model
                 'lower_shade',
                 'metal_trial',
                 'bisq_trial',
+                'is_xray_billable',
                 'finish','instructions', 'xray', 'lingual_condn', 'labial_condn', 'occulusal_condn', 'distal_condn', 'mesial_condn', 'palatal_condn', 'buccal_condn', 'treatment_status', 'anatomy_image', 'remarks', 'created_by', 'updated_by', 'status','deleted_by',
     ];
 

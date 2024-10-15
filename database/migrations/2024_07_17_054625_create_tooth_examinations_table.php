@@ -35,6 +35,7 @@ return new class extends Migration
             $table->string('finish')->nullable();
             $table->string('instructions')->nullable();
             $table->string('xray')->nullable();
+            $table->string('is_xray_billable')->default('N');
             $table->foreignId('lingual_condn')->nullable()->constrained('surface_conditions');
             $table->foreignId('labial_condn')->nullable()->constrained('surface_conditions');
             $table->foreignId('occulusal_condn')->nullable()->constrained('surface_conditions');
@@ -49,21 +50,10 @@ return new class extends Migration
             $table->foreignId('updated_by')->constrained('users');
             $table->foreignId('deleted_by')->nullable()->constrained('users');
             $table->string('status', 5)->default('Y');
-            $table->foreign('patient_id')
-                ->references('patient_id')
-                ->on('patient_profiles')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-            $table->foreign('tooth_id')
-                ->references('teeth_name')
-                ->on('teeths')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-            $table->foreign('row_id')
-                ->references('id')
-                ->on('teeth_rows')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+
+            $table->foreign('patient_id')->references('patient_id')->on('patient_profiles')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('tooth_id')->references('teeth_name')->on('teeths')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('row_id')->references('id')->on('teeth_rows')->onDelete('cascade')->onUpdate('cascade');
 
             $table->timestamps();
             $table->softDeletes();

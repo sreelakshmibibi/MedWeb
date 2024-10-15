@@ -139,6 +139,8 @@
                     $('#edit_clinic_website').val(response.clinic_website);
                     $('#edit_yes').prop('checked', response.is_main_branch === 'Y');
                     $('#edit_no').prop('checked', response.is_main_branch === 'N');
+                    $('#edit_cosmetic_yes').prop('checked', response.is_cosmetic_clinic === 'Y');
+                    $('#edit_cosmetic_no').prop('checked', response.is_cosmetic_clinic === 'N');
                     $('#edit_medicine_yes').prop('checked', response
                         .is_medicine_provided === 'Y');
                     $('#edit_medicine_no').prop('checked', response.is_medicine_provided ===
