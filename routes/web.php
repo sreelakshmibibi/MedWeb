@@ -22,6 +22,7 @@ use App\Http\Controllers\Payroll\EmployeeAdvancePaymentController;
 use App\Http\Controllers\Payroll\EmployeeSalaryController;
 use App\Http\Controllers\Payroll\EmployeeTypeController;
 use App\Http\Controllers\Payroll\HolidayController;
+use App\Http\Controllers\Payroll\MonthlySalaryController;
 use App\Http\Controllers\Payroll\PayHeadController;
 use App\Http\Controllers\Payroll\SalaryAdvanceController;
 use App\Http\Controllers\Payroll\WorkController;
@@ -392,6 +393,15 @@ Route::middleware(['auth', 'check.session'])->group(function () {
     Route::post('/salaryAdvance/store', [SalaryAdvanceController::class, 'store'])->name('salaryAdvance.store');
     Route::get('/salaryAdvance/{userId}', [SalaryAdvanceController::class, 'show'])->name('salaryAdvance.show');
     Route::post('/salaryAdvance/delete/{historyId}', [SalaryAdvanceController::class, 'destroy'])->name('salaryAdvance.destroy');
+
+    Route::get('/employee_salary/monthly', [MonthlySalaryController::class, 'index'])->name('employeeMonthlySalary');
+    Route::get('/employee_salary/monthly/{month}/year/{year}/create/{id}', [MonthlySalaryController::class, 'create'])->name('salary.monthly.create');
+    Route::get('/employee_salary/monthly/{month}/year/{year}/view/{id}', [MonthlySalaryController::class, 'show'])->name('salary.monthly.view');
+    Route::get('/employee_salary/monthly/{month}/year/{year}/edit/{id}', [MonthlySalaryController::class, 'edit'])->name('salary.monthly.edit');
+    Route::post('/employee_salary/monthly/update', [MonthlySalaryController::class, 'update'])->name('salary.monthly.update');
+    Route::post('/employee_salary/monthly/cancel/{id}', [MonthlySalaryController::class, 'destroy'])->name(name: 'salary.monthly.destroy');
+    Route::post('/employee_salary/monthly/store', [MonthlySalaryController::class, 'store'])->name('salary.monthly.store');
+    Route::post('/employee_salary/monthly/{month}/year/{year}/download-salaryslip', [MonthlySalaryController::class, 'generatesalaryslipPdf'])->name('download.monthly.salaryslip');
 
     Route::post('/logout-cancel', function () {
         Auth::logout();

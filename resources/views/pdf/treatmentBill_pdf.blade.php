@@ -290,7 +290,7 @@ header('Content-Type: text/html; charset=UTF-8');
                                 } else if ($billDetail->plan_id != null) {
                                     $treatment = $billDetail->treatmentPlan->plan;
                                 } else {
-                                    $treatment = $billDetail->consultation_registration;
+                                    $treatment = $billDetail->consultation_registration_xray;
                                 } ?>
                                 <td style="text-align:left;">{{ $treatment ?? '' }}</td>
                                 <td>{{ $billDetail->quantity ?? '' }}</td>

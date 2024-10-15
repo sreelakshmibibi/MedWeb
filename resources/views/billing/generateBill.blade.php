@@ -136,7 +136,7 @@ date_default_timezone_set('Asia/Kolkata');
                                                                 {{ $detailBill->treatmentPlan->plan }}
                                                                 <input type="hidden" name="planId{{ $i }}" value="{{ $detailBill->plan_id }}">
                                                             @else
-                                                                {{ $detailBill->consultation_registration }}
+                                                                {{ $detailBill->consultation_registration_xray }}
                                                             @endif
                                                         </td>
                                                         <td><input type="text" readonly

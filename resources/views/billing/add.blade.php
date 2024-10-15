@@ -110,7 +110,7 @@ date_default_timezone_set('Asia/Kolkata');
                                             <tbody>
                                                 <?php $i = 0;
                                                 $treatmentTotal = 0; ?>
-                                                <input type="hidden" value="{{ sizeof($individualTreatmentAmounts) + sizeof($individualTreatmentPlanAmounts) }}"
+                                                <input type="hidden" value="{{ sizeof($individualTreatmentAmounts) + sizeof($individualTreatmentPlanAmounts) + sizeof($xrays) }}"
                                                     name="treatmentCount">
                                                 <input type="hidden" value="{{ $appointment->id }}" name="appointment_id">
                                                 <input type="hidden" value="{{ $appointment->patient_id }}"
@@ -158,6 +158,7 @@ date_default_timezone_set('Asia/Kolkata');
                                                         ?>
                                                     </tr>
                                                 @endforeach
+                                                
                                                 @foreach ($individualTreatmentPlanAmounts as $individualTreatmentPlanAmount)
                                                     <?php
                                                     $i++;
@@ -201,6 +202,52 @@ date_default_timezone_set('Asia/Kolkata');
                                                         ?>
                                                     </tr>
                                                 @endforeach
+                                                @if(!empty($xrays) && sizeof($xrays) > 0)
+                                                    @foreach ($xrays as $xray)
+                                                        <?php
+                                                        $i++;
+                                                        $cost = is_numeric($xray['cost']) ? floatval($individualTreatmentPlanAmount['cost']) : 0;
+                                                        $subtotal = is_numeric($xray['subtotal']) ? floatval($individualTreatmentPlanAmount['subtotal']) : 0;
+                                                        ?>
+                                                        <tr>
+                                                            <td>{{ $i }}</td>
+                                                            <td class="text-start">
+                                                                {{ $xray['treat_name'] }}
+                                                                <input type="hidden" name="treatmentId{{ $i }}"
+                                                                    value="Xrays">
+                                                                    <input type="hidden" name="treatmentType{{ $i }}"
+                                                                    value="xrays">
+                                                            </td>
+                                                            <td><input type="text" readonly
+                                                                    name="tquantity{{ $i }}"
+                                                                    class="form-control text-center"
+                                                                    value="{{ $xray['quantity'] }}"></td>
+                                                            <!-- Add quantity if available -->
+                                                            <td><input type="text" readonly name="cost{{ $i }}"
+                                                                    class="form-control text-center"
+                                                                    value="{{ number_format($xray['cost'], 3) }}">
+                                                            </td>
+                                                            <?php if (empty($insuranceDetails))  { ?>
+                                                            <td> <input type="text" readonly
+                                                                    name="discount_percentage{{ $i }}"
+                                                                    class="form-control text-center"
+                                                                    value="{{ $xray['discount_percentage'] }}">
+                                                            </td>
+                                                            <?php } ?>
+                                                            <td> <input type="text" readonly
+                                                                    name="subtotal{{ $i }}"
+                                                                    class="form-control text-center"
+                                                                    value="{{ number_format($xray['subtotal'], 3) }}">
+                                                            </td> <!-- Format the cost -->
+                                                            <?php
+                                                            // $treatm(entTotal += number_format($individualTreatmentAmount['subtotal'], 3)
+                                                            // print_r($treatmentTotal);
+                                                            // print_r($subtotal);
+                                                            $treatmentTotal += $xray['subtotal'];
+                                                            ?>
+                                                        </tr>
+                                                    @endforeach
+                                                @endif
                                                 @if ($consultationFees == 1)
                                                     <tr>
                                                         <td>{{ ++$i }}</td>

@@ -44,6 +44,17 @@
                         </div>
 
                         <div class="form-group mt-2">
+                            <label class="form-label col-md-6" for="edit_is_cosmetic_clinic_yes">Is cosmetic clinic included?</label>
+                            <input name="edit_is_cosmetic_clinic" type="radio" class="form-control with-gap" id="edit_cosmetic_yes"
+                                value="Y">
+                            <label for="edit_cosmetic_yes">Yes</label>
+                            <input name="edit_is_cosmetic_clinic" type="radio" class="form-control with-gap" id="edit_cosmetic_no"
+                                value="N">
+                            <label for="edit_cosmetic_no">No</label>
+                            <div id="edit_cosmeticError" class="invalid-feedback"></div>
+                        </div>
+
+                        <div class="form-group mt-2">
                             <label class="form-label col-md-6" for="edit_medicine_yes">Is medicine provided?</label>
                             <input name="edit_is_medicine_provided" type="radio" class="form-control with-gap"
                                 id="edit_medicine_yes" value="Y">
@@ -219,6 +230,7 @@
                 clinic_phone: $('#edit_clinic_phone').val(),
                 branch_active: $('input[name="edit_branch_active"]:checked').val(),
                 is_medicine_provided: $('input[name="edit_is_medicine_provided"]:checked').val(),
+                is_cosmetic_clinic: $('input[name="edit_is_cosmetic_clinic"]:checked').val(),
                 clinic_address1: $('#edit_clinic_address1').val(),
                 clinic_address2: $('#edit_clinic_address2').val(),
                 clinic_country: $('#edit_clinic_country').val(),

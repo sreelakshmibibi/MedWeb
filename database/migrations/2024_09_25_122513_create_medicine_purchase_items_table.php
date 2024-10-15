@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -22,11 +21,13 @@ return new class extends Migration
             $table->integer('package_count')->nullable(); // Number of packages
             $table->integer('total_quantity')->nullable(); // Total number of units available across all packages
             $table->string('package_type', 50)->nullable(); // field helps distinguish between strips, bottles, and other packaging types
-            $table->decimal('purchase_unit_price',10)->nullable();
-            $table->decimal('purchase_amount',10)->nullable();
+            $table->decimal('purchase_unit_price', 10)->nullable();
+            $table->decimal('purchase_amount', 10)->nullable();
             $table->string('status', 1)->default('Y');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('cascade');
+            $table->integer('used_stock')->nullable()->default(0);
+            $table->integer('balance')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->index('med_price');

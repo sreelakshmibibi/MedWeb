@@ -7,6 +7,7 @@ use App\Http\Requests\Appointment\TreatmentDetailsRequest;
 use App\Models\Appointment;
 use App\Models\AppointmentStatus;
 use App\Models\AppointmentType;
+use App\Models\ClinicBasicDetail;
 use App\Models\ClinicBranch;
 use App\Models\ComboOfferTreatment;
 use App\Models\Disease;
@@ -415,6 +416,7 @@ class TreatmentController extends Controller
                 'dental_examination',
                 'diagnosis',
                 'treatment_id',
+                'is_xray_billable',
                 'treatment_plan_id',
                 'shade_id',
                 'upper_shade',
@@ -568,10 +570,11 @@ class TreatmentController extends Controller
                 
             }
         }
-        
+        $xrays = 0;
+        $i =0;
         // Process each tooth examination
         foreach ($toothExaminations as $toothExamination) {
-
+            
             // Collect treatment IDs
             $treatments[] = $toothExamination->treatment->id;
             $treatmentPlans[] = $toothExamination->treatment_plan_id;
@@ -584,6 +587,10 @@ class TreatmentController extends Controller
             // Calculate discount cost if applicable
             $discountCost = $treatmentCost;
             $currentDate = date('Y-m-d');
+            if ($toothExamination->is_xray_billable == 'Y')
+            {
+                $xrays++;
+            }
 
             if (
                 $discount_from !== null && $discount_to !== null &&
@@ -625,9 +632,10 @@ class TreatmentController extends Controller
                     
                 
             ];
-
+            
             if ($toothExamination->treatment_plan_id) {
-                $individualTreatmentPlanAmounts[$toothExamination->treatment_plan_id] = [
+                $i++;
+                $individualTreatmentPlanAmounts[$toothExamination->treatmentPlan->plan.$i] = [
                     'treat_name' => $toothExamination->treatmentPlan->plan,
                     'treat_cost' => $toothExamination->treatmentPlan->cost, // Use discounted cost
                     'treat_id' => $toothExamination->treatment_plan_id,
@@ -638,14 +646,42 @@ class TreatmentController extends Controller
     
             }
         }
-
+        // if (!empty($treatmentPlans)) {
+        //     foreach($treatmentPlans as $key=> $treatment_plan) {
+        //         $treatmentPlan = TreatmentPlan::find($treatment_plan);
+        //         $individualTreatmentPlanAmounts[$treatmentPlan->plan.$key] = [
+        //             'treat_name' => $treatmentPlan->plan,
+        //             'treat_cost' => $treatmentPlan->cost, // Use discounted cost
+        //             'treat_id' => $treatment_plan,
+        //             'cost' => $treatmentPlan->cost,
+        //             'discount_percentage' => 0,   
+        //         ];
+    
+        //     }
+        // }
+        
+        
 // Filter toothExaminations to only include those with treatments in individualTreatmentAmounts
     $toothExaminations = $toothExaminations->filter(function ($toothExamination) use ($individualTreatmentAmounts) {
         return isset($individualTreatmentAmounts[$toothExamination->treatment_id]);
     });
         $doctorDiscountApp = Appointment::findOrFail($appointment);
         $doctorDiscount = $doctorDiscountApp->doctor_discount;
-
+        $xraysArray = [];
+        if ($xrays> 0) {
+            $xrayAmount = (ClinicBasicDetail::first())->xray_amount;
+            $xraysCharge = [
+                'treat_name' => "X-ray ( " . $xrays . " * " . $xrayAmount . " ).",
+                'treat_cost' => $xrayAmount * $xrays,
+                'treat_id' => "X-ray",
+                'cost' => $xrayAmount * $xrays,
+                'discount_percentage' => 0,
+            ];
+            $xraysArray[] = $xraysCharge; // Add this to your existing xrays array
+        }
+    
+    // Assuming you have an array for xrays in your response
+    
         // Return the data as a JSON response
         return response()->json([
             'toothExaminations' => $toothExaminations,
@@ -653,6 +689,7 @@ class TreatmentController extends Controller
             'individualTreatmentPlanAmounts' => $individualTreatmentPlanAmounts,
             'comboOffers' => $comboOffersResult,
             'doctorDiscount' => $doctorDiscount,
+            'xrays' => $xraysArray,
         ]);
     }
 

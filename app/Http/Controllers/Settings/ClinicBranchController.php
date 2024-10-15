@@ -110,6 +110,7 @@ class ClinicBranchController extends Controller
             $consultationFees = $request->input('consultation_fees');
             $consultationFeesFrequency = $request->input('consultation_fees_frequency');
             $patientRegistrationFees = $request->input('patient_registration_fees');
+            $xrayAmount = $request->input('xray_amount');
             $tax = $request->input('treatment_tax')? $request->input('treatment_tax') : 0;
             $financialYearStart = $request->input('financial_year_start')? $request->input('financial_year_start') : 4;
             $financialYearEnd = $request->input('financial_year_end')? $request->input('financial_year_end') : 3;
@@ -135,6 +136,7 @@ class ClinicBranchController extends Controller
                 }
                 $clinic->clinic_insurance_available = $clinicInsurance;
                 $clinic->patient_registration_fees = $patientRegistrationFees;
+                $clinic->xray_amount = $xrayAmount;
                 $clinic->consultation_fees = $consultationFees;
                 $clinic->consultation_fees_frequency = $consultationFeesFrequency;
                 $clinic->tax = $tax;
@@ -152,6 +154,7 @@ class ClinicBranchController extends Controller
                     'clinic_logo' => $clinic_logo,
                     'clinic_insurance_available' => $request->input('insurance'),
                     'patient_registration_fees' => $request->input('patient_registration_fees'),
+                    'xray_amount' => $request->input('xray_amount'),
                     'consultation_fees' => $request->input('consultation_fees'),
                     'consultation_fees_frequency' => $request->input('consultation_fees_frequency'),
                     'tax' => $request->input('treatment_tax'),
@@ -191,6 +194,7 @@ class ClinicBranchController extends Controller
             $clinic->clinic_phone = $request->input('clinic_phone');
             $clinic->is_main_branch = $request->input('branch_active');
             $clinic->is_medicine_provided = $request->input('is_medicine_provided');
+            $clinic->is_cosmetic_clinic = $request->input('is_cosmetic_clinic');
             $clinic->clinic_address = $clinic_address;
             $clinic->country_id = $request->input('clinic_country');
             $clinic->state_id = $request->input('clinic_state');
@@ -240,6 +244,7 @@ class ClinicBranchController extends Controller
             $clinic->clinic_phone = $request->clinic_phone;
             $clinic->is_main_branch = $request->edit_branch_active;
             $clinic->is_medicine_provided = $request->edit_is_medicine_provided;
+            $clinic->is_cosmetic_clinic = $request->edit_is_cosmetic_clinic;
             $clinic->clinic_address = ucwords(strtolower($request->edit_clinic_address1)) . "<br>" . ucwords(strtolower($request->edit_clinic_address2));
             $clinic->country_id = $request->clinic_country;
             $clinic->state_id = $request->clinic_state;

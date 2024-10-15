@@ -78,6 +78,7 @@ if ($hasPrescriptionBill) {
                             <th style="width:10%;">Frequency</th>
                             <th style="width:10%;">Duration</th>
                             <th style="width:10%;">Quantity</th>
+                            <th style="width:10%;">Unit Price</th>
                             <th style="width:5%;" class="text-center">Status</th>
                             <th style="width:20%;" class="text-center">Rate
                                 ({{ $clinicBasicDetails->currency }})
@@ -92,15 +93,23 @@ if ($hasPrescriptionBill) {
                         $cashAmount = '';
                         $cardAmount = '';
                         $machineId = '';
-                        $balanceGiven = ''; ?>
+                        $balanceGiven = '';
+                        $totalamount = '';
+                        $grandtotal = '';
+                        $rowspan = 1; ?>
                         @foreach ($prescriptions as $prescription)
                             @php
-                                $i++;
+                                if ($prescription->medicine->id) {
+                                    $i++;
+                                }
                                 $isOutOfStock = $prescription->medicine->stock_status === 'Out of Stock';
                                 $totalQuantity = $prescription->medicine->stock;
                                 $medicine = $prescription->medicine;
-                                $latestPurchaseItem = $medicine->latestMedicinePurchaseItem;
-                                $price = $latestPurchaseItem ? $latestPurchaseItem->med_price : 0;
+                                // $latestPurchaseItem = $medicine->latestMedicinePurchaseItem;
+                                // $price = $latestPurchaseItem ? $latestPurchaseItem->med_price : 0;
+                                $purchaseItem = $medicine->oldesetMedicinePurchaseItem;
+                                $price = $purchaseItem ? $purchaseItem->med_price : 0;
+
                                 $isChecked = false;
                                 $quantityValue = '';
                                 $rateValue = '';
@@ -111,18 +120,34 @@ if ($hasPrescriptionBill) {
                                 $cardAmount = '';
                                 $machineId = '';
                                 $balanceGiven = '';
-
+                                $grandtotal = '';
+                                $totalamount = '';
                                 // Check if prescription bill details contain this medicine
-                                $billDetail = $prescriptionBillDetails->firstWhere(
+                                // $billDetail = $prescriptionBillDetails->firstWhere(
+                                //     'medicine_id',
+                                //     $prescription->medicine->id,
+                                // );
+
+                                // if ($billDetail) {
+                                //     $isChecked = true;
+                                //     $quantityValue = $billDetail->quantity;
+                                //     $rateValue = $billDetail->amount;
+                                //     $price = $billDetail->cost;
+                                // }
+
+                                $billDetail = $prescriptionBillDetails->where(
                                     'medicine_id',
                                     $prescription->medicine->id,
                                 );
 
-                                if ($billDetail) {
+                                if ($billDetail->count() >= 1) {
                                     $isChecked = true;
-                                    $quantityValue = $billDetail->quantity;
-                                    $rateValue = $billDetail->amount;
+                                    // $rowspan = $billDetail->count();
+                                    // $quantityValue = $billDetail->quantity;
+                                    // $rateValue = $billDetail->amount;
+                                    // $price = $billDetail->cost;
                                 }
+                                $rowspan = $billDetail->count() > 0 ? $billDetail->count() : 1;
                                 if ($hasPrescriptionBill) {
                                     $paidAmount = $hasPrescriptionBill->amount_paid;
                                     $gpayAmount = $hasPrescriptionBill->gpay;
@@ -130,35 +155,50 @@ if ($hasPrescriptionBill) {
                                     $cardAmount = $hasPrescriptionBill->card;
                                     $machineId = $hasPrescriptionBill->card_pay_id;
                                     $balanceGiven = $hasPrescriptionBill->balance_given;
+                                    $totalamount = $hasPrescriptionBill->prescription_total_amount;
+                                    $grandtotal = $hasPrescriptionBill->amount_to_be_paid;
+                                    $isOutOfStock = false;
                                 }
                             @endphp
                             <tr class="{{ $isOutOfStock ? 'bg-light text-muted' : '' }}">
-                                <td>{{ $i }}</td>
-                                <td class="text-start">
+                                <td rowspan="{{ $rowspan }}">{{ $i }}</td>
+                                <td class="text-start" rowspan="{{ $rowspan }}">
                                     <input type="checkbox" id="medicine_checkbox{{ $loop->index }}"
                                         name="medicine_checkbox[]" class="filled-in chk-col-success"
-                                        value="{{ $prescription->medicine->id }}" {{ $isChecked ? 'checked' : '' }}
-                                        data-price="{{ $price }}"
-                                        {{ $isOutOfStock ? 'disabled' : '' }} {{ $isChecked ? 'disabled' : '' }}/>
+                                        {{ $isChecked ? 'checked' : '' }} data-price="{{ $price }}"
+                                        {{ $isOutOfStock ? 'disabled' : '' }}
+                                        data-medname={{ $prescription->medicine->med_name }}
+                                        {{ $isChecked ? 'disabled' : '' }} />
                                     <label for="medicine_checkbox{{ $loop->index }}">
                                         {{ $prescription->medicine->med_name }}
                                     </label>
+                                    <input type="hidden" id="medicine_id{{ $loop->index }}" name="medicine_id[]"
+                                        value="{{ $prescription->medicine->id }}">
+                                    <input type="hidden" id="isChecked{{ $loop->index }}" name="isChecked[]"
+                                        value="Y">
+
                                 </td>
-                                <td>
+                                <td rowspan="{{ $rowspan }}">
                                     <div class="input-group col-12">
                                         <input type="number" class="form-control text-center"
-                                            id="duration{{ $loop->index }}" name="duration[]"
-                                            aria-describedby="basic-addon2" value="{{ $prescription->dose }}"
-                                            {{ $isOutOfStock ? 'disabled' : '' }} readonly>
+                                            id="dose{{ $loop->index }}" name="dose[]" aria-describedby="basic-addon2"
+                                            value="{{ $prescription->dose }}" {{ $isOutOfStock ? 'disabled' : '' }}
+                                            data-doseUnit={{ $prescription->dose_unit }}
+                                            data-doseName={{ $prescription->dosage->dos_name }} readonly>
                                         <div class="input-group-append">
                                             <span class="input-group-text"
                                                 id="basic-addon2">{{ $prescription->dose_unit }}</span>
                                         </div>
+                                        <input type="hidden" id="dose_unit{{ $loop->index }}" name="dose_unit[]"
+                                            value="{{ $prescription->dose_unit }}">
                                     </div>
                                 </td>
 
-                                <th>{{ $prescription->dosage->dos_name }}</th>
-                                <td>
+                                <th rowspan="{{ $rowspan }}">{{ $prescription->dosage->dos_name }}
+                                    <input type="hidden" id="dosage{{ $loop->index }}" name="dosage[]"
+                                        value="{{ $prescription->dosage->dos_name }}">
+                                </th>
+                                <td rowspan="{{ $rowspan }}">
                                     <div class="input-group col-12">
                                         <input type="number" class="form-control text-center"
                                             id="duration{{ $loop->index }}" name="duration[]"
@@ -169,40 +209,99 @@ if ($hasPrescriptionBill) {
                                         </div>
                                     </div>
                                 </td>
-                                <th>
-                                    <input type="number" name="quantity[]" id="quantity{{ $loop->index }}"
+
+                                @if ($billDetail->isNotEmpty())
+                                    @foreach ($billDetail as $bill)
+                                        <?php
+                                        $quantityValue = $bill->quantity;
+                                        $rateValue = $bill->amount;
+                                        $price = $bill->cost;
+                                        ?>
+                                        <td>
+                                            <input type="number" data-total-quantity="{{ $totalQuantity }}"
+                                                class="form-control text-center" {{ $isOutOfStock ? 'disabled' : '' }}
+                                                {{ $quantityValue ? 'readonly' : '' }} value="{{ $quantityValue }}">
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control text-center"
+                                                value="{{ $price }}" {{ $isOutOfStock ? 'disabled' : '' }}
+                                                readonly>
+                                        </td>
+                                        <td>
+                                            @if ($prescription->medicine->stock_status == 'In Stock' || !$isOutOfStock)
+                                                <span class="text-success" title="in stock"><i
+                                                        class="fa-solid fa-circle-check"></i></span>
+                                            @else
+                                                <span class="text-danger" title="out of stock"><i
+                                                        class="fa-solid fa-circle-xmark"></i></span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control text-center"
+                                                value="{{ $rateValue }}" aria-describedby="basic-addon2"
+                                                {{ $isOutOfStock ? 'disabled' : '' }} readonly>
+                                        </td>
+                            </tr>
+                        @endforeach
+                        </tr>
+                    @else
+                        <td rowspan="{{ $rowspan }}">
+                            {{-- <input type="number" name="quantity[]" id="quantity{{ $loop->index }}"
                                         data-total-quantity="{{ $totalQuantity }}" class="form-control text-center"
                                         {{ $isOutOfStock ? 'disabled' : '' }} {{ $quantityValue ? 'readonly' : '' }}
-                                        value="{{ $quantityValue }}">
-                                    <span id="stock_message{{ $loop->index }}" class="text-danger"></span>
-                                    <span id="quantity{{ $loop->index }}-error" class="text-danger"></span>
-                                </th>
-                                
-                                <td>
-                                    {{-- {{ $prescription->medicine->stock_status }} --}}
-                                    @if ($prescription->medicine->stock_status == 'In Stock')
-                                        <span class="text-success" title="in stock"><i
-                                                class="fa-solid fa-circle-check"></i></span>
-                                    @else
-                                        <span class="text-danger" title="out of stock"><i
-                                                class="fa-solid fa-circle-xmark"></i></span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <input type="hidden" id="unitcost{{ $loop->index }}" name="unitcost[]"
-                                        value="{{ $price }}">
-                                    <input type="text" class="form-control text-center" id="rate{{ $loop->index }}"
-                                        name="rate[]" value="{{ $rateValue }}" aria-describedby="basic-addon2"
-                                        {{ $isOutOfStock ? 'disabled' : '' }} readonly>
-                                </td>
-                            </tr>
+                                        value="{{ $quantityValue }}"> --}}
+                            <input type="number" name="quantity[]" id="quantity{{ $loop->index }}"
+                                data-total-quantity="{{ $totalQuantity }}" class="form-control text-center"
+                                onchange="checkStock({{ $prescription->medicine->id }}, {{ $loop->index }})"
+                                {{ $isOutOfStock ? 'disabled' : '' }} {{ $quantityValue ? 'readonly' : '' }}
+                                value="{{ $quantityValue }}">
+
+                            <span id="stock_message{{ $loop->index }}" class="text-danger"></span>
+                            <span id="quantity{{ $loop->index }}-error" class="text-danger"></span>
+                        </td>
+                        <td rowspan="{{ $rowspan }}">
+                            <input type="text" class="form-control text-center" id="unitcost{{ $loop->index }}"
+                                name="unitcost[]" value="{{ $price }}" {{ $isOutOfStock ? 'disabled' : '' }}
+                                readonly>
+                            {{-- <input type="hidden" id="purchase_id{{ $loop->index }}" name="purchase_id[]"> --}}
+                        </td>
+                        <td rowspan="{{ $rowspan }}">
+                            {{-- {{ $prescription->medicine->stock_status }} --}}
+                            @if ($prescription->medicine->stock_status == 'In Stock')
+                                <span class="text-success" title="in stock"><i
+                                        class="fa-solid fa-circle-check"></i></span>
+                            @else
+                                <span class="text-danger" title="out of stock"><i
+                                        class="fa-solid fa-circle-xmark"></i></span>
+                            @endif
+                        </td>
+                        <td rowspan="{{ $rowspan }}">
+                            {{-- <input type="hidden" id="unitcost{{ $loop->index }}" name="unitcost[]"
+                                        value="{{ $price }}"> --}}
+                            <input type="text" class="form-control text-center" id="rate{{ $loop->index }}"
+                                name="rate[]" value="{{ $rateValue }}" aria-describedby="basic-addon2"
+                                {{ $isOutOfStock ? 'disabled' : '' }} readonly>
+                        </td>
+                        </tr>
+                        @endif
+                        {{-- </tr> --}}
                         @endforeach
                     </tbody>
                     <tbody>
                         <tr>
-                            <th colspan="7" class="text-end">Total</th>
+                            {{-- @if (!$billDetail->isNotEmpty()) --}}
+                            @if (!$hasPrescriptionBill)
+                                <th colspan="2" class="text-start"> <button id="medicineAddRow" type="button"
+                                        class="waves-effect waves-light btn btn-sm btn-primary">
+                                        <i class="fa fa-add"></i>
+                                        Add Row
+                                    </button></th>
+                                <th colspan="6" class="text-end">Total</th>
+                            @else
+                                <th colspan="8" class="text-end">Total</th>
+                            @endif
                             <th><input type="text" class="form-control text-center" id="total" name="total"
-                                    aria-describedby="basic-addon2" readonly>
+                                    aria-describedby="basic-addon2" readonly value="{{ $totalamount }}">
                                 <span class="text-danger" id="prescTotalError">
                                     @error('total')
                                         {{ $message }}
@@ -211,7 +310,7 @@ if ($hasPrescriptionBill) {
                             </th>
                         </tr>
                         <tr>
-                            <th colspan="7" class="text-end">Tax</th>
+                            <th colspan="8" class="text-end">Tax</th>
                             <td><input type="hidden" class="form-control text-center" id="medtax" name="medtax"
                                     aria-describedby="basic-addon2" value="{{ $clinicBasicDetails->tax }}" readonly>
                                 <label>{{ $clinicBasicDetails->tax }}%</label>
@@ -224,12 +323,13 @@ if ($hasPrescriptionBill) {
                         </tr>
                         {{-- <tr> --}}
                         <tr class="bt-3 border-primary">
-                            <td colspan="7" class="text-end">
+                            <td colspan="8" class="text-end">
                                 <h3><b>Grand Total</b></h3>
                             </td>
                             <td>
                                 <input type="text" class="form-control text-center" id="grandTotal"
-                                    name="grandTotal" aria-describedby="basic-addon2" readonly>
+                                    name="grandTotal" aria-describedby="basic-addon2" readonly
+                                    value="{{ $grandtotal }}">
                                 <span class="text-danger" id="prescGrandTotalError">
                                     @error('grandTotal')
                                         {{ $message }}
@@ -238,8 +338,8 @@ if ($hasPrescriptionBill) {
                             </td>
                         </tr>
                         <tr>
-                                
-                            <td colspan="5" class="text-start">
+
+                            <td colspan="6" class="text-start">
                                 <span class="text-bold me-2">Mode of Payment:</span>
 
                                 <!-- Checkbox for Gpay -->
@@ -294,7 +394,7 @@ if ($hasPrescriptionBill) {
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="5" class="text-start">
+                            <td colspan="6" class="text-start">
                                 <input type="checkbox" name="medbalance_given" id="medbalance_given"
                                     class="filled-in chk-col-success" <?php if ($balanceGiven >0) { ?> checked <?php } ?>>
                                 <label class="form-check-label" for="medbalance_given">Balance Given</label>
@@ -302,7 +402,7 @@ if ($hasPrescriptionBill) {
                             </td>
                             <td colspan="2" class="text-end">Balance to Give Back</td>
                             <td><input type="text" name="medbalanceToGiveBack" id="medbalanceToGiveBack"
-                                    class="form-control text-center" readonly>
+                                    class="form-control text-center" readonly value="{{ $balanceGiven }}">
                                 <span class="text-danger" id="prescBalanceToGiveBackError">
                                     @error('medbalanceToGiveBack')
                                         {{ $message }}
@@ -337,5 +437,231 @@ if ($hasPrescriptionBill) {
 <script>
     var prescriptionReceiptRoute = "{{ route('medicineBilling.paymentReceipt') }}";
     var prescriptionBillingRoute = "{{ route('billing') }}";
+    var medicineStockData = @json($MedicineStock);
+    let medicinecount = {{ count($prescriptions) }};
+    const prescriptioncount = {{ count($prescriptions) }};
+
+    let rowIndex = medicinecount;
+    $(document).on("click", "#medicineAddRow", function() {
+        const tbody = document.getElementById("tablebody");
+
+        if (!tbody) {
+            console.error("No tbody element found.");
+            return;
+        }
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+        <td rowspan="1">${rowIndex+1}</td>
+        <td rowspan="1" class="d-flex justify-content-between align-items-center">
+            <input type="checkbox" id="medicine_checkbox${rowIndex}" name="medicine_checkbox[]" class="filled-in chk-col-success" />
+            <label class="checkboxselectlabel" for="medicine_checkbox${rowIndex}"></label>
+            <input type="hidden" id="isChecked${rowIndex}" name="isChecked[]" value="Y">
+            <input type="hidden" id="medicine_id${rowIndex}" name="medicine_id[]" value="">
+            <select class="form-control medicine_idselectclass" id="medicine_idselect${rowIndex}" onchange="updateMedicineId(${rowIndex}, this)"
+                name="medicine_idselect[]" style="width: 100%;" required>
+                <option value=""> Select a Medicine </option>
+                @foreach ($medicines as $medicine)
+                    <option value="{{ $medicine->id }}" data-price="{{ $medicine->med_price }}" data-name="{{ $medicine->med_name }}" data-total-quantity="{{ $medicine->stock }}">{{ $medicine->med_name }}</option>
+                @endforeach
+            </select>  
+        </td>
+        <td rowspan="1">
+            <div class="input-group">
+                <input type="text" class="form-control" id="dose${rowIndex}" name="dose[]" placeholder="Dose" aria-describedby="dose_unit${rowIndex}" required>
+                <select class="form-control input-group-text" id="dose_unit${rowIndex}" name="dose_unit[]" required >
+                    <option value="" disabled selected>Unit</option>
+                    <option value="ml">ml</option>
+                    <option value="drops">drops</option>
+                    <option value="tab">tab</option>
+                    <option value="g">g</option>
+                    <option value="mg">mg</option>
+                    <option value="cc">cc</option>
+                    <option value="pills">pills</option>
+                    <option value="units">units</option>
+                    <option value="teaspoon">teaspoon</option>
+                    <option value="tablespoon">tablespoon</option>
+                    <option value="cup">cup</option>
+                    <option value="patch">patch</option>
+                    <option value="inhaler">inhaler</option>
+                    <option value="spray">spray</option>
+                    <option value="dropper">dropper</option>
+                    <option value="vial">vial</option>
+                    <option value="ampule">ampule</option>
+                </select>
+            </div>
+        </td>
+        <td rowspan="1">
+            <select class="form-control" id="dosage${rowIndex}" name="dosage[]" required style="width: 100%;">
+                <option value=""> Select a Dosage </option>
+                @foreach ($dosages as $dosage)
+                    <option value="{{ $dosage->id }}">{{ $dosage->dos_name }}</option>
+                @endforeach
+            </select>
+        </td>
+        <td rowspan="1">
+            <div class="input-group">
+                <input type="number" min="1" max="365" class="form-control" id="duration${rowIndex}" name="duration[]" aria-describedby="basic-addon2" required>
+                <div class="input-group-append">
+                    <span class="input-group-text" id="basic-addon2">days</span>
+                </div>
+            </div>
+        </td>
+        <td rowspan="1">
+            <input type="number" name="quantity[]" id="quantity${rowIndex}" data-total-quantity="" class="form-control text-center"
+                value="">
+            <span id="stock_message${rowIndex}" class="text-danger stock_message"></span>
+            <span id="quantity${rowIndex}-error" class="text-danger qerror"></span></td>
+        <td rowspan="1"><input type="text" class="form-control text-center" id="unitcost${rowIndex}"
+                name="unitcost[]" value="" readonly></td>
+        <td rowspan="1"><span class="text-success" title="in stock"><i class="fa-solid fa-circle-check"></i></span></td>
+        <td rowspan="1"><input type="text" class="form-control text-center" id="rate${rowIndex}"
+            name="rate[]" value="" aria-describedby="basic-addon2" readonly></td>
+        `;
+
+        tbody.appendChild(row);
+
+        $(`#medicine_idselect${rowIndex}`).select2({
+            width: "100%",
+            placeholder: "Select a Medicine",
+        });
+        $(`#dosage${rowIndex}`).select2({
+            width: "100%",
+            placeholder: "Select a Dosage",
+        });
+        $(`#advice${rowIndex}`).select2({
+            width: "100%",
+        });
+        $(`#route${rowIndex}`).select2({
+            width: "100%",
+            placeholder: "Select a Route",
+        });
+        // Add event listener for the new checkbox
+        const checkbox = row.querySelector(`input[type="checkbox"]`);
+        checkbox.addEventListener("change", function() {
+            updateRateAndTotal();
+            validateBalanceGiven(); // Validate balance whenever a checkbox changes
+        });
+        // const quantityIn = row.querySelector(`input[name="quantity[]"]`);
+        // quantityIn.addEventListener("input", function() {
+        //     updateRateAndTotal();
+        //     validateBalanceGiven();
+        // });
+        rowIndex++;
+        medicinecount++;
+
+    });
+
+    window.removeRow = function(button) {
+        button.closest("tr").remove();
+        medicinecount--;
+        rowIndex--;
+        updateIds();
+    };
+
+    function updateIds() {
+        const tableBody = document.getElementById('tablebody');
+        const rows = tableBody.getElementsByTagName('tr');
+
+        for (let i = prescriptioncount; i < rows.length; i++) {
+            // Update the SL No. in the first cell
+            rows[i].cells[0].textContent = i + 1; // SL No. starts from 1
+
+            const rowIndex = i + 1; // Row index starts from 1
+
+            // Update the SL No. in the first cell
+            rows[i].cells[0].textContent = rowIndex;
+
+            const medicineCheckbox = rows[i].querySelector(`input[name="medicine_checkbox[]"]`);
+            if (medicineCheckbox) {
+                medicineCheckbox.id = `medicine_checkbox${i}`;
+            }
+
+            rows[i].querySelector(`.checkboxselectlabel`).setAttribute('for', `medicine_checkbox${i}`);
+            const isCheckedInput = rows[i].querySelector(`input[name="isChecked[]"]`);
+            if (isCheckedInput) {
+                isCheckedInput.id = `isChecked${i}`;
+            }
+            const medicine_idinput = rows[i].querySelector(`input[name="medicine_id[]"]`);
+            if (medicine_idinput) {
+                medicine_idinput.id = `medicine_id${i}`;
+            }
+
+            const medicineId = rows[i].querySelector(`.medicine_idselectclass`);
+            if (medicineId) {
+                medicineId.id = `medicine_idselect${i}`;
+            }
+
+            const doseInput = rows[i].querySelector(`input[name="dose[]"]`);
+            if (doseInput) {
+                doseInput.id = `dose${i}`;
+            }
+            const doseUnit = rows[i].querySelector(`select[name="dose_unit[]"]`);
+            if (doseUnit) {
+                doseUnit.id = `dose_unit${i}`;
+            }
+
+            const dosageSelect = rows[i].querySelector(`select[name="dosage[]"]`);
+            if (dosageSelect) {
+                dosageSelect.id = `dosage${i}`;
+            }
+
+            const durationInput = rows[i].querySelector(`input[name="duration[]"]`);
+            if (durationInput) {
+                durationInput.id = `duration${i}`;
+            }
+
+            const quantityInput = rows[i].querySelector(`input[name="quantity[]"]`);
+            if (quantityInput) {
+                quantityInput.id = `quantity${i}`;
+            }
+            rows[i].querySelector(`.stock_message`).id = `stock_message${i}`;
+            rows[i].querySelector(`.qerror`).id = `quantity${i}-error`;
+
+            const unitcostInput = rows[i].querySelector(`input[name="unitcost[]"]`);
+            if (unitcostInput) {
+                unitcostInput.id = `unitcost${i}`;
+            }
+
+            const rateInput = rows[i].querySelector(`input[name="rate[]"]`);
+            if (rateInput) {
+                rateInput.id = `rate${i}`;
+            }
+
+        }
+    }
+
+    function updateMedicineId(rowIndex, selectElement) {
+        const medicineId = selectElement.value;
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+
+        const medicineIdInput = document.getElementById(`medicine_id${rowIndex}`);
+        if (medicineIdInput) {
+            medicineIdInput.value = medicineId; // Update the hidden input with the selected medicine ID
+        }
+
+        const quantityInput = document.getElementById(`quantity${rowIndex}`);
+        quantityInput.setAttribute('onchange',
+            `checkStock(${medicineId}, ${rowIndex})`); // Update onchange
+
+        // Get medicine details from data attributes
+        if (selectedOption) {
+            const medicineCheckboxInput = document.getElementById(`medicine_checkbox${rowIndex}`);
+            if (medicineCheckboxInput) {
+                medicineCheckboxInput.setAttribute('data-price', selectedOption.getAttribute('data-price'));
+                medicineCheckboxInput.setAttribute('data-medname', selectedOption.getAttribute('data-name'));
+            }
+
+            if (quantityInput) {
+                quantityInput.setAttribute('data-total-quantity', selectedOption.getAttribute('data-total-quantity'));
+            }
+
+            // Assuming you want to update some fields based on medicineDetails
+            const unitCostInput = document.getElementById(`unitcost${rowIndex}`);
+            if (unitCostInput) {
+                unitCostInput.value = selectedOption.getAttribute('data-price'); // Adjust based on actual property name
+            }
+        }
+    }
 </script>
 <script src="{{ asset('js/prescription_billing.js') }}"></script>

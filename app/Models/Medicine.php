@@ -55,5 +55,10 @@ class Medicine extends Model
         return $this->hasOne(MedicinePurchaseItem::class, 'medicine_id')->latest('id');
     }
 
+    public function oldesetMedicinePurchaseItem()
+    {
+        return $this->hasOne(MedicinePurchaseItem::class, 'medicine_id')->where('balance', '>', 0)->oldest('id');
+    }
+
 
 }

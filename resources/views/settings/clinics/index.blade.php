@@ -51,7 +51,7 @@
                                 <div class="row d-flex justify-content-between">
                                     <div class="col-md-8 col-lg-6 col-12">
                                         <div class="box">
-                                            <div class="box-body pb-0">
+                                            <div class="box-body pb-1">
                                                 <div class="form-group">
                                                     <label class="form-label" for="clinic_name">Clinic Name <span
                                                             class="text-danger">
@@ -66,7 +66,7 @@
                                                     @enderror
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label class="form-label" for="clinic_website">Website</label>
                                                             <input
@@ -80,7 +80,7 @@
                                                             @enderror
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    {{-- <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label class="form-label" for="yes">
                                                                 Is Insurance available?<span class="text-danger">*</span>
@@ -104,10 +104,29 @@
                                                                 <div id="insuranceError" class="invalid-feedback"></div>
                                                             </div>
                                                         </div>
+                                                    </div> --}}
+                                                    <div class="col-lg-6 col-md-6">
+                                                        <div class="form-group ">
+                                                            <label class="form-label" for="clinic_logo">Logo</label>
+                                                            <input
+                                                                class="form-control @error('clinic_logo') is-invalid @enderror"
+                                                                type="file" id="clinic_logo" name="clinic_logo"
+                                                                placeholder="logo">
+                                                            @error('clinic_logo')
+                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                            @enderror
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-2 col-md-2">
+                                                        <div class="form-group">
+                                                            <canvas id="logoCanvas" style="height: 64px;"></canvas>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-md-4">
+                                                    {{-- <div class="col-md-4"> --}}
+                                                    <div class="col-md-2">
                                                         <div class="form-group">
                                                             <label class="form-label" for="tax">Tax (%)
                                                                 <span class="text-danger">
@@ -122,10 +141,15 @@
                                                             @enderror
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-4">
+                                                    {{-- <div class="col-md-4"> --}}
+                                                    <div class="col-md-3">
                                                         <div class="form-group">
-                                                            <label class="form-label"
+                                                            {{-- <label class="form-label"
                                                                 for="treatment_tax_included">Treatment Tax Included
+                                                                <span class="text-danger">
+                                                                    *</span></label> --}}
+                                                            <label class="form-label" for="treatment_tax_included">Tax
+                                                                Inclusive?
                                                                 <span class="text-danger">
                                                                     *</span></label>
                                                             <select
@@ -149,7 +173,8 @@
                                                             @enderror
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-4">
+                                                    {{-- <div class="col-md-4"> --}}
+                                                    <div class="col-md-3">
                                                         <div class="form-group">
                                                             <label class="form-label" for="currency">Currency<span
                                                                     class="text-danger">
@@ -178,12 +203,10 @@
                                                             @enderror
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="row">
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label class="form-label"
-                                                                for="patient_registration_fees">Patient Registration
+                                                                for="patient_registration_fees">Registration
                                                                 Fees<span class="text-danger">
                                                                     *</span></label>
                                                             <input
@@ -198,6 +221,26 @@
                                                             @enderror
                                                         </div>
                                                     </div>
+                                                </div>
+                                                <div class="row">
+                                                    {{-- <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label"
+                                                                for="patient_registration_fees">Patient Registration
+                                                                Fees<span class="text-danger">
+                                                                    *</span></label>
+                                                            <input
+                                                                class="form-control @error('patient_registration_fees') is-invalid @enderror"
+                                                                type="text" id="patient_registration_fees"
+                                                                name="patient_registration_fees"
+                                                                placeholder="Registration Fees" <?php// if($clinicDetails) { ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?>
+                                                                value="{{ old('patient_registration_fees', $clinicDetails->patient_registration_fees) }}"
+                                                                <?php// }?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?> ?>>
+                                                            @error('registration_fees')
+                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                            @enderror
+                                                        </div>
+                                                    </div> --}}
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label class="form-label" for="consultation_fees">Consultation
@@ -218,8 +261,8 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label class="form-label"
-                                                                for="consultation_fees_frequency">Frequency(Consult
-                                                                fee)<span class="text-danger">
+                                                                for="consultation_fees_frequency">Frequency(Cons. Fee)<span
+                                                                    class="text-danger">
                                                                     *</span></label>
                                                             <input
                                                                 class="form-control @error('consultation_fees_frequency') is-invalid @enderror"
@@ -233,12 +276,103 @@
                                                             @enderror
                                                         </div>
                                                     </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label" for="yes">Insurance
+                                                                Available?<span class="text-danger">*</span>
+                                                            </label>
+                                                            <div>
+                                                                <input name="insurance" type="radio"
+                                                                    class="form-control with-gap" id="yes"
+                                                                    value="Y"
+                                                                    @if ($clinicDetails) @if ($clinicDetails->clinic_insurance_available == 'Y') checked @endif
+                                                                    @endif
+                                                                >
+                                                                <label for="yes">Yes</label>
+
+                                                                <input name="insurance" type="radio"
+                                                                    class="form-control with-gap" id="no"
+                                                                    value="N"
+                                                                    @if ($clinicDetails) @if ($clinicDetails->clinic_insurance_available == 'N') checked @endif
+                                                                    @endif
+                                                                >
+                                                                <label for="no">No</label>
+                                                                <div id="insuranceError" class="invalid-feedback"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label" for="financial_year">Financial
+                                                                Year<span class="text-danger">
+                                                                    *</span></label>
+                                                            <div class="input-group" id="financial_year">
+                                                                <select
+                                                                    class="form-control @error('financial_year_start') is-invalid @enderror"
+                                                                    type="text" id="financial_year_start"
+                                                                    name="financial_year_start">
+                                                                    <option value="">--Select--</option>
+                                                                    @foreach ($months as $key => $month)
+                                                                        <option value="{{ $key }}"
+                                                                            <?php if ($clinicDetails) {
+                                                                                if ($clinicDetails->financial_year_start == $key) {
+                                                                                    echo 'selected';
+                                                                                }
+                                                                            } ?>>{{ $month }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+
+                                                                @error('financial_year_start')
+                                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                                @enderror
+                                                                <span class="input-group-text">-</span>
+                                                                <select
+                                                                    class="form-control @error('financial_year_end') is-invalid @enderror"
+                                                                    type="text" id="financial_year_end"
+                                                                    name="financial_year_end">
+                                                                    <option value="">--Select--</option>
+                                                                    @foreach ($months as $key => $month)
+                                                                        <option value="{{ $key }}"
+                                                                            <?php if ($clinicDetails) {
+                                                                                if ($clinicDetails->financial_year_end == $key) {
+                                                                                    echo 'selected';
+                                                                                }
+                                                                            } ?>>{{ $month }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+
+                                                                @error('financial_year_end')
+                                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label class="form-label"
-                                                                for="financial_year_start">Financial Year starting Month
+                                                                for="xray_amount">Xray Charge<span class="text-danger">
+                                                                    *</span></label>
+                                                            <input
+                                                                class="form-control @error('xray_amount') is-invalid @enderror"
+                                                                type="text" id="xray_amount"
+                                                                name="xray_amount"
+                                                                placeholder="Charge for one xray" <?php if($clinicDetails) { ?>
+                                                                value="{{ old('xray_amount', $clinicDetails->xray_amount) }}"
+                                                                <?php }?>>
+                                                            @error('xray_amount')
+                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                            @enderror
+                                                        </div>
+                                                    </div>
+                                                
+                                                    {{-- <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label class="form-label" for="financial_year_start">Financial
+                                                                Year starting Month
                                                                 <span class="text-danger">
                                                                     *</span></label>
                                                             <select
@@ -246,12 +380,13 @@
                                                                 type="text" id="financial_year_start"
                                                                 name="financial_year_start">
                                                                 <option value="">--Select--</option>
-                                                                @foreach($months as $key => $month)
-                                                                <option value="{{$key}}" <?php if ($clinicDetails) {
-                                                                    if ($clinicDetails->financial_year_start == $key) {
-                                                                        echo 'selected';
-                                                                    }
-                                                                } ?>>{{$month}}</option>
+                                                                @foreach ($months as $key => $month)
+                                                                    <option value="{{ $key }}"
+                                                                        <?php if ($clinicDetails) {
+                                                                            if ($clinicDetails->financial_year_start == $key) {
+                                                                                echo 'selected';
+                                                                            }
+                                                                        } ?>>{{ $month }}</option>
                                                                 @endforeach
                                                             </select>
 
@@ -260,10 +395,10 @@
                                                             @enderror
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-4">
                                                         <div class="form-group">
-                                                            <label class="form-label"
-                                                                for="financial_year_end">Financial Year ending Month
+                                                            <label class="form-label" for="financial_year_end">Financial
+                                                                Year ending Month
                                                                 <span class="text-danger">
                                                                     *</span></label>
                                                             <select
@@ -271,12 +406,13 @@
                                                                 type="text" id="financial_year_end"
                                                                 name="financial_year_end">
                                                                 <option value="">--Select--</option>
-                                                                @foreach($months as $key => $month)
-                                                                <option value="{{$key}}" <?php if ($clinicDetails) {
-                                                                    if ($clinicDetails->financial_year_end == $key) {
-                                                                        echo 'selected';
-                                                                    }
-                                                                } ?>>{{$month}}</option>
+                                                                @foreach ($months as $key => $month)
+                                                                    <option value="{{ $key }}"
+                                                                        <?php if ($clinicDetails) {
+                                                                            if ($clinicDetails->financial_year_end == $key) {
+                                                                                echo 'selected';
+                                                                            }
+                                                                        } ?>>{{ $month }}</option>
                                                                 @endforeach
                                                             </select>
 
@@ -284,9 +420,9 @@
                                                                 <div class="invalid-feedback">{{ $message }}</div>
                                                             @enderror
                                                         </div>
-                                                    </div>
+                                                    </div> --}}
                                                 </div>
-                                                <div class="row">
+                                                {{-- <div class="row">
                                                     <div class="col-lg-10">
                                                         <div class="form-group ">
                                                             <label class="form-label" for="clinic_logo">Logo</label>
@@ -305,7 +441,7 @@
                                                             <canvas id="logoCanvas" style="height: 64px;"></canvas>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> --}}
                                             </div>
                                             <div class="box-footer p-3 text-end">
                                                 <button type="submit" class="btn btn-success">
@@ -342,7 +478,7 @@
             var ctx = canvas.getContext('2d');
             if ('{{ $clinicDetails }}') {
 
-                var clinicLogoUrl = '{{ $clinicDetails->clinic_logo ?? "" }}';
+                var clinicLogoUrl = '{{ $clinicDetails->clinic_logo ?? '' }}';
                 var logoUrl = "{{ asset('storage/') }}/" + clinicLogoUrl;
                 if (clinicLogoUrl) {
                     var img = new Image();

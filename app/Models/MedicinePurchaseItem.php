@@ -24,6 +24,8 @@ class MedicinePurchaseItem extends Model
         'purchase_unit_price',
         'purchase_amount',
         'status',
+        'used_stock',
+        'balance',
         'created_by',
         'updated_by'
     ];
