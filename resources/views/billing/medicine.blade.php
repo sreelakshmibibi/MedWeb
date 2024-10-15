@@ -287,7 +287,8 @@ if ($hasPrescriptionBill) {
                     </tbody>
                     <tbody>
                         <tr>
-                            @if (!$billDetail->isNotEmpty())
+                            {{-- @if (!$billDetail->isNotEmpty()) --}}
+                            @if (!$hasPrescriptionBill)
                                 <th colspan="2" class="text-start"> <button id="medicineAddRow" type="button"
                                         class="waves-effect waves-light btn btn-sm btn-primary">
                                         <i class="fa fa-add"></i>
