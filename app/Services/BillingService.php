@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use DateTime;
 use App\Models\IncomeReport;
 use App\Models\CardPay;
+use App\Models\ClinicBasicDetail;
 use App\Models\TreatmentStatus;
 
 class BillingService
@@ -75,15 +76,20 @@ class BillingService
             }
         }
     
+        $xrays = 0;
         // Process current tooth examinations and filter out follow-up treatments
         foreach ($toothExaminations as $toothExamination) {
             $treatment = $toothExamination->treatment;
             $treatmentPlan = $toothExamination->treatmentPlan;
-    
+            
             if (!$treatment) {
                 continue; // Skip if no treatment data is found
             }
-    
+            if ($toothExamination->is_xray_billable == 'Y')
+            {
+                $xrays++;
+            }
+
             $treatmentId = $treatment->id;
             $treatmentName = $treatment->treat_name;
             $treatmentCost = floatval($treatment->treat_cost);
@@ -160,7 +166,19 @@ class BillingService
             // Accumulate total cost for the treatment
             $totalCost += $discountCost;
         }
-    
+        $xrayAmount = (ClinicBasicDetail::first())->xray_amount;
+
+        $xraysCharge= [
+            'treat_id' => 'Xrays',
+            'treat_name' => "Xrays",
+            'cost' => $xrayAmount,
+            'discount_percentage' => 0, // Assuming no discount for plans
+            'treat_cost' => $xrayAmount,
+            'quantity' => $xrays,
+            'subtotal' => $xrays * $xrayAmount,
+            'type' => 'xrays'
+        ];
+        $xraysAmount[] = $xraysCharge;
         // Return the processed data
         return [
             'individualTreatmentAmounts' => $individualTreatmentAmounts,
@@ -168,6 +186,7 @@ class BillingService
             'totalCost' => $totalCost,
             'selectedTreatmentIds' => array_unique($selectedTreatmentIds), // Ensure unique treatment IDs
             'selectedTreatmentPlanIds' => array_unique($selectedTreatmentPlanIds), // Ensure unique treatment plan IDs
+            'xrays' => $xraysAmount
         ];
     }
     
@@ -261,6 +280,10 @@ class BillingService
         } else if ($treatmentType == 'treatmentplan') {
         
             $patientDetailBilling->plan_id = $request->input('treatmentId' . $index);
+        } else if ($treatmentType == 'xrays') {
+            // Ensure you're setting the correct property for X-ray charges
+            $patientDetailBilling->consultation_registration_xray = $request->input('treatmentId' . $index); // Store treatmentId if needed
+            // You can also set the amount or other properties as needed
         }
     
         $patientDetailBilling->quantity = $request->input('tquantity' . $index);
@@ -281,7 +304,7 @@ class BillingService
             if (isset($inputs[$key]) && $inputs[$key] !== null) {
                 $patientDetailBilling = new PatientDetailBilling();
                 $patientDetailBilling->billing_id = $billingId;
-                $patientDetailBilling->consultation_registration = $inputs[$key];
+                $patientDetailBilling->consultation_registration_xray = $inputs[$key];
                 $patientDetailBilling->quantity = 1;
                 $patientDetailBilling->cost = (float) str_replace(',', '', $inputs[$fields['cost']]);
                 $patientDetailBilling->discount = 0;

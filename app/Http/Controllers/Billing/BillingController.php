@@ -306,6 +306,7 @@ class BillingController extends Controller
         $treatmentAmounts = $billingService->individualTreatmentAmounts($id, $appointment->patient_id);
         $individualTreatmentAmounts = $treatmentAmounts['individualTreatmentAmounts'];
         $individualTreatmentPlanAmounts = $treatmentAmounts['individualTreatmentPlanAmounts'];
+        $xrays = $treatmentAmounts['xrays'];
         $selectedTreatments = $treatmentAmounts['selectedTreatmentIds'] != null ? $treatmentAmounts['selectedTreatmentIds'] : [];
         $totalCost = $treatmentAmounts['totalCost'];
         // Fetch the doctor discount from the appointment
@@ -445,7 +446,7 @@ class BillingController extends Controller
             // }
             $cardPay = CardPay::where('status', 'Y')->get();
             if ($billExists->bill_status = PatientTreatmentBilling::BILL_GENERATED) {
-                return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'previousOutStanding', 'clinicBasicDetails', 'isMedicineProvided', 'medicineTotal', 'prescriptions', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab', 'MedicineStock', 'medicines', 'dosages', 'medicineRoutes'));
+                return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'previousOutStanding', 'clinicBasicDetails', 'isMedicineProvided', 'medicineTotal', 'prescriptions', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab', 'MedicineStock', 'medicines', 'dosages', 'medicineRoutes', 'xrays'));
             } else if ($billExists->bill_status = PatientTreatmentBilling::PAYMENT_DONE) {
                 return redirect()->route('billing.paymentReceipt')->with([
                     'billId' => $billExists->id,
@@ -457,7 +458,7 @@ class BillingController extends Controller
         }
         $cardPay = CardPay::where('status', "Y")->get();
         // if (!empty($insuranceDetails)) {
-        return view('billing.add', compact('appointment', 'individualTreatmentPlanAmounts', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction', 'insuranceDetails', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab', 'MedicineStock', 'medicines', 'dosages', 'medicineRoutes'));
+        return view('billing.add', compact('appointment', 'individualTreatmentPlanAmounts', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction', 'insuranceDetails', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab', 'MedicineStock', 'medicines', 'dosages', 'medicineRoutes', 'xrays'));
         // }
         //  else {
         //     return view('billing.generateBill', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction'));
@@ -526,6 +527,7 @@ class BillingController extends Controller
         $treatmentAmounts = $billingService->individualTreatmentAmounts($id, $appointment->patient_id);
         $individualTreatmentAmounts = $treatmentAmounts['individualTreatmentAmounts'];
         $individualTreatmentPlanAmounts = $treatmentAmounts['individualTreatmentPlanAmounts'];
+        $xrays = $treatmentAmounts['xrays'];
         $selectedTreatments = $treatmentAmounts['selectedTreatmentIds'] != null ? $treatmentAmounts['selectedTreatmentIds'] : [];
         $totalCost = $treatmentAmounts['totalCost'];
         // Fetch the doctor discount from the appointment
@@ -668,7 +670,7 @@ class BillingController extends Controller
             // }
             $cardPay = CardPay::where('status', 'Y')->get();
             if ($billExists->bill_status = PatientTreatmentBilling::BILL_GENERATED) {
-                return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'previousOutStanding', 'clinicBasicDetails', 'isMedicineProvided', 'medicineTotal', 'prescriptions', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab', 'MedicineStock', 'medicines', 'dosages', 'medicineRoutes'));
+                return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'previousOutStanding', 'clinicBasicDetails', 'isMedicineProvided', 'medicineTotal', 'prescriptions', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab', 'MedicineStock', 'medicines', 'dosages', 'medicineRoutes', 'xrays'));
             } else if ($billExists->bill_status = PatientTreatmentBilling::PAYMENT_DONE) {
                 return redirect()->route('billing.paymentReceipt')->with([
                     'billId' => $billExists->id,
@@ -680,7 +682,7 @@ class BillingController extends Controller
         }
         $cardPay = CardPay::where('status', "Y")->get();
         // if (!empty($insuranceDetails)) {
-        return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction', 'insuranceDetails', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab', 'individualTreatmentPlanAmounts', 'MedicineStock', 'medicines', 'dosages', 'medicineRoutes'));
+        return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction', 'insuranceDetails', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab', 'individualTreatmentPlanAmounts', 'MedicineStock', 'medicines', 'dosages', 'medicineRoutes', 'xrays'));
         // }
         //  else {
         //     return view('billing.generateBill', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction'));
