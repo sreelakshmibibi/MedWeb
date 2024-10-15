@@ -173,6 +173,17 @@ use App\Models\Appointment;
                                     <div id="xrayError" class="invalid-feedback"></div>
                                 </div>
                             </div>
+                            <div class="col-md-6 ">
+                                <div class="form-group">
+                                    <label class="form-label" for="is_xray_billable">Is Xray Billable?</label>
+                                    <select class="form-select" id="is_xray_billable"
+                                        name="is_xray_billable">
+                                        <option value="N">No</option>
+                                        <option value="Y">Yes</option>
+                                    </select>
+                                    <div id="planError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
                             {{-- <div class="col-md-6 ">
                                 <div class="form-group">
                                     <label class="form-label" for="remarks">Remarks</label>
@@ -180,6 +191,8 @@ use App\Models\Appointment;
                                     <div id="remarksError" class="invalid-feedback"></div>
                                 </div>
                             </div> --}}
+                        </div>
+                        <div class="row">
                             <div class="col-md-6 ">
                                 <div class="form-group">
                                     <label class="form-label" for="treatment_plan_id">Treatment Plan</label>

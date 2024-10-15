@@ -393,6 +393,20 @@ $lower_teethImages = [
                                     return false; // Exit the loop once found
                                 }
                             });
+                            var is_xray_billable = examination
+                                .is_xray_billable;
+                            $('#is_xray_billable').val(is_xray_billable);
+
+                            // Loop through options to find the corresponding text and select it
+                            $('#is_xray_billable option').each(function() {
+                                if ($(this).val() ==
+                                    is_xray_billable) {
+                                    $(this).prop('selected', true);
+                                    $('#is_xray_billable').change();
+                                    return false; // Exit the loop once found
+                                }
+                            });
+                            
                             var treatment_plan_id = examination
                                 .treatment_plan_id;
                             $('#treatment_plan_id').val(treatment_plan_id);

@@ -235,7 +235,24 @@
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-md-6">
+                                                <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label"
+                                                                for="xray_amount">Xray Charge<span class="text-danger">
+                                                                    *</span></label>
+                                                            <input
+                                                                class="form-control @error('xray_amount') is-invalid @enderror"
+                                                                type="text" id="xray_amount"
+                                                                name="xray_amount"
+                                                                placeholder="Charge for one xray" <?php if($clinicDetails) { ?>
+                                                                value="{{ old('xray_amount', $clinicDetails->xray_amount) }}"
+                                                                <?php }?>>
+                                                            @error('xray_amount')
+                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                            @enderror
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label class="form-label"
                                                                 for="financial_year_start">Financial Year starting Month
@@ -260,7 +277,7 @@
                                                             @enderror
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label class="form-label"
                                                                 for="financial_year_end">Financial Year ending Month

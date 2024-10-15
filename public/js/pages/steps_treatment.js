@@ -276,6 +276,7 @@ function getTreatmentTable(stepIndex) {
             
                     var treatments = response.toothExaminations || [];
                     var plans = Object.values(response.individualTreatmentPlanAmounts || {}); // Convert object to array
+                    var xrays =  Object.values(response.xrays || {} ); // Convert object to array
                     var comboOffers = response.comboOffer || [];
                     var doctorDiscount = response.doctorDiscount || 0;
                     var totalCost = 0;
@@ -289,7 +290,7 @@ function getTreatmentTable(stepIndex) {
                         if (isNaN(discountCost)) discountCost = 0;
                     
                         totalCost += discountCost;
-                        if (type == 'plan') {
+                        if (type == 'plan' || type == 'xray') {
                             totalCost += treatCost;
                         }
                         var treatDiscount = treat.discount_percentage || 0;
@@ -298,27 +299,32 @@ function getTreatmentTable(stepIndex) {
                             <tr>
                                 <td>${index + 1}</td>
                                 <td style="text-align:left;">${treat.treat_name} (${currency} ${treatCost.toFixed(3)})</td>
-                                <td>${discountCost} %</td>
+                                <td>${treatDiscount} %</td>
                                 <td>${currency} ${treatCost.toFixed(3)}</td>
                             </tr>
                         `;
                         tableBody.append(row);
                     }
-                    
+                    indexCounter = 0;
             
                     if (treatments.length > 0) {
-                        treatments.forEach(function (exam, index) {
-                            addRow(exam.treatment, index, 'treatment');
+                        treatments.forEach(function (exam) {
+                            addRow(exam.treatment, indexCounter++, 'treatment');
                         });
                     }
             
                     if (plans.length > 0) {
-                        plans.forEach(function (plan, index) {
-                            addRow(plan, index, 'plan');
+                        plans.forEach(function (plan) {
+                            addRow(plan, indexCounter++, 'plan');
+                        });
+                    }
+                    if (xrays.length > 0) {
+                        xrays.forEach(function (xray, index) {
+                            addRow(xray, indexCounter++, 'xray');
                         });
                     }
             
-                    if (treatments.length === 0 && plans.length === 0) {
+                    if (treatments.length === 0 && plans.length === 0 ) {
                         tableBody.append(`
                             <tr>
                                 <td colspan="4">No data available</td>
