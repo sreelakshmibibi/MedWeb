@@ -27,7 +27,7 @@ class MedicinePurchaseController extends Controller
         $this->middleware('permission:medicine purchase store', ['only' => ['store']]);
         $this->middleware('permission:medicine purchase cancel', ['only' => ['destroy']]);
         $this->middleware('permission:medicine purchase update', ['only' => ['edit', 'update']]);
-        
+
     }
     public function index()
     {
@@ -177,6 +177,8 @@ class MedicinePurchaseController extends Controller
                     'total_quantity' => $request->input('quantity')[$index],
                     'purchase_amount' => $request->input('itemAmount')[$index],
                     'status' => 'Y',
+                    'used_stock' => 0,
+                    'balance' => $request->input('quantity')[$index],
                     'created_by' => $data['created_by'],
                     'created_at' => $purchase->created_at,
                 ];
@@ -246,10 +248,10 @@ class MedicinePurchaseController extends Controller
                         $base64Id = base64_encode($row->id);
                         $idEncrypted = Crypt::encrypt($base64Id);
                         $btn = '';
-                        if (Auth::user()->can('medicine purchase') ) {
+                        if (Auth::user()->can('medicine purchase')) {
                             $btn .= '<a href="' . route('medicine.purchase.view', $idEncrypted) . '" class="me-1 waves-effect waves-light btn btn-circle btn-info btn-view btn-xs" title="view"><i class="fa fa-eye"></i></a>';
                         }
-                        
+
                         if ($row->status == 'Y' && Auth::user()->can('medicine purchase update')) {
                             $btn .= '<a href="' . route('medicine.purchase.edit', $idEncrypted) . '" class="me-1 waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs" title="edit"><i class="fa fa-pencil"></i></a>';
                         }
@@ -325,7 +327,7 @@ class MedicinePurchaseController extends Controller
 
     public function update(MedicinePurchaseRequest $request)
     {
-        
+
         $id = $request->input('purchase_id');
         \Log::info('Update Request Data:', $request->all()); // Log request data
 
@@ -430,7 +432,7 @@ class MedicinePurchaseController extends Controller
             \Log::info('Medicine purchase updated successfully:', $purchase->toArray());
 
             $items = [];
-            
+
             foreach ($request->input('item') as $index => $item) {
                 // Check if the medicine is a new one or an existing one
                 if (!is_numeric($item)) {
@@ -472,6 +474,8 @@ class MedicinePurchaseController extends Controller
                     'total_quantity' => $request->input('quantity')[$index],
                     'purchase_amount' => $request->input('itemAmount')[$index],
                     'status' => 'Y',
+                    'used_stock' => 0,
+                    'balance' => $request->input('quantity')[$index],
                     'created_by' => $data['created_by'],
                     'created_at' => $purchase->created_at,
                 ];
@@ -506,7 +510,7 @@ class MedicinePurchaseController extends Controller
                 $medicine = Medicine::find($item->medicine_id);
                 if ($medicine) {
                     // Deduct stock
-                    $medicine->stock -= $item->total_quantity; 
+                    $medicine->stock -= $item->total_quantity;
                     if ($medicine->stock <= 0) {
                         $medicine->stock = 0;// Ensure stock doesn't go negative
                         $medicine->stock_status = 'Out of Stock';
@@ -519,11 +523,11 @@ class MedicinePurchaseController extends Controller
                 }
             }
 
-           
+
             $itemStatusUpdate = MedicinePurchaseItem::where('purchase_id', $id)
                 ->update(['status' => 'N', 'updated_by' => auth()->id()]);
 
-            
+
             if ($itemStatusUpdate) {
                 $purchase->purchase_delete_reason = $request->reason;
                 $purchase->status = 'N';

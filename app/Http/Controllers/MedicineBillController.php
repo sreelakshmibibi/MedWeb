@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use App\Models\MedicinePurchaseItem;
 
 
 class MedicineBillController extends Controller
@@ -70,6 +71,24 @@ class MedicineBillController extends Controller
      */
     public function store(MedicineBillRequest $request)
     {
+        \Log::info('Request Data:', $request->all());
+        // Decode the JSON string to an array
+        // $medicineCheckbox = json_decode($request->medicine_checkbox, true);
+        // Decode the JSON string to an array
+        // $medicineCheckbox = json_decode($request->medicine_checkbox, true);
+
+        // Check if decoding was successful
+        // if (json_last_error() !== JSON_ERROR_NONE) {
+        //     return response()->json(['success' => false, 'message' => 'Invalid medicine checkbox data.'], 400);
+        // }
+
+        \Log::info('Lengths:', [
+            // 'medicine_checkbox' => is_array($medicineCheckbox) ? count($medicineCheckbox) : 0,
+            'medicine_checkbox' => count($request->medicine_checkbox),
+            'quantity' => count($request->quantity),
+            'rate' => count($request->rate),
+        ]);
+
         // Generate a unique bill_id
         $bill_id = $this->generateBillId();
         // Decode and decrypt the appointmentId
@@ -105,11 +124,29 @@ class MedicineBillController extends Controller
             ]);
 
             // Store prescription details
-            foreach ($request->quantity as $index => $quantity) {
-                if ($quantity > 0 && $request->rate[$index] > 0 && !empty($request->medicine_checkbox[$index])) {
+            // foreach ($request->quantity as $index => $quantity) {
+            // Check if the index exists in other arrays before proceeding
+            // if (!isset($request->medicine_checkbox[$index], $request->unitcost[$index], $request->rate[$index])) {
+            //     continue; // Skip to the next iteration if any index is missing
+            // }
+            // if (!isset($medicineCheckbox[$index], $request->unitcost[$index], $request->rate[$index])) {
+            //     continue; // Skip to the next iteration if any index is missing
+            // }
+            foreach ($request->isChecked as $index => $checkedvalue) {
+                if ($checkedvalue == 'N') {
+                    continue;
+                }
+                if (!isset($request->unitcost[$index], $request->rate[$index])) {
+                    continue; // Skip to the next iteration if any index is missing
+                }
+
+                $quantity = $request->quantity[$index];
+                $medicineId = $request->medicine_id[$index];
+                $med_price = $request->unitcost[$index];
+                if ($quantity > 0 && $request->rate[$index] > 0 && !empty($request->medicine_id[$index])) {
                     PrescriptionDetailBilling::create([
                         'bill_id' => $billing->id,
-                        'medicine_id' => $request->medicine_checkbox[$index],
+                        'medicine_id' => $request->medicine_id[$index],
                         'quantity' => $quantity,
                         'cost' => $request->unitcost[$index],
                         'amount' => $request->rate[$index] ?? 0,
@@ -117,13 +154,66 @@ class MedicineBillController extends Controller
                         'updated_by' => auth()->user()->id,
                         'status' => 'Y',
                     ]);
-                    $medicine = Medicine::findOrFail($request->medicine_checkbox[$index]);
+                    $medicine = Medicine::findOrFail($request->medicine_id[$index]);
                     $medStock = $medicine->stock - $quantity;
                     $medicine->stock = $medStock;
-                    if ($medStock<=0) {
+                    if ($medStock <= 0) {
                         $medicine->stock_status = 'Out of Stock';
                     }
                     $medicine->save();
+
+                    // Query stock for the medicines in prescriptions
+                    $medicineStocks = MedicinePurchaseItem::where('medicine_id', $medicineId)
+                        ->where('balance', '>', 0)
+                        ->where('med_price', '=', $med_price)
+                        ->where('status', 'Y')
+                        ->orderBy('expiry_date', 'asc')
+                        ->get();
+
+                    $totalUsed = $quantity; // Total quantity to be used
+                    foreach ($medicineStocks as $medicineStock) {
+                        if ($totalUsed <= 0) {
+                            break; // Exit if no more quantity needs to be used
+                        }
+
+                        // Determine how much can be used from this stock
+                        $usableQuantity = min($totalUsed, $medicineStock->balance);
+
+                        // Update the stock
+                        $medicineStock->balance -= $usableQuantity;
+                        $medicineStock->used_stock += $usableQuantity;
+                        $medicineStock->save(); // Save the updated stock
+
+                        // Decrement the total used quantity
+                        $totalUsed -= $usableQuantity;
+                    }
+
+                    // If there's any remaining quantity that couldn't be fulfilled
+                    if ($totalUsed > 0) {
+                        return response()->json(['error' => 'Insufficient stock for medicine ID ' . $medicineId], 400);
+                    }
+                    // Check if the prescription already exists for the given patient and app ID
+                    $existingPrescription = Prescription::where('patient_id', $request->patientId)
+                        ->where('app_id', $appId)
+                        ->where('medicine_id', $medicineId)
+                        ->first();
+                    // \Log::info('Request data:', $request->all());
+                    if (!$existingPrescription) {
+                        $prescriptionData = new Prescription();
+                        $prescriptionData->patient_id = $request->patientId;
+                        $prescriptionData->app_id = $appId;
+                        $prescriptionData->medicine_id = $medicineId;
+                        $prescriptionData->dose = $request->dose[$index] ?? null;
+                        $prescriptionData->dose_unit = $request->dose_unit[$index] ?? null;
+                        $prescriptionData->dosage_id = $request->dosage[$index] ?? 8;
+                        $prescriptionData->duration = $request->duration[$index] ?? 0;
+                        $prescriptionData->remark = 'added at bill time';
+                        $prescriptionData->prescribed_by = auth()->user()->id;
+                        $prescriptionData->created_by = auth()->user()->id;
+                        $prescriptionData->updated_by = auth()->user()->id;
+
+                        $prescriptionData->save();
+                    }
                 }
             }
             $billingService = new BillingService();
@@ -177,7 +267,7 @@ class MedicineBillController extends Controller
             DB::rollBack();
 
             //return redirect()->back()->with('error', 'Failed to create bill: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'An error occurred while processing the payment.', 'error' => 'An error occurred while processing the payment.: '.$e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'An error occurred while processing the payment.', 'error' => 'An error occurred while processing the payment.: ' . $e->getMessage()], 500);
         }
     }
 

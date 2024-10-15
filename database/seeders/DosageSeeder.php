@@ -20,5 +20,6 @@ class DosageSeeder extends Seeder
         Dosage::create(['dos_name' => '1-0-1', 'status' => 'Y']);
         Dosage::create(['dos_name' => '1-1-0', 'status' => 'Y']);
         Dosage::create(['dos_name' => '1-1-1', 'status' => 'Y']);
+        Dosage::create(['dos_name' => '0-0-0', 'status' => 'Y']);
     }
 }

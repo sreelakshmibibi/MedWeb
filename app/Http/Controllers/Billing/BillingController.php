@@ -30,6 +30,10 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\DataTables;
+use App\Models\Medicine;
+use App\Models\MedicinePurchaseItem;
+use App\Models\Dosage;
+use App\Models\MedicineRoute;
 
 class BillingController extends Controller
 {
@@ -355,18 +359,64 @@ class BillingController extends Controller
             ->where('patient_id', $appointment->patient_id)
             ->where('status', 'Y')
             ->get();
-           
+        // Extract medicine IDs from prescriptions
+        $prescriptionMedicineIds = $prescriptions->pluck('medicine.id')->toArray();
+
+        // Query stock for the medicines in prescriptions
+        // $MedicineStock = MedicinePurchaseItem::whereIn('medicine_id', $prescriptionMedicineIds)
+        //     ->where('balance', '>', 0)
+        //     ->where('status', 'Y')
+        //     ->orderBy('expiry_date', 'asc')
+        //     ->get();
+        $MedicineStock = MedicinePurchaseItem::where('balance', '>', 0)
+            ->where('status', 'Y')
+            ->orderBy('expiry_date', 'asc')
+            ->get();
+
+        $medicineAvailable = MedicinePurchaseItem::where('balance', '>', 0)
+            ->where('status', 'Y')
+            ->orderBy('expiry_date', 'asc')
+            ->get();
+        $availableMedicineIds = $medicineAvailable->pluck('medicine.id')->toArray();
+
+        // $medicines = Medicine::where('stock', '>', 0)
+        //     ->where('status', 'Y')->get();
+        // $medicines = Medicine::where('stock', '>', 0)
+        //     ->where('medicines.status', 'Y')
+        //     ->leftJoin('medicine_purchase_items', 'medicines.id', '=', 'medicine_purchase_items.medicine_id')
+        //     ->where('medicine_purchase_items.balance', '>', 0)
+        //     ->where('medicine_purchase_items.status', 'Y')
+        //     ->orderBy('medicine_purchase_items.expiry_date', 'asc')
+        //     // ->select('medicines.*', 'medicine_purchase_items.*')
+        //     ->get();
+        $medicines = Medicine::whereNotIn('medicine_id', $prescriptionMedicineIds)
+            ->where('stock', '>', 0)
+            ->where('medicines.status', 'Y')
+            ->leftJoin('medicine_purchase_items', 'medicines.id', '=', 'medicine_purchase_items.medicine_id')
+            ->where('medicine_purchase_items.med_price', '!=', null)
+            ->where('medicine_purchase_items.balance', '>', 0)
+            ->where('medicine_purchase_items.status', 'Y')
+            ->orderBy('medicine_purchase_items.expiry_date', 'asc')
+            ->select('medicines.*', 'medicine_purchase_items.med_price')
+            ->get();
+
+
+        $dosages = Dosage::all();
+        $medicineRoutes = MedicineRoute::all();
+
         $medicineTotal = 0;
         $hasPrescriptionBill = PatientPrescriptionBilling::where('appointment_id', $appointment->id)->first();
-       
+
         // Initialize prescription bill details
         if ($hasPrescriptionBill) {
 
             $prescriptionBillDetails = PrescriptionDetailBilling::where('bill_id', $hasPrescriptionBill->id)->get();
+
         } else {
             $prescriptionBillDetails = collect(); // Use an empty collection
+
         }
-        
+
         $insurance = 0;
         // Pass variables to the view
         // if (!empty($billExists)) {
@@ -395,7 +445,7 @@ class BillingController extends Controller
             // }
             $cardPay = CardPay::where('status', 'Y')->get();
             if ($billExists->bill_status = PatientTreatmentBilling::BILL_GENERATED) {
-                return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'previousOutStanding', 'clinicBasicDetails', 'isMedicineProvided', 'medicineTotal', 'prescriptions', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab'));
+                return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'previousOutStanding', 'clinicBasicDetails', 'isMedicineProvided', 'medicineTotal', 'prescriptions', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab', 'MedicineStock', 'medicines', 'dosages', 'medicineRoutes'));
             } else if ($billExists->bill_status = PatientTreatmentBilling::PAYMENT_DONE) {
                 return redirect()->route('billing.paymentReceipt')->with([
                     'billId' => $billExists->id,
@@ -407,7 +457,7 @@ class BillingController extends Controller
         }
         $cardPay = CardPay::where('status', "Y")->get();
         // if (!empty($insuranceDetails)) {
-        return view('billing.add', compact('appointment', 'individualTreatmentPlanAmounts','individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction', 'insuranceDetails', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab'));
+        return view('billing.add', compact('appointment', 'individualTreatmentPlanAmounts', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction', 'insuranceDetails', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab', 'MedicineStock', 'medicines', 'dosages', 'medicineRoutes'));
         // }
         //  else {
         //     return view('billing.generateBill', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction'));
@@ -524,11 +574,59 @@ class BillingController extends Controller
                 $comboOfferDeduction = $comboOfferActualAmount - $comboOfferApplied;
             }
         }
-        $prescriptions = Prescription::with(['medicine', 'dosage', 'medicine.latestMedicinePurchaseItem'])
+        // $prescriptions = Prescription::with(['medicine', 'dosage', 'medicine.latestMedicinePurchaseItem'])
+        $prescriptions = Prescription::with(['medicine', 'dosage', 'medicine.oldesetMedicinePurchaseItem'])
             ->where('app_id', $appointment->id)
             ->where('patient_id', $appointment->patient_id)
             ->where('status', 'Y')
             ->get();
+
+        // Extract medicine IDs from prescriptions
+        $prescriptionMedicineIds = $prescriptions->pluck('medicine.id')->toArray();
+
+        // Query stock for the medicines in prescriptions
+        // $MedicineStock = MedicinePurchaseItem::whereIn('medicine_id', $prescriptionMedicineIds)
+        //     ->where('balance', '>', 0)
+        //     ->where('med_price', '!=', null)
+        //     ->where('status', 'Y')
+        //     ->orderBy('expiry_date', 'asc')
+        //     ->get();
+        $MedicineStock = MedicinePurchaseItem::where('balance', '>', 0)
+            ->where('status', 'Y')
+            ->orderBy('expiry_date', 'asc')
+            ->get();
+        $medicineAvailable = MedicinePurchaseItem::where('balance', '>', 0)
+            ->where('status', 'Y')
+            ->orderBy('expiry_date', 'asc')
+            ->get();
+        $availableMedicineIds = $medicineAvailable->pluck('medicine.id')->toArray();
+
+        $medicines = Medicine::where('stock', '>', 0)
+            ->where('status', 'Y')->get();
+        // $medicines = Medicine::where('stock', '>', 0)
+        //     ->where('medicines.status', 'Y')
+        //     ->leftJoin('medicine_purchase_items', 'medicines.id', '=', 'medicine_purchase_items.medicine_id')
+        //     ->where('medicine_purchase_items.med_price', '!=', null)
+        //     ->where('medicine_purchase_items.balance', '>', 0)
+        //     ->where('medicine_purchase_items.status', 'Y')
+        //     ->orderBy('medicine_purchase_items.expiry_date', 'asc')
+        //     // ->select('medicines.*', 'medicine_purchase_items.*')
+        //     ->get();
+        $medicines = Medicine::whereNotIn('medicine_id', $prescriptionMedicineIds)
+            ->where('stock', '>', 0)
+            ->where('medicines.status', 'Y')
+            ->leftJoin('medicine_purchase_items', 'medicines.id', '=', 'medicine_purchase_items.medicine_id')
+            ->where('medicine_purchase_items.med_price', '!=', null)
+            ->where('medicine_purchase_items.balance', '>', 0)
+            ->where('medicine_purchase_items.status', 'Y')
+            ->orderBy('medicine_purchase_items.expiry_date', 'asc')
+            ->select('medicines.*', 'medicine_purchase_items.med_price')
+            ->get();
+
+
+        $dosages = Dosage::all();
+        $medicineRoutes = MedicineRoute::all();
+
 
         $medicineTotal = 0;
         $hasPrescriptionBill = PatientPrescriptionBilling::where('appointment_id', $appointment->id)->first();
@@ -539,8 +637,9 @@ class BillingController extends Controller
             $prescriptionBillDetails = PrescriptionDetailBilling::where('bill_id', $hasPrescriptionBill->id)->get();
         } else {
             $prescriptionBillDetails = collect(); // Use an empty collection
+
         }
-        
+
         $insurance = 0;
         // Pass variables to the view
         // if (!empty($billExists)) {
@@ -569,7 +668,7 @@ class BillingController extends Controller
             // }
             $cardPay = CardPay::where('status', 'Y')->get();
             if ($billExists->bill_status = PatientTreatmentBilling::BILL_GENERATED) {
-                return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'previousOutStanding', 'clinicBasicDetails', 'isMedicineProvided', 'medicineTotal', 'prescriptions', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab'));
+                return view('billing.generateBill', compact('appointment', 'billExists', 'detailBills', 'previousOutStanding', 'clinicBasicDetails', 'isMedicineProvided', 'medicineTotal', 'prescriptions', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab', 'MedicineStock', 'medicines', 'dosages', 'medicineRoutes'));
             } else if ($billExists->bill_status = PatientTreatmentBilling::PAYMENT_DONE) {
                 return redirect()->route('billing.paymentReceipt')->with([
                     'billId' => $billExists->id,
@@ -581,7 +680,7 @@ class BillingController extends Controller
         }
         $cardPay = CardPay::where('status', "Y")->get();
         // if (!empty($insuranceDetails)) {
-        return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction', 'insuranceDetails', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab', 'individualTreatmentPlanAmounts'));
+        return view('billing.add', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction', 'insuranceDetails', 'hasPrescriptionBill', 'prescriptionBillDetails', 'cardPay', 'activeTab', 'individualTreatmentPlanAmounts', 'MedicineStock', 'medicines', 'dosages', 'medicineRoutes'));
         // }
         //  else {
         //     return view('billing.generateBill', compact('appointment', 'individualTreatmentAmounts', 'doctorDiscount', 'totalCost', 'insuranceApproved', 'checkAppointmentCount', 'clinicBasicDetails', 'consultationFees', 'fees', 'combOffers', 'isMedicineProvided', 'prescriptions', 'comboOfferApplied', 'medicineTotal', 'insurance', 'comboOfferDeduction'));
@@ -771,7 +870,7 @@ class BillingController extends Controller
             }
 
             $appointment = Appointment::with(['patient', 'doctor', 'branch'])->find($appointmentId);
-            $billDetails = PatientDetailBilling::with(['treatment','treatmentPlan'])->where('billing_id', $billId)->get();
+            $billDetails = PatientDetailBilling::with(['treatment', 'treatmentPlan'])->where('billing_id', $billId)->get();
             $clinicDetails = ClinicBasicDetail::first();
             $clinicLogo = $clinicDetails->clinic_logo ? 'storage/' . $clinicDetails->clinic_logo : 'public/images/logo-It.png';
 
@@ -875,4 +974,94 @@ class BillingController extends Controller
             return response()->json(['error', 'Bill not cancelled.'], 200);
         }
     }
+    // public function checkStock(Request $request)
+    // {
+    //     $medicineId = $request->input('medicine_id');
+    //     $quantity = $request->input('quantity');
+
+    //     // Fetch the medicine and its latest purchase item
+    //     $medicine = Medicine::find($medicineId);
+    //     $latestPurchaseItem = $medicine->latestMedicinePurchaseItem;
+
+    //     if (!$latestPurchaseItem) {
+    //         return response()->json(['success' => false, 'message' => 'No stock available.']);
+    //     }
+
+    //     $oldStock = $latestPurchaseItem->total_quantity; // Assuming this represents available stock
+    //     $oldPrice = $latestPurchaseItem->med_price;
+
+    //     // Calculate remaining stock after requested quantity
+    //     $remainingStock = $oldStock - $quantity;
+
+    //     // If old stock is sufficient
+    //     if ($remainingStock >= 0) {
+    //         // Update the stock in the old purchase item
+    //         $latestPurchaseItem->total_quantity = $remainingStock;
+    //         // $latestPurchaseItem->save();
+
+    //         return response()->json(['success' => true, 'newPrice' => $oldPrice, 'remainingStock' => $remainingStock]);
+    //     } else {
+    //         // Use all old stock
+    //         $quantityToUseFromOldStock = $oldStock;
+
+    //         // Check for new stock availability
+    //         $newStockItem = MedicinePurchaseItem::where('medicine_id', $medicineId)
+    //             ->where('total_quantity', '>', 0)
+    //             ->where('med_price', '!=', $oldPrice) // Check if price has changed
+    //             ->first();
+
+    //         // Calculate remaining quantity needed after using old stock
+    //         $remainingQuantityNeeded = $quantity - $quantityToUseFromOldStock;
+
+    //         if ($newStockItem) {
+    //             // If new stock is available
+    //             if ($newStockItem->total_quantity >= $remainingQuantityNeeded) {
+    //                 // Update old stock to zero since it's fully utilized
+    //                 $latestPurchaseItem->total_quantity = 0;
+    //                 // $latestPurchaseItem->save();
+
+    //                 // Update the new stock
+    //                 $newStockItem->total_quantity -= $remainingQuantityNeeded;
+    //                 // $newStockItem->save();
+
+    //                 return response()->json([
+    //                     'success' => true,
+    //                     'newPrice' => $newStockItem->med_price,
+    //                     'remainingStock' => $newStockItem->total_quantity,
+    //                     'message' => 'Used old stock and new stock.'
+    //                 ]);
+    //             } else {
+    //                 // Not enough new stock, use what is available
+    //                 $newStockUsed = $newStockItem->total_quantity;
+
+    //                 // Update old stock to zero since it's fully utilized
+    //                 $latestPurchaseItem->total_quantity = 0;
+    //                 // $latestPurchaseItem->save();
+
+    //                 // Update new stock to zero since it's partially utilized
+    //                 $newStockItem->total_quantity = 0;
+    //                 // $newStockItem->save();
+
+    //                 return response()->json([
+    //                     'success' => true,
+    //                     'newPrice' => $newStockItem->med_price,
+    //                     'remainingStock' => 0,
+    //                     'message' => "Used old stock and partially used new stock. Only $newStockUsed units were available."
+    //                 ]);
+    //             }
+    //         } else {
+    //             // If no new stock, return message
+    //             $latestPurchaseItem->total_quantity = 0; // All old stock used
+    //             // $latestPurchaseItem->save();
+
+    //             return response()->json([
+    //                 'success' => true,
+    //                 'newPrice' => $oldPrice,
+    //                 'remainingStock' => 0,
+    //                 'message' => 'No new stock available. Filling with old stock.'
+    //             ]);
+    //         }
+    //     }
+    // }
+
 }
