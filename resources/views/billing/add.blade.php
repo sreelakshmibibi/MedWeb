@@ -206,8 +206,8 @@ date_default_timezone_set('Asia/Kolkata');
                                                     @foreach ($xrays as $xray)
                                                         <?php
                                                         $i++;
-                                                        $cost = is_numeric($xray['cost']) ? floatval($individualTreatmentPlanAmount['cost']) : 0;
-                                                        $subtotal = is_numeric($xray['subtotal']) ? floatval($individualTreatmentPlanAmount['subtotal']) : 0;
+                                                        $cost = is_numeric($xray['cost']) ? floatval($xray['cost']) : 0;
+                                                        $subtotal = is_numeric($xray['subtotal']) ? floatval($xray['subtotal']) : 0;
                                                         ?>
                                                         <tr>
                                                             <td>{{ $i }}</td>
