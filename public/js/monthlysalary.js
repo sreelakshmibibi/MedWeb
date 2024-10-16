@@ -13,42 +13,6 @@ $(document).ready(function () {
         $(target).collapse("toggle");
     });
 
-    function togglePaymentField(checkbox) {
-        // Get the corresponding payment input field by constructing its ID dynamically
-        var paymentMode = checkbox.value; // value is now used instead of data attribute
-        var paymentField = document.getElementById('payment_amount_' + paymentMode);
-        
-        // Enable or disable the corresponding input field based on checkbox state
-        if (checkbox.checked) {
-            paymentField.disabled = false;
-        } else {
-            paymentField.disabled = true;
-            paymentField.value = ''; // Clear value if disabled
-        }
-        
-        // Recalculate total after toggling the field
-        calculateTotalPaid();
-    }
-    
-    function calculateTotalPaid() {
-        let totalPaid = 0;
-    
-        // Loop through all payment amount input fields
-        document.querySelectorAll('.payment_amount').forEach(function(field) {
-            if (!field.disabled && field.value) {
-                totalPaid += parseFloat(field.value) || 0;
-            }
-        });
-    
-        // Update the total paid field
-        document.getElementById('total_paid').value = totalPaid.toFixed(2);
-        
-        // Optionally update the balance due (if there's a total amount field)
-        const totalDue = parseFloat(document.getElementById('total_due').value) || 0;
-        const balanceDue = totalDue - totalPaid;
-        document.getElementById('balance_due').value = balanceDue.toFixed(2);
-    }
-
     // Function to calculate the total earnings
     function calculateTotalEarnings() {
         let total = 0;
@@ -103,9 +67,11 @@ $(document).ready(function () {
 
     function calculateSalary() {
         const salary = parseFloat($("#earningstotal").val()) || 0;
-        const statDeductionsTotal = parseFloat($("#deductionstotal").val()) || 0;
+        const statDeductionsTotal =
+            parseFloat($("#deductionstotal").val()) || 0;
         const totalAdditions = parseFloat($("#additionstotal").val()) || 0;
-        const monthlyDeductionsTotal = parseFloat($("#monthlyDeductionsTotal").val()) || 0;
+        const monthlyDeductionsTotal =
+            parseFloat($("#monthlyDeductionsTotal").val()) || 0;
         const totalDeductions = statDeductionsTotal + monthlyDeductionsTotal;
 
         const netsalary = salary - totalDeductions;
@@ -120,13 +86,12 @@ $(document).ready(function () {
         const advance = parseFloat($("#advance").val()) || 0;
         const monthlySalary = netsalary + previousDue - advance;
         $("#monthlySalary").val(monthlySalary.toFixed(2));
+        
+        
     }
 
     // Attach event listener to the earnings amount inputs
-    $("input[name='incentive']").on(
-        "input change",
-        calculateTotalEarnings
-    );
+    $("input[name='incentive']").on("input change", calculateTotalEarnings);
     // Attach event listener to the additions amount inputs
     $("input[name='additionsamount[]']").on(
         "input change",
@@ -192,25 +157,6 @@ $(document).ready(function () {
         $(this).removeClass("is-invalid"); // Remove invalid class if applicable
     });
 
-    // document
-    //     .getElementById("casual_leaves")
-    //     .addEventListener("input", function () {
-    //         const casualLeavesError =
-    //             document.getElementById("casual_leavesError");
-    //         casualLeavesError.innerHTML = "";
-    //         casualLeavesError.style.display = "none"; // Hide error message
-    //         this.classList.remove("is-invalid");
-    //     });
-
-    // document
-    //     .getElementById("sick_leaves")
-    //     .addEventListener("input", function () {
-    //         const sickLeavesError = document.getElementById("sick_leavesError");
-    //         sickLeavesError.innerHTML = "";
-    //         sickLeavesError.style.display = "none"; // Hide error message
-    //         this.classList.remove("is-invalid");
-    //     });
-
     // Add input event listener for all amount fields to clear errors
     document.querySelectorAll(".amount").forEach(function (input) {
         input.addEventListener("input", function () {
@@ -235,7 +181,7 @@ $(document).ready(function () {
     });
 
     document
-        .getElementById("saveSalaryButton")
+        .getElementById("saveMonthlySalaryButton")
         .addEventListener("click", function (event) {
             event.preventDefault();
             let isValid = true;
@@ -247,49 +193,13 @@ $(document).ready(function () {
                     error.innerHTML = "";
                 });
 
-            // Validate Employee Type
-            const empType = document.getElementById("emp_type");
-            if (empType.value === "") {
-                isValid = false;
-                empType.classList.add("is-invalid");
-                document.getElementById("emp_typeError").innerHTML =
-                    "Employee Type is required.";
-                $("#emp_typeError").show();
-            } else {
-                empType.classList.remove("is-invalid");
-            }
-
-            // Validate Casual Leaves
-            // const casualLeaves = document.getElementById("casual_leaves");
-            // if (casualLeaves.value === "") {
-            //     isValid = false;
-            //     casualLeaves.classList.add("is-invalid");
-            //     document.getElementById("casual_leavesError").innerHTML =
-            //         "Total Casual Leaves are required.";
-            //     $("#casual_leavesError").show();
-            // } else {
-            //     casualLeaves.classList.remove("is-invalid");
-            // }
-
-            // Validate Sick Leaves
-            // const sickLeaves = document.getElementById("sick_leaves");
-            // if (sickLeaves.value === "") {
-            //     isValid = false;
-            //     sickLeaves.classList.add("is-invalid");
-            //     document.getElementById("sick_leavesError").innerHTML =
-            //         "Total Sick Leaves are required.";
-            //     $("#sick_leavesError").show();
-            // } else {
-            //     sickLeaves.classList.remove("is-invalid");
-            // }
-
             // Validate each section
             const earningsValid = validateSection("earningsSection");
-            const additionsValid = validateSection("additionsSection");
-            const deductionsValid = validateSection("deductionsSection");
+            // const additionsValid = validateSection("additionsSection");
+            // const deductionsValid = validateSection("deductionsSection");
 
             // Combine the section validations
-            isValid = earningsValid && additionsValid && deductionsValid;
+            // isValid = earningsValid && additionsValid && deductionsValid;
 
             // Check total fields
             const totalEarnings = document
@@ -301,6 +211,10 @@ $(document).ready(function () {
             const totalDeductions = document
                 .getElementById("deductionstotal")
                 .value.trim();
+            const totalMonthlyDeductions = document
+                .getElementById("monthlyDeductionsTotal")
+                .value.trim();
+            const monthlySalary = parseFloat(document.getElementById("monthlySalary").value.trim()) || 0;
 
             if (totalEarnings === "") {
                 isValid = false;
@@ -313,6 +227,20 @@ $(document).ready(function () {
             } else {
                 document
                     .getElementById("earningstotal")
+                    .classList.remove("is-invalid");
+            }
+
+            if (totalMonthlyDeductions === "") {
+                isValid = false;
+                document
+                    .getElementById("monthlyDeductionsTotal")
+                    .classList.add("is-invalid");
+                document.querySelector(
+                    "#monthlyDeductionsTotal + .invalid-feedback"
+                ).innerHTML = "Total deductions is required.";
+            } else {
+                document
+                    .getElementById("deductionstotal")
                     .classList.remove("is-invalid");
             }
 
@@ -344,6 +272,63 @@ $(document).ready(function () {
                     .classList.remove("is-invalid");
             }
 
+            // Validate payment method
+            const paymentMethods = document.querySelectorAll(
+                'input[name="medmode_of_payment[]"]:checked'
+            );
+            const bankAmount = document.getElementById("medbank").value.trim();
+            const cashAmount = document.getElementById("medcash").value.trim();
+            const totalPaidAmount = bankAmount + cashAmount;
+
+            if (paymentMethods.length === 0) {
+                isValid = false;
+                document.getElementById("modePaymentError").innerHTML =
+                    "At least one mode of payment is required.";
+            } else {
+                document.getElementById("modePaymentError").innerHTML = "";
+            }
+
+            // Validate bank amount if bank is selected
+            if (
+                document.getElementById("medmode_of_payment_bank").checked &&
+                bankAmount === ""
+            ) {
+                isValid = false;
+                document.getElementById("medbank").classList.add("is-invalid");
+                document.querySelector(
+                    "#medbank + .invalid-feedback"
+                ).innerHTML =
+                    "Bank amount is required if bank payment is selected.";
+            } else {
+                document
+                    .getElementById("medbank")
+                    .classList.remove("is-invalid");
+            }
+
+            // Validate cash amount if cash is selected
+            if (
+                document.getElementById("medmode_of_payment_cash").checked &&
+                cashAmount === ""
+            ) {
+                isValid = false;
+                document.getElementById("medcash").classList.add("is-invalid");
+                document.querySelector(
+                    "#medcash + .invalid-feedback"
+                ).innerHTML =
+                    "Cash amount is required if cash payment is selected.";
+            } else {
+                document
+                    .getElementById("medcash")
+                    .classList.remove("is-invalid");
+            }
+
+            if (totalPaidAmount > monthlySalary) {
+                isValid = false;
+                document.getElementById("amountPaidError").innerHTML = "Total paid amount cannot exceed monthly salary.";
+            } else {
+                document.getElementById("amountPaidError").innerHTML = "";
+            }
+
             if (!isValid) return;
 
             const form = $("#salaryForm");
@@ -373,9 +358,9 @@ $(document).ready(function () {
                             .fadeOut();
                         console.log(response);
                         if (response.status == 201) {
-                            $("#saveSalaryButton").hide();
+                            $("#saveMonthlySalaryButton").hide();
                         } else {
-                            $("#saveSalaryButton").show();
+                            $("#saveMonthlySalaryButton").show();
                             // $("#saveSalaryButton").attr("disabled", false);
                         }
                     } else if (response.error) {
@@ -413,5 +398,216 @@ $(document).ready(function () {
                 },
             });
         });
+
+        const bankInput = document.getElementById("medbank");
+        const cashInput = document.getElementById("medcash");
+    
+        // Handle checkbox changes for bank and cash
+        document
+            .getElementById("medmode_of_payment_bank")
+            .addEventListener("change", function () {
+                handleCheckboxChange();
+                calculateTotalPaid();
+            });
+        document
+            .getElementById("medmode_of_payment_cash")
+            .addEventListener("change", function () {
+                handleCheckboxChange();
+                calculateTotalPaid();
+            });
+    
+        // Trigger total calculation when bank or cash input changes
+        bankInput.addEventListener("input", function () {
+            calculateTotalPaid();
+        });
+    
+        cashInput.addEventListener("input", function () {
+            calculateTotalPaid();
+        });
+    
+        // Show or hide payment fields based on checkbox state
+        function handleCheckboxChange() {
+            const bankChecked = document.getElementById(
+                "medmode_of_payment_bank"
+            ).checked;
+            const cashChecked = document.getElementById(
+                "medmode_of_payment_cash"
+            ).checked;
+    
+            // Toggle bank input field
+            bankInput.style.display = bankChecked ? "inline-block" : "none";
+            if (!bankChecked) {
+                bankInput.value = ""; // Clear the value if the checkbox is unchecked
+            }
+    
+            // Toggle cash input field
+            cashInput.style.display = cashChecked ? "inline-block" : "none";
+            if (!cashChecked) {
+                cashInput.value = ""; // Clear the value if the checkbox is unchecked
+            }
+        }
+    
+        // Calculate the total paid and update the balance
+        function calculateTotalPaid() {
+            let totalPaid = 0;
+            let isValid = true;
+            const errorElement = document.getElementById("modePaymentError");
+            if (errorElement) {
+                errorElement.textContent = ""; // Clear previous errors
+            }
+    
+            // Calculate bank amount if it's visible
+            if (bankInput && bankInput.style.display !== "none") {
+                const bankValue = parseFloat(bankInput.value);
+                if (isNaN(bankValue) || bankValue < 0) {
+                    isValid = false;
+                    if (errorElement) {
+                        errorElement.textContent +=
+                            "Bank amount should be a valid number. ";
+                    }
+                } else {
+                    totalPaid += bankValue;
+                }
+            }
+    
+            // Calculate cash amount if it's visible
+            if (cashInput && cashInput.style.display !== "none") {
+                const cashValue = parseFloat(cashInput.value);
+                if (isNaN(cashValue) || cashValue < 0) {
+                    isValid = false;
+                    if (errorElement) {
+                        errorElement.textContent +=
+                            "Cash amount should be a valid number. ";
+                    }
+                } else {
+                    totalPaid += cashValue;
+                }
+            }
+    
+            if (isValid) {
+                document.getElementById("medamountPaid").value =
+                    totalPaid.toFixed(2);
+                document.getElementById("total_paid").value = totalPaid.toFixed(2);
+                updateBalance();
+            }
+        }
+    
+        // Update balance due
+        function updateBalance() {
+            const amountPaid =
+                parseFloat(document.getElementById("medamountPaid").value) || 0;
+            const monthlySalary =
+                parseFloat(document.getElementById("monthlySalary").value) || 0;
+    
+            const balanceDue = (monthlySalary - amountPaid).toFixed(2);
+            document.getElementById("balance_due").value =
+                amountPaid <= monthlySalary ? balanceDue : "0.00";
+        }
 });
 
+// document.addEventListener("DOMContentLoaded", (event) => {
+//     const bankInput = document.getElementById("medbank");
+//     const cashInput = document.getElementById("medcash");
+
+//     // Handle checkbox changes for bank and cash
+//     document
+//         .getElementById("medmode_of_payment_bank")
+//         .addEventListener("change", function () {
+//             handleCheckboxChange();
+//             calculateTotalPaid();
+//         });
+//     document
+//         .getElementById("medmode_of_payment_cash")
+//         .addEventListener("change", function () {
+//             handleCheckboxChange();
+//             calculateTotalPaid();
+//         });
+
+//     // Trigger total calculation when bank or cash input changes
+//     bankInput.addEventListener("input", function () {
+//         calculateTotalPaid();
+//     });
+
+//     cashInput.addEventListener("input", function () {
+//         calculateTotalPaid();
+//     });
+
+//     // Show or hide payment fields based on checkbox state
+//     function handleCheckboxChange() {
+//         const bankChecked = document.getElementById(
+//             "medmode_of_payment_bank"
+//         ).checked;
+//         const cashChecked = document.getElementById(
+//             "medmode_of_payment_cash"
+//         ).checked;
+
+//         // Toggle bank input field
+//         bankInput.style.display = bankChecked ? "inline-block" : "none";
+//         if (!bankChecked) {
+//             bankInput.value = ""; // Clear the value if the checkbox is unchecked
+//         }
+
+//         // Toggle cash input field
+//         cashInput.style.display = cashChecked ? "inline-block" : "none";
+//         if (!cashChecked) {
+//             cashInput.value = ""; // Clear the value if the checkbox is unchecked
+//         }
+//     }
+
+//     // Calculate the total paid and update the balance
+//     function calculateTotalPaid() {
+//         let totalPaid = 0;
+//         let isValid = true;
+//         const errorElement = document.getElementById("modePaymentError");
+//         if (errorElement) {
+//             errorElement.textContent = ""; // Clear previous errors
+//         }
+
+//         // Calculate bank amount if it's visible
+//         if (bankInput && bankInput.style.display !== "none") {
+//             const bankValue = parseFloat(bankInput.value);
+//             if (isNaN(bankValue) || bankValue < 0) {
+//                 isValid = false;
+//                 if (errorElement) {
+//                     errorElement.textContent +=
+//                         "Bank amount should be a valid number. ";
+//                 }
+//             } else {
+//                 totalPaid += bankValue;
+//             }
+//         }
+
+//         // Calculate cash amount if it's visible
+//         if (cashInput && cashInput.style.display !== "none") {
+//             const cashValue = parseFloat(cashInput.value);
+//             if (isNaN(cashValue) || cashValue < 0) {
+//                 isValid = false;
+//                 if (errorElement) {
+//                     errorElement.textContent +=
+//                         "Cash amount should be a valid number. ";
+//                 }
+//             } else {
+//                 totalPaid += cashValue;
+//             }
+//         }
+
+//         if (isValid) {
+//             document.getElementById("medamountPaid").value =
+//                 totalPaid.toFixed(2);
+//             document.getElementById("total_paid").value = totalPaid.toFixed(2);
+//             updateBalance();
+//         }
+//     }
+
+//     // Update balance due
+//     function updateBalance() {
+//         const amountPaid =
+//             parseFloat(document.getElementById("medamountPaid").value) || 0;
+//         const monthlySalary =
+//             parseFloat(document.getElementById("monthlySalary").value) || 0;
+
+//         const balanceDue = (monthlySalary - amountPaid).toFixed(2);
+//         document.getElementById("balance_due").value =
+//             amountPaid <= monthlySalary ? balanceDue : "0.00";
+//     }
+// });

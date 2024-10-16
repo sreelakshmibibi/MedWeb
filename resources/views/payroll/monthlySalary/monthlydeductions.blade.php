@@ -11,14 +11,14 @@
     $absenceDeduction = 0;
     $lossOfPay = 0;
     $totDt = 0;
-    if ($salaryData) {
+    if (isset($salaryData)) {
         $totalWorkingdays = $salaryData['totalWorkingDays'];
         $paidDays = $salaryData['paidDays'];
         $unPaidDays = $salaryData['unPaidDays'];
 
-        $unPaidLeave = $salaryData['unPaidLeave'];
+        $unPaidLeave = $salaryData['totalUnpaidInput'];
         $partiallyPaidLeave = $salaryData['partiallyPaidLeave'];
-        $paidLeave = $salaryData['paidLeave'];
+        $paidLeave = $salaryData['totalPaidInput'];
 
         $monthBasicPay = $salary ? $salary->netsalary : 0;
         $perDaySalary = round($monthBasicPay / $totalWorkingdays, 1);
@@ -72,10 +72,11 @@
                 placeholder="0.00" value="{{ $month }}" required readonly>
             <input type="hidden" class="form-control text-center amount" id="year" name="year"
                 placeholder="0.00" value="{{ $year }}" required readonly>
-            <input type="hidden" class="form-control text-center amount" id="salary_id " name="salary_id "
+            <input type="hidden" class="form-control text-center amount" id="salary_id" name="salary_id"
                 placeholder="0.00" value="{{ $salary->id }}" required readonly>
             <input type="hidden" class="form-control text-center amount" id="basic_salary" name="basic_salary"
                 placeholder="0.00" value="{{ $monthBasicPay }}" required readonly>
+
         </td>
         <td>
             <label for="totalWorkingDays">Total Working Days : {{ $totalWorkingdays }}</label>
@@ -84,7 +85,7 @@
         </td>
         <td>
             <input type="text" class="form-control text-center amount" name="lossOfPay" placeholder="0.00"
-                value="{{ $lossOfPay }}" required readonly>
+                value="{{ $lossOfPay }}" readonly>
 
             <div class="invalid-feedback text-start"></div>
         </td>

@@ -50,7 +50,7 @@
 
                         <div class="box-footer text-end p-3">
                             @if ($mode != 'view')
-                                <button type="submit" class="btn btn-success" id="saveSalaryButton">
+                                <button type="submit" class="btn btn-success" id="saveMonthlySalaryButton">
                                     <i class="fa fa-save"></i> {{ $mode === 'create' ? 'Save' : 'Update' }} Salary
                                 </button>
                             @endif

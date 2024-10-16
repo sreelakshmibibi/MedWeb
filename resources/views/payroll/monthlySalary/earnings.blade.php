@@ -45,7 +45,7 @@
         </td>
         <td>
             <input type="text" class="form-control text-center amount" name="incentive" placeholder="0.00"
-                value="{{ $monthlySalary ? $monthlySalary->incentives : '' }}" required {{ $mode === 'view' ? 'readonly' : '' }}>
+                value="{{ $monthlySalary ? $monthlySalary->incentives : 0 }}" {{ $mode === 'view' ? 'readonly' : '' }}>
             <div class="invalid-feedback text-start"></div>
         </td>
     </tr>
