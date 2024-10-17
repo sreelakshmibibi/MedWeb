@@ -457,6 +457,8 @@ $(document).ready(function () {
                         $("#category").val("D").trigger("change");
                         $(".itempay").hide();
                         removeAllRowsExceptFirst();
+                        // Directly update the suppliers in the dropdown
+                        updateSupplierDropdown(response.suppliers);
                     } else {
                         if (response.purchase.billfile != null) {
                             $("#uploadedBills").attr("disabled", false);
@@ -589,3 +591,16 @@ $("#btn-cancel-bill").click(function () {
         },
     });
 });
+
+function updateSupplierDropdown(suppliers) {
+    const $supplierSelect = $("#name");
+    $supplierSelect.empty(); // Clear existing options
+    $supplierSelect.append('<option value="">Select a Supplier</option>'); // Add default option
+
+    // Loop through the suppliers from the response and add them to the dropdown
+    suppliers.forEach(function (supplier) {
+        $supplierSelect.append(
+            $("<option></option>").val(supplier.id).text(supplier.name)
+        );
+    });
+}

@@ -197,7 +197,8 @@ class PurchaseController extends Controller
             PurchaseItem::insert($items);
             \Log::info('Purchase items added successfully.');
             DB::commit();
-            return response()->json(['success' => 'Purchase added successfully!', 'purchase' => $purchase, 'status' => 201], 201);
+            $suppliers = Supplier::where('status', 'Y')->get();
+            return response()->json(['success' => 'Purchase added successfully!', 'purchase' => $purchase, 'status' => 201, 'suppliers' => $suppliers], 201);
         } catch (Exception $e) {
             DB::rollback();
             \Log::error('Error storing purchase:', ['message' => $e->getMessage()]);
@@ -490,7 +491,8 @@ class PurchaseController extends Controller
             PurchaseItem::insert($items);
             \Log::info('Purchase items updated successfully.');
             DB::commit();
-            return response()->json(['success' => 'Purchase updated successfully!', 'purchase' => $purchase, 'status' => 200], 200);
+            $suppliers = Supplier::where('status', 'Y')->get();
+            return response()->json(['success' => 'Purchase updated successfully!', 'purchase' => $purchase, 'status' => 200, 'suppliers' => $suppliers], 200);
         } catch (Exception $e) {
             DB::rollback();
             \Log::error('Error updating purchase:', ['message' => $e->getMessage()]);
