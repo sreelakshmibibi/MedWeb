@@ -198,6 +198,7 @@ class BillingController extends Controller
                     $prescriptions = Prescription::where('app_id', $row->id)
                         ->where('status', 'Y')
                         ->get();
+                    $isMedicineProvided = (ClinicBranch::find($row->app_branch))->is_medicine_provided;
                     $hasPrescriptionBill = PatientPrescriptionBilling::where('appointment_id', $row->id)->first();
                     if ($row->app_status == AppointmentStatus::COMPLETED && !empty($billing) && ($billing->bill_status == PatientTreatmentBilling::BILL_CANCELLED || $billing->bill_status == PatientTreatmentBilling::BILL_GENERATED)) {
                         // if ( Auth::user()->can('bill view')) {
@@ -211,7 +212,7 @@ class BillingController extends Controller
 
                                 $buttons[] = "<a href='" . route('billing.add', ['idEncrypted' => $idEncrypted, 'tab' => 'treatbill']) . "' class='waves-effect waves-light btn btn-circle btn-secondary text-dark btn-xs me-1' title='treatment bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-t'></i></a>";
                             }
-                            if (empty($hasPrescriptionBill) && !empty($prescriptions)) {
+                            if (empty($hasPrescriptionBill) && (sizeof($prescriptions) > 0 && $isMedicineProvided == 'Y')) {
                                 $buttons[] = "<a href='" . route('billing.add', ['idEncrypted' => $idEncrypted, 'tab' => 'medbill']) . "' class='waves-effect waves-light btn btn-circle btn-warning btn-xs me-1' title='medicine bill' data-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}' data-patient-name='" . str_replace('<br>', ' ', $row->patient->first_name . ' ' . $row->patient->last_name) . "' ><i class='fa fa-m'></i></a>";
                             }
                         }
