@@ -99,27 +99,27 @@
                     </td>
                 </tr>
                 <tr>
-                    <th colspan="3" class="text-end ">Net Salary</th>
+                    <th colspan="3" class="text-end text-info">Net Salary</th>
                     <td colspan="2">
                         <input type="text" readonly name="netsalary" id="netsalary"
                             value="{{ isset($monthlySalary) ? $monthlySalary->total_salary : (isset($salary) ? $salary->netsalary : '') }}"
+                            class="form-control text-center text-bold text-info" placeholder="0.00">
+                    </td>
+                </tr>
+                <tr>
+                    <th colspan="3" class="text-end">Previous Due</th>
+                    <td colspan="2">
+                        <input type="text" readonly name="previousDue" id="previousDue"
+                            value="{{ isset($monthlySalary) ? $monthlySalary->previous_due : (isset($previousBalanceDue) ? $previousBalanceDue : 0) }}"
                             class="form-control text-center text-bold" placeholder="0.00">
                     </td>
                 </tr>
                 <tr>
-                    <th colspan="3" class="text-end text-info">Previous Due</th>
-                    <td colspan="2">
-                        <input type="text" readonly name="previousDue" id="previousDue"
-                            value="{{ isset($monthlySalary) ? $monthlySalary->previous_due : (isset($previousBalanceDue) ? $previousBalanceDue : 0) }}"
-                            class="form-control text-center text-bold text-info" placeholder="0.00">
-                    </td>
-                </tr>
-                <tr>
-                    <th colspan="3" class="text-end text-info">Advance Given</th>
+                    <th colspan="3" class="text-end">Advance Given</th>
                     <td colspan="2">
                         <input type="text" readonly name="advance" id="advance"
                             value="{{ isset($monthlySalary) ? $monthlySalary->advance_given : (isset($currentMonthAdvance) ? $currentMonthAdvance->amount : 0) }}"
-                            class="form-control text-center text-bold text-info" placeholder="0.00">
+                            class="form-control text-center text-bold" placeholder="0.00">
                         <input type="hidden" class="form-control text-center amount" id="advance_id"
                             name="advance_id" placeholder="0.00"
                             value="{{ isset($monthlySalary) ? $monthlySalary->advance_id : (isset($currentMonthAdvance) ? $currentMonthAdvance->id : '') }}"
@@ -199,11 +199,11 @@
                     </td>
                 </tr>
                 <tr>
-                    <th colspan="3" class="text-end text-info">Salary Paid Date</th>
+                    <th colspan="3" class="text-end">Salary Paid Date</th>
                     <td colspan="2">
-                        <input type="date" id="paid_on" name="paid_on"
-                            class="form-control text-center text-info" placeholder="Paid date"
-                            value="{{ isset($monthlySalary) ? $monthlySalary->paid_on : 0 }}" >
+                        <input type="date" id="paid_on" name="paid_on" class="form-control text-center"
+                            placeholder="Paid date"
+                            value="{{ isset($monthlySalary) ? $monthlySalary->paid_on : date('Y-m-d') }}">
                     </td>
                 </tr>
 

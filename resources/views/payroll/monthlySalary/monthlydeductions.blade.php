@@ -96,8 +96,9 @@
             Other Deductions
         </td>
         <td>
-            <input type="text" class="form-control text-center amount" name="deductionReason"
+            <input type="text" class="form-control text-center amount" name="deductionReason" id="deductionReason"
                 placeholder="Deduction Reason" value="{{ $monthlySalary ? $monthlySalary->deduction_reason : '' }}">
+            <div class="invalid-feedback text-start"></div>
         </td>
         <td>
             <input type="text" class="form-control text-center amount" name="monthlyDeduction" placeholder="0.00"

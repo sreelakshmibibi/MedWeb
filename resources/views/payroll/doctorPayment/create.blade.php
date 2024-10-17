@@ -120,9 +120,9 @@
                             </button>
                         </div>
                         @endif
-                    </div>
+                        {{-- </div>
 
-                    <div class="box">
+                    <div class="box"> --}}
                         <div class="box-body">
                             <div class="table-responsive">
                                 <table width="100%"

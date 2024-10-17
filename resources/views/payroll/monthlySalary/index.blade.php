@@ -105,7 +105,7 @@
                     </div>
 
                     {{-- Report --}}
-                    <div class="box no-border mb-0" id="monthlyReportDiv" style="display:none;">
+                    <div class="box-body no-border mb-0" id="monthlyReportDiv" style="display:none;">
                         <div class="table-responsive">
                             <table width="100%" id="monthlySalaryTable"
                                 class="table table-bordered table-hover table-striped mb-0 data-table text-center">
@@ -616,15 +616,15 @@
                     },
                     success: function(response) {
                         $("#modal-cancel-salary-bill").modal(
-                        "hide"); // Close modal after success
+                            "hide"); // Close modal after success
                         table.draw(); // Refresh DataTable
                         $("#successMessage").text("Salary cancelled successfully");
                         $("#successMessage").fadeIn().delay(3000)
                             .fadeOut(); // Show for 3 seconds
-                        const currentMonth = new Date().getMonth() +1; 
-                        const formattedMonth = ("0" + currentMonth).slice(-2); 
+                        const currentMonth = new Date().getMonth() + 1;
+                        const formattedMonth = ("0" + currentMonth).slice(-2);
                         const currentYear = new Date().getFullYear(); // Get the current year
-                        $('#salaryYear').val(currentYear); 
+                        $('#salaryYear').val(currentYear);
                         $('#salaryMonth').val(formattedMonth);
 
                     },
