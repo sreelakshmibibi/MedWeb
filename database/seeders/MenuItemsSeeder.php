@@ -108,7 +108,9 @@ class MenuItemsSeeder extends Seeder
             'medicine purchase store',
             'medicine purchase cancel',
             'medicine purchase update',
-
+            'monthly salary view',
+            'monthly salary create',
+            'monthly salary delete',
         ];
 
 
@@ -192,7 +194,9 @@ class MenuItemsSeeder extends Seeder
             'medicine purchase store',
             'medicine purchase cancel',
             'medicine purchase update',
-
+            'monthly salary view',
+            'monthly salary create',
+            'monthly salary delete',
         ];
 
 
