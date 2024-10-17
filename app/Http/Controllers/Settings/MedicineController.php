@@ -23,42 +23,43 @@ class MedicineController extends Controller
     {
         if ($request->ajax()) {
             $medicinePurchaseItems = MedicinePurchaseItem::with(['purchase.supplier', 'medicine']) // Eager load purchase, supplier, and medicine
-            ->get();
+                ->get();
             //Log::info('$medicinePurchaseItems: '.$medicinePurchaseItems);
             return DataTables::of($medicinePurchaseItems)
-                ->addIndexColumn() 
+                ->addIndexColumn()
                 ->addColumn('med_bar_code', function ($row) {
-                    return $row->medicine->med_bar_code ?? ''; 
+                    return $row->medicine->med_bar_code ?? '';
                 })
                 ->addColumn('med_name', function ($row) {
-                    return $row->medicine->med_name ?? ''; 
+                    return $row->medicine->med_name ?? '';
                 })
                 ->addColumn('med_company', function ($row) {
-                    return $row->medicine->med_company ?? ''; 
+                    return $row->medicine->med_company ?? '';
                 })
                 ->addColumn('stock', function ($row) {
-                    return $row->medicine->stock ?? 'N/A'; 
+                    // return $row->medicine->stock ?? 'N/A'; 
+                    return $row->balance ?? 'N/A';
                 })
                 ->addColumn('batch_no', function ($row) {
-                    return $row->batch_no ?? 'N/A'; 
+                    return $row->batch_no ?? 'N/A';
                 })
                 ->addColumn('med_price', function ($row) {
                     return $row->med_price ?? 0;
                 })
                 ->addColumn('expiry_date', function ($row) {
-                    return $row->expiry_date ? $row->expiry_date : ''; 
+                    return $row->expiry_date ? $row->expiry_date : '';
                 })
                 ->addColumn('supplier', function ($row) {
-                    return $row->purchase ? $row->purchase->supplier->name: 'N/A'; 
+                    return $row->purchase ? $row->purchase->supplier->name : 'N/A';
                 })
                 ->addColumn('total_quantity', function ($row) {
-                    return $row->total_quantity ?? 'N/A'; 
+                    return $row->total_quantity ?? 'N/A';
                 })
                 ->addColumn('purchase_amount', function ($row) {
-                    return $row->purchase_amount ?? 'N/A'; 
+                    return $row->purchase_amount ?? 'N/A';
                 })
                 ->addColumn('purchase_date', function ($row) {
-                    return $row->purchase ? $row->purchase->invoice_date : ''; 
+                    return $row->purchase ? $row->purchase->invoice_date : '';
                 })
                 ->addColumn('status', function ($row) {
                     if ($row->medicine->stock_status == "In Stock") {
@@ -70,10 +71,10 @@ class MedicineController extends Controller
                 ->addColumn('action', function ($row) {
                     return '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="' . $row->id . '"
                 data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>';
-                // <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
-                // <i class="fa fa-trash"></i></button>
+                    // <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="' . $row->id . '" title="delete">
+                    // <i class="fa fa-trash"></i></button>
                 })
-                ->rawColumns(['status', 'action']) 
+                ->rawColumns(['status', 'action'])
                 ->make(true);
 
         }
@@ -131,8 +132,8 @@ class MedicineController extends Controller
     {
         // $medicine = Medicine::with(['purchaseItems.supplier'])->find($id);
         $medicine = MedicinePurchaseItem::with(['purchase.supplier', 'medicine'])
-        ->find($id); 
-        Log::info('$EditmedicinePurchaseItems: '.$medicine);
+            ->find($id);
+        Log::info('$EditmedicinePurchaseItems: ' . $medicine);
         if (!$medicine) {
             abort(404);
         }
@@ -167,7 +168,7 @@ class MedicineController extends Controller
 
             // Save the updated medicine
             $medicine->save();
-            
+
 
             // Return JSON response for AJAX request
             if ($request->ajax()) {
