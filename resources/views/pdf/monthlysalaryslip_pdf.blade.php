@@ -419,10 +419,10 @@ header('Content-Type: text/html; charset=UTF-8');
                     <td>{{ $currency }}{{ number_format($monthlySalary->ctc, 2) }}</td>
                 </tr>
                 <tr>
-                    <td colspan="3" style="text-align: right;"><h4>CURRENT MONTH NET (A+B-C-D) </h4></td>
+                    <td colspan="3" style="text-align: right;"><h4>CURRENT MONTH NET (A-C-D) </h4></td>
                     <td><h4>{{ $currency }}{{ number_format($monthlySalary->total_salary, 2) }}<h4></td>
                 </tr>
-                @if ($monthlySalary->previous_due >0)
+                {{-- @if ($monthlySalary->previous_due >0)
                 <tr>
                     <td colspan="3" style="text-align: right;"> Previous Due Given</td>
                     <td> + {{ $currency }}{{ number_format($monthlySalary->previous_due, 2) }}</td>
@@ -445,7 +445,7 @@ header('Content-Type: text/html; charset=UTF-8');
                 <tr>
                     <td colspan="3" style="text-align: right;">CURRENT MONTH SALARY</td>
                     <td>{{ $currency }}{{ number_format($monthlySalary->amount_paid, 2) }}</td>
-                </tr>
+                </tr> --}}
             </tbody>
         </table>
 

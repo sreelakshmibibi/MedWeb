@@ -12,13 +12,12 @@ use App\Models\EmployeeType;
 use App\Models\PayHead;
 use App\Models\EmployeeSalary;
 use App\Models\Salary;
-use App\Models\EmployeeLeave;
 use App\Models\Holiday;
 use App\Models\SalaryAdvance;
 use App\Models\EmployeeMonthlySalary;
 use App\Models\EmployeeAttendance;
 use App\Models\LeaveApplication;
-use App\Http\Requests\Payroll\SalaryRequest;
+use App\Http\Requests\payroll\MonthlySalaryRequest;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -376,6 +375,9 @@ class MonthlySalaryController extends Controller
         $totalunpaidDays = $totalAbsentDays + $unPaidLeave + round($partiallyPaidLeave / 2, 1);
         $totalpaidDays = $presentDays + $paidLeave + round($partiallyPaidLeave / 2, 1);
         //Log::info('$totalpaidDays'.$totalpaidDays);
+        $totalUnpaidInput = $totalAbsentDays + $unPaidLeave;
+        $totalPaidInput = $presentDays + $paidLeave;
+
 
         return [
             'totalWorkingDays' => $totalWorkingDays,
@@ -388,6 +390,8 @@ class MonthlySalaryController extends Controller
             'partiallyPaidLeave' => $partiallyPaidLeave,
             'totalLeave' => $totalLeaveDays,
             'totalAbsent' => $totalAbsentDays,
+            'totalUnpaidInput' => $totalUnpaidInput,
+            'totalPaidInput' => $totalPaidInput,
         ];
     }
 
@@ -398,7 +402,7 @@ class MonthlySalaryController extends Controller
     {
         $id = base64_decode(Crypt::decrypt($id));
         $staff = StaffProfile::with('user')->where('user_id', $id)->first();
-        Log::info('$month' . $month);
+        
         if (!$staff) {
             abort(404);
         }
@@ -417,6 +421,7 @@ class MonthlySalaryController extends Controller
         $startDate = Carbon::create($year, $month, 1);
         $endDate = $startDate->copy()->endOfMonth();
         $salaryData = $this->generateEmployeeSalaryData($id, $startDate, $endDate);
+        Log::info('Salary Data: ' . json_encode($salaryData));
         // Fetch balance due from the previous month
         $previousMonth = Carbon::create($year, $month)->subMonth();
         $previousMonthSalary = EmployeeMonthlySalary::where('user_id', $id)
@@ -441,50 +446,50 @@ class MonthlySalaryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SalaryRequest $request)
+
+    public function store(MonthlySalaryRequest $request)
     {
         \Log::info('Request Data for Create:', $request->all());
-
         try {
             DB::beginTransaction();
-            $data = $request->validated();
-            \Log::info('Validated Data for Create:', $data);
 
-            $data['created_by'] = auth()->id(); // Get the ID of the authenticated user
-            $userId = $request->input('user_id');
+            $monthlySalary = new EmployeeMonthlySalary();
+            $monthlySalary->user_id = $request->input('user_id'); // Assuming the employee's user_id is the same as staff_id
+            $monthlySalary->month = $request->input('month');
+            $monthlySalary->year = $request->input('year');
+            $monthlySalary->working_days = $request->input('totalWorkingDays');
+            $monthlySalary->paid_days = $request->input('paid_days');
+            $monthlySalary->unpaid_days = $request->input('unpaid_days');
+            $monthlySalary->partially_paid_days = $request->input('partially_paid_days');
+            $monthlySalary->salary_id = $request->input('salary_id');
+            $monthlySalary->basic_salary = $request->input('basic_salary');
+            $monthlySalary->absence_deduction = $request->input('lossOfPay');
+            $monthlySalary->incentives = $request->input('incentive');
+            $monthlySalary->monthly_deduction = $request->input('monthlyDeduction');
+            $monthlySalary->deduction_reason = $request->input('deductionReason');
+            $monthlySalary->total_deduction = $request->input('monthlyDeductionsTotal');
+            $monthlySalary->total_earnings = $request->input('earningstotal');
+            $monthlySalary->ctc = $request->input('ctc');
+            $monthlySalary->total_salary = $request->input('netsalary');
+            $monthlySalary->previous_due = $request->input('previousDue');
+            $monthlySalary->advance_id = $request->input('advance_id');
+            $monthlySalary->advance_given = $request->input('advance');
+            $monthlySalary->amount_to_be_paid = $request->input('monthlySalary');
+            $monthlySalary->amount_paid = $request->input('total_paid') ?? null;
+            $monthlySalary->balance_due = $monthlySalary->amount_to_be_paid - ($monthlySalary->amount_paid ?? 0);
+            $monthlySalary->paid_on = $request->input('paid_on') ?? now()->toDateString();
+            $monthlySalary->cash = $request->input('medcash') ?? 0;
+            $monthlySalary->bank = $request->input('medbank') ?? 0;
+            $monthlySalary->status = 'Y';
+            $monthlySalary->created_by = auth()->user()->id;
 
-            // Create new Employee Leave
-            // $leaveData = [
-            //     'user_id' => $userId,
-            //     'employee_type_id' => $data['emp_type'],
-            //     'casual_leave_monthly' => $data['casual_leaves'],
-            //     'sick_leave_monthly' => $data['sick_leaves'],
-            //     'with_effect_from' => $request->input('with_effect_from'),
-            //     'status' => 'Y',
-            //     'created_by' => $data['created_by'],
-            // ];
-            // EmployeeLeave::create($leaveData);
+            // Save the monthly salary data
+            $monthlySalary->save();
 
-            // Handle Earnings, Additions, and Deductions
-            $this->handleSalaryEntries($request, $userId, 'create');
-
-            // Create Salary
-            Salary::create([
-                'user_id' => $userId,
-                'employee_type_id' => $data['emp_type'],
-                'salary' => $data['salary'],
-                'netsalary' => $data['netsalary'],
-                'ctc' => $data['ctc'],
-                'etotal' => $data['earningstotal'],
-                'satotal' => $data['additionstotal'],
-                'sdtotal' => $data['deductionstotal'],
-                'status' => 'Y',
-                'created_by' => $data['created_by'],
-            ]);
-
-            \Log::info('Salary items created successfully.');
+            \Log::info('Employee salary data saved successfully.');
             DB::commit();
             return response()->json(['success' => 'Salary created successfully!', 'status' => 201], 201);
+
         } catch (Exception $e) {
             DB::rollback();
             \Log::error('Error creating salary:', ['message' => $e->getMessage()]);
@@ -532,113 +537,6 @@ class MonthlySalaryController extends Controller
         return view('payroll.monthlySalary.create', compact('staff', 'employeeType', 'payHeads', 'mode', 'EPayHeads', 'SAPayHeads', 'SDPayHeads', 'employeesalary', 'salary', 'monthlySalary', 'month', 'year'));
 
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-
-
-    /**
-     * Update the specified resource in storage.
-     */
-
-
-    private function handleSalaryEntries($request, $userId, $action)
-    {
-        // Handle Earnings
-        $earningspayHeadIds = $request->input('earningspay_head_id');
-        $earningsamounts = $request->input('earningsamount');
-        $earningseffectDates = $request->input('earningseffect_date');
-
-        foreach ($earningspayHeadIds as $index => $payHeadId) {
-            if ($action === 'update') {
-                // Update existing record and include updated_by
-                EmployeeSalary::updateOrCreate(
-                    ['user_id' => $userId, 'pay_head_id' => $payHeadId],
-                    [
-                        'amount' => $earningsamounts[$index],
-                        'with_effect_from' => $earningseffectDates[$index],
-                        // 'created_by' => auth()->id(), // Keep the original creator
-                        'updated_by' => auth()->id(), // Set the updater
-                        'status' => 'Y',
-                    ]
-                );
-            } else {
-                // Create new record
-                EmployeeSalary::create([
-                    'user_id' => $userId,
-                    'pay_head_id' => $payHeadId,
-                    'amount' => $earningsamounts[$index],
-                    'with_effect_from' => $earningseffectDates[$index],
-                    'created_by' => auth()->id(),
-                    'status' => 'Y',
-                ]);
-            }
-        }
-
-        // Handle Additions
-        $additionspayHeadIds = $request->input('additionspay_head_id');
-        $additionsamounts = $request->input('additionsamount');
-        $additionseffectDates = $request->input('additionseffect_date');
-
-        foreach ($additionspayHeadIds as $index => $payHeadId) {
-            if ($action === 'update') {
-                // Update existing record and include updated_by
-                EmployeeSalary::updateOrCreate(
-                    ['user_id' => $userId, 'pay_head_id' => $payHeadId],
-                    [
-                        'amount' => $additionsamounts[$index],
-                        'with_effect_from' => $additionseffectDates[$index],
-                        // 'created_by' => auth()->id(), // Keep the original creator
-                        'updated_by' => auth()->id(), // Set the updater
-                        'status' => 'Y',
-                    ]
-                );
-            } else {
-                // Create new record
-                EmployeeSalary::create([
-                    'user_id' => $userId,
-                    'pay_head_id' => $payHeadId,
-                    'amount' => $additionsamounts[$index],
-                    'with_effect_from' => $additionseffectDates[$index],
-                    'created_by' => auth()->id(),
-                    'status' => 'Y',
-                ]);
-            }
-        }
-
-        // Handle Earnings
-        $deductionspayHeadIds = $request->input('deductionspay_head_id');
-        $deductionsamounts = $request->input('deductionsamount');
-        $deductionseffectDates = $request->input('deductionseffect_date');
-
-        foreach ($deductionspayHeadIds as $index => $payHeadId) {
-            if ($action === 'update') {
-                // Update existing record and include updated_by
-                EmployeeSalary::updateOrCreate(
-                    ['user_id' => $userId, 'pay_head_id' => $payHeadId],
-                    [
-                        'amount' => $deductionsamounts[$index],
-                        'with_effect_from' => $deductionseffectDates[$index],
-                        // 'created_by' => auth()->id(), // Keep the original creator
-                        'updated_by' => auth()->id(), // Set the updater
-                        'status' => 'Y',
-                    ]
-                );
-            } else {
-                // Create new record
-                EmployeeSalary::create([
-                    'user_id' => $userId,
-                    'pay_head_id' => $payHeadId,
-                    'amount' => $deductionsamounts[$index],
-                    'with_effect_from' => $deductionseffectDates[$index],
-                    'created_by' => auth()->id(),
-                    'status' => 'Y',
-                ]);
-            }
-        }
-    }
-
 
 
     /**
