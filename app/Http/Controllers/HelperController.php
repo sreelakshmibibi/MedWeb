@@ -282,9 +282,11 @@ class HelperController extends Controller
                         'teeth_name' => 'Row : ' . $teethName,
                     ];
                 } else if ($examination->face_part) {
+                    $faceParts = json_decode($examination->face_part, true);
+
                     return [
                         'teeth_id' => 'Face Part:' . $examination->face_part,
-                        'teeth_name' => 'Face Part:' . $examination->face_part,
+                        'teeth_name' => 'Face Part:' . implode(',',$faceParts),
                     ];
                 }
 
