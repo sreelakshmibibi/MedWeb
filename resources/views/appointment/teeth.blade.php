@@ -132,12 +132,13 @@ use App\Models\Appointment;
                                     <label class="form-label" for="facepart">Face Part <span class="text-danger">
                                             *</span></label>
                                     <select class="form-control form-select" required id="facepart"
-                                        name="facepart[]" data-placeholder="Select a Part" style="width: 100%;"
+                                        name="face_part[]" data-placeholder="Select a Part" style="width: 100%;"
                                         multiple>
                                         @foreach ($faceparts as $part)
                                             <option value="{{ $part->face_part }}">{{ $part->face_part }}</option>
                                         @endforeach
                                     </select>
+                                    <div id="facepartError" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
@@ -595,6 +596,10 @@ use App\Models\Appointment;
         }
 
         $('#modal-teeth').on('shown.bs.modal', function(e) {
+            $('.form-select').select2({
+                dropdownParent: $('#modal-teeth'),
+                width: "100%",
+            });
             if ($('.exam_toothdiv').is(':hidden')) {
                 removeChiefComplaintInput();
                 addChiefComplaintInput('.chief_exam');
@@ -654,52 +659,59 @@ use App\Models\Appointment;
         $('#newTreatmentBtn').click(function() {
             // Reset previous error messages
             resetErrors();
-
-            // Validate form inputs
-            var toothScore = $('#tooth_score_id').val();
             var complaint = $('#chief_complaint').val();
-            var disease = $('#disease_id').val();
-            var hpi = $('#hpi').val();
-            var dexam = $('#dental_examination').val();
-            var diagnosis = $('#diagnosis').val();
             var xray = $('#xray').prop('files');
             var treatment = $('#treatment_id').val();
             var remarks = $('#remarks').val();
             var treatment_status = $('#treatment_status').val();
 
-            // Basic client-side validation
-            if (!toothScore) {
-                $('#tooth_score_id').addClass('is-invalid');
-                $('#toothScoreError').text('Tooth Score is required.');
+            const rowId = $('#row_id').val();
+
+            if (rowId == "cosmetics") {
+                var facepart = $('#facepart').val();
+                if (!facepart) {
+                    $('#facepart').addClass('is-invalid');
+                    $('#facepartError').text('Face Part is required.');
+                }
+            } else {
+                // Validate form inputs
+                var toothScore = $('#tooth_score_id').val();
+                var disease = $('#disease_id').val();
+                var hpi = $('#hpi').val();
+                var dexam = $('#dental_examination').val();
+                var diagnosis = $('#diagnosis').val();
+
+                // Basic client-side validation
+                if (!toothScore) {
+                    $('#tooth_score_id').addClass('is-invalid');
+                    $('#toothScoreError').text('Tooth Score is required.');
+                }
+
+                if (!disease) {
+                    $('#disease_id').addClass('is-invalid');
+                    $('#diseaseError').text('Disease is required.');
+                }
+
+                // if (!hpi) {
+                //     $('#hpi').addClass('is-invalid');
+                //     $('#hpiError').text('HPI is required.');
+                // }
+
+                if (!dexam) {
+                    $('#dental_examination').addClass('is-invalid');
+                    $('#dexamError').text('Dental Examination is required.');
+                }
+
+                if (!diagnosis) {
+                    $('#diagnosis').addClass('is-invalid');
+                    $('#diagnosisError').text('Diagnosis is required.');
+                }
             }
 
             if (!complaint) {
                 $('#chief_complaint').addClass('is-invalid');
                 $('#complaintError').text('Chief Complaint is required.');
             }
-
-            if (!disease) {
-                $('#disease_id').addClass('is-invalid');
-                $('#diseaseError').text('Disease is required.');
-            }
-
-            // if (!hpi) {
-            //     $('#hpi').addClass('is-invalid');
-            //     $('#hpiError').text('HPI is required.');
-            // }
-
-            if (!dexam) {
-                $('#dental_examination').addClass('is-invalid');
-                $('#dexamError').text('Dental Examination is required.');
-            }
-
-            if (!diagnosis) {
-                $('#diagnosis').addClass('is-invalid');
-                $('#diagnosisError').text('Diagnosis is required.');
-            }
-
-
-
             if (!treatment) {
                 $('#treatment_id').addClass('is-invalid');
                 $('#treatmentError').text('Treatment is required.');
@@ -708,8 +720,6 @@ use App\Models\Appointment;
                 $('#treatment_status').addClass('is-invalid');
                 $('#treatmentStatusError').text('Status is required.');
             }
-
-
             // If all validations pass, submit the form via AJAX
             var form = $('#form-teeth');
             var url = form.attr('action');

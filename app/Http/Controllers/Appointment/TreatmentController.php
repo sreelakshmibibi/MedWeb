@@ -131,7 +131,7 @@ class TreatmentController extends Controller
         $toothIds = ToothExamination::where('patient_id', $appointment->patient->patient_id)
             ->where('app_id', '<=', $id)
             ->where('status', 'Y')
-            ->select('app_id', 'tooth_id', 'row_id', 'anatomy_image', 'treatment_status', 'lingual_condn', 'labial_condn', 'occulusal_condn', 'distal_condn', 'mesial_condn', 'palatal_condn', 'buccal_condn')
+            ->select('app_id', 'tooth_id', 'row_id', 'face_part', 'anatomy_image', 'treatment_status', 'lingual_condn', 'labial_condn', 'occulusal_condn', 'distal_condn', 'mesial_condn', 'palatal_condn', 'buccal_condn')
             ->get();
         if ($request->ajax()) {
             return DataTables::of($previousAppointments)
@@ -280,7 +280,21 @@ class TreatmentController extends Controller
         $toothExamination = [];
         $appointment = Appointment::find($appId);
         $parentAppId = $appointment->app_parent_id;
-        if (in_array($toothId, [1, 2, 3, 4, 5])) {
+        if ($toothId == "cosmetics") {
+            $toothExamination = ToothExamination::where('face_part', '!=', null)
+                ->where('patient_id', $patientId)
+                ->where('app_id', $appId)
+                ->where('status', 'Y')
+                ->first();
+            if ($parentAppId != null && $toothExamination == null) {
+                $toothExamination = ToothExamination::where('face_part', '!=', null)
+                    ->where('patient_id', $patientId)
+                    ->where('app_id', $parentAppId)
+                    ->where('status', 'Y')
+                    ->first();
+            }
+
+        } else if (in_array($toothId, [1, 2, 3, 4, 5])) {
             $toothExamination = ToothExamination::where('row_id', $toothId)
                 ->where('patient_id', $patientId)
                 ->where('app_id', $appId)
@@ -350,7 +364,17 @@ class TreatmentController extends Controller
         try {
             DB::beginTransaction();
             $checkExists = [];
-            if (in_array($request->row_id, [1, 2, 3, 4, 5])) {
+            if ($request->row_id == "cosmetics") {
+                $request->merge(['row_id' => null]);
+                $checkExists = ToothExamination::where('face_part', '!=', null)
+                    ->where('patient_id', $request->patient_id)
+                    ->where('app_id', $request->app_id)
+                    ->where('status', 'Y')
+                    ->get();
+                $request->merge(['dental_examination' => 'NA']);
+                $request->merge(['diagnosis' => 'NA']);
+
+            } else if (in_array($request->row_id, [1, 2, 3, 4, 5])) {
 
                 $checkExists = ToothExamination::where('row_id', $request->row_id)
                     ->where('patient_id', $request->patient_id)
@@ -372,6 +396,26 @@ class TreatmentController extends Controller
                     $check->save();
                 }
             }
+
+            foreach ($request->input('face_part') as $index => $item) {
+                $facePartName = ucwords(strtolower($item)); // Normalize the input
+
+                // Check if the face part already exists
+                $existingFacePart = FacePart::where('face_part', $facePartName)->first();
+
+                if ($existingFacePart) {
+                    // If it exists, you can choose to skip or update the existing record
+                    // $facePartId = $existingFacePart->id; // Get the existing ID if needed
+                } else {
+                    // Create new FacePart record
+                    $facePart = FacePart::create([
+                        'face_part' => $facePartName,
+                        'created_at' => now(),
+                    ]);
+                    // $facePartId = $facePart->id; // Get the new ID
+                }
+            }
+
             // $toothExamination = new ToothExamination();
             $toothId = $request->tooth_id;
             $row_id = $request->selected_row;
@@ -398,21 +442,28 @@ class TreatmentController extends Controller
 
                 }
             } else {
-                // Create new Disease record
-                $disease = Disease::create([
-                    'name' => ucwords(strtolower($request->disease_id)),
-                    'status' => 'Y',
-                    'created_by' => auth()->user()->id,
-                    'updated_by' => auth()->user()->id,
-                ]);
-                $diseaseId = $disease->id;
+                if ($request->disease_id == "") {
+                    $diseaseId = null;
+                } else {
+                    // Create new Disease record
+                    $disease = Disease::create([
+                        'name' => ucwords(strtolower($request->disease_id)),
+                        'status' => 'Y',
+                        'created_by' => auth()->user()->id,
+                        'updated_by' => auth()->user()->id,
+                    ]);
+                    $diseaseId = $disease->id;
+                }
             }
+            $facePart = json_encode($request->input('face_part'));
             $request->merge(['disease_id' => $diseaseId]);
+            $request->merge(['face_part' => $facePart]);
             $toothExamination = ToothExamination::create($request->only([
                 'app_id',
                 'patient_id',
                 'tooth_id',
                 'row_id',
+                'face_part',
                 'tooth_score_id',
                 'chief_complaint',
                 'disease_id',

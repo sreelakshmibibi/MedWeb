@@ -74,7 +74,8 @@ $lower_teethImages = [
 <div class=" row">
     <div class="alert alert-success" id="successMessage" style="display:none;"></div>
     <div class="row" style="left:2rem; top:0;">
-        <div class="col-lg-1 col-md-2 col-sm-2">
+        {{-- <div class="col-lg-1 col-md-2 col-sm-2"> --}}
+        <div class="mb-2">
             <input type="checkbox" id="checkbox_all" class="filled-in chk-col-success" value="<?= TeethRow::RowAll ?>">
             <label for="checkbox_all">Other</label>
         </div>
@@ -238,6 +239,7 @@ $lower_teethImages = [
         toothData.forEach(function(tooth) {
             var toothId = tooth.tooth_id;
             var rowId = tooth.row_id;
+            var facepart = tooth.face_part;
             var treatStatus = tooth.treatment_status;
             if (toothId != null) {
                 var anatomyImage = tooth.anatomy_image;
@@ -264,6 +266,10 @@ $lower_teethImages = [
                 } else {
                     $(rowId).addClass('follow');
                 }
+            }
+            console.log(facepart);
+            if (facepart != null) {
+                $('#checkbox_cos').prop('checked', true);
             }
         });
 
@@ -720,6 +726,10 @@ $lower_teethImages = [
                             $('#uploadedXrays').attr('data-id', null);
                             $('#xtooth_exam_id').val('');
                         }
+                        $('.form-select').select2({
+                            dropdownParent: $('#modal-teeth'),
+                            width: "100%",
+                        });
                     },
 
                 });
@@ -802,7 +812,7 @@ $lower_teethImages = [
             $('.dentalSections').hide();
             $('.cosmeticSection').show();
             $('#row_id').val('cosmetics');
-            // getRowData(5, patientId, appId);
+            getRowData('cosmetics', patientId, appId);
             $('#modal-teeth').modal('show');
 
         } else {
@@ -820,7 +830,7 @@ $lower_teethImages = [
                 $('.cosmeticSection').show();
                 $('.exam_chiefComplaint').show();
                 $('#row_id').val('cosmetics');
-                // getRowData(5, patientId, appId);
+                getRowData('cosmetics', patientId, appId);
                 $('#modal-teeth').modal('show');
 
             } else {
@@ -959,8 +969,6 @@ $lower_teethImages = [
                         .examination; // Assuming there's only one item in the array
 
                     if (examination != null) {
-
-
                         // Set the value of tooth_score_id field
                         var toothScoreId = examination.tooth_score_id;
                         $('#tooth_score_id').val(toothScoreId);
@@ -990,6 +998,27 @@ $lower_teethImages = [
                                 return false; // Exit the loop once found
                             }
                         });
+                        console.log(examination.face_part);
+                        // if (!Array.isArray(examination.face_part)) {
+                        //     examination.face_part = [examination
+                        //         .face_part
+                        //     ]; // Convert to array if it's not
+                        // }
+                        var faceparts = examination.face_part;
+
+                        if (faceparts) {
+                            faceparts = JSON.parse(faceparts); // Adjust the delimiter as needed
+
+                            for (var i = 0; i < faceparts.length; i++) {
+                                $('#facepart option').each(function() {
+                                    if ($(this).val().toLowerCase() == faceparts[i]
+                                        .toLowerCase()) {
+                                        $(this).prop('selected', true);
+                                        return false; // Exit the loop once found
+                                    }
+                                });
+                            }
+                        }
 
                         var treatment_id = examination.treatment_id;
                         $('#treatment_id').val(treatment_id);
@@ -1042,6 +1071,43 @@ $lower_teethImages = [
                         $('#uploadedXrays').attr('data-id', null);
                         $('#xtooth_exam_id').val('');
                     }
+                    $('.form-select').select2({
+                        dropdownParent: $('#modal-teeth'),
+                        width: "100%",
+                    });
+                    $("#facepart").select2({
+                        dropdownParent: $('#modal-teeth'),
+                        width: "100%",
+                        placeholder: "Select a Part",
+                        tags: true,
+                        tokenSeparators: [","],
+                        createTag: function(params) {
+                            var term = $.trim(params.term);
+                            if (term === "") {
+                                return null;
+                            }
+                            // Check if the term already exists as an option
+                            var found = false;
+                            // $(".treatment_id_select option").each(function() {
+                            $(".facepart option").each(function() {
+                                if ($.trim($(this).text()) === term) {
+                                    found = true;
+                                    return false; // Exit the loop early
+                                }
+                            });
+                            if (!found) {
+                                return {
+                                    id: term,
+                                    text: term,
+                                    newTag: true
+                                };
+                            }
+                            return null;
+                        },
+                        insertTag: function(data, tag) {
+                            data.push(tag);
+                        }
+                    });
                 },
 
             });
