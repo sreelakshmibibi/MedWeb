@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
+use App\Models\Prescription;
 
 class AppointmentController extends Controller
 {
@@ -86,13 +87,13 @@ class AppointmentController extends Controller
                     ->first();
 
                 // $appointments = $appointments->where('app_branch', $clinicBranchId);
-                
+
 
                 // Check if the clinicBranchId is not null or empty
                 if (!empty($clinicBranchId)) {
                     // Convert the string to an array
                     $clinicBranchIdsArray = explode(',', $clinicBranchId);
-      
+
                     // Filter appointments based on the clinic branch IDs
                     $appointments = $appointments->whereIn('app_branch', $clinicBranchIdsArray);
                 }
@@ -212,9 +213,14 @@ class AppointmentController extends Controller
                     if ($row->app_status == AppointmentStatus::WAITING) {
                         $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' id='btn-appStatus' data-id='$row->id' class='waves-effect waves-light btn btn-circle btn-info btn-xs me-1' title='change status to scheduled'><i class='fa-solid fa-sliders'></i></a>";
                     }
+                    $prescriptions = Prescription::where('app_id', $row->id)
+                        ->where('status', 'Y')
+                        ->get();
                     if ($row->app_status == AppointmentStatus::COMPLETED) {
                         $buttons[] = "<button type='button' class='waves-effect waves-light btn btn-circle btn-secondary btn-treatment-pdf-generate btn-xs me-1' title='Download Treatment Summary' data-bs-toggle='modal' data-app-id='{$row->id}' data-parent-id='{$parent_id}' data-patient-id='{$row->patient->patient_id}'  data-bs-target='#modal-download'><i class='fa fa-download'></i></button>";
-                        $buttons[] = "<a href='#' class='waves-effect waves-light btn btn-circle btn-prescription-pdf-generate btn-warning btn-xs me-1' title='Download Prescription' data-app-id='{$row->id}' data-patient-id='{$row->patient->patient_id}' ><i class='fa fa-prescription'></i></a>";
+                        if (sizeof($prescriptions) > 0) {
+                            $buttons[] = "<a href='#' class='waves-effect waves-light btn btn-circle btn-prescription-pdf-generate btn-warning btn-xs me-1' title='Download Prescription' data-app-id='{$row->id}' data-patient-id='{$row->patient->patient_id}' ><i class='fa fa-prescription'></i></a>";
+                        }
                     }
 
                     return implode('', $buttons);
