@@ -69,13 +69,24 @@ function getDentalTable(stepIndex) {
                                         rowName = row5;
                                     }
                                 }
+                                // teethName = exam.tooth_id
+                                //     ? exam.teeth.teeth_name
+                                //     : exam.row_id;
                                 teethName = exam.tooth_id
                                     ? exam.teeth.teeth_name
-                                    : exam.row_id;
+                                    : exam.row_id
+                                    ? exam.row_id
+                                    : "cosmetics";
                                 teethNameDisplay = exam.tooth_id
                                     ? exam.teeth.teeth_name
-                                    : "Row : " + rowName;
-                                teethType = exam.tooth_id ? "Teeth" : "Row";
+                                    : exam.row_id
+                                    ? "Row : " + rowName
+                                    : "Cosmetics";
+                                teethType = exam.tooth_id
+                                    ? "Teeth"
+                                    : exam.row_id
+                                    ? "Row"
+                                    : "";
                                 // Check if there are x-ray images
                                 if (
                                     exam.x_ray_images &&
@@ -103,9 +114,9 @@ function getDentalTable(stepIndex) {
                                     <td>${teethNameDisplay}</td>
                                     <td>${exam.chief_complaint}</td>
                                     <td>${
-                                        exam.disease ? exam.disease.name : ""
+                                        exam.disease ? exam.disease.name : "-"
                                     }</td>
-                                    <td>${exam.hpi}</td>
+                                    <td>${exam.hpi ? exam.hpi : "-"}</td>
                                     <td>${exam.dental_examination}</td>
                                     <td>${exam.diagnosis}</td>
                                     <td>${viewDocumentsButton}</td>
@@ -273,32 +284,36 @@ function getTreatmentTable(stepIndex) {
                 success: function (response) {
                     var tableBody = $("#chargetablebody");
                     tableBody.empty(); // Clear any existing rows
-            
+
                     var treatments = response.toothExaminations || [];
-                    var plans = Object.values(response.individualTreatmentPlanAmounts || {}); // Convert object to array
-                    var xrays =  Object.values(response.xrays || {} ); // Convert object to array
+                    var plans = Object.values(
+                        response.individualTreatmentPlanAmounts || {}
+                    ); // Convert object to array
+                    var xrays = Object.values(response.xrays || {}); // Convert object to array
                     var comboOffers = response.comboOffer || [];
                     var doctorDiscount = response.doctorDiscount || 0;
                     var totalCost = 0;
-            
+
                     function addRow(treat, index, type) {
                         var treatCost = parseFloat(treat.treat_cost);
                         var discountCost = parseFloat(treat.discount_cost);
-                    
+
                         // Ensure treatCost and discountCost are valid numbers
                         if (isNaN(treatCost)) treatCost = 0;
                         if (isNaN(discountCost)) discountCost = 0;
-                    
+
                         totalCost += discountCost;
-                        if (type == 'plan' || type == 'xray') {
+                        if (type == "plan" || type == "xray") {
                             totalCost += treatCost;
                         }
                         var treatDiscount = treat.discount_percentage || 0;
-                    
+
                         var row = `
                             <tr>
                                 <td>${index + 1}</td>
-                                <td style="text-align:left;">${treat.treat_name} (${currency} ${treatCost.toFixed(3)})</td>
+                                <td style="text-align:left;">${
+                                    treat.treat_name
+                                } (${currency} ${treatCost.toFixed(3)})</td>
                                 <td>${treatDiscount} %</td>
                                 <td>${currency} ${treatCost.toFixed(3)}</td>
                             </tr>
@@ -306,25 +321,29 @@ function getTreatmentTable(stepIndex) {
                         tableBody.append(row);
                     }
                     indexCounter = 0;
-            
+
                     if (treatments.length > 0) {
                         treatments.forEach(function (exam) {
-                            addRow(exam.treatment, indexCounter++, 'treatment');
+                            addRow(exam.treatment, indexCounter++, "treatment");
                         });
                     }
-            
+
                     if (plans.length > 0) {
                         plans.forEach(function (plan) {
-                            addRow(plan, indexCounter++, 'plan');
+                            addRow(plan, indexCounter++, "plan");
                         });
                     }
                     if (xrays.length > 0) {
                         xrays.forEach(function (xray, index) {
-                            addRow(xray, indexCounter++, 'xray');
+                            addRow(xray, indexCounter++, "xray");
                         });
                     }
-            
-                    if (treatments.length === 0 && plans.length === 0 && xrays.length === 0) {
+
+                    if (
+                        treatments.length === 0 &&
+                        plans.length === 0 &&
+                        xrays.length === 0
+                    ) {
                         tableBody.append(`
                             <tr>
                                 <td colspan="4">No data available</td>
@@ -338,8 +357,6 @@ function getTreatmentTable(stepIndex) {
                     console.error("Error fetching treatment table data:", xhr);
                 },
             });
-            
-            
         })
         .fail(function (xhr) {
             console.error("Error fetching session data:", xhr);

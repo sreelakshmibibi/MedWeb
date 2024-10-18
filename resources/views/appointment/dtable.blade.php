@@ -251,14 +251,25 @@ use Illuminate\Support\Facades\Session;
         var patientId = '<?= Session::get('patientId') ?>';
         var divId = '#div' + teethName;
         $(divId).addClass('blue'); //new
+
         if (teethType == 'Row') {
             $('.exam_chiefComplaint').show();
             $('.exam_toothdiv').hide();
-        } else {
+            $('.dentalSections').show();
+            $('.cosmeticSection').hide();
+        } else if (teethType == 'Teeth') {
             $('.exam_chiefComplaint').hide();
             $('.exam_toothdiv').show();
+            $('.dentalSections').show();
+            $('.cosmeticSection').hide();
+        } else {
+            $('.exam_chiefComplaint').show();
+            $('.exam_toothdiv').hide();
+            $('.dentalSections').hide();
+            $('.cosmeticSection').show();
         }
 
+        $('#row_id').val(teethName);
         $('#tooth_id').val(teethName);
         $('#xteeth_id').val(teethName); //new
         $('#app_id').val(appId);
@@ -339,42 +350,21 @@ use Illuminate\Support\Facades\Session;
                         // });
                     }
 
-                    $(".disease_id_select").select2("destroy");
-                    $(".disease_id_select").select2({
-                        dropdownParent: $('#modal-teeth'),
-                        width: "100%",
-                        placeholder: "Select a Disease",
-                        tags: true,
-                        tokenSeparators: [","],
-                        createTag: function(params) {
-                            var term = $.trim(params.term);
-                            if (term === "") {
-                                return null;
-                            }
-                            // Check if the term already exists as an option
-                            var found = false;
-                            $(".treatment_id_select option")
-                                .each(function() {
-                                    if ($.trim($(this)
-                                            .text()) ===
-                                        term) {
-                                        found = true;
-                                        return false; // Exit the loop early
-                                    }
-                                });
-                            if (!found) {
-                                return {
-                                    id: term,
-                                    text: term,
-                                    newTag: true
-                                };
-                            }
-                            return null;
-                        },
-                        insertTag: function(data, tag) {
-                            data.push(tag);
+                    var faceparts = examination.face_part;
+
+                    if (faceparts) {
+                        faceparts = JSON.parse(faceparts); // Adjust the delimiter as needed
+
+                        for (var i = 0; i < faceparts.length; i++) {
+                            $('#facepart option').each(function() {
+                                if ($(this).val().toLowerCase() == faceparts[i]
+                                    .toLowerCase()) {
+                                    $(this).prop('selected', true);
+                                    return false; // Exit the loop once found
+                                }
+                            });
                         }
-                    });
+                    }
 
                     var treatment_id = examination.treatment_id;
                     $('#treatment_id').val(treatment_id);
@@ -388,7 +378,7 @@ use Illuminate\Support\Facades\Session;
                     });
 
                     var is_xray_billable = examination
-                                .is_xray_billable;
+                        .is_xray_billable;
                     $('#is_xray_billable').val(is_xray_billable);
 
                     // Loop through options to find the corresponding text and select it
@@ -669,6 +659,79 @@ use Illuminate\Support\Facades\Session;
 
 
                 $('#teethXrayDiv').hide();
+                $('.form-select').select2({
+                    dropdownParent: $('#modal-teeth'),
+                    width: "100%",
+                });
+                $(".disease_id_select").select2("destroy");
+                $(".disease_id_select").select2({
+                    dropdownParent: $('#modal-teeth'),
+                    width: "100%",
+                    placeholder: "Select a Disease",
+                    tags: true,
+                    tokenSeparators: [","],
+                    createTag: function(params) {
+                        var term = $.trim(params.term);
+                        if (term === "") {
+                            return null;
+                        }
+                        // Check if the term already exists as an option
+                        var found = false;
+                        $(".treatment_id_select option")
+                            .each(function() {
+                                if ($.trim($(this)
+                                        .text()) ===
+                                    term) {
+                                    found = true;
+                                    return false; // Exit the loop early
+                                }
+                            });
+                        if (!found) {
+                            return {
+                                id: term,
+                                text: term,
+                                newTag: true
+                            };
+                        }
+                        return null;
+                    },
+                    insertTag: function(data, tag) {
+                        data.push(tag);
+                    }
+                });
+                $("#facepart").select2({
+                    dropdownParent: $('#modal-teeth'),
+                    width: "100%",
+                    placeholder: "Select a Part",
+                    tags: true,
+                    tokenSeparators: [","],
+                    createTag: function(params) {
+                        var term = $.trim(params.term);
+                        if (term === "") {
+                            return null;
+                        }
+                        // Check if the term already exists as an option
+                        var found = false;
+                        // $(".treatment_id_select option").each(function() {
+                        $(".facepart option").each(function() {
+                            if ($.trim($(this).text()) === term) {
+                                found = true;
+                                return false; // Exit the loop early
+                            }
+                        });
+                        if (!found) {
+                            return {
+                                id: term,
+                                text: term,
+                                newTag: true
+                            };
+                        }
+                        return null;
+                    },
+                    insertTag: function(data, tag) {
+                        data.push(tag);
+                    }
+                });
             },
 
         });
@@ -689,12 +752,23 @@ use Illuminate\Support\Facades\Session;
             $('#tooth_id').val('');
             $('.exam_chiefComplaint').show();
             $('.exam_toothdiv').hide();
-        } else {
+            $('.dentalSections').show();
+            $('.cosmeticSection').hide();
+        } else if (teethType == 'Teeth') {
             $('#tooth_id').val(teethName);
             $('#xteeth_id').val(teethName);
             $('#row_id').val('');
             $('.exam_chiefComplaint').hide();
             $('.exam_toothdiv').show();
+            $('.dentalSections').show();
+            $('.cosmeticSection').hide();
+        } else {
+            $('#row_id').val(teethName);
+            $('#tooth_id').val('');
+            $('.exam_chiefComplaint').show();
+            $('.exam_toothdiv').hide();
+            $('.dentalSections').hide();
+            $('.cosmeticSection').show();
         }
 
         //new
@@ -777,42 +851,21 @@ use Illuminate\Support\Facades\Session;
                         // });
                     }
 
-                    $(".disease_id_select").select2("destroy");
-                    $(".disease_id_select").select2({
-                        dropdownParent: $('#modal-teeth'),
-                        width: "100%",
-                        placeholder: "Select a Disease",
-                        tags: true,
-                        tokenSeparators: [","],
-                        createTag: function(params) {
-                            var term = $.trim(params.term);
-                            if (term === "") {
-                                return null;
-                            }
-                            // Check if the term already exists as an option
-                            var found = false;
-                            $(".treatment_id_select option")
-                                .each(function() {
-                                    if ($.trim($(this)
-                                            .text()) ===
-                                        term) {
-                                        found = true;
-                                        return false; // Exit the loop early
-                                    }
-                                });
-                            if (!found) {
-                                return {
-                                    id: term,
-                                    text: term,
-                                    newTag: true
-                                };
-                            }
-                            return null;
-                        },
-                        insertTag: function(data, tag) {
-                            data.push(tag);
+                    var faceparts = examination.face_part;
+
+                    if (faceparts) {
+                        faceparts = JSON.parse(faceparts); // Adjust the delimiter as needed
+
+                        for (var i = 0; i < faceparts.length; i++) {
+                            $('#facepart option').each(function() {
+                                if ($(this).val().toLowerCase() == faceparts[i]
+                                    .toLowerCase()) {
+                                    $(this).prop('selected', true);
+                                    return false; // Exit the loop once found
+                                }
+                            });
                         }
-                    });
+                    }
 
                     var treatment_id = examination.treatment_id;
                     $('#treatment_id').val(treatment_id);
@@ -826,7 +879,7 @@ use Illuminate\Support\Facades\Session;
                     });
 
                     var is_xray_billable = examination
-                                .is_xray_billable;
+                        .is_xray_billable;
                     $('#is_xray_billable').val(is_xray_billable);
 
                     // Loop through options to find the corresponding text and select it
@@ -838,7 +891,7 @@ use Illuminate\Support\Facades\Session;
                             return false; // Exit the loop once found
                         }
                     });
-                    
+
                     var treatment_plan_id = examination.treatment_plan_id;
                     $('#treatment_plan_id').val(treatment_plan_id);
 
@@ -1117,6 +1170,80 @@ use Illuminate\Support\Facades\Session;
                     $('#uploadedXrays').attr('data-id', null);
                     $('#xtooth_exam_id').val('');
                 }
+
+                $('.form-select').select2({
+                    dropdownParent: $('#modal-teeth'),
+                    width: "100%",
+                });
+                $(".disease_id_select").select2("destroy");
+                $(".disease_id_select").select2({
+                    dropdownParent: $('#modal-teeth'),
+                    width: "100%",
+                    placeholder: "Select a Disease",
+                    tags: true,
+                    tokenSeparators: [","],
+                    createTag: function(params) {
+                        var term = $.trim(params.term);
+                        if (term === "") {
+                            return null;
+                        }
+                        // Check if the term already exists as an option
+                        var found = false;
+                        $(".disease_id_select option")
+                            .each(function() {
+                                if ($.trim($(this)
+                                        .text()) ===
+                                    term) {
+                                    found = true;
+                                    return false; // Exit the loop early
+                                }
+                            });
+                        if (!found) {
+                            return {
+                                id: term,
+                                text: term,
+                                newTag: true
+                            };
+                        }
+                        return null;
+                    },
+                    insertTag: function(data, tag) {
+                        data.push(tag);
+                    }
+                });
+                $("#facepart").select2({
+                    dropdownParent: $('#modal-teeth'),
+                    width: "100%",
+                    placeholder: "Select a Part",
+                    tags: true,
+                    tokenSeparators: [","],
+                    createTag: function(params) {
+                        var term = $.trim(params.term);
+                        if (term === "") {
+                            return null;
+                        }
+                        // Check if the term already exists as an option
+                        var found = false;
+                        // $(".treatment_id_select option").each(function() {
+                        $(".facepart option").each(function() {
+                            if ($.trim($(this).text()) === term) {
+                                found = true;
+                                return false; // Exit the loop early
+                            }
+                        });
+                        if (!found) {
+                            return {
+                                id: term,
+                                text: term,
+                                newTag: true
+                            };
+                        }
+                        return null;
+                    },
+                    insertTag: function(data, tag) {
+                        data.push(tag);
+                    }
+                });
             },
 
         });

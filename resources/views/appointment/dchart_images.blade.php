@@ -993,12 +993,7 @@ $lower_teethImages = [
                                 return false; // Exit the loop once found
                             }
                         });
-                        console.log(examination.face_part);
-                        // if (!Array.isArray(examination.face_part)) {
-                        //     examination.face_part = [examination
-                        //         .face_part
-                        //     ]; // Convert to array if it's not
-                        // }
+
                         var faceparts = examination.face_part;
 
                         if (faceparts) {
