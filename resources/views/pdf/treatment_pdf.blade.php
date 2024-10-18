@@ -262,7 +262,19 @@ date_default_timezone_set('Asia/Kolkata');
                                 Unknown Row
                         @endswitch
                     @elseif ($examination->face_part)
-                        Face Part : {{ $examination->face_part }}
+                        <?php $faceParts = json_decode($examination->face_part, true);
+
+                            // Check if the decoding was successful
+                            if (is_array($faceParts)) {
+                                // Create a comma-separated string from the array
+                                $formattedFaceParts = implode(', ', $faceParts); ?>
+                                 Face Part: {{ $formattedFaceParts}} 
+                            <?php
+                            } else { ?>
+                                Face Part: Invalid data
+                           <?php }
+                        ?>
+                        
                     @endif
                 </h5>
                 <table class="info-table">

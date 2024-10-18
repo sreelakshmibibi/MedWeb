@@ -196,7 +196,17 @@ class TreatmentController extends Controller
                             };
                             return "<li>{$teethName}</li>";
                         } else if($examination->face_part != null) {
-                            return $examination->face_part;
+                            $faceParts = json_decode($examination->face_part, true);
+
+                            // Check if the decoding was successful
+                            if (is_array($faceParts)) {
+                                // Create a comma-separated string from the array
+                                $formattedFaceParts = implode(', ', $faceParts);
+                                return 'Face Part: ' . $formattedFaceParts;
+                            } else {
+                                // Handle the case where decoding fails
+                                return 'Face Part: Invalid data';
+                            }
                         }
                         return '';
                     })->implode('');
