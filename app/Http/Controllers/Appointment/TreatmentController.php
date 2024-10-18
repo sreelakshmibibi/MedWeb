@@ -28,6 +28,7 @@ use App\Models\TreatmentPlan;
 use App\Models\TreatmentStatus;
 use App\Models\TreatmentType;
 use App\Models\XRayImage;
+use App\Models\FacePart;
 use App\Services\AnatomyService;
 use App\Services\AppointmentService;
 use App\Services\CommonService;
@@ -63,7 +64,7 @@ class TreatmentController extends Controller
         }
         $appAction = 'Treatment';
         $bills = PatientTreatmentBilling::where('appointment_id', $appointment->id)->where('status', 'Y')->get();
-        if (($appointment->app_date < date('Y-m-d') || $bills->isNotEmpty()) && ($appointment->app_status == AppointmentStatus::COMPLETED  && $appointment->app_status != AppointmentStatus::MISSED )) {
+        if (($appointment->app_date < date('Y-m-d') || $bills->isNotEmpty()) && ($appointment->app_status == AppointmentStatus::COMPLETED && $appointment->app_status != AppointmentStatus::MISSED)) {
             $appAction = 'Show';
         }
         $doctorDiscount = $appointment->doctor_discount;
@@ -98,6 +99,7 @@ class TreatmentController extends Controller
         $surfaceConditions = SurfaceCondition::all();
         $treatmentStatus = TreatmentStatus::all();
         $treatments = TreatmentType::where('status', 'Y')->get();
+        $faceparts = FacePart::all();
         $diseases = Disease::where('status', 'Y')->get();
         $patientName = str_replace('<br>', ' ', $appointment->patient->first_name) . ' ' . $appointment->patient->last_name;
         $doctorName = str_replace('<br>', ' ', $appointment->doctor->name);
@@ -151,26 +153,26 @@ class TreatmentController extends Controller
                         TreatmentStatus::COMPLETED => 'fa-circle-check text-success',
                         TreatmentStatus::FOLLOWUP => 'fa-circle-exclamation text-warning',
                     ];
-                
+
                     // Check if toothExamination is not null and properly loaded
                     if (!$row->toothExamination) {
                         return '';
                     }
-                
+
                     // Generate list items for each tooth's status
                     $statusListItems = $row->toothExamination->map(function ($examination) use ($statusMap) {
                         $treatmentStatusId = $examination->treatment_status;
                         $btnClass = isset($statusMap[$treatmentStatusId]) ? $statusMap[$treatmentStatusId] : 'fa-circle text-secondary';
                         $statusWords = TreatmentStatus::statusToWords($treatmentStatusId);
-                
+
                         return "<li><i class='fa-solid {$btnClass} fs-16' title='{$statusWords}'></i></li>";
                     })->implode('');
-                
+
                     // Wrap list items in a <ul> element
                     return $statusListItems ? "<ul>{$statusListItems}</ul>" : '';
                 })
-                
-                
+
+
                 ->addColumn('treat_date', function ($row) {
                     return $row->app_date;
                 })
@@ -196,10 +198,10 @@ class TreatmentController extends Controller
                         }
                         return '';
                     })->implode('');
-                    
+
                     return $teethData ? "<ul>{$teethData}</ul>" : '';
                 })
-                
+
                 ->addColumn('problem', function ($row) {
                     if (!$row->toothExamination) {
                         return '';
@@ -207,10 +209,10 @@ class TreatmentController extends Controller
                     $problems = $row->toothExamination->pluck('chief_complaint')->filter()->map(function ($problem) {
                         return "<li>{$problem}</li>";
                     })->implode('');
-                    
+
                     return $problems ? "<ul>{$problems}</ul>" : '';
                 })
-                
+
                 ->addColumn('disease', function ($row) {
                     if (!$row->toothExamination) {
                         return '';
@@ -218,10 +220,10 @@ class TreatmentController extends Controller
                     $diseases = $row->toothExamination->map(function ($examination) {
                         return $examination->disease ? "<li>{$examination->disease->name}</li>" : "<li>No Disease</li>";
                     })->implode('');
-                    
+
                     return $diseases ? "<ul>{$diseases}</ul>" : '';
                 })
-                
+
                 ->addColumn('remarks', function ($row) {
                     if (!$row->toothExamination) {
                         return '';
@@ -229,10 +231,10 @@ class TreatmentController extends Controller
                     $remarks = $row->toothExamination->pluck('remarks')->filter()->map(function ($remark) {
                         return "<li>{$remark}</li>";
                     })->implode('');
-                    
+
                     return $remarks ? "<ul>{$remarks}</ul>" : '';
                 })
-                
+
                 ->addColumn('treatment', function ($row) {
                     if (!$row->toothExamination) {
                         return '';
@@ -240,11 +242,11 @@ class TreatmentController extends Controller
                     $treatments = $row->toothExamination->map(function ($examination) {
                         return $examination->treatment ? "<li>{$examination->treatment->treat_name}</li>" : '';
                     })->filter()->implode('');
-                    
+
                     return $treatments ? "<ul>{$treatments}</ul>" : '';
                 })
-                
-                    
+
+
                 ->addColumn('action', function ($row) use ($patientName) {
 
                     $parent_id = $row->app_parent_id ? $row->app_parent_id : $row->id;
@@ -264,7 +266,7 @@ class TreatmentController extends Controller
                 ->make(true);
         }
 
-        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases', 'previousAppointments', 'clinicBranches', 'appointmentTypes', 'workingDoctors', 'medicines', 'dosages', 'patientPrescriptions', 'appAction', 'doctorDiscount', 'latestFollowup', 'plans', 'toothIds', 'medicineRoutes', 'shades'));
+        return view('appointment.treatment', compact('patientProfile', 'appointment', 'tooth', 'latestAppointment', 'toothScores', 'surfaceConditions', 'treatmentStatus', 'treatments', 'diseases', 'previousAppointments', 'clinicBranches', 'appointmentTypes', 'workingDoctors', 'medicines', 'dosages', 'patientPrescriptions', 'appAction', 'doctorDiscount', 'latestFollowup', 'plans', 'toothIds', 'medicineRoutes', 'shades', 'faceparts'));
 
     }
 
@@ -284,25 +286,25 @@ class TreatmentController extends Controller
                 ->first();
             if ($parentAppId != null && $toothExamination == null) {
                 $toothExamination = ToothExamination::where('row_id', $toothId)
-                ->where('patient_id', $patientId)
-                ->where('app_id', $parentAppId)
-                ->where('status', 'Y')
-                ->first();
+                    ->where('patient_id', $patientId)
+                    ->where('app_id', $parentAppId)
+                    ->where('status', 'Y')
+                    ->first();
             }
         } else {
             $toothExamination = ToothExamination::where('tooth_id', $toothId)
-            ->where('patient_id', $patientId)
-            ->where('app_id', $appId)
-            ->where('status', 'Y')
-            ->first();
-            if ($parentAppId != null && $toothExamination == null) {
-                $toothExamination = ToothExamination::where('tooth_id', $toothId)
                 ->where('patient_id', $patientId)
-                ->where('app_id', $parentAppId)
+                ->where('app_id', $appId)
                 ->where('status', 'Y')
                 ->first();
+            if ($parentAppId != null && $toothExamination == null) {
+                $toothExamination = ToothExamination::where('tooth_id', $toothId)
+                    ->where('patient_id', $patientId)
+                    ->where('app_id', $parentAppId)
+                    ->where('status', 'Y')
+                    ->first();
             }
-           
+
         }
         $xrays = null;
         $diseaseName = null;
@@ -470,7 +472,7 @@ class TreatmentController extends Controller
             $toothExaminationEdit->anatomy_image = $anatomyImage;
             if ($toothExaminationEdit->save()) {
                 DB::commit();
-                $successMessage = $request->tooth_id != null ? 'Tooth examination for teeth no ' . $toothId . ' added' : 'Tooth examination added';               
+                $successMessage = $request->tooth_id != null ? 'Tooth examination for teeth no ' . $toothId . ' added' : 'Tooth examination added';
                 return response()->json(['success' => $successMessage]);
             } else {
                 DB::rollback();
@@ -531,10 +533,10 @@ class TreatmentController extends Controller
                 'disease:id,name',
                 'xRayImages:id,tooth_examination_id,xray,status',
             ])
-            ->where('app_id', $appointmentPrevious->app_parent_id)
-            ->where('patient_id', $patientId)
-            ->where('status', 'Y')
-            ->get();
+                ->where('app_id', $appointmentPrevious->app_parent_id)
+                ->where('patient_id', $patientId)
+                ->where('status', 'Y')
+                ->get();
         }
 
         // Fetch ToothExamination data with related teeth and treatment details
@@ -560,21 +562,21 @@ class TreatmentController extends Controller
         $previousTreatments = [];
         if ($toothExaminationsPrevious) {
             foreach ($toothExaminationsPrevious as $prevExam) {
-                    $treatmentId = $prevExam->treatment_id;
-                    $teethId = $prevExam->teeth_id;
+                $treatmentId = $prevExam->treatment_id;
+                $teethId = $prevExam->teeth_id;
 
-                    // Mark treatment as follow-up
-                    if ($prevExam->treatment_status === TreatmentStatus::FOLLOWUP) {
-                        $previousTreatments[$teethId][$treatmentId] = true;
-                    }
-                
+                // Mark treatment as follow-up
+                if ($prevExam->treatment_status === TreatmentStatus::FOLLOWUP) {
+                    $previousTreatments[$teethId][$treatmentId] = true;
+                }
+
             }
         }
         $xrays = 0;
-        $i =0;
+        $i = 0;
         // Process each tooth examination
         foreach ($toothExaminations as $toothExamination) {
-            
+
             // Collect treatment IDs
             $treatments[] = $toothExamination->treatment->id;
             $treatmentPlans[] = $toothExamination->treatment_plan_id;
@@ -587,8 +589,7 @@ class TreatmentController extends Controller
             // Calculate discount cost if applicable
             $discountCost = $treatmentCost;
             $currentDate = date('Y-m-d');
-            if ($toothExamination->is_xray_billable == 'Y')
-            {
+            if ($toothExamination->is_xray_billable == 'Y') {
                 $xrays++;
             }
 
@@ -617,9 +618,11 @@ class TreatmentController extends Controller
                 $comboOffersResult[$toothExamination->treatment->id] = [];
             }
             // Skip if treatment is marked as follow-up in previous examinations
-            if (isset($previousTreatments[$toothExamination->teeth_id]) &&
-                isset($previousTreatments[$toothExamination->teeth_id][$toothExamination->treatment_id])) {
-                    continue;
+            if (
+                isset($previousTreatments[$toothExamination->teeth_id]) &&
+                isset($previousTreatments[$toothExamination->teeth_id][$toothExamination->treatment_id])
+            ) {
+                continue;
             }
 
             // Store individual treatment amount
@@ -629,21 +632,21 @@ class TreatmentController extends Controller
                 'treat_id' => $toothExamination->treatment_id,
                 'cost' => $toothExamination->treatment->treat_cost,
                 'discount_percentage' => $toothExamination->treatment->discount_percentage,
-                    
-                
+
+
             ];
-            
+
             if ($toothExamination->treatment_plan_id) {
                 $i++;
-                $individualTreatmentPlanAmounts[$toothExamination->treatmentPlan->plan.$i] = [
+                $individualTreatmentPlanAmounts[$toothExamination->treatmentPlan->plan . $i] = [
                     'treat_name' => $toothExamination->treatmentPlan->plan,
                     'treat_cost' => $toothExamination->treatmentPlan->cost, // Use discounted cost
                     'treat_id' => $toothExamination->treatment_plan_id,
                     'cost' => $toothExamination->treatmentPlan->cost,
                     'discount_percentage' => 0,
-                        
+
                 ];
-    
+
             }
         }
         // if (!empty($treatmentPlans)) {
@@ -656,19 +659,19 @@ class TreatmentController extends Controller
         //             'cost' => $treatmentPlan->cost,
         //             'discount_percentage' => 0,   
         //         ];
-    
+
         //     }
         // }
-        
-        
-// Filter toothExaminations to only include those with treatments in individualTreatmentAmounts
-    $toothExaminations = $toothExaminations->filter(function ($toothExamination) use ($individualTreatmentAmounts) {
-        return isset($individualTreatmentAmounts[$toothExamination->treatment_id]);
-    });
+
+
+        // Filter toothExaminations to only include those with treatments in individualTreatmentAmounts
+        $toothExaminations = $toothExaminations->filter(function ($toothExamination) use ($individualTreatmentAmounts) {
+            return isset($individualTreatmentAmounts[$toothExamination->treatment_id]);
+        });
         $doctorDiscountApp = Appointment::findOrFail($appointment);
         $doctorDiscount = $doctorDiscountApp->doctor_discount;
         $xraysArray = [];
-        if ($xrays> 0) {
+        if ($xrays > 0) {
             $xrayAmount = (ClinicBasicDetail::first())->xray_amount;
             $xraysCharge = [
                 'treat_name' => "X-ray ( " . $xrays . " * " . $xrayAmount . " ).",
@@ -679,9 +682,9 @@ class TreatmentController extends Controller
             ];
             $xraysArray[] = $xraysCharge; // Add this to your existing xrays array
         }
-    
-    // Assuming you have an array for xrays in your response
-    
+
+        // Assuming you have an array for xrays in your response
+
         // Return the data as a JSON response
         return response()->json([
             'toothExaminations' => $toothExaminations,

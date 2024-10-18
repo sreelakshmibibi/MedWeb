@@ -10,7 +10,7 @@ use App\Models\Appointment;
         <div class="modal-dialog modal-dialog-scrollable h-p100">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fa-solid fa-tooth"></i> Tooth Examination
+                    <h5 class="modal-title" id="modalTitle"><i class="fa-solid fa-tooth"></i> Tooth Examination
                     </h5>
                     <button type="button" class="btn-close closeToothBtn" data-bs-dismiss="modal"
                         aria-label="Close"></button>
@@ -82,7 +82,7 @@ use App\Models\Appointment;
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row dentalSections">
                             <div class="col-md-6 ">
                                 <div class="form-group">
                                     <label class="form-label" for="disease_id">Disease <span class="text-danger">
@@ -105,7 +105,7 @@ use App\Models\Appointment;
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row dentalSections">
                             <div class="col-md-6 ">
                                 <div class="form-group">
                                     <label class="form-label" for="dental_examination">Dental Examination <span
@@ -123,6 +123,21 @@ use App\Models\Appointment;
                                     <input type="text" class="form-control" id="diagnosis" name="diagnosis"
                                         placeholder="diagnosis">
                                     <div id="diagnosisError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row cosmeticSection" style="display: none;">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="facepart">Face Part <span class="text-danger">
+                                            *</span></label>
+                                    <select class="form-control form-select" required id="facepart"
+                                        name="facepart[]" data-placeholder="Select a Part" style="width: 100%;"
+                                        multiple>
+                                        @foreach ($faceparts as $part)
+                                            <option value="{{ $part->face_part }}">{{ $part->face_part }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -162,7 +177,7 @@ use App\Models\Appointment;
                             <div class="col-md-6" id="teethXrayDiv">
                                 <div class="form-group">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <label class="form-label" for="xray">X-Ray</label>
+                                        <label class="form-label" id="xrayLabel" for="xray">X-Ray</label>
                                         <button type="button" id="uploadedXrays" style="display:none;"
                                             class="waves-effect waves-light btn btn-circle btn-info btn-xs"
                                             data-bs-toggle="modal" data-bs-target="#modal-documents"
@@ -173,11 +188,10 @@ use App\Models\Appointment;
                                     <div id="xrayError" class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-6 ">
+                            <div class="col-md-6 dentalSections">
                                 <div class="form-group">
                                     <label class="form-label" for="is_xray_billable">Is Xray Billable?</label>
-                                    <select class="form-select" id="is_xray_billable"
-                                        name="is_xray_billable">
+                                    <select class="form-select" id="is_xray_billable" name="is_xray_billable">
                                         <option value="N">No</option>
                                         <option value="Y">Yes</option>
                                     </select>
@@ -192,7 +206,7 @@ use App\Models\Appointment;
                                 </div>
                             </div> --}}
                         </div>
-                        <div class="row">
+                        <div class="row dentalSections">
                             <div class="col-md-6 ">
                                 <div class="form-group">
                                     <label class="form-label" for="treatment_plan_id">Treatment Plan</label>
@@ -474,6 +488,10 @@ use App\Models\Appointment;
             //         data.push(tag);
             //     }
             // });
+            $('.form-select').select2({
+                dropdownParent: $('#modal-teeth'),
+                width: "100%",
+            });
 
             $(".disease_id_select").select2({
                 dropdownParent: $('#modal-teeth'),
@@ -488,7 +506,42 @@ use App\Models\Appointment;
                     }
                     // Check if the term already exists as an option
                     var found = false;
-                    $(".treatment_id_select option").each(function() {
+                    // $(".treatment_id_select option").each(function() {
+                    $(".disease_id_select option").each(function() {
+                        if ($.trim($(this).text()) === term) {
+                            found = true;
+                            return false; // Exit the loop early
+                        }
+                    });
+                    if (!found) {
+                        return {
+                            id: term,
+                            text: term,
+                            newTag: true
+                        };
+                    }
+                    return null;
+                },
+                insertTag: function(data, tag) {
+                    data.push(tag);
+                }
+            });
+
+            $("#facepart").select2({
+                dropdownParent: $('#modal-teeth'),
+                width: "100%",
+                placeholder: "Select a Part",
+                tags: true,
+                tokenSeparators: [","],
+                createTag: function(params) {
+                    var term = $.trim(params.term);
+                    if (term === "") {
+                        return null;
+                    }
+                    // Check if the term already exists as an option
+                    var found = false;
+                    // $(".treatment_id_select option").each(function() {
+                    $(".facepart option").each(function() {
                         if ($.trim($(this).text()) === term) {
                             found = true;
                             return false; // Exit the loop early
@@ -513,7 +566,8 @@ use App\Models\Appointment;
         $('#modal-teeth').on('hidden.bs.modal', function() {
             // $(".treatment_id_select").select2("destroy");
             // $(".treatment_plan_select").select2("destroy");
-            $(".disease_id_select").select2("destroy");
+            // $(".disease_id_select").select2("destroy");
+            $(".form-select").select2("destroy");
         });
 
         function addChiefComplaintInput(classname) {
@@ -547,6 +601,52 @@ use App\Models\Appointment;
             } else {
                 removeChiefComplaintInput();
                 addChiefComplaintInput('.chief_tooth');
+            }
+
+            const rowId = document.getElementById('row_id').value; // Get the value of the hidden input
+            const treatmentSelect = document.getElementById('treatment_id');
+            const xrayLabel = document.getElementById('xrayLabel');
+            const teethXrayDiv = document.getElementById('teethXrayDiv');
+            const modalTitle = document.getElementById('modalTitle');
+            // Function to filter treatments based on category
+            function filterTreatments() {
+                const treatments = @json($treatments); // Convert PHP variable to JS array
+                treatmentSelect.innerHTML =
+                    '<option value="">Select a Treatment</option>'; // Reset options
+
+                // Check the category and filter accordingly
+                const filteredTreatments = treatments.filter(treatment => {
+                    if (rowId === 'cosmetics') {
+                        return treatment.treat_category === 2; // For cosmetics
+                    } else {
+                        return treatment.treat_category === 1; // For other categories
+                    }
+                });
+
+                // Populate the select options
+                filteredTreatments.forEach(treatment => {
+                    const option = document.createElement('option');
+                    option.value = treatment.id;
+                    option.textContent = treatment.treat_name;
+                    treatmentSelect.appendChild(option);
+                });
+            }
+
+            // Call the function to filter treatments on page load
+            filterTreatments();
+            if (rowId === 'cosmetics') {
+                modalTitle.innerHTML = '<i class="fa-solid fa-spa"></i> Cosmetic Examination';
+                xrayLabel.textContent = 'Image';
+                // Change the class of the div
+                teethXrayDiv.classList.remove('col-md-6'); // Remove old class
+                teethXrayDiv.classList.add('col-md-12'); // Add new class
+            } else {
+                modalTitle.innerHTML = '<i class="fa-solid fa-tooth"></i> Tooth Examination';
+                xrayLabel.textContent = 'X-Ray';
+                if ($('#teethXrayDiv').hasClass('col-md-12')) {
+                    $('#teethXrayDiv').removeClass('col-md-12');
+                    $('#teethXrayDiv').addClass('col-md-6');
+                }
             }
         });
 
@@ -681,11 +781,26 @@ use App\Models\Appointment;
                     $(this).removeClass('rowbordered')
                 }
             });
+            $("#facepart").val('');
+            $('#row_id').val('');
+            document.getElementById('modalTitle').innerHTML =
+                '<i class="fa-solid fa-tooth"></i> Tooth Examination';
+            document.getElementById('xrayLabel').textContent = 'X-Ray';
+            if ($('#teethXrayDiv').hasClass('col-md-12')) {
+                $('#teethXrayDiv').removeClass('col-md-12');
+                $('#teethXrayDiv').addClass('col-md-6');
+            }
 
             if ($('#checkbox_all').is(':checked')) {
                 $('#checkbox_all').prop('checked', false);
                 $('.exam_chiefComplaint').hide();
                 $('.exam_toothdiv').show();
+            } else if ($('#checkbox_cos').is(':checked')) {
+                $('#checkbox_cos').prop('checked', false);
+                $('.exam_chiefComplaint').hide();
+                $('.exam_toothdiv').show();
+                $('.dentalSections').show();
+                $('.cosmeticSection').hide();
             } else if ($('#checkbox_row1').is(':checked')) {
                 $('#checkbox_row1').prop('checked', false);
                 $('.exam_chiefComplaint').hide();

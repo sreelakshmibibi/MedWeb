@@ -73,6 +73,16 @@ $lower_teethImages = [
 
 <div class=" row">
     <div class="alert alert-success" id="successMessage" style="display:none;"></div>
+    <div class="row" style="left:2rem; top:0;">
+        <div class="col-lg-1 col-md-2 col-sm-2">
+            <input type="checkbox" id="checkbox_all" class="filled-in chk-col-success" value="<?= TeethRow::RowAll ?>">
+            <label for="checkbox_all">Other</label>
+        </div>
+        <div class="col-lg-2 col-md-3 col-sm-3">
+            <input type="checkbox" id="checkbox_cos" class="filled-in chk-col-success" value="cosmetics">
+            <label for="checkbox_cos">Cosmetics</label>
+        </div>
+    </div>
     <div class="box no-border">
         <div class="box-body tooth-boxbody  ">
             <div class="tooth_body">
@@ -199,19 +209,13 @@ $lower_teethImages = [
                     </div>
                 </div>
             </div>
-            <div class="row position-absolute" style="left:2rem; top:0;">
-                {{-- <div class="row position-absolute" style="left:2rem; top:-1.5rem;"> --}}
-                <div class="select-div">
-                    <input type="checkbox" id="checkbox_all" class="filled-in chk-col-success"
-                        value="<?= TeethRow::RowAll ?>">
-                    <label for="checkbox_all">Other</label>
-                </div>
-            </div>
+
             <div>
                 <ul class="list-style-none ps-0">
                     <li><span class="badge badge-dot badge-danger"></span>&nbsp; Treatment ongoing</li>
                     <li><span class="badge badge-dot badge-success"></span>&nbsp; Treatment completed before</li>
-                    <li><span class="badge badge-dot" style="background-color:yellow"></span>&nbsp; Treatment Follow up
+                    <li><span class="badge badge-dot" style="background-color:yellow"></span>&nbsp; Treatment Follow
+                        up
                     </li>
                 </ul>
             </div>
@@ -406,7 +410,7 @@ $lower_teethImages = [
                                     return false; // Exit the loop once found
                                 }
                             });
-                            
+
                             var treatment_plan_id = examination
                                 .treatment_plan_id;
                             $('#treatment_plan_id').val(treatment_plan_id);
@@ -792,6 +796,43 @@ $lower_teethImages = [
 
             }
         });
+
+        if ($('#checkbox_cos').is(':checked')) {
+            $('.exam_toothdiv').hide();
+            $('.dentalSections').hide();
+            $('.cosmeticSection').show();
+            $('#row_id').val('cosmetics');
+            // getRowData(5, patientId, appId);
+            $('#modal-teeth').modal('show');
+
+        } else {
+            $('.exam_toothdiv').show();
+            $('.dentalSections').show();
+            $('.cosmeticSection').hide();
+            $('#row_id').val('');
+        }
+
+
+        $('#checkbox_cos').change(function() {
+            if ($(this).is(':checked')) {
+                $('.exam_toothdiv').hide();
+                $('.dentalSections').hide();
+                $('.cosmeticSection').show();
+                $('.exam_chiefComplaint').show();
+                $('#row_id').val('cosmetics');
+                // getRowData(5, patientId, appId);
+                $('#modal-teeth').modal('show');
+
+            } else {
+                $('.exam_toothdiv').show();
+                $('.dentalSections').show();
+                $('.cosmeticSection').hide();
+                $('.exam_chiefComplaint').hide();
+                $('#row_id').val('');
+
+            }
+        });
+
 
         if ($('#checkbox_row1').is(':checked')) {
             $('.exam_toothdiv').hide();
