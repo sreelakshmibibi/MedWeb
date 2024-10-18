@@ -12,14 +12,29 @@
 
                 <div class="modal-body">
                     <div class="container-fluid">
-
-                        <div class="form-group">
-                            <label class="form-label" for="edit_treatment_name">Treatment Name <span
-                                    class="text-danger">
-                                    *</span></label>
-                            <input class="form-control" type="text" id="edit_treatment_name" name="treat_name"
-                                placeholder="Treatment Name" autocomplete="off">
-                            <div id="editTreatmentError" class="invalid-feedback"></div>
+                    <div class="row">
+                        <!-- Treatment Cost -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="edit_treatment_name">Treatment Name <span
+                                        class="text-danger">
+                                        *</span></label>
+                                <input class="form-control" type="text" id="edit_treatment_name" name="treat_name"
+                                    placeholder="Treatment Name" autocomplete="off">
+                                <div id="editTreatmentError" class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="edit_treatment_category">Treatment Category <span class="text-danger">
+                                        *</span></label>
+                                <select class="form-control" id="edit_treatment_category" name="edit_treatment_category"
+                                    placeholder="Treatment Category">
+                                    <option value="{{App\Models\TreatmentType::DENTAL_CLINIC}}">{{App\Models\TreatmentType::DENTAL_CLINIC_WORDS}}</option>
+                                    <option value="{{App\Models\TreatmentType::COSMETIC_CLINIC}}">{{App\Models\TreatmentType::COSMETIC_CLINIC_WORDS}}</option>
+                                </select>
+                                <div id="editTreatmentCategoryError" class="invalid-feedback"></div>
+                            </div>
                         </div>
 
                         <div class="row">
@@ -96,6 +111,7 @@
             // Reset previous error messages
             $('#editTreatmentError').text('');
             $('#editTreatmentCostError').text('');
+            $('#editTreatmentCategoryError').text();
             $('#editStatusError').text('');
             $('#editDiscountPercentageError').text('');
             $('#editDiscountFromError').text('');
@@ -103,6 +119,7 @@
 
             // Validate form inputs
             var treatment = $('#edit_treatment_name').val();
+            var treatmentCategory = $('#edit_treatment_category').val();
             var treatmentCost = $('#edit_treatment_cost').val();
             var status = $('input[name="status"]:checked').val();
             var discountPercentage = $('#edit_discount_percentage').val();
@@ -183,6 +200,11 @@
                         $('#editTreatmentCostError').text(errors.treat_cost[0]);
                     }
 
+                    if (errors.hasOwnProperty('treat_category')) {
+                        $('#edit_treatment_category').addClass('is-invalid');
+                        $('#editTreatmentCategoryError').text(errors.treat_category[0]);
+                    }
+
                     if (errors.hasOwnProperty('discount')) {
                         $('#edit_discount_percentage').addClass('is-invalid');
                         $('#editDiscountPercentageError').text(errors.discount[0]);
@@ -209,6 +231,7 @@
         $('#modal-edit').on('hidden.bs.modal', function() {
             $('#editTreatmentCostForm').trigger('reset');
             $('#edit_treatment_name').removeClass('is-invalid');
+            $('#edit_treatment_category').removeClass('is-invalid');
             $('#edit_treatment_cost').removeClass('is-invalid');
             $('#edit_discount_percentage').removeClass('is-invalid');
             $('#edit_discount_from').removeClass('is-invalid');
@@ -220,6 +243,7 @@
             $('#edit_discount_to').next('.invalid-feedback').text('');
             $('#editTreatmentError').text('');
             $('#editTreatmentCostError').text('');
+            $('#editTreatmentCategoryError').text('');
             $('#editDiscountPercentageError').text('');
             $('#editDiscountFromError').text('');
             $('#editDiscountToError').text('');
@@ -234,7 +258,7 @@
 
             // Fetch department details via AJAX
             $.ajax({
-                url: '{{ url('treatment_cost', '') }}' + "/" + treatmentId + "/edit",
+                url: '{{ url("treatment_cost", "") }}' + "/" + treatmentId + "/edit",
                 method: 'GET',
                 success: function(response) {
                     // Populate form fields
@@ -243,6 +267,7 @@
                     var formattedCost = parseFloat(response.treat_cost).toFixed(2);
                     // Clear input value and ensure no autofill suggestions
                     $('#edit_treatment_name').val('').focus().val(response.treat_name);
+                    $('#edit_treatment_category').val('').focus().val(response.treat_category);
                     $('#edit_treatment_cost').val('').focus().val(formattedCost);
                     $('#edit_discount_percentage').val(response.discount_percentage || '');
                     $('#edit_discount_from').val(response.discount_from || '');

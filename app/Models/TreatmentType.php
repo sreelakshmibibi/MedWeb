@@ -12,8 +12,15 @@ class TreatmentType extends Model
     use HasFactory;
     use SoftDeletes;
 
+    const DENTAL_CLINIC = 1;
+    const COSMETIC_CLINIC = 2;
+
+    const DENTAL_CLINIC_WORDS = "Dental";
+    const COSMETIC_CLINIC_WORDS = "Cosmetic";
+
     protected $fillable = [
         'treat_name',
+        'treat_category',
         'treat_cost',
         'discount_percentage',
         'discount_from',

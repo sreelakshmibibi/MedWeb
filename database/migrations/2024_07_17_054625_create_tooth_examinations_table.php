@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('app_id')->constrained('appointments');
             $table->string('tooth_id')->nullable();
             $table->unsignedBigInteger('row_id')->nullable();
+            $table->string('face_part')->nullable();
             $table->foreignId('tooth_score_id')->nullable()->constrained('tooth_scores');
             $table->string('chief_complaint');
             $table->string('hpi')->nullable();

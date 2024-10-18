@@ -28,6 +28,14 @@ class TreatmentCostController extends Controller
 
             return DataTables::of($treatments)
                 ->addIndexColumn()
+                ->addColumn('Category', function ($row) {
+                    if ($row->treat_category == TreatmentType::DENTAL_CLINIC) {
+                        return TreatmentType::DENTAL_CLINIC_WORDS;
+                    } else {
+                        return TreatmentType::COSMETIC_CLINIC_WORDS;  
+                    }
+                    // return $btn1;
+                })
                 ->addColumn('status', function ($row) {
                     if ($row->status == 'Y') {
                         $btn1 = '<span class="text-success" title="active"><i class="fa-solid fa-circle-check"></i></span>';
@@ -40,9 +48,9 @@ class TreatmentCostController extends Controller
                 ->addColumn('action', function ($row) {
 
                     $btn = '<button type="button" class="waves-effect waves-light btn btn-circle btn-success btn-edit btn-xs me-1" title="edit" data-bs-toggle="modal" data-id="'.$row->id.'"
-                        data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>
-                        <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="'.$row->id.'" title="delete">
-                        <i class="fa fa-trash"></i></button>';
+                        data-bs-target="#modal-edit" ><i class="fa fa-pencil"></i></button>';
+                        // <button type="button" class="waves-effect waves-light btn btn-circle btn-danger btn-xs" data-bs-toggle="modal" data-bs-target="#modal-delete" data-id="'.$row->id.'" title="delete">
+                        // <i class="fa fa-trash"></i></button>';
 
                     return $btn;
                 })
@@ -62,6 +70,7 @@ class TreatmentCostController extends Controller
             // Create a new treatment instance
             $treatment = new TreatmentType();
             $treatment->treat_name = ucwords(strtolower($request->input('treat_name')));
+            $treatment->treat_category = $request->input('treat_category');
             $treatment->treat_cost = $request->input('treat_cost');
             $treatment->status = $request->input('status');
             $treatment->discount_percentage = $request->input('discount');
@@ -103,6 +112,7 @@ class TreatmentCostController extends Controller
             // Update treatment cost fields based on form data
             $treatment->treat_name = ucwords(strtolower($request->treat_name));
             $treatment->treat_cost = $request->treat_cost;
+            $treatment->treat_category = $request->input('edit_treatment_category');
             $treatment->status = $request->status;
             $treatment->discount_percentage = $request->input('discount');
             $treatment->discount_from = $request->input('discount_from');

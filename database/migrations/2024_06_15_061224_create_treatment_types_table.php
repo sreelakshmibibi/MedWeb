@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('treatment_types', function (Blueprint $table) {
             $table->id();
             $table->string('treat_name'); //Treatment name
+            $table->integer('treat_category')->default(1); /* 1 = Dental 2 = Cosmetic */
             $table->decimal('treat_cost', 10, 3); //Treatment cost
             $table->decimal('discount_percentage', 5, 2)->nullable(); // Discount percentage
             $table->date('discount_from')->nullable(); // Discount start date
