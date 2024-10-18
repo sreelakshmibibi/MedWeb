@@ -156,6 +156,12 @@ class HelperController extends Controller
             })->map(function ($id) {
                 return str_replace('Row:', '', $id); // Extract the ID value
             });
+
+            $faceValues = $toothIds->filter(function ($id) {
+                return strpos($id, 'Face Part:') === 0; // Check if it starts with 'Face Part:'
+            })->map(function ($id) {
+                return str_replace('Face Part:', '', $id); // Extract the ID value
+            });
             // Fetch specific tooth details
             $tooth = Appointment::with([
                 'doctor:id,name',
@@ -163,16 +169,20 @@ class HelperController extends Controller
                 'branch.state:id,state',
                 'branch.city:id,city',
                 'branch.country:id,country',
-                'toothExamination' => function ($query) use ($toothIdValues, $rowIdValues, $appointmentId) {
+                'toothExamination' => function ($query) use ($toothIdValues, $rowIdValues, $appointmentId, $faceValues) {
                     $query->where('status', 'Y')
                         ->where('app_id', $appointmentId)
-                        ->where(function ($query) use ($toothIdValues, $rowIdValues) {
+                        ->where(function ($query) use ($toothIdValues, $rowIdValues, $faceValues) {
                             if (!empty($toothIdValues)) {
                                 $query->whereIn('tooth_id', $toothIdValues);
                             }
 
                             if (!empty($rowIdValues)) {
                                 $query->orWhereIn('row_id', $rowIdValues);
+                            }
+
+                            if (!empty($faceValues)) {
+                                $query->orWhereIn('face_part', $faceValues);
                             }
                         })
                         ->whereNull('deleted_at')
@@ -266,13 +276,18 @@ class HelperController extends Controller
                         default:
                             $teethName = 'Unknown Row';
                             break;
-                    }
-
+                    } 
                     return [
                         'teeth_id' => 'Row:' . $examination->row_id,
                         'teeth_name' => 'Row : ' . $teethName,
                     ];
+                } else if ($examination->face_part) {
+                    return [
+                        'teeth_id' => 'Face Part:' . $examination->face_part,
+                        'teeth_name' => 'Face Part:' . $examination->face_part,
+                    ];
                 }
+
 
                 if ($examination->tooth_id) {
                     // If `tooth_id` is present, use the related teeth name

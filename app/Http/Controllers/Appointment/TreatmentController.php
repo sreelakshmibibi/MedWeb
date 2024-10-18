@@ -195,6 +195,8 @@ class TreatmentController extends Controller
                                 default => '',
                             };
                             return "<li>{$teethName}</li>";
+                        } else if($examination->face_part != null) {
+                            return $examination->face_part;
                         }
                         return '';
                     })->implode('');

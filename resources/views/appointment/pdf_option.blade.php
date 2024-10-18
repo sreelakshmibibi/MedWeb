@@ -20,7 +20,7 @@
                         <select class="form-select" id="pdfType" name="pdf_type" required>
                             <option value="" disabled selected>Select an option</option>
                             <option value="appointment">Entire Appointment</option>
-                            <option value="tooth">Specific Tooth</option>
+                            <option value="tooth">Specific Tooth / Face Part</option>
                         </select>
                     </div>
 

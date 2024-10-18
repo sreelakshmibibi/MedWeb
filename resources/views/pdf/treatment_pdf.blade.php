@@ -261,6 +261,8 @@ date_default_timezone_set('Asia/Kolkata');
                             @default
                                 Unknown Row
                         @endswitch
+                    @elseif ($examination->face_part)
+                        Face Part : {{ $examination->face_part }}
                     @endif
                 </h5>
                 <table class="info-table">
