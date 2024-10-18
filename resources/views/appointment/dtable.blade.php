@@ -322,7 +322,8 @@ use Illuminate\Support\Facades\Session;
                     //     }
                     // });
                     var diseaseName = response
-                        .diseaseName.name;
+                        .diseaseName ? response
+                        .diseaseName.name : '';
                     var found = false;
                     // Loop through options to find the corresponding text and select it
                     $('#disease_id option').each(function() {
@@ -333,7 +334,7 @@ use Illuminate\Support\Facades\Session;
                         }
                     });
 
-                    if (!found) {
+                    if (!found && diseaseName != '') {
                         $('.disease_id_select').empty();
                         var diseaseSelect = $('.disease_id_select');
                         var option = new Option(diseaseName, disease_id,
@@ -823,7 +824,8 @@ use Illuminate\Support\Facades\Session;
                     //     }
                     // });
                     var diseaseName = response
-                        .diseaseName.name;
+                        .diseaseName ? response
+                        .diseaseName.name : '';
                     var found = false;
                     // Loop through options to find the corresponding text and select it
                     $('#disease_id option').each(function() {
@@ -834,7 +836,7 @@ use Illuminate\Support\Facades\Session;
                         }
                     });
 
-                    if (!found) {
+                    if (!found && diseaseName != '') {
                         $('.disease_id_select').empty();
                         var diseaseSelect = $('.disease_id_select');
                         var option = new Option(diseaseName, disease_id,
