@@ -10,13 +10,29 @@
 
                 <div class="modal-body">
                     <div class="container-fluid">
-                        <!-- Treatment Name -->
-                        <div class="form-group">
-                            <label class="form-label" for="treat_name">Treatment Name <span class="text-danger">
-                                    *</span></label>
-                            <input class="form-control" type="text" id="treat_name" name="treat_name"
-                                placeholder="Treatment Name">
-                            <div id="treatmentError" class="invalid-feedback"></div>
+                        <div class="row">
+                            <!-- Treatment Cost -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="treat_name">Treatment Name <span class="text-danger">
+                                            *</span></label>
+                                    <input class="form-control" type="text" id="treat_name" name="treat_name"
+                                        placeholder="Treatment Name">
+                                    <div id="treatmentError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="treat_category">Treatment Category <span class="text-danger">
+                                            *</span></label>
+                                    <select class="form-control" id="treat_category" name="treat_category"
+                                        placeholder="Treatment Category">
+                                        <option value="{{App\Models\TreatmentType::DENTAL_CLINIC}}">{{App\Models\TreatmentType::DENTAL_CLINIC_WORDS}}</option>
+                                        <option value="{{App\Models\TreatmentType::COSMETIC_CLINIC}}">{{App\Models\TreatmentType::COSMETIC_CLINIC_WORDS}}</option>
+                                    </select>
+                                    <div id="treatmentCategoryError" class="invalid-feedback"></div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="row">

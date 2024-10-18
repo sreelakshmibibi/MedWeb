@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             SurfaceConditionSeeder::class,
             ToothScoreSeeder::class,
             TeethRowSeeder::class,
+            FacePartSeeder::class,
             TreatmentStatusSeeder::class,
             TreatmentPlanSeeder::class,
             MedicineRouteSeeder::class,
