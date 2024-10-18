@@ -239,7 +239,6 @@ $lower_teethImages = [
         toothData.forEach(function(tooth) {
             var toothId = tooth.tooth_id;
             var rowId = tooth.row_id;
-            var facepart = tooth.face_part;
             var treatStatus = tooth.treatment_status;
             if (toothId != null) {
                 var anatomyImage = tooth.anatomy_image;
@@ -266,10 +265,6 @@ $lower_teethImages = [
                 } else {
                     $(rowId).addClass('follow');
                 }
-            }
-            console.log(facepart);
-            if (facepart != null) {
-                $('#checkbox_cos').prop('checked', true);
             }
         });
 
